@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en" data-course="vault">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rebuild with only the read key · Cyber Vault course</title>
+<meta name="description" content="Course unit 4.2: build a new cluster, add the vault with only the read key, search it, pick the clean run and download it. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m4-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">Cyber Vault course</a> <span>·</span> Module 4 · Recover from the vault alone</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 4</span>
+      <h1>Rebuild with only the read key</h1>
+      <p class="lead">By the end you can list the steps that rebuild from the vault alone, say which two switches to turn off when you add the vault, and choose the clean run to download.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a new cluster with only the read key reaches the vault and downloads the clean run."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"text":"new cluster","at":[14,30],"hand":true,"size":17,"tone":"muted"},
+          {"box":[10,40,150,60],"heavy":true,"title":"read key only"},
+          {"line":[164,70,236,70],"arrow":true,"tone":"mark"},
+          {"text":"the vault","at":[254,30],"hand":true,"size":17,"tone":"muted"},
+          {"box":[240,40,170,60],"heavy":true,"tone":"mark","title":"clean run"},
+          {"text":"the old cluster is gone","at":[90,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its backup cluster is destroyed. The only thing left is the vault, and the one key Northgate holds for it: the read key.</p>
+    </div>
+  </div>
+  <p class="small">Every number and screen in this unit comes from a real run in our lab on 10 November 2026 (tutorial V7b). The screenshots show a second registration of the vault, named <code>cv-console-vault-shots</code>. When you do this yourself, type a name of your own. The vault is a Beta in us-south, with no SLA.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Six steps, and nothing from the old cluster</h2>
+  <p class="lead">At 12:05 the lab destroyed the old cluster, and removed both agents from the servers. Only the vault held the data. The new cluster was created at 12:26.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram of six steps. One: new cluster with a host name. Two: the new cluster&apos;s agent on each server. Three: register the servers as sources. Four: add the vault with the read key. Five: search with CloudRetrieve. Six: download the clean run."
+    data-drawing='{"w":560,"h":210,"shapes":[
+      {"box":[10,10,160,64],"title":"1 New cluster","detail":"with a host name"},
+      {"line":[174,42,196,42],"arrow":true,"tone":"mark"},
+      {"box":[200,10,160,64],"title":"2 Agents","detail":"the new one"},
+      {"line":[364,42,386,42],"arrow":true,"tone":"mark"},
+      {"box":[390,10,160,64],"title":"3 Sources","detail":"Linux, Windows, SQL"},
+      {"line":[470,78,470,126],"arrow":true,"tone":"mark"},
+      {"box":[390,130,160,64],"tone":"mark","title":"4 The vault","detail":"read key only"},
+      {"line":[386,162,364,162],"arrow":true,"tone":"mark"},
+      {"box":[200,130,160,64],"tone":"mark","title":"5 Search","detail":"CloudRetrieve"},
+      {"line":[196,162,174,162],"arrow":true,"tone":"mark"},
+      {"box":[10,130,160,64],"tone":"mark","heavy":true,"title":"6 Download","detail":"the clean run"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>With the old cluster destroyed, what holds Northgate&apos;s data?</p>
+      <div class="opts">
+        <button class="opt">The servers, once the agents are reinstalled</button>
+        <button class="opt" data-ok>Only the vault</button>
+        <button class="opt">The new cluster, which copies it from the old one</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The old cluster was destroyed at 12:05 and the servers were already attacked. The new cluster was created with nothing in it. The vault was the only copy of the clean data.</p></details>
+    </div>
+    <div class="q">
+      <p>Why does each server need the new cluster&apos;s agent?</p>
+      <div class="opts">
+        <button class="opt">The old agent is too old to run</button>
+        <button class="opt" data-ok>An agent trusts one cluster, so it must be replaced</button>
+        <button class="opt">The vault will only talk to a new agent</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The agent trusts one cluster (ISS-140). In the lab the new cluster&apos;s agent went on each server before the sources were registered.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>Add the vault: two switches</h2>
+  <p class="lead">In the console, Infrastructure &gt; External Targets &gt; Add. The form is the one used to add the vault in the first place, with two differences. Here are the fields. The bucket name and the keys are placeholders: values were changed.</p>
+  <pre class="def" aria-label="The register form">Purpose            Archival
+Storage Type       S3Compatible
+Storage Class      Standard
+Bucket Name        &lt;your vault&apos;s bucket name&gt;
+Access Key ID      &lt;the read key&apos;s ID&gt;
+Secret Access Key  &lt;the read key&apos;s secret&gt;
+Endpoint           s3.direct.us-south.cloud-object-storage.appdomain.cloud
+Port               443
+Region             us-south
+Archive Object Lock  ?
+Encryption           ?</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The archive was written without encryption. What should Encryption be?</p>
+      <div class="opts">
+        <button class="opt">On: it is the default, so it is safe</button>
+        <button class="opt" data-ok>Off, because the archive was written without it</button>
+        <button class="opt">It does not appear on this form</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The form opens with Encryption on, using the internal key manager. The lab turned it off, because the archive was written with no encryption (V7, test 10.3).</p></details>
+    </div>
+    <div class="q">
+      <p>What should Archive Object Lock be on a read-only registration?</p>
+      <div class="opts">
+        <button class="opt">On, or the archive is not immutable</button>
+        <button class="opt" data-ok>Off: the lock is on the vault, and a read-only registration does not need it</button>
+        <button class="opt">On, but only for the read key</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The vault enforces the lock itself, so the archive stays immutable. In the lab the registration worked with the read key and the lock switch off.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Click through the console</span>
+  <h2>Add, search, pick, download</h2>
+  <p class="lead">These screens come from the Data Protect console of the new cluster in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="29.5,67.6,10.5,3.8" data-width="1000px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-3-switches-set-name-encryption-off.png" alt="The Register External Target form scrolled down. Space Reclamation is Storage Optimized. The External Target Name is filled in. The switches Archive Object Lock, Encryption and Bandwidth Throttling are off, and Compression is on." width="1480" height="812"></div>
+      <figcaption>
+        <h3>The name is typed and the Archive Object Lock switch is off. Which switch must also be off for an archive written without encryption?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Encryption is off here, below Archive Object Lock. It opens switched on, so you must turn it off.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="20.5,42.8,38,4.6" data-width="1000px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-4-target-details-key-blurred.png" alt="The details page of the new target. The Access Key ID is blurred. Archive Object Lock is Disabled, Bucket Name is the vault&apos;s bucket, Encryption is Not Configured, and the endpoint is on us-south." width="1480" height="812"></div>
+      <figcaption>
+        <h3>The target is registered. Where does its details page show the lock switch was left off?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Archive Object Lock says Disabled, and Encryption says Not Configured. The Access Key ID is blurred in this picture; never share a screenshot with a key in it.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="19.5,53,30,21" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-7-search-results-three-groups.png" alt="Search results from CloudRetrieve: three protection groups, cv-sql-labdb, cv-linux-data and cv-win-data, all from cluster cohesity-dp. The search status is Success and took 8 seconds." width="1036" height="568"></div>
+      <figcaption>
+        <h3>You searched the vault in CloudRetrieve. Where are the groups the search found?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Protection Group column lists all three groups of the old cluster <code>cohesity-dp</code>. The new cluster found them with only the read key.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="20.5,77.4,11.5,5" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-8-snapshot-picker-clean-run.png" alt="The snapshot picker: two snapshots, Nov 10, 2026 11:55am and 11:43am. The radio button of 11:43am is being chosen." width="1036" height="568"></div>
+      <figcaption>
+        <h3>Open the snapshot picker. Which snapshot do you choose, if the attack was at 11:54?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The 11:43 snapshot is from before the attack. Choose DefaultStorageDomain and click Download.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="75,61.5,21,23" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-10-retrieved-groups-success.png" alt="CloudRetrieve, Downloaded Protection Groups: three groups, cv-sql-labdb, cv-linux-data and cv-win-data, each with Success for the meta-data and the snapshot. Snapshot times are 11:44am, 11:43am and 11:43am." width="1036" height="568"></div>
+      <figcaption>
+        <h3>The download finished. Where do you check that the clean run was retrieved for each group?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Snapshot column shows 11:44am for SQL and 11:43am for Linux and Windows: the clean runs. All three show Success.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>An agent that keeps its old trust</h2>
+  <p class="lead">Northgate&apos;s Linux admin upgrades the agent in place with <code>rpm -Uvh --force</code>, then registers the server on the new cluster.</p>
+  <pre class="def" aria-label="Replacing the Linux agent">What the lab did on Linux, 10 November 2026:
+  1. Remove the package cohesity-agent
+  2. Delete /etc/cohesity-agent/agent.cfg and the .rpmsave copy
+  3. Install the new cluster&apos;s rpm</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What happens to the registration after a plain <code>rpm -Uvh --force</code>?</p>
+      <div class="opts">
+        <button class="opt">It works: the force flag replaces the trust</button>
+        <button class="opt" data-ok>It fails with a TLS error: the old trust is kept</button>
+        <button class="opt">It works, but only for SQL</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A plain <code>rpm -Uvh --force</code> keeps the old trust and registration fails with a TLS error (V7b, section 2). The lab removed the package and the saved configuration first.</p></details>
+    </div>
+    <div class="q">
+      <p>On Windows, what did the lab check, and do, around the agent install?</p>
+      <div class="opts">
+        <button class="opt">Nothing: the installer is always whole</button>
+        <button class="opt" data-ok>Check the download is 21,896,312 bytes, and reboot after the install</button>
+        <button class="opt">Install twice, to be sure</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The lab checked the size of the download (ISS-214) and rebooted after the install (ISS-170). Then the sources were registered: Linux source 3, Windows source 7, with SQL turned on at source 7, and all four checks passed.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> A server still trusts the old cluster until its agent is replaced. A registration that fails with a TLS error points at the agent, not at the vault.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which two switches did the lab turn off when it added the vault with the read key?</p>
+      <div class="opts">
+        <button class="opt">Compression and Secure Connection</button>
+        <button class="opt" data-ok>Encryption and Archive Object Lock</button>
+        <button class="opt">Archive Object Lock and Bandwidth Throttling</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Encryption, because the archive was written without it, and Archive Object Lock, because the lock is on the vault.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>What did the new cluster hold when it was created?</p>
+      <div class="opts">
+        <button class="opt">A copy of the old cluster&apos;s groups</button>
+        <button class="opt" data-ok>Nothing: it found the groups by searching the vault</button>
+        <button class="opt">The write key</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The search found all three groups of the old cluster with only the read key.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>The attack was at 11:54. The picker lists 11:55 and 11:43. Which do you download?</p>
+      <div class="opts">
+        <button class="opt" data-ok>11:43, the clean run</button>
+        <button class="opt">11:55, the newest</button>
+        <button class="opt">Both</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The picker lets you tick one snapshot to download, and the lab chose the runs from before the attack.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can rebuild from the read key</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>A new cluster with only the read key found every group in the vault. Add the vault with Encryption off and Archive Object Lock off, replace each server&apos;s agent, search, pick the run from before the attack, and download.</p></div>
+    <div><span class="label">When you have access to the Beta</span><p>Tutorial V7b has the console steps and the screens. Tutorial V7, section 10, has the first rebuild from the vault alone.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

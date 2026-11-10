@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Encryption with Key Protect · VPC course</title>
+<meta name="description" content="Course unit 4.2: see the four things that make a volume encrypted with a key you own, read the recorded output, and choose between IBM-managed and customer-managed encryption. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m4-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPC course</a> <span>·</span> Module 4 · Storage and backup</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 4</span>
+      <h1>Encryption with Key Protect</h1>
+      <p class="lead">By the end you can say what makes a volume encrypted with a key you own, read the two values of the <code>Encryption</code> line, and choose between IBM-managed and customer-managed encryption.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a volume, an arrow, and a separate box labelled Key Protect that holds your root key."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[10,50,150,120],"heavy":true,"title":"volume","detail":"encrypted"},
+          {"line":[178,110,240,110],"arrow":true,"tone":"mark"},
+          {"box":[258,50,150,120],"heavy":true,"title":"Key Protect","detail":"your root key"},
+          {"text":"who holds the key?","at":[120,206],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its auditor asks one question about the new app servers&apos; disks: who holds the key? The company is made up; the commands and output are real.</p>
+    </div>
+  </div>
+  <p class="small">Every command and line of output here comes from a real run, recorded in tutorial chapter 42 (and chapter 45 for one error). Account and key IDs are shortened.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Four things make an encrypted volume</h2>
+  <p class="lead">A volume encrypted with a key you own needs a Key Protect instance, a root key, a rule that lets Block Storage use the key, and a volume created with the key. Select a part of the drawing to see what it does and which line makes it. You can also click a line. Options that only name the lab&apos;s tags are left out.</p>
+  <div class="explorer" data-start="key"
+    data-map='{"instance":[[1,1]],"key":[[2,3]],"auth":[[4,4]],"volume":[[5,6]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram: a Key Protect instance holding a root key, an arrow to a rule marked Block Storage may read, and a volume created with the key."
+          data-drawing='{"w":560,"h":300,"shapes":[
+            {"box":[20,20,300,150],"heavy":true,"part":"instance","title":"Key Protect instance","detail":"vpct-key-protect"},
+            {"box":[44,76,252,72],"part":"key","title":"Root key","detail":"vpct-volume-root-key"},
+            {"line":[320,95,372,95],"arrow":true,"part":"auth"},
+            {"box":[372,60,170,70],"part":"auth","dashed":true,"title":"Rule","detail":"Block Storage may read"},
+            {"line":[457,132,457,190],"arrow":true,"part":"volume"},
+            {"box":[372,190,170,80],"part":"volume","title":"Volume","detail":"Encryption: user_managed"},
+            {"text":"you own the key","at":[40,220],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="instance">
+          <h3>Key Protect instance</h3>
+          <p>Key Protect is IBM Cloud&apos;s key management service. It stores root keys. The standard plan is a multi-tenant service with FIPS 140-2 Level 3; the dedicated one is single-tenant with FIPS 140-3 Level 4.</p>
+        </div>
+        <div class="part-info" data-part="key">
+          <h3>Root key</h3>
+          <p>A key you own, held in Key Protect. IBM wraps each volume&apos;s passphrase with it.</p>
+          <p class="watch"><b>Watch for this.</b> The <code>ibmcloud kp</code> commands go to the region stored in the plug-in&apos;s own configuration, not the region you targeted. That is why <code>region-set</code> comes first.</p>
+        </div>
+        <div class="part-info" data-part="auth">
+          <h3>The rule</h3>
+          <p>A service-to-service authorization: an IAM rule that lets Block Storage (<code>server-protect</code>) use Key Protect (<code>kms</code>) with the Reader role. Here it is scoped to this one instance.</p>
+          <p class="watch"><b>Watch for this.</b> IBM&apos;s own command omits the instance ID, which covers every Key Protect instance in the account. The chapter scopes it, so the rule is yours and no other team&apos;s rule makes it work.</p>
+        </div>
+        <div class="part-info" data-part="volume">
+          <h3>The volume</h3>
+          <p>The volume is created with the key&apos;s CRN. Its <code>Encryption</code> line then reads <code>user_managed</code>. A volume with no key reads <code>provider_managed</code>.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The commands that create the instance, the key, the rule and the encrypted volume">ibmcloud resource service-instance-create vpct-key-protect kms tiered-pricing us-east -g vpct-lab
+ibmcloud kp region-set us-east
+ibmcloud kp key create vpct-volume-root-key -i $KP_ID
+ibmcloud iam authorization-policy-create server-protect kms Reader --target-service-instance-id $KP_ID
+ibmcloud is volume-create vpct-prod-app-z1-02-data1 general-purpose us-east-1 --capacity 10 \
+  --encryption-key $KEY_CRN</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>Create the key, the rule and the volume</h2>
+  <p class="lead">Run each command in turn. The output is what the lab returned.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <p class="pre"># the instance already exists</p>
+          <pre class="in">ibmcloud kp region-set us-east
+ibmcloud kp key create vpct-volume-root-key -i $KP_ID</pre>
+          <pre class="out">OK
+Targeting endpoint: https://us-east.kms.cloud.ibm.com
+Creating key: 'vpct-volume-root-key', in instance: 'bb76b20a-…'...
+OK
+Key ID                                 Key Name
+a8276da3-…   vpct-volume-root-key</pre>
+          <p class="hand note">The key lives in Key Protect, in us-east.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud iam authorization-policy-create server-protect kms Reader --target-service-instance-id $KP_ID</pre>
+          <pre class="out">Creating authorization policy under account &lt;redacted&gt; as &lt;redacted&gt;...
+OK
+Authorization policy 5cceaf9a-… was created.
+
+ID:                        5cceaf9a-…
+Source service name:       server-protect
+Source service instance:   All instances
+Target service name:       kms
+Target service instance:   bb76b20a-…
+Roles:                     Reader</pre>
+          <p class="hand note">Target service instance names the one Key Protect instance.</p>
+        </div>
+        <div class="q">
+          <p>Before you create the volume with <code>--encryption-key $KEY_CRN</code>: what will its <code>Encryption</code> line read?</p>
+          <div class="opts">
+            <button class="opt">provider_managed</button>
+            <button class="opt" data-ok>user_managed</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>A volume with a key of yours reads <code>user_managed</code>. A volume without one reads <code>provider_managed</code>.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is volume vpct-prod-app-z1-02-data1 | grep -E '^(Status|Encryption|Profile|Capacity)'</pre>
+          <pre class="out">Status                                 available
+Capacity                               10
+Profile                                general-purpose
+Encryption key                         crn:v1:bluemix:public:kms:us-east:a/&lt;redacted&gt;:bb76b20a-…:key:a8276da3-…
+Encryption                             user_managed</pre>
+          <p class="hand note">user_managed: the key is yours.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is volumes --encryption user_managed --resource-group-name vpct-lab</pre>
+          <pre class="out">Listing volumes in resource group vpct-lab and region us-east under account &lt;redacted&gt; as user &lt;redacted&gt;...
+ID                Name                        Status      Capacity   IOPS   Profile           Attachment state   Attachment type   Zone        Resource group
+r014-ffc99816-…   vpct-prod-app-z1-02-data1   available   10         3000   general-purpose   unattached         -                 us-east-1   vpct-lab</pre>
+          <p class="hand note">One command lists every volume with a key of yours.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>Two messages that look like failures</h2>
+  <div class="pair">
+    <div style="display:grid;gap:10px;align-content:start">
+      <p>A Northgate admin creates an authorization rule. Here it is the one that lets file shares replicate between regions. The account already holds a rule like it. The answer:</p>
+      <pre class="def" aria-label="The error from creating the rule">FAILED
+Error response from server. Status code: 409; description: {"trace":"…","status_code":409,"errors":[{"code":"policy_conflict_error","message":"The policy wasn't created because an access policy with identical attributes already exists. ...</pre>
+      <div class="q">
+        <p>What now?</p>
+        <div class="opts">
+          <button class="opt">Delete the existing rule and try again</button>
+          <button class="opt" data-ok>Nothing. The existing rule does the work</button>
+          <button class="opt">Ask IBM to raise the quota</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>Chapters 42 and 45 both say that if the account already holds a rule with the same attributes, the command fails with <code>policy_conflict_error</code> (status 409) and names the existing rule. That rule then does the work, and you need no new one. The output above is from chapter 45.</p></details>
+      </div>
+    </div>
+    <div style="display:grid;gap:10px;align-content:start">
+      <p>The CLI is logged in and targeted at us-east. <code>ibmcloud kp key create</code> fails with <code>Unauthorized</code>, although the Key Protect instance is in us-east.</p>
+      <div class="q">
+        <p>What is the cause?</p>
+        <div class="opts">
+          <button class="opt">The API key has expired</button>
+          <button class="opt" data-ok>The plug-in used its own stored region, <code>eu-de</code> in the lab</button>
+          <button class="opt">The key name is too long</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>The <code>kp</code> commands go to the region in the plug-in&apos;s own configuration, not the region you targeted. Without <code>ibmcloud kp region-set us-east</code> the plug-in used <code>eu-de</code>, and the create failed with <code>Unauthorized</code>.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Design it</span>
+  <h2>Whose key?</h2>
+  <p class="lead">Four Northgate situations. Pick an answer, then read the worked answer from chapters 40 and 42.</p>
+  <div class="pair">
+    <div class="q">
+      <p>Northgate has no requirement to own the keys.</p>
+      <div class="opts">
+        <button class="opt" data-ok>Do nothing. Use IBM-managed encryption</button>
+        <button class="opt">Create a Key Protect instance anyway</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>IBM-managed encryption is the default, with nothing to set up. IBM holds the keys. Boot volumes, data volumes and file shares have it.</p></details>
+    </div>
+    <div class="q">
+      <p>The auditor says Northgate must own and rotate the key.</p>
+      <div class="opts">
+        <button class="opt" data-ok>Customer-managed, with Key Protect standard</button>
+        <button class="opt">IBM-managed encryption</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Standard is the chapter&apos;s choice: a multi-tenant service, FIPS 140-2 Level 3. A single-tenant key service is Key Protect dedicated, FIPS 140-3 Level 4.</p></details>
+    </div>
+    <div class="q">
+      <p>Northgate already holds an instance of Hyper Protect Crypto Services.</p>
+      <div class="opts">
+        <button class="opt">Build on it for new volumes without a plan</button>
+        <button class="opt" data-ok>Plan to migrate its keys to a dedicated Key Protect instance</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>It is deprecated. Existing instances are usable until 20 March 2027, and chapter 40 says to migrate keys to a dedicated Key Protect instance.</p></details>
+    </div>
+    <div class="q">
+      <p>A file share was created with IBM-managed keys. Later the auditor wants a customer root key on it.</p>
+      <div class="opts">
+        <button class="opt">Switch it in the console</button>
+        <button class="opt" data-ok>It cannot be changed. The choice is made when the share is created</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A customer root key can replace IBM-managed keys when the share is created. The choice cannot change afterwards.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Why does the chapter scope the rule with <code>--target-service-instance-id</code>?</p>
+      <div class="opts">
+        <button class="opt">IBM requires it</button>
+        <button class="opt" data-ok>So the rule is yours, and no other team&apos;s rule makes it work</button>
+        <button class="opt">So the key is rotated</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The lab account is shared and another team may already have a rule. IBM&apos;s own command omits the instance ID and so covers every Key Protect instance in the account.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You delete a Key Protect instance that holds no keys. Is it gone at once?</p>
+      <div class="opts">
+        <button class="opt">Yes</button>
+        <button class="opt" data-ok>No. It is scheduled, with a date seven days after the delete</button>
+        <button class="opt">No. It stays for ever</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p><code>ibmcloud resource reclamations</code> lists it with the state <code>SCHEDULED</code>. Key Protect bills while the instance exists and holds no keys.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>How long must you keep the key and the rule?</p>
+      <div class="opts">
+        <button class="opt">Until the volume is attached</button>
+        <button class="opt" data-ok>For as long as the volume exists</button>
+        <button class="opt">Until the first backup</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>With the rule and the key in place, Block Storage can open the volume when it attaches. IBM lists disabling, rotating and deleting keys as things to plan for. The chapter does not disable or delete the key, so it did not test what then happens.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 4.1.</b> A data volume is 20 GB. Can you make it 10 GB with <code>volume-update</code>?</p>
+      <div class="opts">
+        <button class="opt">Yes, while it is attached</button>
+        <button class="opt" data-ok>No. Capacity can only grow</button>
+        <button class="opt">Yes, if the file system is empty</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says the capacity of a tiered volume can only grow, and only while it is attached to a running server.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know who holds the key</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Instance, root key, rule, volume. <code>user_managed</code> means your key. Set the plug-in&apos;s region. A 409 on the rule means one already exists.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 42, Encrypting VPC volumes with a Key Protect root key, runs everything you just saw.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

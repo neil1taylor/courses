@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Watch the estate · VPC course</title>
+<meta name="description" content="Course unit 5.4: read flow logs, audit events, metrics, logs and compliance results, and spot what each one cannot tell you. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m5-u4">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPC course</a> <span>·</span> Module 5 · Services and security</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 4 of Module 5</span>
+      <h1>Watch the estate</h1>
+      <p class="lead">By the end you can say which of five tools answers which question about the estate, read a flow log and an audit event, and spot why a tool shows nothing.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a large eye looking at a VPC with servers in it."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[10,60,170,120],"heavy":true},
+          {"grid":[24,78,3,2,34,26,44,40],"tone":"muted"},
+          {"text":"the estate","at":[30,204],"hand":true,"size":18,"tone":"muted"},
+          {"line":[190,120,250,120],"arrow":true,"tone":"mark"},
+          {"box":[256,86,150,68],"heavy":true,"fill":"hatch","tone":"mark"},
+          {"text":"five ways to look","at":[262,76],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its security team asks who changed a rule, what was blocked, and what the estate fails. The commands, output and screenshots below are real, from a test account.</p>
+    </div>
+  </div>
+  <p class="small">Every command, output and screenshot in this unit comes from tutorial chapters 62 to 66, apart from the review question, which comes from chapter 61.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Five ways to look</h2>
+  <p class="lead">Each tool answers one kind of question. Select a part of the drawing to see what it records and which command sets it up. You can also click a line.</p>
+  <div class="explorer" data-start="flow"
+    data-map='{"flow":[[1,2]],"audit":[[3,3]],"metrics":[[4,5]],"logs":[[6,7]],"posture":[[8,9]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A VPC with a server on the left, and five tools on the right: flow logs for traffic, Activity Tracker for who changed what, Monitoring for CPU and memory, Cloud Logs for log lines, and a compliance scan for settings checked against policies."
+          data-drawing='{"w":620,"h":340,"shapes":[
+            {"box":[10,100,150,130],"heavy":true},
+            {"text":"vpct-prod","at":[24,126],"hand":true,"tone":"muted"},
+            {"box":[30,146,110,50],"title":"Server"},
+            {"line":[160,150,300,36],"part":"flow","arrow":true},
+            {"line":[160,160,300,102],"part":"audit","arrow":true},
+            {"line":[160,166,300,168],"part":"metrics","arrow":true},
+            {"line":[160,176,300,234],"part":"logs","arrow":true},
+            {"line":[160,186,300,300],"part":"posture","arrow":true},
+            {"box":[300,8,300,56],"part":"flow","title":"Flow logs","detail":"connections, accepted or rejected"},
+            {"box":[300,74,300,56],"part":"audit","title":"Activity Tracker","detail":"who changed what"},
+            {"box":[300,140,300,56],"part":"metrics","title":"Monitoring","detail":"CPU and memory, from an agent"},
+            {"box":[300,206,300,56],"part":"logs","title":"Cloud Logs","detail":"log lines, from an agent"},
+            {"box":[300,272,300,56],"part":"posture","title":"Compliance scan","detail":"settings checked against policies"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="flow">
+          <h3>Flow logs</h3>
+          <p>A collector watches a VPC, a subnet, a server or an interface. It writes a summary of each connection to an Object Storage bucket, about every 5 minutes. The bucket must be a single-region bucket in the region of the target.</p>
+          <p class="watch"><b>Watch for this.</b> A collector on a cross-region bucket is accepted and shows <code>stable</code> and active, and writes nothing. Flow logs collect TCP and UDP, not ICMP.</p>
+        </div>
+        <div class="part-info" data-part="audit">
+          <h3>Activity Tracker</h3>
+          <p>An audit event records that a user or service did something to a resource. A route sends the events to a target, here a bucket.</p>
+          <p class="watch"><b>Watch for this.</b> The lab account is shared. A route for <code>us-east</code> sends the events of every team&apos;s resources there. Read only your own.</p>
+        </div>
+        <div class="part-info" data-part="metrics">
+          <h3>Monitoring</h3>
+          <p>IBM Cloud Monitoring holds the metrics. An agent on the server collects host CPU, memory, storage, process and network metrics and sends them to a collector endpoint on port 6443.</p>
+          <p class="watch"><b>Watch for this.</b> IBM adds a setting, <code>monitor_light</code>, for a Linux server that is not orchestrated. With it the agent connected and then lost the connection every three minutes, and no metrics arrived in seven minutes. Chapter 64 does not use it.</p>
+        </div>
+        <div class="part-info" data-part="logs">
+          <h3>Cloud Logs</h3>
+          <p>IBM Cloud Logs stores, searches and alerts on logs. A logging agent reads log files and sends them. Each line carries an application name and a subsystem name.</p>
+          <p class="watch"><b>Watch for this.</b> The agent&apos;s default input is <code>/var/log/**/*.log</code>. That matches files in subdirectories of <code>/var/log</code> only. A file such as <code>/var/log/syslog</code> does not match.</p>
+        </div>
+        <div class="part-info" data-part="posture">
+          <h3>Compliance scan</h3>
+          <p>Security and Compliance Center Workload Protection scans the account&apos;s resources against compliance policies. It reads a copy of the resource settings that App Configuration holds. The scan needs no agent on a server.</p>
+          <p class="watch"><b>Watch for this.</b> The scan reads every team&apos;s resources in a shared account. After a fix the results change only after the next daily collection.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The commands that set each tool up">ibmcloud is flow-log-create --bucket vpct-flowlogs-nrt29b --target vpct-prod --target-type vpc \
+  --name vpct-prod-flow-log --active true --resource-group-name vpct-lab
+ibmcloud atracker route create --name vpct-audit-route --target-ids $TARGET_ID --locations us-east
+ibmcloud resource service-instance-create vpct-monitoring sysdig-monitor lite us-east -g vpct-lab \
+  --tags "project:vpc-tutorials,owner:&lt;your-user-name&gt;,series:6,chapter:64" -p '{"default_receiver": false}'
+ibmcloud resource service-instance-create vpct-logs logs standard us-east -g vpct-lab \
+  --tags "project:vpc-tutorials,owner:&lt;your-user-name&gt;,series:6,chapter:65"
+ibmcloud resource service-instance-create vpct-scc sysdig-secure free-trial us-east -g vpct-lab \
+  --tags "project:vpc-tutorials,owner:&lt;your-user-name&gt;,series:6,chapter:66"
+</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Spot the fault</span>
+  <h2>What was blocked, and why is the bucket empty?</h2>
+  <p class="lead">A web server tried port 9090 on the app server, and port 22 for comparison. Then the flow log object for the app server&apos;s interface was read.</p>
+  <pre class="def" aria-label="Five flow log records">$ gunzip -c flow.gz | jq -c ".flow_logs[] | {start_time, action, direction, initiator_ip, target_ip, target_port, transport_protocol}"
+{"start_time":"2026-10-30T18:53:40Z","action":"accepted","direction":"I","initiator_ip":"10.20.0.25","target_ip":"10.20.1.28","target_port":22,"transport_protocol":6}
+{"start_time":"2026-10-30T16:33:45Z","action":"rejected","direction":"I","initiator_ip":"10.20.0.25","target_ip":"10.20.1.28","target_port":9090,"transport_protocol":6}
+{"start_time":"2026-10-30T18:53:01Z","action":"accepted","direction":"I","initiator_ip":"10.20.1.1","target_ip":"255.255.255.255","target_port":68,"transport_protocol":17}
+{"start_time":"2026-10-30T16:33:42Z","action":"rejected","direction":"I","initiator_ip":"10.20.0.25","target_ip":"10.20.1.28","target_port":9090,"transport_protocol":6}
+{"start_time":"2026-10-30T16:33:48Z","action":"rejected","direction":"I","initiator_ip":"10.20.0.25","target_ip":"10.20.1.28","target_port":9090,"transport_protocol":6}</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which records show blocked connections?</p>
+      <div class="opts">
+        <button class="opt">None. Every connection reached the server</button>
+        <button class="opt" data-ok>The three with <code>rejected</code>, all for port 9090</button>
+        <button class="opt">The one for port 22</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Each flow has an <code>action</code> of <code>accepted</code> or <code>rejected</code>. The port 22 connection is in the same object, accepted. The three rejected flows are the port 9090 attempts, from the bastion&apos;s address to the app server.</p></details>
+    </div>
+    <div class="q">
+      <p>Which control rejected the port 9090 connection: the security group or the network ACL?</p>
+      <div class="opts">
+        <button class="opt">The security group</button>
+        <button class="opt">The network ACL</button>
+        <button class="opt" data-ok>The record does not say</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says a security group or a network ACL can cause a rejection, and the flow log does not say which. Compare the rules of <code>vpct-prod-app-sg</code> and of the app subnet&apos;s ACL with port 9090.</p></details>
+    </div>
+  </div>
+  <p class="lead" style="margin-top:20px">Later, a rule from chapter 61 that allows only the VPC was enforced on the bucket&apos;s Object Storage instance, and the flow log collector stayed active. The object list, newest last:</p>
+  <pre class="def" aria-label="Flow log objects and the rule's times">$ ibmcloud cbr rule-create --description "vpct-cos-vpc-only" ...    (19:05:25 UTC, enforced)
+$ ibmcloud cbr rule-delete $RULE                                     (19:13:20 UTC)
+$ ibmcloud cos objects ... | sort | tail -6                           (19:20 UTC)
+2026-10-30T19:04:36.878Z 0757-02ba3a88 3966
+2026-10-30T19:04:36.883Z 0757-02ba3a88 1130
+2026-10-30T19:18:14.192Z 0757-831b0467 809
+2026-10-30T19:18:14.238Z 0757-831b0467 745
+2026-10-30T19:19:36.738Z 0757-02ba3a88 988
+2026-10-30T19:19:36.876Z 0757-02ba3a88 4078</pre>
+  <div class="q" style="margin-top:20px">
+    <p>No objects appear between 19:05 and 19:13, and the collector shows active. What is the cause?</p>
+    <div class="opts">
+      <button class="opt">The collector is switched off</button>
+      <button class="opt" data-ok>The enforced rule on Object Storage stops the collector writing</button>
+      <button class="opt">The bucket is full</button>
+    </div>
+    <details class="reveal"><summary>Show the answer</summary><p>A rule that allows only the VPC stops the collector writing. No objects appeared while the rule was enforced, and writing resumed within about five minutes of deleting it. To keep the rule and the collector, add a zone for the VPC Infrastructure Services (<code>is</code>) as a second context of the rule. After that the count of objects grew again, and the laptop was still denied.</p></details>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Run it</span>
+  <h2>Find who changed a rule, and find a log line</h2>
+  <p class="lead">An audit route sends events to a bucket. A logging agent sends files to Cloud Logs. Run each command in turn. The output is what the test account returned.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <p class="pre"># create a security group; each action is an audit event</p>
+          <pre class="in">ibmcloud is security-group-create vpct-prod-audit-test-sg vpct-prod --resource-group-name vpct-lab</pre>
+          <pre class="out">Creating security group vpct-prod-audit-test-sg in resource group vpct-lab
+
+ID               r014-16ac…a821
+Name             vpct-prod-audit-test-sg
+Created          2026-10-30T22:33:35+00:00
+VPC              ID                                          Name
+                 r014-6c88…1fbb   vpct-prod</pre>
+          <p class="hand note">Some lines of the full output are left out.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is security-group-delete vpct-prod-audit-test-sg --vpc vpct-prod -f</pre>
+          <pre class="out">OK
+Security group vpct-prod-audit-test-sg is deleted.</pre>
+        </div>
+        <div class="q">
+          <p>About three minutes later the events are in the bucket. You search them for this group&apos;s name. You expect a create and a delete. Is there anything else?</p>
+          <div class="opts">
+            <button class="opt">No, only your two actions</button>
+            <button class="opt" data-ok>Yes, a read, by a service ID</button>
+            <button class="opt">Yes, an update, by your user</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>The platform read the group between your two commands. Run the query to see it.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">jq -c ".line | fromjson | select(.target.name == \"vpct-prod-audit-test-sg\") | {action, outcome, initiator: .initiator.name, eventTime}" events.json</pre>
+          <pre class="out">{"action":"is.security-group.security-group.create","outcome":"success","initiator":"&lt;your-email&gt;","eventTime":"2026-10-30T22:33:35.95+0000"}
+{"action":"is.security-group.security-group.read","outcome":"success","initiator":"ServiceId-&lt;id&gt;","eventTime":"2026-10-30T22:33:39.93+0000"}
+{"action":"is.security-group.security-group.delete","outcome":"success","initiator":"&lt;your-email&gt;","eventTime":"2026-10-30T22:33:44.84+0000"}</pre>
+          <p class="hand note">Create and delete name your user. The read names a service ID.</p>
+          <p class="hand note">Three minutes. IBM says a route can take up to an hour. The same object held 47 events from other teams.</p>
+        </div>
+        <div class="q">
+          <p>The logging agent&apos;s default input is <code>/var/log/**/*.log</code>. You write one test line to a file. Which file does the agent send?</p>
+          <div class="opts">
+            <button class="opt">A new line appended to <code>/var/log/syslog</code></button>
+            <button class="opt" data-ok>A line in <code>/var/log/vpct/test.log</code>, in a subdirectory</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>The pattern matches files in subdirectories of <code>/var/log</code> only. A file such as <code>/var/log/syslog</code> does not match.</p></details>
+        </div>
+        <div class="cmd">
+          <p class="pre"># on the server</p>
+          <pre class="in">sudo mkdir -p /var/log/vpct &amp;&amp; echo "vpct chapter 65 test line $(date -u +%FT%TZ)" | sudo tee -a /var/log/vpct/test.log</pre>
+          <pre class="out">vpct chapter 65 test line 2026-10-31T08:14:01Z</pre>
+        </div>
+        <div class="cmd">
+          <p class="pre"># 34 seconds later, from a laptop</p>
+          <pre class="in">ibmcloud logs query --query "source logs | filter \$d.applicationName == 'vpct-prod'" --since 30m --output json</pre>
+          <pre class="out">timestamp: 2026-10-31T08:14:04.486177758
+user_data: {"applicationName":"vpct-prod","file":"/var/log/vpct/test.log","log":"vpct chapter 65 test line 2026-10-31T08:14:01Z","meta":{"hostname":"vpct-prod-client-z1-01"},"subsystemName":"app","tag":"host.var.log.vpct.test.log"}</pre>
+          <p class="hand note">In the instance 3 seconds after it was written. The query found it 34 seconds later.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Click through the console</span>
+  <h2>Scan the account for compliance</h2>
+  <p class="lead">These are real screens from chapter 66. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="91,84,7.5,8.5">
+      <div class="shot"><img src="../images/66/aggregator-recording.png" alt="The Configuration aggregator page of an App Configuration instance. Active collection reads Periodic, Coverage reads Entire account, and the Periodic collection switch at the bottom right is On." width="1166" height="505"></div>
+      <figcaption>
+        <h3>Northgate wants the account&apos;s settings collected so they can be scanned. Which control keeps collection running?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Periodic collection switch. Saving the aggregation creates a trusted profile with read access to all IAM-enabled and account-management services, so only do this in an account where you may. The collection runs once a day.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="90.5,65.4,8.1,8.4">
+      <div class="shot"><img src="../images/66/sources-account-active.png" alt="The Sources page of a Workload Protection instance on the IBM Cloud Account tab. A table lists one source with an App Configuration instance and the status Active. A blue Add button sits above the table at the right." width="1245" height="535"></div>
+      <figcaption>
+        <h3>Workload Protection must read that copy. Which button adds the account as a source?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Add, on the IBM Cloud Account tab. You choose Use existing and enter the trusted profile and the App Configuration instance. The status shows Configuring and later Active. It can stay on Configuring for a long time, so check the dashboard&apos;s Integrations page too.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="14.4,19.5,11.1,7.5">
+      <div class="shot"><img src="../images/66/compliance-results.png" alt="The Compliance results page of Workload Protection for Entire Infrastructure. At the top: 232 requirements evaluated, 108 failing and 124 passing. Below, a table of failing requirements with the count of failed controls for each." width="1355" height="610"></div>
+      <figcaption>
+        <h3>The first scan has run. Which number is the count of requirements that fail?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. 108 of the 232 requirements fail, and 124 pass. The list holds every team&apos;s resources in the account, so look for names that start with your own prefix and fix only those.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 5.3.</span> You enforce a rule on a Key Protect instance. Minutes later a request from outside the VPC still sometimes succeeds. Is the rule broken?</p>
+      <div class="opts">
+        <button class="opt">Yes. Delete it and start again</button>
+        <button class="opt" data-ok>No. It takes about four minutes to apply everywhere</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>During that time the same request sometimes succeeds and sometimes fails. Wait until it fails every time before you trust a denial.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>One server pings another, and a security group blocks the ping. Does the block appear in the flow log?</p>
+      <div class="opts">
+        <button class="opt">Yes, as a rejected flow</button>
+        <button class="opt" data-ok>No. Flow logs collect only TCP and UDP</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says flow logs collect TCP and UDP traffic, not ICMP. A ping is ICMP.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>The monitoring agent runs with <code>monitor_light</code> set. It connects, but no metrics arrive. What did chapter 64 find?</p>
+      <div class="opts">
+        <button class="opt">The agent needs a longer wait, as metrics can take an hour</button>
+        <button class="opt" data-ok>With the setting the agent lost its connection every three minutes and sent no metrics in seven. Without it the first metrics arrived 32 seconds after the restart</button>
+        <button class="opt">The setting is required on every Linux server</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM adds the setting for a Linux server that is not orchestrated. On the lab server it broke metrics, so the chapter leaves it out.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You fix a failed control. An hour later the results still show it failing. What do you do?</p>
+      <div class="opts">
+        <button class="opt">Switch periodic collection off and on to force a run</button>
+        <button class="opt" data-ok>Wait for the next periodic run, shown on the aggregator page</button>
+        <button class="opt">Recreate the Workload Protection instance</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The aggregator collects once a day, and Workload Protection reads what it collected. The page shows the time of the next run. Switching collection off and on does not start a run.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can watch the estate</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Flow logs show connections, not which control blocked them. Audit events name who. Agents need a route and the right file. Results change after the next collection.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapters 62 to 66 build each one: Capturing VPC flow logs and finding a blocked connection, Finding who changed a resource with Activity Tracker events, Monitoring VPC servers with IBM Cloud Monitoring, Collecting server logs with the IBM Cloud Logs agent and Scanning the estate with Security and Compliance Center.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en" data-course="vault">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The attack: every source hit · Cyber Vault course</title>
+<meta name="description" content="Course unit 4.1: see what the attack changed on every source, and why the vault holds a clean and an infected run of each group. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m4-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">Cyber Vault course</a> <span>·</span> Module 4 · Recover from the vault alone</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 4</span>
+      <h1>The attack: every source hit</h1>
+      <p class="lead">By the end you can say what the attack changed on each source, and why the vault holds two runs of every group: one clean and one infected.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: the servers are overwritten at 11:54. The vault holds two runs of each group, a clean one and an infected one."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"text":"the servers","at":[14,30],"hand":true,"size":17,"tone":"muted"},
+          {"box":[10,40,180,60],"heavy":true,"title":"overwritten"},
+          {"text":"the vault holds","at":[234,30],"hand":true,"size":17,"tone":"muted"},
+          {"box":[230,40,180,60],"heavy":true,"tone":"mark","title":"two runs of each"},
+          {"text":"one clean, one infected","at":[100,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. It already backs up with Defender Data Protect. Its board asks: what happens if an attacker gets the backup admin&apos;s keys? In this module you rebuild from the vault alone. First, the attack.</p>
+    </div>
+  </div>
+  <p class="small">Every number and screen in this unit comes from a real run in our lab on 10 November 2026 (tutorial V7b, section &quot;In the console, a second run&quot;). The vault is a Beta in us-south, with no SLA.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Three sources, two runs each</h2>
+  <p class="lead">Northgate backs up three groups on one cluster, <code>cohesity-dp</code>, and archives each to the vault. At 11:54 the attack hits every source. At 11:55 the groups are archived again.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Linux files, Windows files and the SQL database labdb are attacked. In the vault, each group has a clean run at 11:43 or 11:44 and an infected run at 11:55."
+    data-drawing='{"w":560,"h":270,"shapes":[
+      {"box":[10,10,180,64],"title":"Linux files","detail":"503 of 503 differ"},
+      {"box":[10,100,180,64],"title":"Windows files","detail":"503 of 503 differ"},
+      {"box":[10,190,180,64],"title":"SQL labdb","detail":"payload overwritten"},
+      {"line":[194,42,296,42],"arrow":true,"tone":"mark"},
+      {"line":[194,132,296,132],"arrow":true,"tone":"mark"},
+      {"line":[194,222,296,222],"arrow":true,"tone":"mark"},
+      {"box":[300,10,250,64],"tone":"mark","title":"cv-linux-data","detail":"clean 11:43, infected 11:55"},
+      {"box":[300,100,250,64],"tone":"mark","title":"cv-win-data","detail":"clean 11:43, infected 11:55"},
+      {"box":[300,190,250,64],"tone":"mark","title":"cv-sql-labdb","detail":"clean 11:44, infected 11:55"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>At 11:55 the three groups ran again, after the attack. What did the vault receive?</p>
+      <div class="opts">
+        <button class="opt">Nothing: the archive refuses data it did not expect</button>
+        <button class="opt" data-ok>A second, infected run of each group, kept beside the clean one</button>
+        <button class="opt">The infected run, which replaced the clean one</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The infected runs were archived at 11:55, and the vault then held the clean and the infected run of each group. The clean runs were still there.</p></details>
+    </div>
+    <div class="q">
+      <p>The attack changed the servers only. Did it change the clean runs already in the vault?</p>
+      <div class="opts">
+        <button class="opt">Yes: the clean runs were overwritten too</button>
+        <button class="opt" data-ok>No: the clean data came back from them later</button>
+        <button class="opt">Only the Linux run</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the clean runs of 11:43 and 11:44 were the ones restored in the next two units, and the data matched what it was before the attack.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>What did the attack change?</h2>
+  <p class="lead">On 10 November at 11:54, an attacker with access to the servers overwrote the data. Before it, Northgate had written down a clean record of every file and of the database.</p>
+  <pre class="def" aria-label="What the attack did">Source           What was overwritten                         What was checked
+Linux /data      every file, with random bytes                ?
+Windows C:\data  every file, with random bytes                ?
+SQL labdb        UPDATE dbo.items SET payload = NEWID()       ?</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>After the attack, how many of the 503 files on each file server differed from the clean record?</p>
+      <div class="opts">
+        <button class="opt">A few of them</button>
+        <button class="opt">About half</button>
+        <button class="opt" data-ok>All 503, on both servers</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><pre class="def" aria-label="What was checked">Source           What was overwritten                         What was checked
+Linux /data      every file, with random bytes                503 of 503 differ
+Windows C:\data  every file, with random bytes                503 of 503 differ
+SQL labdb        UPDATE dbo.items SET payload = NEWID()       checksum -426859948</pre></details>
+    </div>
+    <div class="q">
+      <p>The clean SQL value was <code>100000,-108923937</code> (rows, checksum). What did the attacked <code>labdb</code> read afterwards?</p>
+      <div class="opts">
+        <button class="opt">The same: only the payload column changed</button>
+        <button class="opt" data-ok>A different checksum: -426859948</button>
+        <button class="opt">The database was gone</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>One <code>UPDATE</code> set the payload of every row to a new value, and the checksum changed from -108923937 to -426859948. That difference is what the rebuild has to undo.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Click through the console</span>
+  <h2>Both runs, in the vault</h2>
+  <p class="lead">These screens come from the Data Protect console of a new cluster in our lab, with the vault added by its read key. You meet that cluster in the next unit. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="72,52,25,21" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-7-search-results-three-groups.png" alt="CloudRetrieve search results: cv-sql-labdb, cv-linux-data and cv-win-data, all from cluster cohesity-dp, each with a snapshot of Nov 10, 2026 11:55am." width="1036" height="568"></div>
+      <figcaption>
+        <h3>A search of the vault lists the three groups of the old cluster. Which column shows the newest snapshot of each group?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Snapshot column says 11:55 for each group. That is the infected run, made after the attack at 11:54. The newest run is not the clean one.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="20.5,72.5,11.5,5" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-8-snapshot-picker-clean-run.png" alt="The snapshot picker: Download Snapshot is ticked, and 2 snapshots are listed for the selected date range, Nov 10, 2026 11:55am and Nov 10, 2026 11:43am." width="1036" height="568"></div>
+      <figcaption>
+        <h3>Open the snapshot picker of a group. Which snapshot is the infected run?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. 11:55 is the run made after the attack. The vault lists two snapshots for the day: 11:55 and 11:43. The picker shows only the time, so you need to know when the attack happened.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>The newest run is not the safe one</h2>
+  <p class="lead">Northgate&apos;s admin has the vault open on a new cluster. She says: &quot;Take the newest run of each group. It is the most complete.&quot;</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What does the newest run hold?</p>
+      <div class="opts">
+        <button class="opt">The clean data, as the vault locks it</button>
+        <button class="opt" data-ok>The attacked data: it was archived at 11:55, after the attack at 11:54</button>
+        <button class="opt">Nothing: the infected run is empty</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The attack was at 11:54 and the infected runs were archived at 11:55. In the next unit the lab chose the clean runs: Linux and Windows 11:43, SQL 11:44.</p></details>
+    </div>
+    <div class="q">
+      <p>How should the admin choose the run to download?</p>
+      <div class="opts">
+        <button class="opt" data-ok>By time: a run from before the attack began</button>
+        <button class="opt">By the newest snapshot in the list</button>
+        <button class="opt">By the vault, which marks the infected run</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The picker in the console lists the snapshots by time, and the lab picked the runs from before the attack. This tutorial does not show the vault marking a run as infected.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> A backup that runs after an attack archives the attacked data too. If you know the time of the attack, pick a run from before it.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>How many runs of each group did the vault hold after the attack?</p>
+      <div class="opts">
+        <button class="opt">One: the newest</button>
+        <button class="opt" data-ok>Two: a clean run and an infected run</button>
+        <button class="opt">Three: one for each source</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>One clean run (11:43 or 11:44) and one infected run (11:55) of each of the three groups.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>How many of the 503 files on the Linux and Windows servers differed after the attack?</p>
+      <div class="opts">
+        <button class="opt">None</button>
+        <button class="opt">Half</button>
+        <button class="opt" data-ok>All 503 on each</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>503 of 503 differed on each server.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Which SQL checksum is the clean value?</p>
+      <div class="opts">
+        <button class="opt">-426859948</button>
+        <button class="opt" data-ok>-108923937, with 100000 rows</button>
+        <button class="opt">Neither is recorded</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The clean value was <code>100000,-108923937</code>. The attacked database read -426859948.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know what the attack left in the vault</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>The attack changed every source. The vault held a clean and an infected run of each group, and the newest run was the infected one. Choose a run by its time, from before the attack.</p></div>
+    <div><span class="label">When you have access to the Beta</span><p>Tutorial V7b holds the attack and the run times. Tutorial V4 archives the groups from the console.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

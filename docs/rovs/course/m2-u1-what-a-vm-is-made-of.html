@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What a VM is made of on ROVS · ROVS course</title>
+<meta name="description" content="Course unit 2.1: read a ROVS VM's definition, say what each part does, and spot the settings that catch out people coming from vSphere. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m2-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 2 · Anatomy of a VM</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 2</span>
+      <h1>What a VM is made of on ROVS</h1>
+      <p class="lead">By the end you can read a VM's definition, say what each part does, and spot the two settings that catch out people coming from vSphere.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a vSphere host full of VMs, an arrow, and a ROVS cluster with one VM on it."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"text":"vSphere","at":[22,32],"hand":true,"tone":"muted"},
+          {"box":[10,40,150,140],"heavy":true},
+          {"grid":[22,54,4,4,26,20,34,30],"tone":"muted"},
+          {"line":[178,110,240,110],"arrow":true,"tone":"mark"},
+          {"text":"ROVS","at":[270,32],"hand":true,"tone":"muted"},
+          {"box":[258,40,150,140],"heavy":true},
+          {"box":[300,86,66,48],"fill":"hatch","tone":"mark"},
+          {"text":"this one","at":[300,206],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the VM and its output are real. Before they move a single VM, their admins want to understand one properly. This is that one.</p>
+    </div>
+  </div>
+  <p class="small">Every screenshot, definition and line of output in this unit comes from a real run on a test cluster, recorded in tutorial chapter 30.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>One VM, six parts</h2>
+  <p class="lead">On ROVS a VM is a text definition. Select a part of the drawing to see what it does and which lines define it. You can also click a line.</p>
+  <div class="explorer" data-start="disk"
+    data-map='{"identity":[[3,5]],"power":[[7,7]],"disk":[[8,23],[33,35],[50,52]],"compute":[[27,30],[44,45]],"guest":[[36,38],[53,59]],"network":[[39,42],[46,48]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of the VM's six parts, with the golden image, the disk volume and the pod network outside it."
+          data-drawing='{"w":560,"h":350,"shapes":[
+            {"box":[24,52,312,272],"heavy":true},
+            {"text":"outside the VM","at":[392,40],"hand":true,"tone":"mark"},
+            {"line":[320,173,392,180],"part":"disk"},
+            {"line":[467,120,467,148],"part":"disk"},
+            {"line":[320,269,392,276],"part":"network"},
+            {"box":[20,8,200,34],"part":"identity","title":"Identity"},
+            {"box":[232,8,108,34],"part":"power","title":"Power"},
+            {"box":[40,64,280,54],"part":"compute","title":"Compute","detail":"1 vCPU · 2 GiB"},
+            {"box":[40,132,132,82],"part":"guest","title":"Guest setup","detail":"cloudinitdisk"},
+            {"box":[188,132,132,82],"part":"disk","title":"Boot disk","detail":"rootdisk · virtio"},
+            {"box":[40,228,280,82],"part":"network","title":"Network card","detail":"virtio · NAT"},
+            {"box":[392,58,150,62],"part":"disk","dashed":true,"title":"Golden image","detail":"centos-stream9"},
+            {"box":[392,148,150,72],"part":"disk","dashed":true,"title":"Disk volume","detail":"PVC · 30Gi · RWX"},
+            {"box":[392,246,150,64],"part":"network","dashed":true,"title":"Pod network","detail":"172.17.1.200"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="identity">
+          <h3>Identity</h3>
+          <p>Names the VM and the project (namespace) it lives in. Its disk, its launcher pod and every other piece are created in the same project.</p>
+          <p class="hand tilt"><b>From vSphere:</b> like naming a VM and choosing its resource pool when you deploy from a template.</p>
+        </div>
+        <div class="part-info" data-part="power">
+          <h3>Power</h3>
+          <p>Sets the power behaviour. <code>Always</code> starts the VM and restarts it if it stops.</p>
+          <p class="hand tilt"><b>From vSphere:</b> Always is roughly a VM with an HA restart policy.</p>
+          <p class="watch"><b>Watch for this.</b> There are five values. One of them, <code>Once</code>, never restarts the VM, even after a node failure.</p>
+        </div>
+        <div class="part-info" data-part="compute">
+          <h3>Compute</h3>
+          <p>The virtual hardware. The guest sees sockets × cores × threads vCPUs, and the guest memory you set.</p>
+          <p class="watch"><b>Watch for this.</b> The chipset is not in this file. The cluster writes its default in; the stored VM said <code>pc-q35-rhel9.6.0</code>. Leave it out so your VMs follow the cluster default.</p>
+        </div>
+        <div class="part-info" data-part="guest">
+          <h3>Guest setup</h3>
+          <p>A small disk that cloud-init in the guest reads at first boot to set the user, password, SSH keys and network settings.</p>
+          <p class="watch"><b>Watch for this.</b> This one sets a password and no SSH key. Remember that in step 2.</p>
+        </div>
+        <div class="part-info" data-part="disk">
+          <h3>Boot disk</h3>
+          <p>Cloned from a golden image (a DataSource) into a new disk volume (a PVC). The disk belongs to the VM: delete the VM and the volume goes too.</p>
+          <p class="hand tilt"><b>From vSphere:</b> the golden image is like a template in a content library. The virtio bus is the paravirtual disk, like VMware Paravirtual SCSI.</p>
+          <p class="watch"><b>Watch for this.</b> ReadWriteMany plus Block is what makes this disk live-migratable. The virtualization storage class supports both.</p>
+        </div>
+        <div class="part-info" data-part="network">
+          <h3>Network card</h3>
+          <p>One network card on the cluster's pod network. The VM gets a cluster-internal address, and traffic to outside networks is NAT'd through the node (masquerade).</p>
+          <p class="hand tilt"><b>From vSphere:</b> the virtio model is the paravirtual NIC, like VMXNET3.</p>
+          <p class="watch"><b>Watch for this.</b> To connect a VM directly to a VPC subnet you use a localnet or Layer 2 network instead. That is Module 3.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The full definition, my-first-vm.yaml">apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: my-first-vm
+  namespace: my-project
+spec:
+  runStrategy: Always
+  dataVolumeTemplates:
+  - metadata:
+      name: my-first-vm
+    spec:
+      sourceRef:
+        kind: DataSource
+        name: centos-stream9
+        namespace: openshift-virtualization-os-images
+      storage:
+        storageClassName: ocs-storagecluster-ceph-rbd-virtualization
+        accessModes:
+        - ReadWriteMany
+        volumeMode: Block
+        resources:
+          requests:
+            storage: 30Gi
+  template:
+    spec:
+      domain:
+        cpu:
+          cores: 1
+          sockets: 1
+          threads: 1
+        devices:
+          disks:
+          - disk:
+              bus: virtio
+            name: rootdisk
+          - disk:
+              bus: virtio
+            name: cloudinitdisk
+          interfaces:
+          - name: default
+            masquerade: {}
+            model: virtio
+          rng: {}
+        memory:
+          guest: 2Gi
+      networks:
+      - name: default
+        pod: {}
+      volumes:
+      - dataVolume:
+          name: my-first-vm
+        name: rootdisk
+      - cloudInitNoCloud:
+          userData: |
+            #cloud-config
+            user: centos
+            password: my-password
+            chpasswd: { expire: False }
+        name: cloudinitdisk
+</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>Create the VM, then look at it</h2>
+  <p class="lead">Run each command in turn. The output is what the test cluster returned for this exact definition.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">oc apply -f my-first-vm.yaml</pre>
+          <pre class="out">virtualmachine.kubevirt.io/my-first-vm created</pre>
+        </div>
+        <div class="cmd">
+          <p class="pre"># about 40 seconds later</p>
+          <pre class="in">oc get vm,dv,pvc,vmi -n my-project</pre>
+          <pre class="out">NAME                                     AGE   STATUS    READY
+virtualmachine.kubevirt.io/my-first-vm   37s   Running   True
+
+NAME                                     PHASE       PROGRESS   RESTARTS   AGE
+datavolume.cdi.kubevirt.io/my-first-vm   Succeeded   100.0%                38s
+
+NAME                                STATUS   CAPACITY   ACCESS MODES   STORAGECLASS
+persistentvolumeclaim/my-first-vm   Bound    30Gi       RWX            ocs-storagecluster-ceph-rbd-virtualization
+
+NAME                                             AGE   PHASE     IP             NODENAME
+virtualmachineinstance.kubevirt.io/my-first-vm   39s   Running   172.17.1.200   kube-...-00000167</pre>
+          <p class="hand note">Running in under 40 seconds.</p>
+          <p class="hand note">RWX, Block, and the virtualization storage class: this disk can live-migrate.</p>
+          <p class="hand note">172.17.1.200 is a cluster-internal pod network address.</p>
+        </div>
+        <div class="cmd">
+          <p class="pre"># the chipset</p>
+          <pre class="in">oc get vm my-first-vm -n my-project -o jsonpath='{.spec.template.spec.domain.machine.type}'</pre>
+          <pre class="out">pc-q35-rhel9.6.0</pre>
+          <p class="hand note">Nobody typed this. The cluster filled in its default chipset.</p>
+        </div>
+        <div class="q">
+          <p>Before you run the next command: will <code>virtctl ssh</code> log you in to this VM? Look back at Guest setup.</p>
+          <div class="opts">
+            <button class="opt">Yes, it uses the password from Guest setup</button>
+            <button class="opt" data-ok>No, it needs an SSH key and this VM has none</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>The guest setup sets a password and no key, and CentOS Stream 9's SSH server has password login turned off for cloud images. Use <code>virtctl console</code> for this VM, or put a key in the guest setup.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">virtctl -n my-project ssh centos@vm/my-first-vm</pre>
+          <pre class="out err">Received disconnect from UNKNOWN port 65535:2: Too many authentication failures</pre>
+          <p class="hand note">No key, no SSH. Use the console instead.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Click through the console</span>
+  <h2>Make the same VM in the web console</h2>
+  <p class="lead">These are real screens. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="35.1,43.8,19.1,39.2">
+      <div class="shot"><img src="../images/30/template-catalog.jpg" alt="The Create new VirtualMachine page on the Template catalog tab, with template cards for CentOS Stream 9 VM, Fedora VM and Red Hat Enterprise Linux 7 VM." width="1563" height="722"></div>
+      <figcaption>
+        <h3>Northgate wants a CentOS VM. Pick the right template.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The CentOS Stream 9 VM card. It carries a Source available label.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="31.1,90.8,22.8,4.9" data-width="640px">
+      <div class="shot"><img src="../images/30/quick-create.jpg" alt="The CentOS Stream 9 VM template panel. The lower part is a Quick create VirtualMachine form with the buttons Quick create VirtualMachine, Customize VirtualMachine and Cancel." width="858" height="714"></div>
+      <figcaption>
+        <h3>You need to change the boot disk's storage class. Which button lets you?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Customize VirtualMachine. It lets you change the storage class, CPU, memory or network before you create the VM.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="91.4,55,3.6,7.6">
+      <div class="shot"><img src="../images/30/customize-disks.jpg" alt="The Disks tab of Customize and create VirtualMachine, listing cloudinitdisk and rootdisk, each with a menu at the end of its row." width="1563" height="722"></div>
+      <figcaption>
+        <h3>Open the editing menu for the boot disk.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The menu at the end of the rootdisk row, then Edit.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="4.3,68.4,91.4,5.4" data-width="440px">
+      <div class="shot"><img src="../images/30/edit-disk-storageclass.jpg" alt="The Edit disk dialog for rootdisk, with fields for name, disk size, type, interface and storage class. The StorageClass field shows ocs-storagecluster-ceph-rbd." width="533" height="700"></div>
+      <figcaption>
+        <h3>One field here holds the wrong value for a VM. Click it.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The console offered ocs-storagecluster-ceph-rbd, the generic class. Set it to ocs-storagecluster-ceph-rbd-virtualization, then click Save.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Predict</span>
+  <h2>Pick an answer, then see what really happened</h2>
+  <div class="pair">
+    <div class="q">
+      <p>A worker node fails. Your VM's power setting is <code>runStrategy: Once</code>. What happens to the VM?</p>
+      <div class="opts">
+        <button class="opt">It restarts on another node</button>
+        <button class="opt" data-ok>It stays down</button>
+        <button class="opt">It restarts when the node comes back</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Once means once.</span><p><code>Once</code> runs the VM one time and never restarts it, whether it finished cleanly or failed. <code>Always</code> is the one that restarts it, much like a vSphere HA restart policy.</p></details>
+    </div>
+    <div class="q">
+      <p>You click <b>Create VirtualMachine</b> for a CentOS VM with a 30 GiB boot disk. How long until it is running?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Under a minute</button>
+        <button class="opt">About 5 minutes</button>
+        <button class="opt">About 30 minutes</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">2 seconds for the disk!</span><p>On the test cluster the disk clone finished in 2 seconds, and the VM was running 18 seconds after the click. The disk is a CSI snapshot clone of the golden image, which is why 30 GiB is ready in seconds rather than minutes.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which disk settings make this VM's disk live-migratable?</p>
+      <div class="opts">
+        <button class="opt">A 30 GiB size and the virtio bus</button>
+        <button class="opt" data-ok>ReadWriteMany and Block</button>
+        <button class="opt">The power setting Always</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>ReadWriteMany plus Block is what makes the disk live-migratable. The virtualization storage class supports this out of the box.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>The VM got the address <code>172.17.1.200</code>. Where does that address come from?</p>
+      <div class="opts">
+        <button class="opt">A VPC subnet</button>
+        <button class="opt" data-ok>The cluster's internal pod network</button>
+        <button class="opt">The Guest setup disk</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The network card is on the pod network, so the VM gets a cluster-internal address, and traffic to outside networks is NAT'd through the node. Connecting a VM directly to a VPC subnet takes a localnet or Layer 2 network, which Module 3 covers.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You inherit 200 VMs. How do you find the ones whose disks are on the generic storage class?</p>
+      <div class="opts">
+        <button class="opt">Look for disks without ReadWriteMany</button>
+        <button class="opt" data-ok>Read the storage class name on each disk</button>
+        <button class="opt">You can't. Both classes look the same.</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The generic class offers the same access modes, so checking access mode will not tell them apart. The name will: <code>ocs-storagecluster-ceph-rbd</code> is generic, <code>ocs-storagecluster-ceph-rbd-virtualization</code> is the one for VMs.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can read a VM now</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Six parts. Disks on the virtualization storage class. <code>Once</code> never restarts. No key, no SSH.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 30, Create your first VM on ROVS, runs everything you just saw.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

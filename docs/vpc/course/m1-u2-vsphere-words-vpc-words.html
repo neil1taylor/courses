@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>vSphere words, VPC words · VPC course</title>
+<meta name="description" content="Course unit 1.2: match vSphere and NSX words to IBM Cloud VPC words, and spot where the closest word misleads. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m1-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPC course</a> <span>·</span> Module 1 · VPC for a VMware admin</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 1</span>
+      <h1>vSphere words, VPC words</h1>
+      <p class="lead">By the end you can name the VPC word closest to each vSphere and NSX word you use, and say where the closest word misleads.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a list of vSphere words on the left, arrows across, and a list of VPC words on the right, with one arrow marked as misleading."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"text":"vSphere","at":[22,32],"hand":true,"tone":"muted"},
+          {"box":[10,40,130,36],"title":"port group"},
+          {"box":[10,86,130,36],"title":"datastore"},
+          {"box":[10,132,130,36],"title":"DFW"},
+          {"line":[150,58,270,58],"arrow":true,"tone":"muted"},
+          {"line":[150,104,270,104],"arrow":true,"tone":"muted"},
+          {"line":[150,150,270,150],"arrow":true,"tone":"mark"},
+          {"text":"VPC","at":[286,32],"hand":true,"tone":"mark"},
+          {"box":[280,40,130,36],"title":"subnet"},
+          {"box":[280,86,130,36],"title":"volume"},
+          {"box":[280,132,130,36],"title":"security group","tone":"mark"},
+          {"text":"close, not equal","at":[150,196],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is moving its vSphere estate to IBM Cloud VPC. The company is made up; the output in this unit is real. Its admins have a list of vSphere words and want the VPC word for each.</p>
+    </div>
+  </div>
+  <p class="small">The word pairs come from chapter 02, which calls its map approximate. Every statement about how a VPC works comes from the tested chapters named at the end.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the map</span>
+  <h2>Five groups of words</h2>
+  <p class="lead">Each line pairs a vSphere or NSX word with the closest VPC word. The pairs are rough, for orientation. Select a group in the drawing to see where its words differ. You can also click a line.</p>
+  <div class="explorer" data-start="network"
+    data-map='{"place":[[1,1]],"network":[[2,10]],"servers":[[11,15]],"storage":[[16,19]],"tools":[[20,23]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of five groups: place, network, servers, storage, and people and tools."
+          data-drawing='{"w":420,"h":330,"shapes":[
+            {"box":[10,8,400,52],"part":"place","title":"Place","detail":"datacenter, cluster"},
+            {"box":[10,68,400,52],"part":"network","title":"Network and security","detail":"port group to DNS"},
+            {"box":[10,128,400,52],"part":"servers","title":"Servers","detail":"VM, template, DRS, HA, vMotion"},
+            {"box":[10,188,400,52],"part":"storage","title":"Storage","detail":"datastore, VMDK, snapshot"},
+            {"box":[10,248,400,52],"part":"tools","title":"People and tools","detail":"tags, roles, automation"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="place">
+          <h3>Place</h3>
+          <p>A VPC spans the zones of one region. Zones are separate data centres.</p>
+          <p class="hand tilt"><b>From vSphere:</b> roughly, a region is a separate site with its own vCenter, and a zone is a separate cluster with its own power and network.</p>
+        </div>
+        <div class="part-info" data-part="network">
+          <h3>Network and security</h3>
+          <p>A subnet lives in one zone. The VPC and its subnets take the place of the distributed switch and its segments. The route table and the Transit Gateway take the place of the NSX routers.</p>
+          <p class="watch"><b>Watch for this.</b> The NSX distributed firewall becomes a security group, which is applied to a network interface. The NSX gateway firewall becomes a network ACL, which is applied to a whole subnet and has no state. They are not one firewall.</p>
+        </div>
+        <div class="part-info" data-part="servers">
+          <h3>Servers</h3>
+          <p>A VM becomes a virtual server instance, called a server here. IBM makes it from an image, which is the operating system of its boot volume, and a profile, which is its size. An instance group repairs and scales servers.</p>
+          <p class="watch"><b>Watch for this.</b> The closest word to vMotion is live migration, which IBM does for its own host maintenance. Chapter 38 describes it. Step 3 shows what it records.</p>
+        </div>
+        <div class="part-info" data-part="storage">
+          <h3>Storage</h3>
+          <p>A datastore becomes a block storage volume or a file share. A VMDK becomes a boot or data volume. A VPC snapshot is a point-in-time copy of one volume.</p>
+          <p class="watch"><b>Watch for this.</b> A snapshot is kept in a regional storage repository. A copy in another region is a separate step.</p>
+        </div>
+        <div class="part-info" data-part="tools">
+          <h3>People and tools</h3>
+          <p>vCenter tags become tags and access tags, which do different jobs. vCenter roles and permissions become IAM access groups and policies. vRealize and Aria Automation become Terraform and Schematics.</p>
+          <p class="hand tilt">Unit 1.3 covers access groups. Unit 1.4 covers Terraform and Schematics.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="vSphere and NSX words, with the closest VPC word, from chapter 02">Datacenter or cluster          ->  Region and zone
+Port group, VLAN               ->  Subnet
+Distributed switch, NSX segment ->  VPC and its subnets
+NSX Tier-0 or Tier-1 router    ->  Route table, Transit Gateway
+NSX distributed firewall       ->  Security group
+NSX gateway firewall           ->  Network ACL, and a virtual firewall
+NSX load balancer              ->  Load balancer for VPC
+NAT                            ->  Public gateway, floating IP
+VPN                            ->  VPN gateway
+DNS service                    ->  DNS Services
+Virtual machine                ->  Virtual server instance (server)
+VM template                    ->  Image and instance template
+Resource pool, cluster         ->  Instance group, placement group
+DRS, HA                        ->  Instance group, host failure policy
+vMotion                        ->  Live migration, run by IBM
+Datastore, vSAN                ->  Block storage volume, file share
+VMDK                           ->  Boot and data volumes
+Snapshot                       ->  Snapshot, and Backup for VPC
+Content library                ->  Custom images in Object Storage
+vCenter tags                   ->  Tags and access tags
+vCenter roles and permissions  ->  IAM access groups and policies
+vRealize, Aria Automation      ->  Terraform and Schematics
+Site Recovery Manager          ->  Snapshots, replicas, Backup and Recovery, a recovery region</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>Two firewalls, two places</h2>
+  <p class="lead">Chapter 20 lists the rules of the two defaults IBM creates with <code>vpct-prod</code>. Run each command and compare what each one attaches to.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="q">
+          <p>A server is made with no security group named, so it joins the default security group. Can another network ping it or open SSH to it?</p>
+          <div class="opts">
+            <button class="opt">Yes, the default group allows all inbound traffic</button>
+            <button class="opt" data-ok>No. Only members of the same group can reach it</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>Run the command to see the two rules.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is security-group-rules vpct-prod-default-sg</pre>
+          <pre class="out">Listing rules of security group vpct-prod-default-sg under account &lt;redacted&gt; as user &lt;redacted&gt;...
+ID        Direction   IP version   Remote                 Protocol       Local       Name
+r014-…    outbound    ipv4         0.0.0.0/0              icmp_tcp_udp   0.0.0.0/0   outbound-icmp-tcp-udp
+r014-…    inbound     ipv4         vpct-prod-default-sg   icmp_tcp_udp   0.0.0.0/0   inbound-icmp-tcp-udp-from-this-security-group</pre>
+          <p class="hand note">Outbound to anywhere. Inbound only from the group itself.</p>
+          <p class="hand note">No rule allows inbound ping or SSH from outside the group.</p>
+          <p class="hand note">The rules are stateful. Replies are allowed.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is network-acl-rules vpct-prod-default-acl</pre>
+          <pre class="out">Listing rules of network ACL vpct-prod-default-acl under account &lt;redacted&gt; as user &lt;redacted&gt;...
+
+inbound
+ID        Name            Action   IP version   Protocol       Source      Destination   Created
+r014-…    allow-inbound   allow    ipv4         icmp_tcp_udp   0.0.0.0/0   0.0.0.0/0     2026-10-28T16:38:53+00:00
+
+outbound
+ID        Name             Action   IP version   Protocol       Source      Destination   Created
+r014-…    allow-outbound   allow    ipv4         icmp_tcp_udp   0.0.0.0/0   0.0.0.0/0     2026-10-28T16:38:53+00:00</pre>
+          <p class="hand note">Two rules, one for each direction. ACL rules are stateless.</p>
+          <p class="hand note">This ACL covers whole subnets, not single servers.</p>
+          <p class="hand note">The default ACL allows everything. The default security group does not.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Predict</span>
+  <h2>Pick an answer, then see what the chapters record</h2>
+  <div class="pair">
+    <div class="q">
+      <p>Northgate&apos;s VMs have fixed addresses. By default, where does a new server&apos;s primary address come from?</p>
+      <div class="opts">
+        <button class="opt">You type it into the guest</button>
+        <button class="opt" data-ok>IBM picks it and creates a reserved IP for the server</button>
+        <button class="opt">You must reserve it before you create the server</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Reserve first to keep it.</span><p>By default IBM picks the address and names the reserved IP. The reserved IP is created for the server and deleted with it. If the address must be known before the server exists, or must outlive it, you reserve an address first and set auto-delete to false.</p></details>
+    </div>
+    <div class="q">
+      <p>IBM updates the host under a running server. In the usual live-migration case, what does the server&apos;s owner see?</p>
+      <div class="opts">
+        <button class="opt">The server restarts, with notice</button>
+        <button class="opt" data-ok>A pause of about 10 seconds, sometimes up to 30, and no restart</button>
+        <button class="opt">Nothing at all</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Not a move you ask for.</span><p>Chapter 38 records, from IBM&apos;s maintenance page: a nondisruptive live migration pauses the server for about 10 seconds, sometimes up to 30, with no restart and no notice in advance. A disruptive migration restarts the server, with notice. Servers with a GPU profile are not live-migrated: they restart, with notice.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Design it</span>
+  <h2>One rule for the whole subnet</h2>
+  <p class="lead">Northgate&apos;s web subnet holds several servers. An address on the internet is sending bad traffic, and Northgate wants one rule that covers every server in the subnet.</p>
+  <div class="cols">
+    <svg class="sketch" role="img" aria-label="Hand-drawn diagram of one subnet holding three servers. A heavy outline around the subnet is labelled network ACL, one rule for the subnet. Each server has a small box labelled security group, one set of rules for each server."
+      data-drawing='{"w":420,"h":250,"shapes":[
+        {"text":"network ACL: around the subnet","at":[10,22],"hand":true,"tone":"mark"},
+        {"box":[10,32,400,208],"heavy":true,"tone":"mark","title":"subnet"},
+        {"box":[26,70,112,150],"title":"server"},
+        {"box":[154,70,112,150],"title":"server"},
+        {"box":[282,70,112,150],"title":"server"},
+        {"box":[36,150,92,52],"dashed":true,"title":"SG"},
+        {"box":[164,150,92,52],"dashed":true,"title":"SG"},
+        {"box":[292,150,92,52],"dashed":true,"title":"SG"}]}'></svg>
+    <div>
+      <div class="q">
+        <p>Which VPC object gives you one place to write that rule?</p>
+        <div class="opts">
+          <button class="opt" data-ok>A network ACL rule on the subnet</button>
+          <button class="opt">A security group rule on each server</button>
+          <button class="opt">A route in the default route table</button>
+        </div>
+        <details class="reveal"><summary>Show the worked answer</summary><p>A network ACL applies to whole subnets, not to individual servers. Its rules are stateless, so each direction needs its own rule. A security group is attached to a network interface, so it works server by server, and its rules are stateful.</p></details>
+      </div>
+      <p class="hand tilt">The NSX word for the ACL is the gateway firewall. The word for the security group is the distributed firewall. Do not treat them as one.</p>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 1.1.</span> A server in zone 1 must reach a server in zone 2 of the same VPC. What routing do you add?</p>
+      <div class="opts">
+        <button class="opt">A route in the default route table</button>
+        <button class="opt">A Transit Gateway</button>
+        <button class="opt" data-ok>None. The implicit router connects every subnet in the VPC.</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Every subnet in a VPC reaches every other subnet through the implicit router, across zones, with no routes to add.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Northgate used vRealize Automation to build estates from blueprints. Which VPC words does the map pair with it?</p>
+      <div class="opts">
+        <button class="opt">Tags and access tags</button>
+        <button class="opt" data-ok>Terraform and Schematics</button>
+        <button class="opt">Instance groups and placement groups</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The map pairs vRealize and Aria Automation with Terraform and Schematics. Unit 1.4 shows both. The tags and the groups are other rows of the map.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Which VPC idea is closest to a vSphere port group, and what is different?</p>
+      <div class="opts">
+        <button class="opt">A volume, which can span zones</button>
+        <button class="opt" data-ok>A subnet, which lives in one zone</button>
+        <button class="opt">A security group, which lives in one zone</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The map pairs a port group or VLAN with a subnet, and an NSX segment with a subnet placed in one zone. A subnet cannot span zones.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You have the VPC words</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>The map is close, not equal. A security group is for a network interface and an ACL is for a subnet. Reserve an address first if it must outlive the server.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 20, Create a VPC in IBM Cloud with manual address prefixes, runs the two rule listings. Chapter 02, Mapping VMware vSphere and NSX terms to IBM Cloud VPC, holds the whole map.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

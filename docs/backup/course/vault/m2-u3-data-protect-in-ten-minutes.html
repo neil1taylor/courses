@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en" data-course="vault">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Defender Data Protect in ten minutes · Cyber Vault course</title>
+<meta name="description" content="Course unit 2.3: learn what a cluster, a source, a policy and a protection group are in IBM Storage Defender Data Protect, and what a one-node cluster on a VPC bare metal server is. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m2-u3">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">Cyber Vault course</a> <span>·</span> Module 2 · Build and connect</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 3 of Module 2</span>
+      <h1>Defender Data Protect in ten minutes</h1>
+      <p class="lead">By the end you can say what a cluster, a source, a policy and a protection group are, and where a one-node cluster runs on IBM Cloud VPC.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a source is backed up by a protection group, which uses a policy, on a cluster."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"box":[10,30,120,60],"title":"Source","detail":"a server"},
+          {"line":[134,60,166,60],"arrow":true,"tone":"mark"},
+          {"box":[170,30,120,60],"heavy":true,"title":"Group","detail":"has a policy"},
+          {"line":[294,60,326,60],"arrow":true,"tone":"mark"},
+          {"box":[290,30,120,60],"title":"Cluster","detail":"holds backups"},
+          {"text":"four words, one picture","at":[100,150],"hand":true,"size":20,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect. Before it adds a vault, its team learns the four words the console uses.</p>
+    </div>
+  </div>
+  <p class="small">Everything here comes from the Data Protect builds and runs in our lab on 5 October and 10 November 2026 (tutorials D1, D2a, D3, V3 and V4). Product: IBM Storage Defender 2.2.1 Data Protect, version 7.4.1.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Four words</h2>
+  <p class="lead">The cluster is Data Protect itself, managed from its own console and API. It backs up sources. A policy says when and how long. A protection group joins what you protect to a policy.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A source, a server with an agent, is protected by a protection group. The group uses a policy that says when to back up, how long to keep, and where to archive. The cluster holds the backups, and an external target holds the archive copy."
+    data-drawing='{"w":640,"h":200,"shapes":[
+      {"box":[5,20,140,64],"title":"Source","detail":"server + agent"},
+      {"line":[149,52,171,52],"arrow":true,"tone":"mark"},
+      {"box":[175,20,140,64],"heavy":true,"title":"Group","detail":"has one policy"},
+      {"line":[319,52,341,52],"arrow":true,"tone":"mark"},
+      {"box":[345,20,140,64],"title":"Cluster","detail":"local backup"},
+      {"line":[489,52,511,52],"arrow":true,"tone":"mark"},
+      {"box":[515,20,120,64],"tone":"mark","title":"Target","detail":"archive copy"},
+      {"box":[175,120,260,64],"dashed":true,"title":"Policy","detail":"when, how long, archive"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which one says how long a backup is kept and whether it is archived?</p>
+      <div class="opts">
+        <button class="opt">The source</button>
+        <button class="opt" data-ok>The policy</button>
+        <button class="opt">The cluster</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The policy from tutorial V3 is a daily backup, 1 day on the cluster, and every run archived to the vault for 1 day.</p></details>
+    </div>
+    <div class="q">
+      <p>You click Run Now. On which of the four do you click it?</p>
+      <div class="opts">
+        <button class="opt">A policy</button>
+        <button class="opt" data-ok>A protection group</button>
+        <button class="opt">A source</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In tutorial V4 each of three groups was run with Run Now. The dialog carried the policy&apos;s archive line, so no archive target had to be chosen. On the Policies page the console counts the groups that use each policy.</p></details>
+    </div>
+  </div>
+  <p class="small">In our lab a source was a VPC virtual server with an agent and 19 GiB of test data. The cluster serves its own Linux agent, so no separate download was needed.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Explore the parts</span>
+  <h2>Where the cluster runs on IBM Cloud</h2>
+  <p class="lead">IBM ships the cluster as an image for KVM. In our lab it ran as one node, inside a KVM guest, on a VPC bare metal server.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A VPC bare metal server running RHEL 9.6 with KVM holds a KVM guest. The guest is the one-node Data Protect cluster."
+    data-drawing='{"w":560,"h":120,"shapes":[
+      {"box":[5,25,170,64],"title":"Bare metal","detail":"VPC, RHEL 9.6, KVM"},
+      {"line":[179,57,201,57],"arrow":true,"tone":"mark"},
+      {"box":[205,25,150,64],"title":"KVM guest","detail":"the one node"},
+      {"line":[359,57,381,57],"arrow":true,"tone":"mark"},
+      {"box":[385,25,170,64],"heavy":true,"tone":"mark","title":"Cluster","detail":"Data Protect 7.4.1"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Northgate wants the cluster on IBM Cloud VPC. Where do you put it?</p>
+      <div class="opts">
+        <button class="opt">On a VPC virtual server</button>
+        <button class="opt" data-ok>On a bare metal server, with the KVM image</button>
+        <button class="opt">On an OpenShift cluster</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM ships no image for VPC virtual servers, OpenShift or OCI, and Cohesity does not support a cluster on VPC virtual servers (D1).</p></details>
+    </div>
+    <div class="q">
+      <p>Which software version did the lab install?</p>
+      <div class="opts">
+        <button class="opt">7.2.x</button>
+        <button class="opt" data-ok>7.4.1, inside IBM Storage Defender 2.2.1</button>
+        <button class="opt">Any version, they are all supported</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Only 7.3.x and 7.4.x are supported. Support for 7.2.x ended on 8 June 2026 (D1).</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Predict</span>
+  <h2>How long does the build take?</h2>
+  <p class="lead">On 10 November 2026 the lab built the whole cluster again. These are the steps.</p>
+  <pre class="def" aria-label="Build steps">Step                      Time
+Bare metal server         ordered to running: ?
+Image pull                45 GB: ?
+Guest created             start to finish: ?
+Cluster create            call to cluster: ?</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which step took longest?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The bare metal server: 18 minutes</button>
+        <button class="opt">The image pull: 8 minutes 16 seconds</button>
+        <button class="opt">The cluster create: 6 minutes</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><pre class="def" aria-label="Build steps">Step                      Time
+Bare metal server         18 min
+Image pull                8 min 16 s
+Guest created             15 min
+Cluster create            6 min</pre><p>The guest took about 15 minutes. The bare metal server costs about $4.26 an hour. The source server costs about $0.20 an hour (D2a).</p></details>
+    </div>
+    <div class="q">
+      <p>Is a licence needed to run backups?</p>
+      <div class="opts">
+        <button class="opt">Yes, the cluster refuses to start without one</button>
+        <button class="opt" data-ok>In our lab, none was needed to run backups and archives</button>
+        <button class="opt">Only for the first backup</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Defender is licensed in Resource Units. The lab applied no licence on 5 October 2026 and the cluster ran backups and archives. It did not check what the console says about an unlicensed cluster.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>Two traps in the build</h2>
+  <p class="lead">Northgate&apos;s team follows the October steps on 10 November 2026. Two things have changed.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The first run of the install script stops at once with &quot;Permission denied&quot;, exit code 126. Why?</p>
+      <div class="opts">
+        <button class="opt">The image hash did not match</button>
+        <button class="opt" data-ok>The script downloaded without its execute bit; run chmod +x on the copy first</button>
+        <button class="opt">The bare metal server has no KVM</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 10 November 2026 the download had no execute bit. After <code>chmod +x</code> on the copy it ran (D2a).</p></details>
+    </div>
+    <div class="q">
+      <p>In October the boot disk was nvme3n1. What do you do on 10 November?</p>
+      <div class="opts">
+        <button class="opt">Use nvme3n1 again</button>
+        <button class="opt" data-ok>Check with findmnt every time: this time it was nvme0n1</button>
+        <button class="opt">Format every disk</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The boot disk changed between builds. On 10 November 2026 the lab checked first, then formatted the other two disks (D2a).</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> Set the cluster&apos;s host name when you create it. A cluster built without one cannot back up OpenShift VMs, and the name cannot be changed later (ISS-179).</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>What joins what you protect to a policy?</p>
+      <div class="opts">
+        <button class="opt">A source</button>
+        <button class="opt" data-ok>A protection group</button>
+        <button class="opt">A cluster</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The group has one policy, and you run the group.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Where does a Data Protect cluster run on IBM Cloud VPC?</p>
+      <div class="opts">
+        <button class="opt">On a VPC virtual server</button>
+        <button class="opt" data-ok>On a bare metal server, as a KVM guest</button>
+        <button class="opt">On OCI</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Cohesity does not support a cluster on VPC virtual servers.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>The boot disk name was different from the last build. What do you do?</p>
+      <div class="opts">
+        <button class="opt">Assume it is the same</button>
+        <button class="opt" data-ok>Check it with findmnt every time</button>
+        <button class="opt">Delete the host and start again</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>It was nvme3n1 on 5 October and nvme0n1 on 10 November 2026.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know the four words</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>A cluster backs up sources. A policy says when, how long and where to archive. A protection group joins what you protect to a policy. A cluster on IBM Cloud VPC is a KVM guest on a bare metal server.</p></div>
+    <div><span class="label">When you have access to the Beta</span><p>Tutorial D2a builds the cluster. Tutorial D1 covers the download and the licence, and D3 the settings.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

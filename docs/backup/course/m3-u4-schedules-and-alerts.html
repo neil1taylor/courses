@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Schedules and alerts · BRS course</title>
+<meta name="description" content="Course unit 3.4: see how far apart scheduled runs start, find out which failures raise an alert, and see what the console offers for sending one. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m3-u4">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 3 · Back up</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 4 of Module 3</span>
+      <h1>Schedules and alerts</h1>
+      <p class="lead">By the end you can say how far apart scheduled runs start, name which failures raise an alert and which raise none, and say how the console can send an alert on.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a policy that says every 5 minutes. Three runs start 4 minutes 46 seconds and 4 minutes 53 seconds apart."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"text":"policy: every 5 minutes","at":[10,28],"hand":true,"size":17,"tone":"muted"},
+          {"line":[10,100,410,100],"tone":"muted"},
+          {"box":[20,84,20,32],"tone":"mark","fill":"hatch"},
+          {"box":[180,84,20,32],"tone":"mark","fill":"hatch"},
+          {"box":[340,84,20,32],"tone":"mark","fill":"hatch"},
+          {"text":"4 min 46 s","at":[60,74],"hand":true,"size":16},
+          {"text":"4 min 53 s","at":[220,74],"hand":true,"size":16},
+          {"text":"a little under five, in our lab","at":[10,160],"hand":true,"size":17,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. While it tests, it gives one group a backup every five minutes. It also wants to know whether BRS will warn it when a backup or a restore fails.</p>
+    </div>
+  </div>
+  <p class="small">The schedule numbers and screens come from a run in our lab on 9 November 2026, recorded in tutorial B7d. The alerts come from a run on 7 October 2026 and from the console on 9 November 2026, recorded in tutorial B7h. Server addresses and job names in recorded output are replaced with made-up names, and server names are blurred in the screenshots.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Predict</span>
+  <h2>How far apart do the runs start?</h2>
+  <p class="lead">Northgate makes a policy that backs up every 5 minutes and keeps each backup for 1 day. It adds a 2 MB file to the folder, then switches the group to the new policy and un-pauses it. The first run starts seconds later.</p>
+  <pre class="def" aria-label="What the group recorded so far">Run   Started (UTC)   Read
+1     14:16:15        2 MiB (the new file)
+2     ?               ?
+3     ?               ?</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>When does run 2 start?</p>
+      <div class="opts">
+        <button class="opt">Exactly 5 minutes after run 1</button>
+        <button class="opt" data-ok>A little under 5 minutes after run 1</button>
+        <button class="opt">At the group&apos;s next start window</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Run 2 started at 14:21:01, 4 min 46 s after run 1. Run 3 started at 14:25:54, 4 min 53 s after run 2. In October the gaps were 4 min 4 s and 4 min 7 s. In both runs the gap was under 5 minutes.</p></details>
+    </div>
+    <div class="q">
+      <p>The file was added before run 1. How much do runs 2 and 3 read?</p>
+      <div class="opts">
+        <button class="opt">2 MiB each: they read the file again</button>
+        <button class="opt" data-ok>Nothing: no file changed</button>
+        <button class="opt">The whole folder each time</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><pre class="def" aria-label="What the three runs recorded">Run   Started (UTC)   Read
+1     14:16:15        2 MiB (the new file)
+2     14:21:01        0
+3     14:25:54        0</pre></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Click through the console</span>
+  <h2>Set the schedule and watch it run</h2>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="3,38.5,58,8" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7d-1-policy-5min.png" alt="Create Protection Policy: b7d-every-5min, Backup every 5 Minutes, Retain for 1 Day, with a + Add DataLock link instead of a lock." width="631" height="417"></div>
+      <figcaption>
+        <h3>Northgate is making the 5-minute policy. Where is the schedule set?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Set Backup every to 5 and the unit to Minutes; the list has Minutes, Hours, Days, Week and Month. The dialog first adds a lock of 2 Weeks and then says &quot;Maximum value is 0&quot;, because a lock cannot be longer than the retention. Northgate removed it, as in unit 3.1.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="2,80.5,47,7" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7d-2-group-policy.png" alt="Edit Protection: policy b7d-every-5min, Backup every 5 minutes, Retain 1 day; Start Time Not Applicable." width="1002" height="633"></div>
+      <figcaption>
+        <h3>Northgate picked the new policy for the group. Which line shows the group no longer waits for a daily start time?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Start Time changes to Not Applicable. Under Additional Settings, Northgate also switched Pause Future Runs off, then clicked Save.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="45.5,52,8,17" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7d-3-scheduled-runs.png" alt="Group Details: b-linux2-files on policy b7d-every-5min. Runs on 9 November: incrementals at 2:25 pm and 2:21 pm with 0 Bytes read, and at 2:16 pm with 2 MiB read; earlier runs below." width="1180" height="540"></div>
+      <figcaption>
+        <h3>The group has been running by itself. Click the figure that shows the later runs read nothing.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Data Read is 0 Bytes for the runs at 2:21 pm and 2:25 pm. The run at 2:16 pm read 2 MiB, the new file.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+  <p class="small">To put the group back, Northgate edited it again, chose the original policy, switched Pause Future Runs on and deleted the test policy. The tutorial does not cover alerts for this, blackout windows, a daily or weekly schedule over a real day, or retention expiry.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>The failure that no alert reported</h2>
+  <p class="lead">Northgate plans to learn about problems from the alert list. In our lab, tutorial B7h read the alerts raised by the failures of the earlier tutorials. For each failure below, say whether BRS raised an alert.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>A restore of Windows files fails.</p>
+      <div class="opts">
+        <button class="opt" data-ok>A critical alert, at once</button>
+        <button class="opt">No alert</button>
+        <button class="opt">A warning after an hour</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 7 October, a failed Windows restore raised two critical alerts, both still Open.</p><pre class="def" aria-label="The alert">RestoreTaskFailed (CE00610034), Critical
+"Restore for object ng-win-01 in job ng-win-restore failed"</pre></details>
+    </div>
+    <div class="q">
+      <p>The agent on a Linux server is down for 6 minutes after a reboot.</p>
+      <div class="opts">
+        <button class="opt">A critical alert</button>
+        <button class="opt" data-ok>No alert</button>
+        <button class="opt">An alert when the agent comes back</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The agent was down from 14:48 to 14:54 on 7 October and raised no alert in those 6 minutes. On 9 November, with the agent down from 13:59 to 14:06 UTC, the console showed none either.</p></details>
+    </div>
+  </div>
+  <div class="q" style="margin-top:20px">
+    <p>Northgate deletes the 5-minute test policy. Does BRS raise an alert?</p>
+    <div class="opts">
+      <button class="opt">No: deleting a policy is not a failure</button>
+      <button class="opt" data-ok>Yes: a warning, ProtectionPolicyDeleted</button>
+      <button class="opt">Yes: a critical alert</button>
+    </div>
+    <details class="reveal"><summary>Show the answer</summary><p>On 7 October the deletion raised <code>ProtectionPolicyDeleted</code> (<code>CE00610017</code>), severity Warning, still Open. The tutorial calls it an audit event.</p></details>
+  </div>
+  <p class="watch"><b>Watch for this.</b> In our lab, a Linux backup that waited with 0 bytes read raised no alert, and neither did an agent outage. A connector alert on 7 October did not match any outage of ours.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Click through the console</span>
+  <h2>Read the alerts and see how to send them</h2>
+  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="0.5,1,32,64" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7h-1-dashboard-health.png" alt="Dashboard summary: the Health card, Active Alerts - Last 24 Hours, 1 Warning, 1 Data Service. On the right, the Notifications panel lists finished recovery tasks." width="1194" height="510"></div>
+      <figcaption>
+        <h3>Northgate opens the dashboard. Where does it show the active alerts of the last 24 hours?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Health card counts them by severity and by type: here 1 Warning, 1 Data Service. The bell at the top right is not the alert list: its panel, on the right of this screen, lists finished tasks such as recoveries.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="19,71,15,10" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7h-2-alerts.png" alt="System, Health, Alerts: ProtectionPolicyDeleted, a warning, and ProtectionPolicyModified, information, both Active." width="1180" height="400"></div>
+      <figcaption>
+        <h3>This is System &gt; Health &gt; Alerts. Which alert came from deleting the 5-minute test policy?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. ProtectionPolicyDeleted, a warning. The other is ProtectionPolicyModified, information. Export to CSV is at the top right. The console showed nothing for the failures of that day: the agent down after a reboot, the backup that waited 6 minutes, and the agent cut off by the private endpoint.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="2,69.5,13,8" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7h-3-rule-webhook-only.png" alt="Add Alert Notification Rule: Rule Name; When: Alert Category, Alert Severities and Alert Name, each All applies by default; Send Alert Notification via: Webhook only." width="886" height="414"></div>
+      <figcaption>
+        <h3>Northgate opens System &gt; Health &gt; Notification Settings and clicks Add Alert Notification Rule. Where does it choose how the alert is sent?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Under Send Alert Notification via, Webhook is the only choice, so the console cannot send mail. Before the form, the page said &quot;No Notification Rules.&quot; The form was opened and cancelled; no rule was saved.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+  <p class="small">Delivery to a webhook was not tested: it needs an endpoint the service can reach. The tutorial also did not test whether a rule delivers mail or a script, resolving an alert by hand, or the Helios page for alerts.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>A policy says every 5 minutes. In our lab, how far apart did the runs start?</p>
+      <div class="opts">
+        <button class="opt">Exactly 5 minutes</button>
+        <button class="opt" data-ok>A little under 5 minutes</button>
+        <button class="opt">They waited for the group&apos;s start window</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>4 min 46 s and 4 min 53 s on 9 November; 4 min 4 s and 4 min 7 s in October.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Which of these raised no alert in our lab?</p>
+      <div class="opts">
+        <button class="opt">A failed Windows restore</button>
+        <button class="opt">Deleting a policy</button>
+        <button class="opt" data-ok>A Linux agent down for 6 minutes</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The failed restore raised a critical alert and the deleted policy raised a warning. The agent outage raised none.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>In the console, how can an alert notification rule send an alert?</p>
+      <div class="opts">
+        <button class="opt">By mail or by webhook</button>
+        <button class="opt" data-ok>By webhook only</button>
+        <button class="opt">By a text message</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Webhook is the only choice under Send Alert Notification via. Delivery to a webhook was not tested.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know what BRS will and will not tell you</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>A policy of every 5 minutes started runs a little under 5 minutes apart in our lab. A failed restore raised a critical alert; an agent outage and a waiting backup raised none. The console offers only a webhook for sending alerts, and webhook delivery was not tested.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B7d gives a group a short schedule and watches it run, from the console and the command line. Tutorial B7h reads the alerts and the notification rules.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

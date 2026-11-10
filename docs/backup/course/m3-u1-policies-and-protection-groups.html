@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Policies and protection groups · BRS course</title>
+<meta name="description" content="Course unit 3.1: say which built-in policies carry a data lock, find the lock in the Create Policy dialog, make a file-based group and pause its future runs. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m3-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 3 · Back up</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 3</span>
+      <h1>Policies and protection groups</h1>
+      <p class="lead">By the end you can say which built-in policies lock their backups, find the lock in the Create Policy dialog, and make a file-based protection group that waits until you run it.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: Gold, Silver and Bronze are drawn with a lock. Basic is drawn dashed, with no lock."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"box":[10,15,180,55],"tone":"mark","title":"Gold","detail":"data lock"},
+          {"box":[230,15,180,55],"tone":"mark","title":"Silver","detail":"data lock"},
+          {"box":[10,85,180,55],"tone":"mark","title":"Bronze","detail":"data lock"},
+          {"box":[230,85,180,55],"dashed":true,"title":"Basic","detail":"no lock"},
+          {"text":"a locked backup cannot be deleted early","at":[10,185],"hand":true,"size":16,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. It has just ordered a BRS instance and wants to protect the folder <code>/data</code> on a Linux server. Before the first backup it must choose a policy and make a group.</p>
+    </div>
+  </div>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab on 8 November 2026, recorded in tutorials B1 and B3a. The server name is blurred in the screenshots; no address appears.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Predict</span>
+  <h2>What does a new instance start with?</h2>
+  <p class="lead">A policy says how often to back up and how long to keep each backup. A new instance comes with four, already made.</p>
+  <pre class="def" aria-label="The four policies of a new instance">Policy   Schedule         Kept
+Basic    daily            30 days
+Bronze   daily            30 days
+Gold     every 4 hours    1 week
+Silver   every 12 hours   2 weeks</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which of the four carry a data lock?</p>
+      <div class="opts">
+        <button class="opt">None of them</button>
+        <button class="opt">All four</button>
+        <button class="opt" data-ok>Gold, Silver and Bronze, but not Basic</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Gold, Silver and Bronze carry a Compliance data lock equal to their retention. Basic has none.</p><pre class="def" aria-label="The locks">Policy   Data lock
+Gold     1 week
+Silver   2 weeks
+Bronze   30 days
+Basic    none</pre></details>
+    </div>
+    <div class="q">
+      <p>Northgate wants to try a backup and delete it the next day. Which policy should it use?</p>
+      <div class="opts">
+        <button class="opt">Gold: it runs most often</button>
+        <button class="opt" data-ok>Basic, or a policy of its own</button>
+        <button class="opt">Any of them: an administrator can delete a locked backup</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A backup made with a locked policy cannot be deleted until the lock ends, not even by an administrator. The tutorial&apos;s advice for a test is to use Basic, or your own policy.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Click through the console</span>
+  <h2>Find the lock</h2>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="21,72.5,16.5,6.5" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B1-5-default-policies.png" alt="Policies list of a new instance: Basic, Backup 1d, Retain 30d; Bronze with a padlock, Backup 1d, Retain 30d, DataLock 30d; Gold with a padlock, Backup 4h, Retain 1w, DataLock 1w; Silver with a padlock, Backup 12h, Retain 2w, DataLock 2w." width="1480" height="500"></div>
+      <figcaption>
+        <h3>This is Data Protection &gt; Policies. Where does the list say how long Gold&apos;s lock lasts?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The line under the name reads Backup 4h, Retain 1w, DataLock 1w. A padlock beside the name marks the three locked policies; Basic has neither.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="33,63,27,13" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-4-policy-default-lock.png" alt="Create Protection Policy as it opens: Backup every 1 Day, Retain for 2 Weeks, Lock 2 Weeks." width="632" height="418"></div>
+      <figcaption>
+        <h3>Northgate clicks Create Policy. The dialog opens like this. Which field would lock every backup the new policy makes?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The dialog fills in a data lock of its own: Retain for 2 Weeks, Lock 2 Weeks. Leave it and backups cannot be deleted until the lock ends, not even by an administrator. To remove it, point at the Lock field and click the minus sign that appears.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="35,68,19,8" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-5-policy-no-lock.png" alt="The same dialog with the lock removed: Retain for 7 Days and a + Add DataLock link." width="632" height="418"></div>
+      <figcaption>
+        <h3>Northgate removed the lock and set Retain for to 7 Days. What on screen shows the policy now has no lock?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Lock field has become <b>+ Add DataLock</b>. In our lab the policy was saved as &quot;Retain 1w&quot; with no lock, and the list shows no lock symbol for it.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Explore the parts</span>
+  <h2>A file-based group</h2>
+  <p class="lead">A protection group joins a source, the paths to protect and a policy. In the console, <b>Protect &gt; Physical Server</b> offers <b>File-based</b> and no volume-based type.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. The server, with only the folder /data, and the policy both feed the protection group. The group is paused, so only manual runs happen."
+    data-drawing='{"w":560,"h":210,"shapes":[
+      {"box":[10,20,150,60],"title":"server","detail":"only /data"},
+      {"line":[164,50,196,50],"arrow":true,"tone":"mark"},
+      {"box":[200,20,170,60],"tone":"mark","title":"protection group","detail":"file-based"},
+      {"line":[406,50,374,50],"arrow":true,"tone":"mark"},
+      {"box":[410,20,140,60],"title":"policy","detail":"daily, 7 days"},
+      {"text":"paused: only manual runs happen","at":[200,125],"hand":true,"size":16,"tone":"mark"},
+      {"text":"Pause Future Runs, set before you click Protect","at":[10,175],"hand":true,"size":16,"tone":"muted"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Why file-based and not volume-based for a folder?</p>
+      <div class="opts">
+        <button class="opt">Volume-based cannot be paused</button>
+        <button class="opt" data-ok>A file-based group reads only what changed on an incremental run; a volume-based one reads the whole volume every time</button>
+        <button class="opt">File-based keeps backups longer</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>That is what tutorial B3a states. The console makes the choice for you: it offers no volume-based type.</p></details>
+    </div>
+    <div class="q">
+      <p>In the group&apos;s options for the server, Include Path starts as <code>/</code>. What does that protect?</p>
+      <div class="opts">
+        <button class="opt">Nothing until you type a path</button>
+        <button class="opt" data-ok>The whole server</button>
+        <button class="opt">Only the home folders</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Specify directories is chosen and Include Path is <code>/</code>, the whole server. Northgate changes it to <code>/data</code>.</p></details>
+    </div>
+  </div>
+  <div class="tour" style="margin-top:20px">
+    <figure class="tstep" data-hot="6,51,58,8.5" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-8-include-path.png" alt="Options for the server (name blurred): Specify directories chosen, autofs skipped, Include Path /data." width="790" height="654"></div>
+      <figcaption>
+        <h3>Northgate clicked the pencil on the server&apos;s row. Where does it limit the group to the folder?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Type <code>/data</code> in Include Path, then click Save.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>A group that starts by itself</h2>
+  <p class="lead">Northgate wants to run its first backup by hand, when it is ready. It fills in the group form, picks the daily policy and clicks <b>Protect</b>. It does not open Additional Settings.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What does the group do next?</p>
+      <div class="opts">
+        <button class="opt">Nothing: a new group waits for Run Now</button>
+        <button class="opt" data-ok>It runs on its daily schedule, counted from the moment Northgate opened the form</button>
+        <button class="opt">It runs once at midnight</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The start time is the moment you open the form, so without the pause the daily schedule runs from now.</p></details>
+    </div>
+  </div>
+  <div class="tour" style="margin-top:20px">
+    <figure class="tstep" data-hot="35,74,18,17" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-9-pause-runs.png" alt="Additional Settings: Start Time 1:40pm, Europe/London; the Pause Future Runs switch is on, with the note: once enabled, no runs will be scheduled." width="1002" height="270"></div>
+      <figcaption>
+        <h3>Where does Northgate stop the schedule before it clicks Protect?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Under Additional Settings, click the Pause Future Runs row, switch it on and click the tick. The note reads: once enabled, no runs will be scheduled.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="38,81,5.5,11" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-10-group-paused.png" alt="Protection: b-linux-files, Physical Files, policy b-daily-7d, with a Paused tag." width="1227" height="330"></div>
+      <figcaption>
+        <h3>Northgate clicked Protect. Where does the list show the group is paused?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Paused tag beside the group. In our lab the command line agreed: the group was paused, file-based, on <code>/data</code>.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which of the four built-in policies has no data lock?</p>
+      <div class="opts">
+        <button class="opt">Gold</button>
+        <button class="opt" data-ok>Basic</button>
+        <button class="opt">Bronze</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Basic: daily, kept 30 days. Gold, Silver and Bronze each carry a lock equal to their retention.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You click Create Policy. What does the Lock field hold when the dialog opens?</p>
+      <div class="opts">
+        <button class="opt">Nothing: locks are off until you add one</button>
+        <button class="opt" data-ok>2 Weeks: remove it if you do not want a lock</button>
+        <button class="opt">The same as the policy you used last</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The dialog fills in Retain for 2 Weeks and Lock 2 Weeks. A locked backup cannot be deleted until the lock ends.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You make a group and do not switch on Pause Future Runs. When does its daily schedule start?</p>
+      <div class="opts">
+        <button class="opt">When you first click Run Now</button>
+        <button class="opt" data-ok>From the moment you opened the form</button>
+        <button class="opt">At the start of the next week</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The start time is the moment you open the form. Switch on Pause Future Runs to keep only manual runs.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can choose a policy and make a group</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>A new instance has four policies; Gold, Silver and Bronze lock their backups and Basic does not. The Create Policy dialog adds a lock of its own: remove it for a test. A new group runs from the moment you open the form unless you pause it.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B1 orders the instance and shows its four policies. Tutorial B3a registers the server, makes the policy and makes the paused group, from the console and the command line.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

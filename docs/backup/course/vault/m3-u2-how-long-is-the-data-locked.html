@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en" data-course="vault">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How long is the data really locked? · Cyber Vault course</title>
+<meta name="description" content="Course unit 3.2: find the lock length the Data Protect console shows, predict what the vault really holds, and say why the two differ. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m3-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">Cyber Vault course</a> <span>·</span> Module 3 · Archive and lock</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 3</span>
+      <h1>How long is the data really locked?</h1>
+      <p class="lead">By the end you can find the lock length the Data Protect console shows, say how long the vault really holds the data, and explain why the two differ.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: the console says the archive is locked for one day. The vault holds the data chunks for up to fifteen days."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"text":"the console says","at":[14,30],"hand":true,"size":17,"tone":"muted"},
+          {"box":[10,40,180,60],"heavy":true,"title":"1 day"},
+          {"text":"the vault holds","at":[234,30],"hand":true,"size":17,"tone":"muted"},
+          {"box":[230,40,180,60],"heavy":true,"tone":"mark","title":"up to 15 days"},
+          {"text":"two different numbers","at":[120,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. It archives three groups from Defender Data Protect to a Cyber Vault, with a policy that keeps each archive for 1 day. Its auditor asks: how long can nobody delete this data?</p>
+    </div>
+  </div>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab on 10 November 2026 (tutorial V4), with the first finding from 5 October (tutorial V7). The vault is a Beta in us-south, with no SLA.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Where a lock can be set</h2>
+  <p class="lead">Data Protect writes several kinds of object into the vault. Each gets its own lock date. The vault enforces the lock; Data Protect only asks for it.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Data Protect writes archive metadata, data chunks, tree metadata and configs into the vault. The metadata object is locked for one day. The chunks and tree objects are locked for nine to fifteen days. Configs have no lock."
+    data-drawing='{"w":560,"h":290,"shapes":[
+      {"box":[10,15,150,64],"title":"Data Protect","detail":"write key"},
+      {"line":[164,45,196,45],"arrow":true,"tone":"mark"},
+      {"box":[200,5,300,64],"title":"archive_metadata","detail":"1 day"},
+      {"box":[200,77,300,64],"tone":"mark","title":"cloud_chunk_file","detail":"9 to 15 days"},
+      {"box":[200,149,300,64],"tone":"mark","title":"snap_tree_objects","detail":"9 to 15 days"},
+      {"box":[200,221,300,64],"dashed":true,"title":"configs","detail":"no lock"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which key can read the lock date of an object in the vault?</p>
+      <div class="opts">
+        <button class="opt">The write key</button>
+        <button class="opt" data-ok>The read key</button>
+        <button class="opt">Neither: only the account owner can</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our tests the read key could read an object&apos;s lock and the write key could not (V7, test V8). That is why the check in this unit was made with the read key.</p></details>
+    </div>
+    <div class="q">
+      <p>Northgate&apos;s policy says: archive, retain for 1 day. Who decides the lock date of each object in the vault?</p>
+      <div class="opts">
+        <button class="opt">The vault, from its own maximum</button>
+        <button class="opt" data-ok>Data Protect sets it on each write; the vault does not limit it</button>
+        <button class="opt">The person who made the vault, once, for all objects</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In V7 (5 October) Data Protect locked data for 18 days in a vault whose maximum was 3 days. A second test vault with a minimum of 2 days locked a 1-day request for 1 day and a 5-day request for 5 days: the minimum and maximum did not limit a lock the writer set (ISS-132, ISS-145).</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>What does the vault hold?</h2>
+  <p class="lead">On 10 November Northgate ran its three groups at 11:43 and 11:44, each archived for 1 day. At 11:48 an admin read the lock of every object version in the vault with the read key.</p>
+  <pre class="def" aria-label="What was read">Object kind               Count   Lock until
+archive_metadata          3       ?
+cloud_chunk_file          35      ?
+metadata/snap_tree_objects 8      ?
+configs                   -       ?</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Until when are the 35 data chunks locked?</p>
+      <div class="opts">
+        <button class="opt">11 November, one day after the run</button>
+        <button class="opt" data-ok>19, 24 and 25 November: 9 to 15 days</button>
+        <button class="opt">For ever</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">9 to 15 days, not 1.</span><p>The chunks and the tree metadata were locked until 19, 24 and 25 November 2026 (the last at 20:50:48Z). Only the three <code>archive_metadata</code> objects were locked for one day. <code>configs</code> had no lock.</p><pre class="def" aria-label="What was read">Object kind               Count   Lock until
+archive_metadata          3       one day
+cloud_chunk_file          35      19, 24, 25 Nov
+metadata/snap_tree_objects 8      19, 24, 25 Nov
+configs                   -       no lock</pre></details>
+    </div>
+    <div class="q">
+      <p>The same check in October found a different gap. What did it find?</p>
+      <div class="opts">
+        <button class="opt">The vault locked data for less than the policy asked</button>
+        <button class="opt" data-ok>The data was locked for 18 days in a vault with a 3-day maximum</button>
+        <button class="opt">No data was locked at all</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On 5 October, 3,803 data chunks and 16 metadata objects were locked until 23 October, with a 1-day archive retention. The build stopped there. The 10 November run shows the same pattern, in a new vault.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Click through the console</span>
+  <h2>What the console shows</h2>
+  <p class="lead">These screens come from the Data Protect console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="76.5,62,5,9" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V4-2-three-groups-archived.png" alt="The Protection page: three groups, cv-sql-labdb, cv-linux-data and cv-win-data, all Succeeded and Met SLA. Each row has a local icon and a cloud icon, both green." width="1184" height="450"></div>
+      <figcaption>
+        <h3>All three groups ran with an archive copy. Which icon tells you the archive copy succeeded?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The cloud icon is the archive copy; the icon beside it is the local backup. Open a run and its Cloud Archive tab to see the lock.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="42.5,62,31,8" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V4-3-cloud-archive-tab.png" alt="Run Details for cv-linux-data, the Cloud Archive tab: Archive Object Lock Enabled, Archive Object Lock Expiry Time Nov 11, 2026 11:43am. Succeeded on cv-console-vault, 39 seconds." width="1184" height="380"></div>
+      <figcaption>
+        <h3>You opened the Cloud Archive tab of a run. Where does the console show the lock?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Archive Object Lock Expiry Time says 11 November, 11:43: one day after the run. The vault itself held the data chunks for up to 15 days. The console does not show that.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>A deletion that has to wait</h2>
+  <p class="lead">After the test, Northgate wants to delete the vault, on 12 November. The archive retention was 1 day, so it expects no lock to remain.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What happens?</p>
+      <div class="opts">
+        <button class="opt">The vault deletes: the console said the lock ended on 11 November</button>
+        <button class="opt" data-ok>The vault holds locked data until 25 November 2026 at 20:50:48Z; IBM says it cannot be deleted before then</button>
+        <button class="opt">Only the data chunks are removed</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The newest data lock in the vault runs to 25 November. IBM&apos;s page says a vault with locked objects cannot be deleted. In our October test the delete call was accepted anyway and the vault stayed in &quot;deleting&quot; for at least 50 minutes, with its locked objects still readable (ISS-146). So do not plan around a delete before the last lock ends.</p></details>
+    </div>
+    <div class="q">
+      <p>What should the auditor be told about how long the data cannot be deleted?</p>
+      <div class="opts">
+        <button class="opt">The archive retention in the policy</button>
+        <button class="opt">The expiry time in the console</button>
+        <button class="opt" data-ok>The lock dates read from the vault with the read key</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The vault enforces the lock, so its own dates are the record. In our lab the console and the policy both said 1 day while the vault held data for up to 15.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> The console&apos;s one-day lock is not the lock on the data chunks. In our lab, on 5 October and again on 10 November, they differed. Read the dates from the vault if the number matters.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>A policy archives for 1 day. The console shows a lock expiry of one day later. How long were the data chunks locked in our lab?</p>
+      <div class="opts">
+        <button class="opt">One day</button>
+        <button class="opt" data-ok>9 to 15 days</button>
+        <button class="opt">Not locked</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Until 19, 24 and 25 November for runs made on 10 November.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Which object kind was locked for only one day?</p>
+      <div class="opts">
+        <button class="opt" data-ok>archive_metadata</button>
+        <button class="opt">cloud_chunk_file</button>
+        <button class="opt">snap_tree_objects</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The three <code>archive_metadata</code> objects. The chunks and the tree metadata had the longer lock.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A vault has a 3-day maximum. Does that stop Data Protect locking data for longer?</p>
+      <div class="opts">
+        <button class="opt">Yes, the vault refuses it</button>
+        <button class="opt" data-ok>No: in our tests the maximum did not limit a lock the writer set</button>
+        <button class="opt">Only for the read key</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>18 days on 5 October in a vault with a 3-day maximum, and a 5-day lock on a vault with the same maximum on 6 October (ISS-132, ISS-145).</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know what the lock really is</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>The console showed one day. The vault held the data chunks for 9 to 15 days. Read the lock from the vault with the read key; the vault enforces it, and plan on the vault staying until the last lock ends: IBM says a vault with locked data cannot be deleted, and our October delete test left the vault stuck in &quot;deleting&quot; (ISS-146).</p></div>
+    <div><span class="label">When you have access to the Beta</span><p>Tutorial V4 runs the archive from the console and reads the lock dates from the vault. Tutorial V7 holds the October finding and the minimum and maximum test.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

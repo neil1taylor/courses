@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Learn ROVS without a cluster · ROVS course</title>
+<meta name="description" content="A short, interactive course on Red Hat OpenShift Virtualization Service on IBM Cloud for VMware admins. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body>
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb">ROVS course <span>·</span> <a href="../../">All courses</a></span>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+  <section class="home-hero">
+    <div class="start">
+      <div>
+        <span class="kicker">For VMware admins</span>
+        <h1>Learn ROVS without a cluster</h1>
+        <p class="lead">Red Hat OpenShift Virtualization Service on IBM Cloud, in short interactive units. Explore real VM definitions, run commands and see the real output, click through the real console, and check what you learned. Every fact comes from a tested tutorial chapter.</p>
+        <div class="facts"><span>6 modules</span><span>About 10 minutes a unit</span><span>No cluster needed</span></div>
+        <div><a class="btn" href="m2-u1-what-a-vm-is-made-of.html">Try the first unit</a></div>
+      </div>
+      <div style="display:grid;gap:12px">
+        <svg class="sketch" role="img" aria-label="Sketch: a vSphere host full of VMs, an arrow, and a ROVS cluster."
+          data-drawing='{"w":420,"h":220,"shapes":[
+            {"text":"vSphere","at":[22,32],"hand":true,"tone":"muted"},
+            {"box":[10,40,150,140],"heavy":true},
+            {"grid":[22,54,4,4,26,20,34,30],"tone":"muted"},
+            {"line":[178,110,240,110],"arrow":true,"tone":"mark"},
+            {"text":"ROVS","at":[270,32],"hand":true,"tone":"muted"},
+            {"box":[258,40,150,140],"heavy":true},
+            {"grid":[270,54,4,2,26,20,34,30],"tone":"mark"},
+            {"text":"you, after the course","at":[250,206],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+        <p class="hand tilt">The story: Northgate Freight, a made-up haulier, moves its vSphere estate to ROVS one problem at a time.</p>
+      </div>
+    </div>
+  </section>
+
+  <ol class="modules">
+    <li class="module">
+      <span class="num">1</span>
+      <div><h2>ROVS for a VMware admin</h2><p class="about">What ROVS is, who runs what, and the words that change.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m1-u1-what-rovs-is-and-who-runs-what.html" data-unit-link="m1-u1">What ROVS is, and who runs what</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m1-u2-vsphere-words-rovs-words.html" data-unit-link="m1-u2">vSphere words, ROVS words</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m1-u3-where-rovs-fits-and-where-it-does-not.html" data-unit-link="m1-u3">Where ROVS fits, and where it does not</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m1-u4-find-your-way-around-a-cluster.html" data-unit-link="m1-u4">Find your way around a cluster</a><span class="min">10 min</span></li>
+      </ul>
+    </li>
+    <li class="module">
+      <span class="num">2</span>
+      <div><h2>Anatomy of a VM</h2><p class="about">Read a VM's definition and know what every part does.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m2-u1-what-a-vm-is-made-of.html" data-unit-link="m2-u1">What a VM is made of</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m2-u2-where-a-vms-disk-lives.html" data-unit-link="m2-u2">Where a VM's disk really lives</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m2-u3-templates-instance-types-golden-images.html" data-unit-link="m2-u3">Templates, instance types and golden images</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m2-u4-first-boot-cloud-init-sysprep.html" data-unit-link="m2-u4">First boot: cloud-init and Sysprep</a><span class="min">10 min</span></li>
+      </ul>
+    </li>
+    <li class="module">
+      <span class="num">3</span>
+      <div><h2>Networking</h2><p class="about">The VPC under the cluster, and how a VM joins a network.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m3-u1-the-vpc-under-the-cluster.html" data-unit-link="m3-u1">The VPC under the cluster</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m3-u2-pod-network-localnet-or-layer-2.html" data-unit-link="m3-u2">Pod network, localnet or Layer 2?</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m3-u3-put-a-vm-on-a-vpc-subnet.html" data-unit-link="m3-u3">Put a VM on a VPC subnet</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m3-u4-keep-vms-apart-policies-and-egress.html" data-unit-link="m3-u4">Keep VMs apart: policies and egress</a><span class="min">10 min</span></li>
+      </ul>
+    </li>
+    <li class="module">
+      <span class="num">4</span>
+      <div><h2>Storage</h2><p class="about">Storage classes, disk sizes and how fast the storage is.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m4-u1-storage-classes-and-access-modes.html" data-unit-link="m4-u1">Storage classes and access modes</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m4-u2-grow-and-add-disks.html" data-unit-link="m4-u2">Grow and add disks</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m4-u3-how-fast-is-the-storage.html" data-unit-link="m4-u3">How fast is the storage?</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m4-u4-file-storage-for-vpc-as-an-option.html" data-unit-link="m4-u4">File Storage for VPC as an option</a><span class="min">10 min</span></li>
+      </ul>
+    </li>
+    <li class="module">
+      <span class="num">5</span>
+      <div><h2>Day two</h2><p class="about">Keep VMs running: migrate, update, back up and troubleshoot.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m5-u1-live-migration.html" data-unit-link="m5-u1">Live migration</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m5-u2-updates-and-node-maintenance.html" data-unit-link="m5-u2">Updates and node maintenance</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m5-u3-snapshots-and-backups.html" data-unit-link="m5-u3">Snapshots and backups</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m5-u4-watch-and-troubleshoot-a-vm.html" data-unit-link="m5-u4">Watch and troubleshoot a VM</a><span class="min">10 min</span></li>
+      </ul>
+    </li>
+    <li class="module">
+      <span class="num">6</span>
+      <div><h2>Moving and protecting VMs</h2><p class="about">Migration from vSphere, disaster recovery, and Northgate's whole move.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m6-u1-migrate-from-vsphere-with-mtv.html" data-unit-link="m6-u1">Migrate from vSphere with MTV</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m6-u2-rackware-for-migration-and-dr.html" data-unit-link="m6-u2">RackWare for migration and DR</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m6-u3-regional-dr-between-two-clusters.html" data-unit-link="m6-u3">Regional DR between two clusters</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m6-u4-final-scenario-design-northgates-move.html" data-unit-link="m6-u4">Final scenario: design Northgate's move</a><span class="min">20 min</span></li>
+      </ul>
+    </li>
+  </ol>
+  <p class="small" style="padding-top:24px">Your progress is kept in this browser only. When you have a cluster, the tutorials run everything the course shows.</p>
+</div></main>
+</body>
+</html>

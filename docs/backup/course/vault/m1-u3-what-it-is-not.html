@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en" data-course="vault">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What it is not · Cyber Vault course</title>
+<meta name="description" content="Course unit 1.3: say plainly that the Cyber Vault is logically isolated and not a physical air gap, and state the Beta's terms: us-south only, allow-listed, no SLA and no support. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m1-u3">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">Cyber Vault course</a> <span>·</span> Module 1 · What the vault is</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 3 of Module 1</span>
+      <h1>What it is not: logical isolation, no physical air gap, and the Beta&apos;s terms</h1>
+      <p class="lead">By the end you can say what &quot;isolated&quot; means for this vault, say that it is not a physical air gap, and list the terms of the Beta that Northgate must accept.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: the vault is isolated by rules, not by distance. Logical isolation yes. Physical air gap no."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"box":[10,40,180,60],"heavy":true,"tone":"mark","title":"Logical isolation","detail":"rules and locks"},
+          {"box":[230,40,180,60],"dashed":true,"tone":"muted","title":"Physical air gap","detail":"not this"},
+          {"text":"isolated by rules, not by distance","at":[40,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its board has heard the words &quot;air gap&quot;. Before Northgate repeats them, it needs to know exactly what it would be promising.</p>
+    </div>
+  </div>
+  <p class="small">The screen comes from the IBM Cloud console in our lab on 10 November 2026. The results come from tests on 5 and 6 October 2026. The vault is IBM Cloud Cyber Vault (Beta), in us-south, with no SLA.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>What keeps the vault apart</h2>
+  <p class="lead">The vault is isolated by network rules and by locks. It is still a bucket in a cloud region, and the allowed network reaches it over the network.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. The allowed network reaches the vault and gets HTTP 200. Everyone else, even with a valid key, gets HTTP 403. The vault is in an account that IBM manages, in us-south."
+    data-drawing='{"w":560,"h":250,"shapes":[
+      {"box":[10,10,200,64],"title":"Allowed network","detail":"the lab VPC"},
+      {"line":[214,42,306,42],"arrow":true,"tone":"mark"},
+      {"text":"200","at":[240,32],"hand":true,"size":17,"tone":"mark"},
+      {"box":[310,60,240,70],"heavy":true,"tone":"mark","title":"Cyber Vault","detail":"IBM-managed account, us-south"},
+      {"box":[10,150,200,64],"dashed":true,"tone":"muted","title":"Everyone else","detail":"even with a valid key"},
+      {"line":[214,182,306,120],"arrow":true},
+      {"text":"403","at":[250,172],"hand":true,"size":17}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The allowed network is inside the allow-list. What did it get from the vault in our tests?</p>
+      <div class="opts">
+        <button class="opt">Nothing: the vault is cut off from every network</button>
+        <button class="opt" data-ok>Normal answers: HTTP 200 for lists and reads</button>
+        <button class="opt">Only reads</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A control from the lab VSI inside the allowed VPC got HTTP 200 (V7, 6 October 2026). That is why this is logical isolation: the vault is reachable, by the networks on its list, and refuses the rest.</p></details>
+    </div>
+    <div class="q">
+      <p>Whose account holds the vault&apos;s bucket?</p>
+      <div class="opts">
+        <button class="opt">The customer&apos;s account</button>
+        <button class="opt" data-ok>An account that IBM manages</button>
+        <button class="opt">It is not known</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Our notes record the answer of 12 October 2026: the vault is in an IBM-managed account. Consistent with that, the bucket was not in our COS instance&apos;s bucket list and the configuration API gave the owner 403 (V7, section 4.3).</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Click through the console</span>
+  <h2>The words on the page</h2>
+  <p class="lead">The console page for the Cyber Vault uses the word &quot;air-gapped&quot;. Click where it does. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="4,24,92,18" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V2-1-cyber-vault-list.png" alt="Cyber Vaults: three vaults, all Active, us-south, Provider-managed, Retention 0 days" width="1227" height="585"></div>
+      <figcaption>
+        <h3>Where does the page describe the vault with air-gap words?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The banner calls it a managed air-gapped S3 compatible storage solution with virtual air-gap isolation. Those words describe network rules and locks, not a disconnected building. Say &quot;logical isolation, not a physical air gap&quot;.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="47.5,56,6,34" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V2-1-cyber-vault-list.png" alt="Cyber Vaults: three vaults, all Active, us-south, Provider-managed, Retention 0 days" width="1227" height="585"></div>
+      <figcaption>
+        <h3>Which column shows where the vaults are?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Location says us-south for every vault. The create form offers only Dallas (us-south).</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Predict</span>
+  <h2>The terms of the Beta</h2>
+  <p class="lead">The console banner for the vault says the Beta is offered for evaluation and testing for a limited time, with no warranties, SLAs or support. Predict the rest.</p>
+  <pre class="def" aria-label="Beta terms">Term                       Beta
+Regions                    ?
+How an account gets in     ?
+SLA and support            ?
+Use in production          ?</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which row is correct?</p>
+      <div class="opts">
+        <button class="opt">us-south and eu-de; open to all; 99.9% SLA; allowed in production</button>
+        <button class="opt" data-ok>us-south only; allow-listed; no SLA and no support; not for production</button>
+        <button class="opt">us-south only; open to all; no SLA; allowed in production</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">One region, a list, no promises.</span><p>IBM&apos;s overview says there are no warranties, SLA or support, and that it is not for production use. Creating a vault in any region but us-south returns 400.</p><pre class="def" aria-label="Beta terms">Term                       Beta
+Regions                    us-south only
+How an account gets in     allow-listed
+SLA and support            none
+Use in production          not for production</pre></details>
+    </div>
+    <div class="q">
+      <p>Our account listed vaults fine on 25 September 2026 but every create failed. What did that show?</p>
+      <div class="opts">
+        <button class="opt">The account was on the allow-list</button>
+        <button class="opt" data-ok>A list works with a role alone; only a create shows whether the account is allowed in</button>
+        <button class="opt">The vault service was down for a week</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Six creates went to <code>failed</code> in 17 to 40 seconds with no error text. A create on 5 October 2026 went to <code>active</code> in about 30 seconds. IBM did not confirm the cause; the most likely one is that the account was not yet on the list. An account on Basic support cannot open the onboarding case; the product team allow-lists it when asked (V1).</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>A draft for the auditor</h2>
+  <p class="lead">Northgate&apos;s draft says: "The vault is a physically air-gapped, production-ready service, and the owner can show who touched it."</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which part is wrong because of what this unit showed?</p>
+      <div class="opts">
+        <button class="opt">Only &quot;physically air-gapped&quot;</button>
+        <button class="opt">Only &quot;production-ready&quot;</button>
+        <button class="opt" data-ok>Both: the isolation is logical, and the Beta is not for production</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The vault is logically isolated and reachable by its allowed network. IBM&apos;s overview says the Beta has no SLA, no support and is not for production use.</p></details>
+    </div>
+    <div class="q">
+      <p>The last claim: the owner can show who touched the vault. What did our test find?</p>
+      <div class="opts">
+        <button class="opt">The owner could switch on audit events and saw every request</button>
+        <button class="opt" data-ok>The owner got 403 when trying to switch them on, and found no vault events in the logs</button>
+        <button class="opt">Events appeared but only for reads</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On 6 October 2026 the configuration calls returned HTTP 403 for the account owner. Of 4,346 events in the us-south logs instance, none came from Cloud Object Storage, and a scan of the eu-de instance found no vault event. IBM&apos;s overview calls audit logging &quot;fully managed&quot;. In our lab an owner could not show an auditor who touched the vault.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> Two other Beta findings from our lab: a vault delete was accepted and then stayed in <code>deleting</code> for at least six days, and a failed create left two keys behind on the COS instance. Both are in our feedback record.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which phrase is right for this vault?</p>
+      <div class="opts">
+        <button class="opt">Physical air gap</button>
+        <button class="opt" data-ok>Logical isolation, not a physical air gap</button>
+        <button class="opt">Disconnected from every network</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The allowed network reaches the vault and got HTTP 200. Everyone else was refused.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Which list of Beta terms is right?</p>
+      <div class="opts">
+        <button class="opt" data-ok>us-south only, allow-listed, no SLA, no support</button>
+        <button class="opt">Any region, open to all, no SLA</button>
+        <button class="opt">us-south only, open to all, 24-hour support</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s overview: no warranties, SLA or support, and not for production use.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Is this Beta the Deployable Architecture &quot;COS Cyber Vault for Storage Defender&quot;?</p>
+      <div class="opts">
+        <button class="opt">Yes, the same product</button>
+        <button class="opt" data-ok>No: it is a different product, covered in the next unit</button>
+        <button class="opt">Yes, an older version of it</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The Beta is a managed COS feature. The Deployable Architecture is a separate product that was never deployed in our lab. Unit 1.4 sets them side by side.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know what the vault is not</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Logical isolation, not a physical air gap. A Beta in us-south only, allow-listed, with no SLA and no support, and not for production. It is not the Deployable Architecture &quot;COS Cyber Vault for Storage Defender&quot;. In our lab the owner could not see audit events for it.</p></div>
+    <div><span class="label">When you have access to the Beta</span><p>Tutorial V1 covers the allow-list and roles. The five Beta findings are in the feedback record.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

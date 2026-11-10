@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Block or file? · VPC course</title>
+<meta name="description" content="Course unit 4.1: choose between a block volume, a file share and Object Storage for each Northgate need, and read the real output of creating a data volume. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m4-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPC course</a> <span>·</span> Module 4 · Storage and backup</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 4</span>
+      <h1>Block or file?</h1>
+      <p class="lead">By the end you can say which kind of storage fits a need, read the output of creating and attaching a data volume, and avoid the two mistakes that catch people on their first mount.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a datastore holding disk files, an arrow, and a VPC with a server that has its own disk and a shared folder beside it."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"text":"vSphere","at":[22,32],"hand":true,"tone":"muted"},
+          {"box":[10,40,150,140],"heavy":true,"title":"datastore"},
+          {"line":[178,110,240,110],"arrow":true,"tone":"mark"},
+          {"text":"VPC","at":[270,32],"hand":true,"tone":"muted"},
+          {"box":[258,40,70,140],"heavy":true,"title":"server"},
+          {"box":[340,40,70,140],"dashed":true,"title":"shared"},
+          {"text":"disk or folder?","at":[250,206],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its app servers each need a disk of their own, and a folder that every app server can read. The company is made up; the names and output are real.</p>
+    </div>
+  </div>
+  <p class="small">Every name and line of output in this unit comes from a real run, recorded in tutorial chapters 40, 41 and 45. Chapter 40 is marked cited: it rests on IBM&apos;s pages, plus a short run with <code>sdp</code> volumes.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>A disk of its own, and a folder to share</h2>
+  <p class="lead">Four parts, in the commands that create them. Select a part of the drawing to see what it does and which lines make it. You can also click a line. The resource group and tag options are left out.</p>
+  <div class="explorer" data-start="volume"
+    data-map='{"volume":[[1,1]],"attach":[[2,2]],"share":[[3,3]],"mount":[[4,7]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram: an app server holding a boot volume, a data volume and an attachment. Outside it, dashed, a file share and its mount target, joined to the server by a line."
+          data-drawing='{"w":560,"h":330,"shapes":[
+            {"text":"app server","at":[30,34],"hand":true,"tone":"muted"},
+            {"box":[24,44,240,276],"heavy":true},
+            {"box":[40,60,208,56],"title":"Boot volume","detail":"100 GB by default"},
+            {"box":[40,132,208,62],"part":"volume","title":"Data volume","detail":"general-purpose · 10 GB"},
+            {"box":[40,210,208,92],"part":"attach","title":"Attachment","detail":"auto-delete true"},
+            {"text":"outside the server","at":[330,34],"hand":true,"tone":"mark"},
+            {"box":[330,44,210,76],"part":"share","dashed":true,"title":"File share","detail":"dp2 · NFS"},
+            {"line":[435,122,435,170],"part":"share"},
+            {"box":[330,172,210,76],"part":"mount","dashed":true,"title":"Mount target","detail":"network interface + security group"},
+            {"line":[266,200,328,210],"part":"mount"},
+            {"text":"many servers can mount it","at":[330,280],"hand":true,"size":17,"tone":"mark"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="volume">
+          <h3>Data volume</h3>
+          <p>A block volume is a disk that attaches to one server. A data volume is one attached in addition to the boot volume. <code>general-purpose</code> gives 3 IOPS per GB; the 10 GB volume shows 3000 IOPS.</p>
+          <p class="hand tilt"><b>From vSphere:</b> roughly a VMDK on a datastore. This is a rough mapping, not an IBM statement.</p>
+          <p class="watch"><b>Watch for this.</b> The <code>sdp</code> profile is for allowlisted accounts only. Check with <code>ibmcloud is volume-profiles</code> before you design around it.</p>
+        </div>
+        <div class="part-info" data-part="attach">
+          <h3>Attachment</h3>
+          <p>The link between a volume and a server. It has its own name and an auto-delete setting. With auto-delete true, deleting the server deletes the volume.</p>
+          <p class="watch"><b>Watch for this.</b> The volume and the server must be in the same zone.</p>
+        </div>
+        <div class="part-info" data-part="share">
+          <h3>File share</h3>
+          <p>A shared folder reached over NFS by many servers at once. The zonal profile is <code>dp2</code>, from 10 GB. Servers mount it over NFS version 4.1 or higher.</p>
+          <p class="hand tilt"><b>From vSphere:</b> roughly the other half of a datastore: a folder for many hosts, where a volume is a disk for one.</p>
+          <p class="watch"><b>Watch for this.</b> Windows is not supported. You cannot change a share&apos;s profile after creation.</p>
+        </div>
+        <div class="part-info" data-part="mount">
+          <h3>Mount target</h3>
+          <p>The network endpoint through which servers mount the share. It needs a network interface and a security group.</p>
+          <p class="watch"><b>Watch for this.</b> The security group must allow inbound NFS over TCP from the servers that mount the share. The chapter used port 2049.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The commands that create a data volume, attach it, create a file share and give it a mount target">ibmcloud is volume-create vpct-prod-app-z1-01-data1 general-purpose us-east-1 --capacity 10
+ibmcloud is instance-volume-attachment-add vpct-prod-app-z1-01-data1-att vpct-prod-app-z1-01 vpct-prod-app-z1-01-data1 --auto-delete true
+ibmcloud is share-create --profile dp2 --zone us-east-1 --size 10 --iops 100 --name vpct-prod-app-share --initial-owner-uid 1000 --initial-owner-gid 1000
+ibmcloud is share-mount-target-create vpct-prod-app-share --name vpct-prod-app-share-mt1 \
+  --transit-encryption none --access-protocol nfs4 \
+  --vni-name vpct-prod-app-share-mt1-vni0 --vni-auto-delete true \
+  --subnet vpct-prod-app-z1 --vni-sgs vpct-prod-fs-sg --vpc vpct-prod</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>Find the new disk, then format it</h2>
+  <p class="lead">A new data volume has no file system. Run each command in turn. The output is what the lab returned. Long output is cut with <code>...</code>.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is instance-volume-attachments vpct-prod-app-z1-01</pre>
+          <pre class="out">ID                                          Name                            Volume                         Status     Type   Device                                            Auto delete
+0757-…-c6   vpct-prod-app-z1-01-data1-att   vpct-prod-app-z1-01-data1      attached   data   0757-…-9t8b6   true
+0757-…-57   vpct-prod-app-z1-01-boot        vpct-prod-app-z1-01-boot-vol   attached   boot   0757-…-x8tkv   true</pre>
+          <p class="hand note">One boot attachment, one data attachment, both attached.</p>
+        </div>
+        <div class="q">
+          <p>On the server, <code>lsblk</code> lists the disks. Which one is the new 10 GB data disk?</p>
+          <div class="opts">
+            <button class="opt">The first disk after the boot disk</button>
+            <button class="opt" data-ok>The 10 GB disk with no partitions</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>The chapter says not to take the first disk after the boot disk. Run the next command and look at the sizes.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">lsblk</pre>
+          <pre class="out">NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+vda     253:0    0  100G  0 disk 
+├─vda1  253:1    0 98.9G  0 part /
+├─vda13 253:13   0 1023M  0 part /boot
+├─vda14 253:14   0    4M  0 part 
+└─vda15 253:15   0  106M  0 part /boot/efi
+vdb     253:16   0  366K  0 disk 
+vdc     253:32   0   44K  0 disk 
+vdd     253:48   0   10G  0 disk </pre>
+          <p class="hand note">vdb and vdc are small configuration disks: 366K and 44K.</p>
+          <p class="hand note">vdd is the data disk. Formatting vdb would overwrite a configuration disk.</p>
+        </div>
+        <div class="cmd">
+          <p class="pre"># DEV=/dev/vdd, as in the chapter</p>
+          <pre class="in">sudo mkfs.ext4 $DEV</pre>
+          <pre class="out">Discarding device blocks:       0/2621440               done                            
+Creating filesystem with 2621440 4k blocks and 655360 inodes
+...
+Writing superblocks and filesystem accounting information:  0/80     done</pre>
+        </div>
+        <div class="cmd">
+          <p class="pre"># after: sudo mkdir /data; sudo mount $DEV /data</p>
+          <pre class="in">df -h /data</pre>
+          <pre class="out">Filesystem      Size  Used Avail Use% Mounted on
+/dev/vdd        9.8G  2.1M  9.3G   1% /data</pre>
+          <p class="hand note">The mount does not survive a reboot. Add the volume&apos;s UUID to /etc/fstab with the nofail option.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Design it</span>
+  <h2>Disk, folder or object store?</h2>
+  <p class="lead">Three Northgate needs. Pick a choice, then read the worked answer from chapter 40.</p>
+  <div class="pair">
+    <div class="q">
+      <p>Each app server needs its own data disk.</p>
+      <div class="opts">
+        <button class="opt" data-ok>A <code>general-purpose</code> block volume</button>
+        <button class="opt">An <code>sdp</code> block volume</button>
+        <button class="opt">A file share</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>The series uses a <code>general-purpose</code> volume. The <code>sdp</code> profile needs an allowlisted account. A block volume is one server&apos;s own disk.</p></details>
+    </div>
+    <div class="q">
+      <p>Both app servers must read and write the same folder.</p>
+      <div class="opts">
+        <button class="opt">One block volume attached to both</button>
+        <button class="opt" data-ok>A zonal <code>dp2</code> file share</button>
+        <button class="opt">Two block volumes</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A block volume is not shared. A zonal <code>dp2</code> share is mounted over NFS by many servers, and it can have a replica in another zone or region.</p></details>
+    </div>
+    <div class="q">
+      <p>Backups and logs must be kept outside the VPC.</p>
+      <div class="opts">
+        <button class="opt">A file share</button>
+        <button class="opt" data-ok>Object Storage</button>
+        <button class="opt">A larger boot volume</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Chapter 40&apos;s table sends backups and logs outside the VPC to Object Storage. Objects are reached over HTTP, not files over NFS.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Predict, then spot the fault</span>
+  <h2>Two things that catch people out</h2>
+  <div class="pair">
+    <div class="q">
+      <p>Northgate raises the data volume from 10 GB to 20 GB with <code>volume-update --capacity 20</code> while the server runs. What is left to do inside the server?</p>
+      <div class="opts">
+        <button class="opt">Nothing. The mount grows by itself</button>
+        <button class="opt" data-ok>Grow the file system into the new space</button>
+        <button class="opt">Stop the server, then start it</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Two steps, not one.</span><p>The chapter ran <code>sudo resize2fs /dev/vdd</code> and then <code>df -h /data</code> showed 20G. The file written before was still there. IBM says capacity of a tiered volume can only grow, and only while it is attached to a running server.</p></details>
+    </div>
+    <div style="display:grid;gap:10px;align-content:start">
+      <p>A Northgate admin mounts the share on an Ubuntu 26.04 server with no extra options:</p>
+      <pre class="def" aria-label="The mount command without the security option">sudo mount -t nfs4 &lt;mount-path&gt; /mnt/share</pre>
+      <p>The mount succeeds. Every write fails with <code>Permission denied</code>.</p>
+      <div class="q">
+        <p>What is missing?</p>
+        <div class="opts">
+          <button class="opt">A rule for TCP 2049 in the security group</button>
+          <button class="opt" data-ok>The option <code>-o sec=sys</code></button>
+          <button class="opt">Encryption in transit</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>Without it the client mounted with <code>sec=null</code>, and every write failed. The chapter used <code>sudo mount -t nfs4 -o sec=sys &lt;mount-path&gt; /mnt/share</code>.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Northgate tries to create a <code>general-purpose</code> volume from a snapshot of an <code>sdp</code> volume. The error is <code>volume_not_implemented</code>. What does that tell you?</p>
+      <div class="opts">
+        <button class="opt">The zone is full</button>
+        <button class="opt" data-ok>The two profiles are different storage generations and cannot be mixed this way</button>
+        <button class="opt">The snapshot is still pending</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Chapter 40 tried it: an <code>sdp</code> snapshot to a <code>general-purpose</code> volume was refused with this error, and so was an <code>sdp</code> volume from a first-generation boot snapshot. An <code>sdp</code> volume from an <code>sdp</code> snapshot worked, in the same zone and in another.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A data volume was attached with auto-delete true. You delete the server. What happens to the volume?</p>
+      <div class="opts">
+        <button class="opt" data-ok>It is deleted with the server</button>
+        <button class="opt">It stays, unattached</button>
+        <button class="opt">It moves to a file share</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The chapter deleted server 01 and its volume went with it. Server 02&apos;s volume, detached first, was still listed.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Which statement about a file share&apos;s mount target is right?</p>
+      <div class="opts">
+        <button class="opt">It needs no security group</button>
+        <button class="opt" data-ok>It needs a network interface and a security group that allows inbound NFS</button>
+        <button class="opt">It works for Windows servers</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says a mount target needs a network interface and a security group, and Windows is not supported.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 3.1.</b> A server profile name has a <code>d</code> in it. What does that give you, and what is the catch?</p>
+      <div class="opts">
+        <button class="opt">A larger boot volume that is kept for ever</button>
+        <button class="opt" data-ok>Instance storage: temporary disks on the host, which can be lost</button>
+        <button class="opt">A dedicated host</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Chapter 30: instance storage is temporary solid-state disks on the host, for scratch space and swap that can be lost.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can pick the storage</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Block is one server&apos;s disk. A file share is a folder for many. Find the 10 GB disk before you format. Grow the file system after you grow the volume. Mount with <code>sec=sys</code>.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 41, Adding and growing data volumes on VPC servers, runs the disk steps. Chapter 45, Sharing files with a VPC file share and replicating it, runs the share.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

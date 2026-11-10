@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en" data-course="vault">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Two products, one name · Cyber Vault course</title>
+<meta name="description" content="Course unit 1.4: tell the IBM Cloud Cyber Vault (Beta) apart from the Deployable Architecture COS Cyber Vault for Storage Defender, and name the right one in a board paper. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m1-u4">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">Cyber Vault course</a> <span>·</span> Module 1 · What the vault is</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 4 of Module 1</span>
+      <h1>The vault and the Deployable Architecture are different products</h1>
+      <p class="lead">By the end you can name both products, say which one this course teaches, and write the right name in a board paper.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>4 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: two products with similar names. IBM Cloud Cyber Vault (Beta) is tested here. The Deployable Architecture COS Cyber Vault for Storage Defender was never deployed here."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"box":[10,30,185,70],"heavy":true,"tone":"mark","title":"Cyber Vault (Beta)","detail":"tested in our lab"},
+          {"box":[225,30,185,70],"dashed":true,"tone":"muted","title":"Deployable Arch.","detail":"never deployed here"},
+          {"text":"two products, similar names","at":[60,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. A colleague sends it a link that says &quot;cyber vault&quot;. Northgate must find out which of two IBM products the link is about.</p>
+    </div>
+  </div>
+  <p class="small">What this unit says about the Deployable Architecture was read from IBM&apos;s catalog code and docs on 25 September 2026. It was never deployed in our lab, so none of it is tested. Everything tested in this course is the Beta, in us-south, with no SLA and no support.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Two products side by side</h2>
+  <p class="lead">Both are about a cyber vault for backups. They are different products and are made in different ways.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Left: IBM Cloud Cyber Vault (Beta), a managed COS feature made by one API call, us-south only, two keys. Right: COS Cyber Vault for Storage Defender, a Terraform Deployable Architecture, one key, never deployed here."
+    data-drawing='{"w":560,"h":290,"shapes":[
+      {"text":"the course teaches","at":[14,22],"hand":true,"size":17,"tone":"mark"},
+      {"box":[10,30,260,60],"heavy":true,"tone":"mark","title":"Cyber Vault (Beta)","detail":"a managed COS feature"},
+      {"box":[10,98,260,60],"title":"one API call","detail":"makes the bucket"},
+      {"box":[10,166,260,60],"title":"us-south only","detail":"two keys"},
+      {"text":"only named here","at":[304,22],"hand":true,"size":17,"tone":"muted"},
+      {"box":[290,30,260,60],"dashed":true,"tone":"muted","title":"COS Cyber Vault DA","detail":"for Storage Defender"},
+      {"box":[290,98,260,60],"dashed":true,"tone":"muted","title":"Terraform","detail":"builds ordinary resources"},
+      {"box":[290,166,260,60],"dashed":true,"tone":"muted","title":"never deployed","detail":"read from code only"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which product is made by one API call and has two keys, one for writing and one for reading?</p>
+      <div class="opts">
+        <button class="opt" data-ok>IBM Cloud Cyber Vault (Beta)</button>
+        <button class="opt">The Deployable Architecture</button>
+        <button class="opt">Both</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The Beta. IBM&apos;s docs, dated 27 August 2026, describe a managed COS feature: one call creates a hardened bucket with credentials and network rules. The Deployable Architecture is a Terraform architecture in the IBM Cloud catalog that builds ordinary resources in the customer&apos;s account, with one HMAC key.</p></details>
+    </div>
+    <div class="q">
+      <p>Which of the two did we deploy and test in our lab?</p>
+      <div class="opts">
+        <button class="opt">Both</button>
+        <button class="opt">The Deployable Architecture only</button>
+        <button class="opt" data-ok>The Beta only</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The Beta only. The Deployable Architecture was never deployed here. Our decision of 25 September 2026 was to document both and test the Beta.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>Match the facts to the product</h2>
+  <p class="lead">Each fact below is from IBM&apos;s own docs or catalog code, read on 25 September 2026. Match it to the product it describes.</p>
+  <pre class="def" aria-label="Facts to match">Fact                                         Which product?
+Regions: us-south only                       ?
+Lock default of 1 to 1000 years              ?
+Lock default of 0 to 3,650 days              ?
+First release 22 October 2025                ?</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which product has a lock of 0 to 3,650 days, where 0 means &quot;the backup software locks each object&quot;?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The Beta</button>
+        <button class="opt">The Deployable Architecture</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Days: the Beta. Years: the architecture.</span><pre class="def" aria-label="Facts matched">Fact                                         Which product?
+Regions: us-south only                       Beta
+Lock default of 1 to 1000 years              Deployable Architecture (when lock is on)
+Lock default of 0 to 3,650 days              Beta
+First release 22 October 2025                Deployable Architecture</pre><p>The Beta&apos;s docs are dated 27 August 2026. The architecture lists 11 regions including eu-de, and its latest release was v0.1.26 on 20 September 2026.</p></details>
+    </div>
+    <div class="q">
+      <p>A customer in eu-de asks which product to use for a Defender vault in the same region. What do the sources say?</p>
+      <div class="opts">
+        <button class="opt">The Beta runs in eu-de too</button>
+        <button class="opt" data-ok>The Beta is us-south only; the architecture lists eu-de, but we did not deploy it</button>
+        <button class="opt">Neither is available in eu-de</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Anything but us-south returns 400 on the Beta. Our own lab is in eu-de, and its network reached the us-south endpoint (a quick 403 or 405 from the lab VPC on 25 September 2026). The architecture&apos;s region list comes from its catalog code; we did not run it.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>A result that belongs to the other product</h2>
+  <p class="lead">A colleague writes in a summary: &quot;We tested the cyber vault, so we know the lock default is at least one year.&quot;</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What is wrong with the sentence?</p>
+      <div class="opts">
+        <button class="opt">Nothing: it is the same product</button>
+        <button class="opt" data-ok>The one-year minimum belongs to the Deployable Architecture, which we did not test; the Beta was tested</button>
+        <button class="opt">The Beta also has a one-year minimum</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>When the lock is on, the architecture&apos;s lock is at least 1 year in the code we read. The Beta takes 0 to 3,650 days, and our tests used a 3-day maximum. The sentence mixes the two.</p></details>
+    </div>
+    <div class="q">
+      <p>Which name should a statement from this course use?</p>
+      <div class="opts">
+        <button class="opt">&quot;Cyber Vault&quot;, with no more detail</button>
+        <button class="opt" data-ok>IBM Cloud Cyber Vault (Beta)</button>
+        <button class="opt">COS Cyber Vault for Storage Defender</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The Beta, by its recorded name. It is also written &quot;IBM COS Cyber Vault (Beta)&quot;. The backup software on the other side is IBM Storage Defender Data Protect 7.4.1 (Defender 2.2.1).</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> A page or a colleague that says only &quot;cyber vault&quot; may mean either product. Ask which one before you reuse any number.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which product was tested in this course?</p>
+      <div class="opts">
+        <button class="opt" data-ok>IBM Cloud Cyber Vault (Beta)</button>
+        <button class="opt">COS Cyber Vault for Storage Defender</button>
+        <button class="opt">Both</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The Beta. The Deployable Architecture was never deployed here.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Which product is us-south only, allow-listed, with no SLA and no support?</p>
+      <div class="opts">
+        <button class="opt">The Deployable Architecture</button>
+        <button class="opt" data-ok>The Beta</button>
+        <button class="opt">Neither</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The Beta. IBM&apos;s overview says there are no warranties, SLA or support, and that it is not for production use.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>How does the Deployable Architecture get made?</p>
+      <div class="opts">
+        <button class="opt">By one API call to a managed COS feature</button>
+        <button class="opt" data-ok>By Terraform from the IBM Cloud catalog, building ordinary resources in your account</button>
+        <button class="opt">By a support case</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>That is how IBM describes it. We read it, we did not run it.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know which product is which</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 4.</span></div>
+    <div><span class="label">Remember</span><p>This course teaches IBM Cloud Cyber Vault (Beta). The Deployable Architecture &quot;COS Cyber Vault for Storage Defender&quot; is a different product, was never deployed in our lab, and nothing in this course is a test of it. Ask which one is meant whenever a source says only &quot;cyber vault&quot;.</p></div>
+    <div><span class="label">When you have access to the Beta</span><p>Tutorial V1 starts with the Beta&apos;s access and roles. The side-by-side table of the two products is in the vault research note.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

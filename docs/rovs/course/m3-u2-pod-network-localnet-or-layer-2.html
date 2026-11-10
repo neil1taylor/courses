@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pod network, localnet or Layer 2? · ROVS course</title>
+<meta name="description" content="Course unit 3.2: choose between the pod network, a localnet network and a Layer 2 network for a VM, and say what each one costs you. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m3-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 3 · Networking</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 3</span>
+      <h1>Pod network, localnet or Layer 2?</h1>
+      <p class="lead">By the end you can pick a network for a VM from a stated need, and say what that choice costs.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: one VM with three arrows leading to three different networks."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[10,80,90,60],"heavy":true,"title":"VM"},
+          {"line":[104,100,200,40],"arrow":true,"tone":"mark"},
+          {"line":[104,110,200,110],"arrow":true,"tone":"mark"},
+          {"line":[104,120,200,180],"arrow":true,"tone":"mark"},
+          {"box":[206,18,200,46],"title":"pod network"},
+          {"box":[206,88,200,46],"title":"localnet"},
+          {"box":[206,158,200,46],"title":"Layer 2"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output in this unit is real. Its VMs have different needs, and they will not all go on the same network.</p>
+    </div>
+  </div>
+  <p class="small">Every statement and output in this unit comes from tutorial chapters 20, 21, 24, 26, 32 and 37, apart from the review question, which comes from chapter 06. The VMware comparisons are rough mappings, not IBM statements.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Predict</span>
+  <h2>Three places to attach a VM</h2>
+  <p class="lead">The pod network is the default for every pod and VM. Localnet and Layer 2 are extra networks, called secondary, that you define with a cluster network resource (a CUDN).</p>
+  <div class="cols">
+    <svg class="sketch" role="img" aria-label="Hand-drawn comparison of three networks. The pod network is the default, always available, with nothing to configure. Localnet gives the VM an address on a VPC subnet, needs a VNI attached on the VLAN, and is secondary only. Layer 2 is a Geneve overlay across all nodes, needs no VPC resources, and has no external connectivity of its own."
+      data-drawing='{"w":660,"h":250,"shapes":[
+        {"box":[6,8,204,62],"title":"Pod network","detail":"eth0, the default"},
+        {"text":"always there","at":[16,98],"hand":true,"tone":"mark"},
+        {"text":"nothing to configure","at":[16,122],"hand":true,"tone":"mark"},
+        {"box":[228,8,204,62],"tone":"mark","title":"Localnet","detail":"a VPC subnet address"},
+        {"text":"needs a VNI on the VLAN","at":[238,98],"hand":true},
+        {"text":"secondary only","at":[238,122],"hand":true},
+        {"box":[450,8,204,62],"title":"Layer 2","detail":"Geneve overlay"},
+        {"text":"across all nodes","at":[460,98],"hand":true},
+        {"text":"no VPC resources needed","at":[460,122],"hand":true},
+        {"text":"no outside path of its own","at":[460,146],"hand":true}]}'></svg>
+    <div>
+      <div class="q">
+        <p>There is a third kind of CUDN, Layer 3, which gives each node its own subnet. Is it a good fit for a VM?</p>
+        <div class="opts">
+          <button class="opt">Yes, it is the most scalable</button>
+          <button class="opt" data-ok>No. Do not put a VM on it</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>Red Hat states that OpenShift Virtualization only supports the Layer 2 and Localnet topologies. The address on a Layer 3 network comes from the subnet of the worker the VM runs on, so a VM that live-migrates lands in a different subnet and needs a new address.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>Why localnet and Layer 2 have different packet sizes</h2>
+  <p class="lead">Run each command in turn. The output is what a ROVS cluster returned.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">oc get network.operator.openshift.io cluster -o jsonpath='{.spec.defaultNetwork.ovnKubernetesConfig.mtu}'</pre>
+          <pre class="out">8900</pre>
+          <p class="hand note">8900 for the overlay. The worker interfaces are 9000.</p>
+          <p class="hand note">The 100-byte gap is the Geneve header.</p>
+        </div>
+        <div class="q">
+          <p>Each CUDN makes a network attachment definition (NAD). Which kind of CUDN has a NAD that names an <code>mtu</code> of 9000?</p>
+          <div class="opts">
+            <button class="opt" data-ok>Localnet</button>
+            <button class="opt">Layer 2</button>
+            <button class="opt">Both</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>The localnet NAD names an <code>mtu</code> of 9000. The Layer 2 NAD has no <code>mtu</code> key. The next two commands show both.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">oc get net-attach-def scratch-w3c-ln -n scratch-w3c-net -o jsonpath='{.spec.config}'</pre>
+          <pre class="out">{"cniVersion":"1.1.0","mtu":9000,"name":"cluster_udn_scratch-w3c-ln",
+ "netAttachDefName":"scratch-w3c-net/scratch-w3c-ln","physicalNetworkName":"vpc-vlans",
+ "role":"secondary","topology":"localnet","type":"ovn-k8s-cni-overlay","vlanID":360}</pre>
+          <p class="hand note">Localnet: mtu 9000, written out.</p>
+          <p class="hand note">It is bridged onto the 9000-byte underlay, so it pays no overlay tax.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">oc get net-attach-def scratch-w3c-l2 -n scratch-w3c-net -o jsonpath='{.spec.config}'</pre>
+          <pre class="out">{"cniVersion":"1.1.0","name":"cluster_udn_scratch-w3c-l2",
+ "netAttachDefName":"scratch-w3c-net/scratch-w3c-l2","role":"secondary",
+ "topology":"layer2","type":"ovn-k8s-cni-overlay"}</pre>
+          <p class="hand note">Layer 2: no mtu key at all.</p>
+          <p class="hand note">An omitted mtu inherits the cluster value. A CentOS guest on one came up at 8900.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Design it</span>
+  <h2>Pick a network for each need</h2>
+  <p class="lead">Choose one, then open the worked answer. The answers come from chapters 21, 24, 26 and 37.</p>
+  <div class="pair">
+    <div class="q">
+      <p><b>Need A.</b> Northgate&apos;s VMs need real VPC subnet addresses that other VPC resources reach directly.</p>
+      <div class="opts">
+        <button class="opt">Pod network</button>
+        <button class="opt" data-ok>Localnet</button>
+        <button class="opt">Layer 2, secondary</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Localnet. The VM gets a real VPC subnet address, and inherits VPC routing, Transit Gateway and Direct Link. A VM migrated onto it gets a new address: MTV&apos;s Preserve static IPs does not work with localnet. It is the closest match to a VLAN-backed port group on a vDS. <b>The cost:</b> no <code>NetworkPolicy</code> on that interface, and one zone only.</p></details>
+    </div>
+    <div class="q">
+      <p><b>Need B.</b> A tier of VMs must talk to each other across workers on their own address range. It needs no connection to the outside.</p>
+      <div class="opts">
+        <button class="opt">Pod network</button>
+        <button class="opt">Localnet</button>
+        <button class="opt" data-ok>Layer 2, secondary</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Layer 2, secondary. It is a Geneve overlay across all nodes. It needs no OVS bridge, no VNI and no VPC resource, and it has no outside path unless you add a router. <b>The cost:</b> no outside path is not the same as filtered. A <code>NetworkPolicy</code> does not stop VMs on it from talking to each other.</p></details>
+    </div>
+    <div class="q">
+      <p><b>Need C.</b> A new application VM needs an ordinary <code>NetworkPolicy</code> on its main interface. It needs no static IP and no VPC address.</p>
+      <div class="opts">
+        <button class="opt" data-ok>Pod network</button>
+        <button class="opt">Localnet</button>
+        <button class="opt">Layer 2, secondary</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>The pod network. A <code>NetworkPolicy</code> polices a pod&apos;s primary network, and the default pod network is one. A primary Layer 2 or Layer 3 network replaces it and is policed the same way. A secondary interface is not covered by it.</p></details>
+    </div>
+    <div class="q">
+      <p><b>Need D.</b> Migrated VMs must keep their vSphere addresses <em>and</em> need in-cluster <code>NetworkPolicy</code> on those interfaces. Which one network gives both?</p>
+      <div class="opts">
+        <button class="opt">Localnet</button>
+        <button class="opt" data-ok>A primary Layer 2 network, migrated with MTV</button>
+        <button class="opt">None of them</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A primary Layer 2 network. It is the only network MTV&apos;s Preserve static IPs works on, and a primary network is policed by <code>NetworkPolicy</code>. The conditions: the source VM is powered on and runs a VMware guest agent. You cannot set addresses yourself on a primary network, and localnet and secondary networks do not keep migrated addresses. Decide this before the migration plan.</p></details>
+    </div>
+    
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>Three failures that look alike</h2>
+  <p class="lead">A VM on a Layer 2 segment cannot reach another VM. What each symptom means, from chapter 32.</p>
+  <div class="pair">
+    <div class="q">
+      <p><code>curl</code> hangs, then exits with code 28 (<code>Ncat: TIMEOUT.</code> with <code>ncat</code>). What does that tell you?</p>
+      <div class="opts">
+        <button class="opt">Nothing holds that address</button>
+        <button class="opt" data-ok>Something dropped the packet. The destination may be healthy</button>
+        <button class="opt">Something answered and said no</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A hang is a drop: a policy, a firewall or a black-holed route. <code>Destination Host Unreachable</code> with <code>ip neigh</code> showing <code>FAILED</code> is different: ARP got no reply, so nothing holds the address. A missing or stopped router pod looks like that.</p></details>
+    </div>
+    <div class="q">
+      <p>The test prints <code>Connection refused</code>. A colleague writes &quot;the segment is isolated&quot;. Is that right?</p>
+      <div class="opts">
+        <button class="opt">Yes, the connection was blocked</button>
+        <button class="opt" data-ok>No. Something answered, so the path works</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Refused is not blocked.</span><p>Refused means the path works end to end and nothing is listening on that port. It is not enforcement. Reading it as proof of isolation is the most common way a segmentation statement turns out to be false.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 1.3.</span> Northgate wants to live migrate VMs to any worker and to use VNIs. Which layout?</p>
+      <div class="opts">
+        <button class="opt" data-ok>One zone</button>
+        <button class="opt">Three zones</button>
+        <button class="opt">It makes no difference</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In a single zone, live migration can go to any worker and VNI networking is simple. In three zones, live migration stays inside one zone and each VNI is tied to one zone.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Northgate wants a different pod network range after the cluster is ordered. Can it change?</p>
+      <div class="opts">
+        <button class="opt">Yes, patch the network operator</button>
+        <button class="opt">Only the service range can change</button>
+        <button class="opt" data-ok>No. Neither range can change after creation</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Neither the pod range nor the service range can be changed after the cluster is created, and four <code>172.x</code> ranges are prohibited. Read yours off the cluster. On one ROVS cluster the pod range was <code>172.17.0.0/17</code>, but another cluster ran <code>172.23.0.0/17</code>.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A VM&apos;s only interface is on a secondary Layer 2 network. Can it use the cluster&apos;s DNS service?</p>
+      <div class="opts">
+        <button class="opt">Yes, through the service network</button>
+        <button class="opt" data-ok>No. A VM on a secondary network has no path to it</button>
+        <button class="opt">Only if it also has a pod network address</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The cluster DNS address lives in the service network, which nothing on the overlay can route to. Pointing such a VM at it gives resolution timeouts that look like a routing fault.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can choose a network</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Localnet for VPC addresses. Layer 2 for an overlay with no outside path. Pod network for ordinary <code>NetworkPolicy</code>. Refused is not blocked.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 21, Choose and configure CUDN and UDN networks on ROVS, sets out the three topologies in one table.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

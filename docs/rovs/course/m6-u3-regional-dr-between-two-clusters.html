@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Regional DR between two clusters · ROVS course</title>
+<meta name="description" content="Course unit 6.3: say what the three clusters of Regional DR do, read the object that protects a VM, and say what a failover loses. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m6-u3">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 6 · Moving and protecting VMs</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 3 of Module 6</span>
+      <h1>Regional DR between two clusters</h1>
+      <p class="lead">By the end you can say what the three clusters of Regional DR do, read the object that protects a VM, and say what a failover loses.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a hub cluster at the top with two lines down to a production cluster and a DR cluster, and a dashed arrow between production and DR marked disk copy."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[140,10,140,50],"title":"hub"},
+          {"line":[190,62,100,120],"arrow":true,"tone":"muted"},
+          {"line":[230,62,320,120],"arrow":true,"tone":"muted"},
+          {"box":[20,122,150,70],"heavy":true,"title":"production"},
+          {"box":[250,122,150,70],"heavy":true,"tone":"mark","title":"DR"},
+          {"line":[172,160,248,160],"arrow":true,"tone":"mark"},
+          {"text":"disk copy","at":[178,150],"hand":true,"size":15,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its order database cannot wait for a restore from backup. Regional DR is the design the tutorials build for that.</p>
+    </div>
+  </div>
+  <p class="small">Every command, output and fact in this unit comes from tutorial chapters 53 and 79 to 83, run on test clusters. All of them were in one region, so the loss of a region was not shown. The review question repeats one from unit 2.2.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>The object that protects a VM</h2>
+  <p class="lead">This DRPlacementControl, the DRPC, lives on the hub. It decides what is protected and where it runs. Select a part of the drawing to see what it does and which lines define it. You can also click a line.</p>
+  <div class="explorer" data-start="policy"
+    data-map='{"where":[[5,5],[7,7]],"policy":[[6,6]],"scope":[[8,10]],"definition":[[11,14]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of four boxes that all point to the DRPC: Where it runs, Policy, What is protected and The VM definition."
+          data-drawing='{"w":560,"h":300,"shapes":[
+            {"box":[10,20,260,70],"part":"where","title":"Where it runs","detail":"preferred cluster"},
+            {"box":[290,20,260,70],"part":"policy","title":"Policy","detail":"how often to copy"},
+            {"box":[10,120,260,70],"part":"scope","title":"What is protected","detail":"a namespace and a label"},
+            {"box":[290,120,260,70],"part":"definition","title":"The VM definition","detail":"saved every 5 minutes"},
+            {"line":[140,92,230,223],"arrow":true,"tone":"muted"},
+            {"line":[420,92,330,223],"arrow":true,"tone":"muted"},
+            {"line":[140,192,210,223],"arrow":true,"tone":"muted"},
+            {"line":[420,192,350,223],"arrow":true,"tone":"muted"},
+            {"box":[150,226,260,60],"heavy":true,"title":"The DRPC","detail":"on the hub"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="where">
+          <h3>Where it runs</h3>
+          <p>The preferred cluster is where the VM runs now. A Placement names the cluster, and it must carry the <code>experimental-scheduling-disable</code> annotation from the moment it is created. Without it, RHACM schedules its own decision and Ramen rejects it with <code>multiple placements found</code>.</p>
+        </div>
+        <div class="part-info" data-part="policy">
+          <h3>Policy</h3>
+          <p>The DRPolicy pairs the two clusters and sets the replication interval, 5 minutes here. Replication is snapshot-based and asynchronous, so the window of data loss is proportional to the interval. Red Hat documents a one-minute minimum. The interval is fixed once the policy is created.</p>
+          <p class="hand tilt"><b>From vSphere:</b> the closest pair is SRM with vSphere Replication. This is an approximate mapping, not an IBM statement.</p>
+        </div>
+        <div class="part-info" data-part="scope">
+          <h3>What is protected</h3>
+          <p>The disks in the named namespace whose label matches. Each disk replicates through a <code>VolumeGroupReplication</code>, which is grouped RBD mirroring, not VolSync.</p>
+          <p class="watch"><b>Watch for this.</b> Protection is per namespace by default. Put twenty VMs in one namespace and protect one, and you have protected all twenty, and you will fail over all twenty. The VM must also be Running before you protect it.</p>
+        </div>
+        <div class="part-info" data-part="definition">
+          <h3>The VM definition</h3>
+          <p>Ramen saves the VM&apos;s definition through Velero, from the OADP operator, every 5 minutes. Without OADP the volumes replicate and the VM definitions do not. A VM made with <code>oc apply</code> or the console is a discovered application.</p>
+          <p class="watch"><b>Watch for this.</b> For a discovered VM you label every object by hand: the VirtualMachine, DataVolume, PVC, Service, Route, Secret and ConfigMap. A missed Secret or ConfigMap fails silently. You find out at failover.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The DRPlacementControl that protects one VM namespace">apiVersion: ramendr.openshift.io/v1alpha1
+kind: DRPlacementControl
+metadata: {name: dr-test, namespace: openshift-dr-ops}
+spec:
+  preferredCluster: &lt;your-cluster&gt;
+  drPolicyRef: {name: odf-dr-policy-5m}
+  placementRef: {kind: Placement, name: dr-test-placement, namespace: openshift-dr-ops}
+  protectedNamespaces: [dr-test]
+  pvcSelector:
+    matchExpressions: [{key: app, operator: In, values: [dr-test]}]
+  kubeObjectProtection:
+    captureInterval: 5m
+    kubeObjectSelector:
+      matchExpressions: [{key: app, operator: In, values: [dr-test]}]</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict, then run it</span>
+  <h2>Is it protected, and is it copying?</h2>
+  <p class="lead">Two checks the chapter makes after it creates the DRPC. Commit to an answer first.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="q">
+          <p>You create the DRPC for a one-disk VM. About how long until it reaches Protected?</p>
+          <div class="opts">
+            <button class="opt" data-ok>About 75 seconds</button>
+            <button class="opt">About 15 minutes</button>
+            <button class="opt">Not until the first 5-minute sync</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>About 75 seconds on the test cluster, for a one-disk VM. Run the command on the hub to see the result.</p></details>
+        </div>
+        <div class="cmd">
+          <p class="pre"># on the hub</p>
+          <pre class="in">KUBECONFIG=$KC_HUB oc get drpc dr-test -n openshift-dr-ops -o jsonpath='{.status.phase} {.status.conditions[?(@.type=="Protected")].status} sync={.status.lastGroupSyncTime}{"\n"}'</pre>
+          <pre class="out">Deployed True sync=2026-09-24T12:05:05Z</pre>
+          <p class="hand note">Deployed, Protected is True, and the last group sync has a time.</p>
+          <p class="hand note">That last field is the one to watch later.</p>
+        </div>
+        <div class="q">
+          <p>You run the mirroring check on a ROVS cluster that has no DR configured. What does the field show?</p>
+          <div class="opts">
+            <button class="opt">Health OK</button>
+            <button class="opt" data-ok>Nothing. The field is empty</button>
+            <button class="opt">An error</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>Mirroring is unset until DR is set up, so the field is empty. The command below ran on a managed cluster after setup.</p></details>
+        </div>
+        <div class="cmd">
+          <p class="pre"># on each managed cluster: the one to alert on</p>
+          <pre class="in">oc get cephblockpool ocs-storagecluster-cephblockpool -n openshift-storage -o jsonpath='{.status.mirroringStatus.summary}{"\n"}'</pre>
+          <pre class="out">{"daemon_health":"OK","health":"OK","image_health":"OK","states":{}}</pre>
+          <p class="hand note">Three health fields, all OK.</p>
+          <p class="hand note">Your recovery point depends on this replication being healthy.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Console tour</span>
+  <h2>Find the protected VM on the hub</h2>
+  <p class="lead">This is a real screen from the hub of the test build. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="41.8,22.3,14.1,6.8" data-width="900px">
+      <div class="shot"><img src="../images/81/course-protected-applications.jpg" alt="The Protected applications tab of the Disaster recovery page in the hub console, cropped. One entry is listed: a DRPC named dr-test, DR status healthy, policy odf-dr-policy-5m. An Enroll application button sits above the table." width="1100" height="470"></div>
+      <figcaption>
+        <h3>You are on the hub&apos;s Disaster recovery page. Which tab lists the protected applications?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Protected applications. It sits next to Overview and Policies.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="57,78.5,8,8" data-width="900px">
+      <div class="shot"><img src="../images/81/course-protected-applications.jpg" alt="The Protected applications tab of the Disaster recovery page in the hub console, cropped. One entry is listed: a DRPC named dr-test, DR status healthy, policy odf-dr-policy-5m. An Enroll application button sits above the table." width="1100" height="470"></div>
+      <figcaption>
+        <h3>Where does the console show the application&apos;s DR status?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. DR Status, here healthy. Chapter 80 records the DRPC reporting Protected=True through every outage in its test, so also watch the last sync time.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="52.4,39.5,14.4,7.2" data-width="900px">
+      <div class="shot"><img src="../images/81/course-protected-applications.jpg" alt="The Protected applications tab of the Disaster recovery page in the hub console, cropped. One entry is listed: a DRPC named dr-test, DR status healthy, policy odf-dr-policy-5m. An Enroll application button sits above the table." width="1100" height="470"></div>
+      <figcaption>
+        <h3>Which button attaches a policy to another application?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Enroll application. For a discovered VM you still label its objects first.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Predict, design, spot the fault</span>
+  <h2>What a failover costs, and what to watch</h2>
+  <p class="lead">The first two answers come from a VM on a 5-minute policy, failed over from production to the DR cluster and relocated back. All the clusters were in one region.</p>
+  <div class="pair">
+    <div class="q">
+      <p>A marker line is written before a mirror sync. A second line is written two minutes after it. You fail over. What is in the marker file on the DR cluster?</p>
+      <div class="opts">
+        <button class="opt">Both lines</button>
+        <button class="opt" data-ok>Only the first line</button>
+        <button class="opt">Neither line</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The VM was Running on the DR cluster 81 seconds after the failover was requested. The line written two minutes after the sync was gone. That is the loss a 5-minute interval allows. The DRPC then stops at <code>WaitOnUserToCleanUp</code>: for a discovered application you delete the VM, and every disk it does not own, on the old primary.</p></details>
+    </div>
+    <div class="q">
+      <p>Later you relocate the VM back after writing on the DR cluster. What is lost?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Nothing. A relocate makes a final sync first</button>
+        <button class="opt">Up to 5 minutes</button>
+        <button class="opt">Everything since the failover</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Relocate is the planned move home. The line written on the DR cluster was intact on production. The VM was Running there about 2 minutes 15 seconds after the relocate began. Failover, cleanup and relocate together took twelve minutes.</p></details>
+    </div>
+    <div class="q">
+      <p><span class="kicker">Design it.</span> Northgate wants a 5-minute recovery point for tier-one VMs and 1 hour for the rest. What do you create?</p>
+      <div class="opts">
+        <button class="opt">One policy, and change its interval later</button>
+        <button class="opt" data-ok>Two policies over the same pair of clusters, each with its own interval</button>
+        <button class="opt">One policy per VM</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A policy&apos;s interval is fixed once created. To offer more than one tier, create more than one DRPolicy, for example <code>eu-de-us-east-5m</code> and <code>eu-de-us-east-1h</code>. Decide the tiers before you create the first policy.</p></details>
+    </div>
+    <div class="q">
+      <p><span class="kicker">Spot the fault.</span> The hub shows <code>Protected=True</code>, but the last sync time is far older than the interval. What do you trust?</p>
+      <div class="opts">
+        <button class="opt">The Protected condition</button>
+        <button class="opt" data-ok>The last sync time. Replication may have stopped</button>
+        <button class="opt">The VM status on production</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In the lab, the DRPC kept reporting <code>Protected=True</code> while replication had stopped. Run <code>oc get drpc -A -o custom-columns=NAME:.metadata.name,LAST_SYNC:.status.lastGroupSyncTime</code> on the hub and compare with your interval. The chapter records no output for that command. Alert on the sync time, not on the condition.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>The primary region is unavailable. Does the VM fail over by itself?</p>
+      <div class="opts">
+        <button class="opt">Yes, within a minute</button>
+        <button class="opt" data-ok>No. An administrator sets the action on the DRPC</button>
+        <button class="opt">Yes, if runStrategy is Always</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Failover is an explicit administrator action. You set <code>action</code> and <code>failoverCluster</code> on the DRPC, or use the console buttons. The recovered disk is crash-consistent, closer to a vSphere host power cut than to a quiesced snapshot, so a test starts the application and checks it.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>What runs on the hub, the third cluster?</p>
+      <div class="opts">
+        <button class="opt">The VMs, on bare metal</button>
+        <button class="opt" data-ok>RHACM and the DR operators, with no ODF and no VMs</button>
+        <button class="opt">A copy of the VM disks</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The hub orchestrates both managed clusters and needs no bare metal. The whole design is a second cluster, a hub and an RHACM licence, running all the time, and the DR stack is yours to update.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A VM&apos;s disk was made from a golden-image DataSource by a snapshot clone. Does it replicate?</p>
+      <div class="opts">
+        <button class="opt">Yes, like any disk</button>
+        <button class="opt" data-ok>No. The DRPC stayed <code>Protected=False</code> until the clone was flattened</button>
+        <button class="opt">Yes, but only every hour</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>RBD mirroring cannot be enabled on a clone until it is flattened. In the run, a second VM with its disk imported from a registry was protected within two minutes of the DRPC.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 2.2.</span> Which storage class do you use for every VM disk?</p>
+      <div class="opts">
+        <button class="opt">ocs-storagecluster-ceph-rbd</button>
+        <button class="opt" data-ok>ocs-storagecluster-ceph-rbd-virtualization</button>
+        <button class="opt">ocs-storagecluster-cephfs</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On the test clusters, a VM on that class was protected with no second class needed. Its disks were ReadWriteMany with Block.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can read a Regional DR setup</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Three clusters: two with ODF, one hub. The DRPC says what is protected and where it runs. Failover is a human action and loses up to one interval. Watch the last sync time, not the Protected condition.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 53, Choose a disaster recovery design for ROVS VMs, compares the designs and links the four build parts, chapters 79 to 82. Chapter 83 has the known problems.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Restore to another server, and your own encryption key · BRS course</title>
+<meta name="description" content="Course unit 4.4: restore a folder onto a second server and see where it lands, and learn what you can and cannot check about your own encryption key. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m4-u4">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 4 · Restore and prove it</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 4 of Module 4</span>
+      <h1>Restore to another server, and your own encryption key</h1>
+      <p class="lead">By the end you can restore a folder onto a second server, say where it lands, and explain what you can and cannot check about your own encryption key.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: the folder docs is restored from one server onto another server under /restore."
+        data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,45,150,70],"heavy":true,"title":"server A","detail":"/data/docs"},{"line":[164,80,246,80],"arrow":true,"tone":"mark"},{"box":[250,45,160,70],"tone":"mark","title":"server B","detail":"/restore/docs"},{"text":"another server, a new folder","at":[70,170],"hand":true,"size":17,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Today it restores a folder from one server&apos;s backup onto a second server, then looks at what it takes to order a backup instance that uses its own encryption key.</p>
+    </div>
+  </div>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 9 November 2026 for the console, recorded in tutorials B7a, B7g and B1. The servers are blurred in the screenshots. Some lab resource names show in the key screens.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Where the files land</h2>
+  <p class="lead">A restore can go to a different registered server, into a new folder. In the tutorial the source server held <code>/data/docs</code>. The target was a second Linux server.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. The folder /data/docs on the source server is restored to the path /restore on the target server, where it lands as /restore/docs. The path /data is not recreated, drawn dashed."
+    data-drawing='{"w":560,"h":190,"shapes":[
+      {"box":[10,15,200,60],"title":"source server","detail":"/data/docs"},
+      {"line":[214,45,296,45],"arrow":true,"tone":"mark"},
+      {"box":[300,15,250,60],"tone":"mark","title":"target server","detail":"/restore/docs"},
+      {"box":[300,105,250,60],"dashed":true,"title":"not recreated","detail":"the path /data"},
+      {"text":"Path: /restore","at":[10,125],"hand":true,"size":17,"tone":"mark"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Northgate picks <code>/data/docs</code> and sets the Path to <code>/restore</code>. Where do the files land?</p>
+      <div class="opts">
+        <button class="opt" data-ok><code>/restore/docs</code></button>
+        <button class="opt"><code>/restore/data/docs</code></button>
+        <button class="opt">Straight into <code>/restore</code>, with no <code>docs</code> folder</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The folder you pick lands directly under the Path, so <code>docs</code> landed at <code>/restore/docs</code>. The path <code>/data</code> is not recreated. The folder is created if it is missing. The restored files were owned by <code>root</code>, mode 644.</p></details>
+    </div>
+    <div class="q">
+      <p>What must be true of the second server before you restore to it?</p>
+      <div class="opts">
+        <button class="opt" data-ok>It is registered as a source</button>
+        <button class="opt">It has the same name as the first</button>
+        <button class="opt">It is empty</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The tutorial needs a second Linux server registered as a source. In the console: <b>Sources</b>, <b>Register Source</b>, <b>Physical</b>, <b>Direct</b>, pick the Connector Agent and type the server&apos;s address. In our lab the server was then listed, not protected.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Click through the console</span>
+  <h2>Restore to a new server</h2>
+  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="3,83.5,48,8.2" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7a-2-new-server.png" alt="Recover To, New Server chosen. Source Physical Servers, Target blurred, Path /restore." width="1136" height="510"></div>
+      <figcaption>
+        <h3>You ticked <code>docs</code> and chose <b>New Server</b>. Where do you set the folder on the other server?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Path</b>. It starts as <code>/tmp/Recover_&lt;date&gt;_&lt;time&gt;</code>; change it to <code>/restore</code>. <b>Source</b> is <b>Physical Servers</b> and <b>Target</b> is the other server. Keep the Recovery Options as they are and click <b>Recover</b>.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="0.8,44.7,98.3,8.8" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7a-3-succeeded.png" alt="Recoveries list. The top row is Recover_Files_Nov_9_2026_1_49_PM, Succeeded, 23s. Below it are Kubernetes namespace and SQL recoveries and two earlier file recoveries." width="1180" height="570"></div>
+      <figcaption>
+        <h3>Which row is the restore of the files to the other server?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The top row, started 9 November at 1:49 pm: Succeeded, 23s. The other rows are earlier recoveries.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>A field name that is not accepted</h2>
+  <p class="lead">Northgate writes the same restore as a command-line request. It sets <code>restoreToOriginalPaths</code> to false and names the new folder with a field it guessed. The first try fails with this message.</p>
+  <pre class="def" aria-label="The rejected request">"restoreToOriginalPaths": false
+"alternateRestoreBaseDirectory": "/restore"
+
+Field alternate_restore_base_directory is not specified</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What is wrong?</p>
+      <div class="opts">
+        <button class="opt"><code>restoreToOriginalPaths</code> must be true</button>
+        <button class="opt" data-ok>The field is named <code>alternateRestoreDirectory</code>, and the message does not say so</button>
+        <button class="opt"><code>/restore</code> does not exist</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The message names the field in a different spelling and does not say that the name is wrong. The plug-in&apos;s own help text shows <code>alternateRestoreDirectory</code>. With that name the restore succeeded, in 27 s on 7 October 2026.</p></details>
+    </div>
+    <div class="q">
+      <p>After the console restore, Northgate counts the files under <code>/restore</code> on the target and checks them against a list made on the source. What does it find?</p>
+      <div class="opts">
+        <button class="opt">500 of 500 match</button>
+        <button class="opt" data-ok>505 of 505 match</button>
+        <button class="opt">503 of 503 match</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>505 files, and 505 matched, on 9 November 2026. The command-line run on 7 October 2026 had checked 500 of 500.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Your own key</span>
+  <h2>What you can and cannot check</h2>
+  <p class="lead">BRS takes your key only when the instance is created. The lab ordered a second instance to test it. The console&apos;s order form starts with Encryption on and a key already chosen, with a warning &quot;Service authorization required&quot;.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Northgate&apos;s running instance uses provider-managed encryption. Can it switch to its own key?</p>
+      <div class="opts">
+        <button class="opt">Yes, in the instance&apos;s settings</button>
+        <button class="opt" data-ok>No: the key is taken only when the instance is created</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>You cannot change the key of an existing instance. IBM takes the key only when the instance is created, so the test made a second instance.</p></details>
+    </div>
+  </div>
+  <div class="tour">
+    <figure class="tstep" data-hot="7.1,28.6,12.5,8.6" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7g-4-encryption-set.png" alt="Configure integration. Encryption is on and reads Configured, authorized, with an Edit button. Key settings show a key management instance and the key. Terms box and Create button at the right." width="1440" height="290"></div>
+      <figcaption>
+        <h3>Northgate orders a new instance with its own key. Where does the order form say the key is set up?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Configured, authorized</b>. Before this, the Review step showed <b>Service authorization required</b>: BRS to Key Protect, role Reader. Click <b>Authorize</b>, then <b>Confirm</b>. The policy that was made covers the whole key store, not only the key the dialog showed. Then tick the terms and click <b>Create</b>. In our lab the instance was created at 15:59:15 UTC on 9 November and active by 15:59:58.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="52.3,59.5,21.5,5.9" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7g-5-instance-page.png" alt="Details of the new instance: Active, Premium, eu-de, Encryption Provider managed. The CRN and creator are blurred." width="561" height="405"></div>
+      <figcaption>
+        <h3>This is the new instance&apos;s page. Where does it show how the instance is encrypted?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Encryption</b>. It says <b>Provider managed</b>, and that is wrong for this instance, which has our own key. The page says the same for an instance with your own key, so it proves nothing. Check with the key store instead. In our lab <code>kp registrations</code> listed the new instance, and the instance&apos;s parameters carried the key.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="78.7,67.5,7.6,6.1" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7g-6-key-disabled.png" alt="Key Protect Keys list. The root key made for the instance is Disabled, with 1 associated resource. Two other keys are listed." width="1150" height="412"></div>
+      <figcaption>
+        <h3>Which figure in the key store shows that something is tied to the key?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>1 resource</b> under Associated resources. In this screen the key is also <b>Disabled</b>: the lab disabled it as a test.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The lab disabled the key for about two minutes and called the configuration API every 20 seconds. What happened?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Every call answered HTTP 200 with the four default policies</button>
+        <button class="opt">Every call failed</button>
+        <button class="opt">The instance was deleted</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>HTTP 200 every 20 seconds from 16:04:46 to 16:06:41 on 9 November 2026. The same happened in October.</p></details>
+    </div>
+    <div class="q">
+      <p>What does that show about backups while the key is disabled?</p>
+      <div class="opts">
+        <button class="opt">They keep working</button>
+        <button class="opt" data-ok>Nothing: the instance held no backup, so it is untested</button>
+        <button class="opt">They stop</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The policy list is configuration, not the backup data in the object store. The instance held no backup, so the effect on stored data is still untested. A backup and a restore with the key disabled, key rotation and deleting the key were not tested either.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>You restore <code>/data/docs</code> to another server with the Path <code>/restore</code>. Where does <code>docs</code> land?</p>
+      <div class="opts">
+        <button class="opt" data-ok><code>/restore/docs</code></button>
+        <button class="opt"><code>/restore/data/docs</code></button>
+        <button class="opt"><code>/data/docs</code> on the target</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The folder you pick lands directly under the Path. The path <code>/data</code> is not recreated.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>An instance&apos;s page says Encryption: Provider managed. Does that prove your key was not used?</p>
+      <div class="opts">
+        <button class="opt">Yes</button>
+        <button class="opt" data-ok>No: the page says it for an instance with your own key too</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Check with the key store: <code>kp registrations</code> lists the instance, and the key shows 1 associated resource.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 4.3.</b> After a restore over the original SQL Server database, the next group run reads 0 bytes. Why?</p>
+      <div class="opts">
+        <button class="opt">The restore failed</button>
+        <button class="opt" data-ok>The database has a new ID, and the group still holds the old one</button>
+        <button class="opt">The agent is down</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Edit the group and tick the database again. In our lab the next run then read 50.5 MB.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can restore elsewhere and say what your key does</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>A folder restored to another server lands directly under the Path you give. A key of your own is set only when an instance is created, and the console&apos;s instance page says Provider managed either way. In our lab, disabling the key did not stop the configuration API; what it does to stored data is untested.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B7a restores to another server from the console and the command line. Tutorial B7g orders an instance with your own key. Tutorial B1 orders an instance with the default encryption.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Final scenario: design Northgate's estate · VPC course</title>
+<meta name="description" content="Course unit 6.4: the last unit. Decide the hub and spokes, the ways in, the firewalls, the site link, the backup and the recovery region for Northgate Freight, and compare each decision with the answer in the tutorials. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m6-u4">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPC course</a> <span>·</span> Module 6 · Connecting and protecting the estate</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 4 of Module 6 · the last unit</span>
+      <h1>Final scenario: design Northgate&apos;s estate</h1>
+      <p class="lead">By the end you have made the main decisions for a whole estate, from the hub to the recovery region, and compared each one with the answer the tutorials give.</p>
+      <div class="facts"><span>About 20 minutes</span><span>No account needed</span><span>7 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch of Northgate's estate: a hub box in the middle with a firewall pair, prod, dev and shared spokes around it, a site box joined by a VPN line, and a separate recovery region box on the right joined by a dashed line."
+        data-drawing='{"w":560,"h":260,"shapes":[
+          {"box":[170,80,130,80],"heavy":true,"tone":"mark","title":"Hub","detail":"firewall pair"},
+          {"box":[10,10,120,50],"title":"prod"},
+          {"box":[10,105,120,50],"title":"dev"},
+          {"box":[10,200,120,50],"title":"shared"},
+          {"line":[132,35,170,95]},
+          {"line":[132,130,170,120]},
+          {"line":[132,225,170,150]},
+          {"box":[170,200,130,50],"dashed":true,"title":"Site"},
+          {"line":[235,200,235,162],"tone":"muted"},
+          {"box":[390,60,160,130],"heavy":true,"title":"Recovery region"},
+          {"line":[302,120,388,120],"tone":"mark","arrow":true},
+          {"text":"global gateway","at":[306,108],"hand":true,"size":15,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its needs are made up. The answers are not: each one is a statement already tested or cited in the tutorial chapters.</p>
+    </div>
+  </div>
+  <p class="small">The worked answers come from chapters 49, 73, 77, 79, 82 to 84 and 87 to 94, with the conditions those chapters give. Where a chapter measured something once, the unit says so. The review question repeats one from unit 6.3.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Design it</span>
+  <h2>The hub and spokes</h2>
+  <p class="lead">This is the finished estate that chapter 90 builds: a hub with a firewall pair, three spoke VPCs joined by a Transit Gateway, a simulated site, and a recovery region.</p>
+  <img src="../images/target-estate.drawio.svg" alt="The finished estate: a hub VPC with a FortiGate HA pair, three spoke VPCs joined by a Transit Gateway, a simulated on-premises site, and a recovery region in us-south." style="width:100%;height:auto" loading="lazy">
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>How do you choose the address ranges of the hub, the spokes, the site and the recovery region?</p>
+      <div class="opts">
+        <button class="opt">Overlap is fine. The Transit Gateway sorts it out</button>
+        <button class="opt" data-ok>Give each VPC its own range, and keep the recovery region on the same pattern</button>
+        <button class="opt">Reuse prod&apos;s range in the recovery region, so addresses stay the same</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>The estate uses <code>10.10</code> for the hub, <code>10.20</code> for prod, <code>10.30</code> for dev, <code>10.40</code> for shared services, <code>192.168.0.0/16</code> for the site, and <code>10.110</code> and <code>10.120</code> for the recovery hub and spoke. Chapter 73 lists overlapping prefixes among what can go wrong, and the recovery hub follows the primary&apos;s pattern.</p></details>
+    </div>
+    <div class="q">
+      <p>Which VPCs sit on which Transit Gateway?</p>
+      <div class="opts">
+        <button class="opt">All of them on one global gateway</button>
+        <button class="opt" data-ok>Hub, prod, dev and shared on a local gateway. The hub also on a global gateway with the recovery hub</button>
+        <button class="opt">Every spoke on the global gateway, to be safe</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A VPC joins many local gateways and one global gateway. The lab tried a second global attach and it was rejected. The hub is on the global gateway and the other three stay on the local one. The recovery region has its own local gateway.</p></details>
+    </div>
+    <div class="q">
+      <p>How do you build the estate from code?</p>
+      <div class="opts">
+        <button class="opt">A Schematics workspace</button>
+        <button class="opt" data-ok>The Terraform module, run on your own machine</button>
+        <button class="opt">By hand, chapter by chapter</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>The module installs and configures the firewalls with a zsh script that calls the CLI. A Schematics job has no zsh, so it runs with local Terraform. By hand takes hours. In the lab the module made 137 resources, and the estate check reported all 58 items present.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Design it</span>
+  <h2>Ways in and the firewalls</h2>
+  <p class="lead">Internet traffic and spoke traffic must pass the FortiGate pair.</p>
+  <div class="pair">
+    <div class="q">
+      <p>Inbound web traffic must be inspected by the firewall. How does it get in?</p>
+      <div class="opts">
+        <button class="opt">A floating IP on each web server</button>
+        <button class="opt" data-ok>A public address range, an internet ingress route table, and a route to the firewall</button>
+        <button class="opt">A public gateway</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A public gateway is outbound only. A public address range cannot be assigned to a resource. It is the destination of a route in an ingress table, with the firewall as next hop. A request to the range&apos;s address returned <code>200</code> and the firewall logged it. <b>Plan for a public address to be scanned:</b> the log showed requests from other addresses a few minutes after the range existed.</p></details>
+    </div>
+    <div class="q">
+      <p>The app subnet&apos;s outbound traffic must go through the firewall. Where does the <code>0.0.0.0/0</code> route go?</p>
+      <div class="opts">
+        <button class="opt">In the VPC&apos;s default table</button>
+        <button class="opt" data-ok>In a table for that one subnet, with two delegate routes</button>
+        <button class="opt">Nowhere. Use a public gateway</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>In the default table, the bastion&apos;s floating IP stopped answering at once, because every subnet uses that table. In the subnet&apos;s own table, delegate <code>10.20.0.0/16</code> so replies to the bastion&apos;s subnet stay local, and delegate <code>161.26.0.0/16</code> so the platform resolvers still work. The lab did not learn which of a custom default route and a public gateway wins.</p></details>
+    </div>
+    <div class="q">
+      <p>After a firewall failover, what keeps the spoke routes pointing at the active firewall?</p>
+      <div class="opts">
+        <button class="opt">The SDN connector</button>
+        <button class="opt" data-ok>A loop you run, that copies the hub route&apos;s next hop to the spoke routes</button>
+        <button class="opt">Nothing. They follow by themselves</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>The connector moved the hub routes 10 to 13 seconds after the command and left the spoke routes alone. With the loop running every five seconds, traffic came back about 20 seconds after the failover command. The loop needs an API key or trusted profile that can update routes in both spokes. If it stops, the pair still fails over and the spoke traffic does not follow.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Design it</span>
+  <h2>The connection to the site</h2>
+  <p class="lead">Northgate&apos;s data centre has one prefix that matters, <code>192.168.0.0/24</code>. In the lab a second VPC stands in for it.</p>
+  <div class="pair">
+    <div class="q">
+      <p>The site connects over the internet, with one prefix. What do you build?</p>
+      <div class="opts">
+        <button class="opt" data-ok>A route-mode site-to-site VPN, static, with a route on each side</button>
+        <button class="opt">A client-to-site VPN</button>
+        <button class="opt">A dynamic VPN, with BGP</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Static suits a few prefixes. Dynamic needs a Transit Gateway. A route-mode gateway needs a route whose next hop is the connection, and the two sides each need their own: one route gives a one-way path. For a private link instead, chapter 79 says Direct Link Dedicated or Connect, joined to a Transit Gateway. The lab did not build Direct Link.</p></details>
+    </div>
+    <div class="q">
+      <p>How does the Transit Gateway learn <code>192.168.0.0/24</code>, so shared services can reach the site&apos;s DNS server?</p>
+      <div class="opts">
+        <button class="opt">Turn on advertise for the route in the default table</button>
+        <button class="opt" data-ok>A separate Transit Gateway ingress table that advertises to the gateway, holding the route</button>
+        <button class="opt">Nothing. The gateway learns it from the VPN</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A route flagged to advertise, in a table whose <code>advertise_routes_to</code> is empty, goes nowhere and gives no error. The default table cannot be the ingress table while any subnet uses it. About 40 seconds after the separate table's route was made, the report listed <code>192.168.0.0/24</code>.</p></details>
+    </div>
+    <div class="q">
+      <p>The report lists the prefix and the queries reach the site&apos;s DNS server, but the answers time out. Why?</p>
+      <div class="opts">
+        <button class="opt">The tunnel is down</button>
+        <button class="opt" data-ok>The site has a route back for <code>10.20.0.0/16</code> only, not for shared services</button>
+        <button class="opt">DNS cannot cross a VPN</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Chapter 71 added a route in the site for <code>10.20.0.0/16</code> only. The chapter then adds a route for <code>10.40.0.0/16</code>, and names resolve. Security groups and network ACLs also need rules in both directions.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Design it</span>
+  <h2>Backup and the recovery region</h2>
+  <p class="lead">The goal: prod can run in another region if us-east is lost. Read the cost before you choose.</p>
+  <div class="pair">
+    <div class="q">
+      <p>Which copies of prod&apos;s data must exist in us-east before a loss?</p>
+      <div class="opts">
+        <button class="opt">A backup policy in us-east</button>
+        <button class="opt" data-ok>A snapshot copied to the recovery region, a file share with a replica there, and the web image exported to a bucket</button>
+        <button class="opt">The Transit Gateway configuration</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Only one snapshot copy can exist in each region. A us-east bucket serves a us-south image. A gateway is a regional resource: its configuration is not copied to other regions. IBM says backups and snapshots are not a disaster recovery solution, because restoring from either is a manual operation that takes time.</p></details>
+    </div>
+    <div class="q">
+      <p>Recovery traffic must be inspected like production traffic. What is the recovery region?</p>
+      <div class="opts">
+        <button class="opt" data-ok>A copy of the primary, built from code, with its own firewall pair</button>
+        <button class="opt">A reduced copy with no firewall pair</button>
+        <button class="opt">Nothing until a disaster</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>The copy gives recovery that matches production. <b>Cost:</b> two firewall pairs are about $1.36 an hour for the licences, so delete the recovery pair when you pause. A reduced copy leaves recovery traffic uninspected, and nothing until a disaster is the lowest cost and the slowest recovery.</p></details>
+    </div>
+    <div class="q">
+      <p>The global gateway joins the two hubs. What must each hub do for the spokes to reach each other?</p>
+      <div class="opts">
+        <button class="opt">Nothing. The gateway carries all ranges</button>
+        <button class="opt" data-ok>Advertise its spoke&apos;s range from its Transit Gateway ingress table</button>
+        <button class="opt">Join the spoke to the global gateway</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Before advertising, the global gateway carried only the hubs&apos; own ranges as <code>/18</code> prefixes. After it, the report added <code>10.20.0.0/16</code> and <code>10.120.0.0/16</code>. The path then ran through the primary firewall, the global gateway and the recovery firewall, and a ping from prod to the recovery spoke lost no packets.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Design it</span>
+  <h2>Recover, move users, fail back</h2>
+  <p class="lead">Prod is lost in us-east. Then it returns.</p>
+  <div class="pair">
+    <div class="q">
+      <p>Which recovery step took longest in the lab?</p>
+      <div class="opts">
+        <button class="opt">Restoring the data volume</button>
+        <button class="opt" data-ok>Creating the image in us-south from the exported file</button>
+        <button class="opt">Promoting the file share</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>In the lab on 2 November 2026: the volume 52 seconds, the image 7 minutes 4 seconds, two web servers 18 seconds, the share replica 22 seconds, the promotion 38 seconds, and mounting the share 1 minute 42 seconds. The image can start only once the exported file exists.</p></details>
+    </div>
+    <div class="q">
+      <p>You change <code>app.vpct.internal</code> to the recovery balancer, with a TTL of 60. When do clients reach it, and who still cannot?</p>
+      <div class="opts">
+        <button class="opt">At once, and everyone can</button>
+        <button class="opt" data-ok>Within 37 seconds in the lab, but not the web tier until its network ACL allows the recovery range</button>
+        <button class="opt">After an hour, for every client</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Both test clients had the old address 18 seconds after the change and the new one within 37. The prod web server resolved the name, and its request to the recovery balancer timed out: its subnet&apos;s ACL allowed outbound traffic only to <code>10.20.0.0/16</code>.</p></details>
+    </div>
+    <div class="q">
+      <p>Prod must return to us-east. What order?</p>
+      <div class="opts">
+        <button class="opt">Point the name back, then copy the data</button>
+        <button class="opt" data-ok>Stop the writers, copy the data back, fail the share back, point the name back, then remove the recovery servers</button>
+        <button class="opt">Delete the recovery servers first, to save cost</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Cut back only after the data is back. Deleting a server removes the volumes attached to it, so copy first. Fail over the original share, which is already a replica: a new replica of the recovery share is refused. A writer that kept writing through the failback had its last write acknowledged as number 861, and the us-east share held only lines 1 to 409.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 6 · Spot the fault</span>
+  <h2>Review Northgate&apos;s draft plan</h2>
+  <p class="lead">A colleague wrote the draft plan. Each line is checked against the tutorials. Does it hold?</p>
+  <div class="pair">
+    <div class="q">
+      <p>Draft: &quot;Send the app subnet&apos;s outbound traffic through the firewall with a <code>0.0.0.0/0</code> route in the default table.&quot;</p>
+      <div class="opts">
+        <button class="opt">It holds</button>
+        <button class="opt" data-ok>It does not hold</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Every subnet of the VPC uses the default table. The bastion&apos;s floating IP stopped answering at once. Use a table for the one subnet.</p></details>
+    </div>
+    <div class="q">
+      <p>Draft: &quot;For failback, create a new replica of the recovery share in us-east.&quot;</p>
+      <div class="opts">
+        <button class="opt">It holds</button>
+        <button class="opt" data-ok>It does not hold</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><div class="term"><div class="cmd"><pre class="out err">Error code: shares_replica_cannot_be_created
+Error message: Unable to create share replica for the source share ... The source share either already has a replica or the source_share field contains replica share id</pre></div></div><p>After the failover the original share is already a replica of the recovery share. Fail that one over, with <code>--fallback-policy fail</code>.</p></details>
+    </div>
+    <div class="q">
+      <p>Draft: &quot;A prefix filter on the dev connection keeps dev away from prod only.&quot;</p>
+      <div class="opts">
+        <button class="opt">It holds</button>
+        <button class="opt" data-ok>It does not hold</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A filter on one connection hides that connection&apos;s prefixes from every other connection. For dev alone, use a network ACL rule on the source range or a security group rule.</p></details>
+    </div>
+    <div class="q">
+      <p>Draft: &quot;After the cutover, every client in us-east reaches the recovery balancer.&quot;</p>
+      <div class="opts">
+        <button class="opt">It holds</button>
+        <button class="opt" data-ok>It does not hold</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The prod web server resolved the name and timed out against <code>10.120.1.7:8080</code>. Its subnet&apos;s ACL allowed outbound traffic only to <code>10.20.0.0/16</code>. A client in the web tier needs the same rule as the app tier before the cutover helps it.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 7 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Are snapshots and backups a disaster recovery solution?</p>
+      <div class="opts">
+        <button class="opt">Yes, if they are copied to another region</button>
+        <button class="opt" data-ok>No. IBM says restoring from either is a manual operation that takes time</button>
+        <button class="opt">Yes, with a backup policy</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A cross-regional snapshot copy or a cross-region file share replica gives you the data outside the region. Recovery is still the steps of chapter 92.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>How many copies of one snapshot can exist in a region?</p>
+      <div class="opts">
+        <button class="opt">As many as you create</button>
+        <button class="opt" data-ok>One</button>
+        <button class="opt">Two, one for each zone</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Only one copy can exist in each region.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Can a public address range be assigned to a server?</p>
+      <div class="opts">
+        <button class="opt">Yes, like a floating IP</button>
+        <button class="opt" data-ok>No. It is used only as the destination of a route in an ingress table</button>
+        <button class="opt">Yes, on a bare metal server</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says public address ranges can&apos;t be assigned directly to resources. The next hop is a firewall or a similar server.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 6.3.</span> Northgate picks the cheapest FortiGate licence plan now and wants web filtering next year. What is true?</p>
+      <div class="opts">
+        <button class="opt">Upgrade the plan when needed</button>
+        <button class="opt" data-ok>IBM says the plan cannot be changed after deployment, so choose it before the build</button>
+        <button class="opt">Web filtering is in every plan</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The ATP plan has no web or content filtering. UTP is listed at more than twice the ATP price per vCPU. The server&apos;s size can change, but not the plan.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Course complete</span>
+  <h2>You have designed a whole estate</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 7.</span></div>
+    <div><span class="label">Remember</span><p>Each VPC has its own range. Hub and spokes on a local gateway, the hubs on a global one. The firewall pair, with spoke routes you keep in step. A separate ingress table to advertise. Data copied out of the region before a loss. Cut back after the data.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 90, Building the full estate from the series 9 checkpoint, builds the estate from code. Chapters 91 to 94 build the recovery region, recover prod, move users and fail back.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

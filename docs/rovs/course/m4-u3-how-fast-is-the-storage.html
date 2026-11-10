@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How fast is the storage? · ROVS course</title>
+<meta name="description" content="Course unit 4.3: see what one lab run measured for a VM disk on ODF, read the ODF resource profile dialog, and learn how to measure your own storage with fio. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m4-u3">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 4 · Storage</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 3 of Module 4</span>
+      <h1>How fast is the storage?</h1>
+      <p class="lead">By the end you can say why a write costs more than a read, read what one lab run measured and under which conditions, and plan how to measure your own storage.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a dial with a question mark, and a ruler beside it."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[40,30,160,120],"heavy":true},
+          {"text":"?","at":[104,112],"hand":true,"size":64,"tone":"mark"},
+          {"box":[250,30,40,140],"heavy":true},
+          {"line":[250,60,272,60]},
+          {"line":[250,90,272,90]},
+          {"line":[250,120,272,120]},
+          {"text":"measure your own","at":[60,200],"hand":true,"size":20,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its database team asks one thing before it moves: how fast is the disk? This unit gives you real numbers, and says plainly why you must not reuse them.</p>
+    </div>
+  </div>
+  <p class="small">Every figure in this unit comes from one lab run, recorded in tutorial chapter 78, and is quoted with the conditions the chapter states. The chapter publishes no expected figures, and neither does this unit. The review question repeats one from unit 2.2.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Why a write costs more than a read</h2>
+  <p class="lead">ODF keeps three copies. Every write to a VM disk is replicated, typically three times, before it is acknowledged.</p>
+  <div class="pair">
+    <div>
+      <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A guest does one 4 KB write. An arrow goes to a primary OSD, which is marked. Two arrows go on to two replica OSDs. Text says three 4 KB writes in all."
+        data-drawing='{"w":560,"h":260,"shapes":[
+          {"box":[10,90,130,70],"heavy":true,"title":"Guest","detail":"one 4 KB write"},
+          {"line":[142,125,208,60],"arrow":true,"tone":"mark"},
+          {"box":[210,20,150,70],"heavy":true,"tone":"mark","title":"Primary OSD","detail":"takes the write"},
+          {"line":[362,55,418,55],"arrow":true},
+          {"box":[420,20,130,70],"title":"Replica OSD","detail":"copy 2"},
+          {"line":[285,92,285,148],"arrow":true},
+          {"box":[210,150,150,70],"title":"Replica OSD","detail":"copy 3"},
+          {"text":"3 x 4 KB writes","at":[400,160],"hand":true,"size":22,"tone":"mark"},
+          {"text":"across different OSDs","at":[400,186],"hand":true,"size":18,"tone":"muted"}]}'></svg>
+    </div>
+    <div>
+      <div class="q">
+        <p>A guest does one 4 KB write. How much is written across the OSDs?</p>
+        <div class="opts">
+          <button class="opt">One 4 KB write</button>
+          <button class="opt" data-ok>Three 4 KB writes, on different OSDs</button>
+          <button class="opt">One 12 KB write</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>This is write amplification. The write is not acknowledged until the primary OSD and at least one replica confirm it.</p></details>
+      </div>
+      <div class="q">
+        <p>Which OSD serves a read?</p>
+        <div class="opts">
+          <button class="opt" data-ok>The primary OSD only</button>
+          <button class="opt">All three, and the fastest answer wins</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>Reads are served from the primary OSD only, so read latency is close to a single NVMe access.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>Three measured results</h2>
+  <p class="lead">All three come from one fio VM on one lab cluster, with other VMs running. Predict each, then read the figures and what they do not show.</p>
+  <div class="pair">
+    <div class="q">
+      <p>Two 20 GiB disks on the same class, one Block and one Filesystem. Which gave more read IOPS on a 4k random 70/30 job, three runs each?</p>
+      <div class="opts">
+        <button class="opt">Block</button>
+        <button class="opt" data-ok>Filesystem</button>
+        <button class="opt">The same</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Block was not the faster disk.</span><p>Filesystem gave 63,110 read IOPS against 47,411 for Block. Its queue-depth-1 latency was slightly worse: read p50 458 µs against 376 µs, and its queue-depth-1 write p99.9 varied from 4 ms to 36 ms between runs. No host-side measurement was taken. Use Block for VM disks on this class, but not for speed: it is the class default, and RWX Block lets a VM live migrate.</p></details>
+    </div>
+    <div class="q">
+      <p>A 4-vCPU VM with four busy Block disks, one fio job per disk (4k random 70/30, queue depth 32), gave 65,053 IOPS in total with no IOThreads. What after <code>ioThreadsPolicy: auto</code> and a restart?</p>
+      <div class="opts">
+        <button class="opt">About 65,000</button>
+        <button class="opt" data-ok>About 97,000</button>
+        <button class="opt">About 40,000</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>It gave 97,012 IOPS, three runs each, and the ranges did not overlap. The domain showed two IOThreads, with the disks alternating between them. On <b>one</b> busy Block disk the same VM gave 43,506 IOPS with no IOThreads and 47,039 with <code>auto</code>, and those ranges overlap. By default a VM has no IOThread.</p></details>
+    </div>
+    <div class="q">
+      <p>The same VM and disk under the ODF <code>performance</code> profile and then under <code>balanced</code>, with the 4k random 70/30 job at queue depth 32. How does the p99 read latency change on <code>balanced</code>?</p>
+      <div class="opts">
+        <button class="opt">It does not change</button>
+        <button class="opt">It halves</button>
+        <button class="opt" data-ok>It is about seven times higher</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Under <code>performance</code> the read IOPS were 45,576 and 47,309, and the p99 read latency was 3.3 ms in both runs. Under <code>balanced</code> they were 36,764 read IOPS and 22.9 ms: about 20% fewer IOPS, and a p99 about seven times higher. With one request at a time (queue depth 1) nothing changed. This is one VM, one disk and one cluster, and the run did not look at OSD CPU, so it does not show why.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> These are the figures of one run. They are not expected values for your cluster. The measure-it-yourself step comes later in this unit.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Click through the console</span>
+  <h2>Change the resource profile</h2>
+  <p class="lead">The resource profile sets how much CPU and memory ODF reserves for the Ceph daemons. It does not change Ceph&apos;s data path. These screens come from a lab cluster with 24 OSDs. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="39.4,27.1,46.7,7.6" data-width="360px">
+      <div class="shot"><img src="../images/78/course-actions-menu.jpg" alt="The Actions menu of the Data Foundation Storage cluster page, open. It lists Add Capacity, Configure performance, Automatic capacity scaling, Attach Storage, Edit labels, Edit annotations, Edit Storage Cluster and Delete Storage Cluster." width="360" height="340"></div>
+      <figcaption>
+        <h3>You are on the Storage cluster page of Data Foundation, with the Actions menu open. Which entry changes the profile?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Configure performance. Red Hat names this route for a bare metal deployment, and it worked on a lab cluster.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="3.5,86.3,29.9,12.7" data-width="640px">
+      <div class="shot"><img src="../images/78/course-profile-list.jpg" alt="The Configure Performance dialog with the profile list open. Lean mode: CPUs required 56, memory required 135 GiB. Balanced mode: 72 and 177 GiB. Performance mode, ticked: 129 and 264 GiB." width="635" height="212"></div>
+      <figcaption>
+        <h3>Which profile needs the most CPU and memory for this cluster&apos;s 24 OSDs?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Performance mode needs 129 CPUs and 264 GiB. Balanced mode needs 72 CPUs and 177 GiB, and lean mode 56 CPUs and 135 GiB. The performance entry is ticked, so it is the profile in use.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="3.1,84,58.3,14" data-width="640px">
+      <div class="shot"><img src="../images/78/course-balanced-saved.jpg" alt="The Configure Performance dialog after the change, with Balanced mode selected. The line below the drop-down reads: The aggregate resource requirements for balanced mode is 72 CPUs and 177 GiB RAM." width="635" height="130"></div>
+      <figcaption>
+        <h3>After you save Balanced mode, which line shows what the profile needs?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The aggregate line: 72 CPUs and 177 GiB RAM. Saving changed the StorageCluster at once, and the OSD pods restarted. On the lab cluster it read Ready about eight minutes after the save, with Ceph healthy. Each change restarts the OSDs.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Explore the parts</span>
+  <h2>Measure your own: four fio jobs</h2>
+  <p class="lead">Compare against your own vSphere VM, not against a table. Run the same four jobs on both, changing only the device path. Select a job to see what it answers. You can also click a line.</p>
+  <div class="explorer" data-start="job1"
+    data-map='{"job1":[[3,6]],"job2":[[8,12]],"job3":[[14,18]],"job4":[[20,23]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of four boxes: Job 1 IOPS, Job 2 read latency, Job 3 write latency and Job 4 throughput."
+          data-drawing='{"w":560,"h":230,"shapes":[
+            {"box":[10,20,260,70],"part":"job1","title":"Job 1","detail":"the IOPS question"},
+            {"box":[290,20,260,70],"part":"job2","title":"Job 2","detail":"the read latency question"},
+            {"box":[10,120,260,70],"part":"job3","title":"Job 3","detail":"what a database commit feels"},
+            {"box":[290,120,260,70],"part":"job4","title":"Job 4","detail":"the throughput question"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="job1">
+          <h3>Job 1: random read and write</h3>
+          <p>Small blocks, queue depth 32, four jobs, 70% reads. Queue depth 32 measures how much the system can absorb.</p>
+        </div>
+        <div class="part-info" data-part="job2">
+          <h3>Job 2: one outstanding read</h3>
+          <p>Queue depth 1 measures latency. Record the 99th percentile, not only the average.</p>
+        </div>
+        <div class="part-info" data-part="job3">
+          <h3>Job 3: one outstanding write</h3>
+          <p>Also queue depth 1. This is what a database commit feels.</p>
+        </div>
+        <div class="part-info" data-part="job4">
+          <h3>Job 4: large sequential read</h3>
+          <p>1 MiB blocks. The four jobs ran three times each against a Block virtio, a Filesystem virtio and a Block scsi disk, 20 GiB each, after one full write pass. This job gave 2,558, 2,721 and 2,472 MiB/s respectively. That is one VM on one lab cluster in one run.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The four fio jobs from chapter 78">DEV=/dev/vdb   # the empty test disk. CHECK IT.
+
+# 1. Random read and write at small blocks: the IOPS question
+sudo fio --name=rand4k --filename=$DEV --direct=1 --ioengine=libaio \
+  --rw=randrw --rwmixread=70 --bs=4k --iodepth=32 --numjobs=4 \
+  --time_based --runtime=120 --ramp_time=20 --group_reporting
+
+# 2. Single outstanding read: the latency question
+sudo fio --name=lat-read --filename=$DEV --direct=1 --ioengine=libaio \
+  --rw=randread --bs=4k --iodepth=1 --numjobs=1 \
+  --time_based --runtime=120 --ramp_time=20 \
+  --percentile_list=50:90:99:99.9
+
+# 3. Single outstanding write: what a database commit feels
+sudo fio --name=lat-write --filename=$DEV --direct=1 --ioengine=libaio \
+  --rw=randwrite --bs=4k --iodepth=1 --numjobs=1 \
+  --time_based --runtime=120 --ramp_time=20 \
+  --percentile_list=50:90:99:99.9
+
+# 4. Large sequential: the throughput question
+sudo fio --name=seq1m --filename=$DEV --direct=1 --ioengine=libaio \
+  --rw=read --bs=1M --iodepth=16 --numjobs=1 \
+  --time_based --runtime=120 --ramp_time=20</pre>
+  </div>
+  <p class="watch"><b>Watch for this.</b> fio writing to a raw device destroys the data on it. Use a new, empty data disk, never the root disk. Check the device name with <code>lsblk</code> before every run. Run one write pass over the whole device before the read jobs.</p>
+  <p class="hand tilt"><b>From vSphere:</b> fio plays the role that vscsiStats or HCIBench play. It measures from inside the guest, so it includes everything between the guest and the disk.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>The Northgate database team asks what IOPS a ROVS disk will give. What is the honest answer?</p>
+      <div class="opts">
+        <button class="opt">47,000, from the lab run</button>
+        <button class="opt" data-ok>There is no expected figure. Measure with the same four fio jobs on your own VMs.</button>
+        <button class="opt">As many as the NVMe drives allow</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IOPS and latency depend on your hardware, your ODF version and your workload. The chapter gives no expected number. Compare a ROVS VM against your own vSphere VM, with the same block size, queue depth, job count, runtime and device size, and repeat each run at least three times.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Which disk do you point fio at?</p>
+      <div class="opts">
+        <button class="opt">The root disk, to test the real VM</button>
+        <button class="opt" data-ok>A new, empty data disk</button>
+        <button class="opt">Any disk, because fio only reads</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>fio writing to a raw device destroys the data on it. Use a new data disk and check the name with <code>lsblk</code> first.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>An admin wants a per-disk IOPS cap, as vSphere offers per VMDK. What exists on ROVS?</p>
+      <div class="opts">
+        <button class="opt">A throttle field on the VM disk</button>
+        <button class="opt" data-ok>No supported field was found</button>
+        <button class="opt">A setting in the ODF console</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The disk has no throttle field, and no Red Hat or IBM page says per-PVC IOPS limits are set in the ODF console. Keeping a noisy workload from its neighbours takes its own disks or its own cluster, with capacity sized for it.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 2.2.</b> Which layer turns the guest&apos;s disk I/O into I/O against the host&apos;s block device?</p>
+      <div class="opts">
+        <button class="opt">The VirtIO driver</button>
+        <button class="opt" data-ok>QEMU, in the virt-launcher pod</button>
+        <button class="opt">The Ceph OSD</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>QEMU runs in the virt-launcher pod and translates guest I/O into host-level I/O against the RBD block device. The VirtIO driver only passes the requests to QEMU.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know how to ask about speed</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>A write costs three. Lab figures are not your figures. Measure with the same four fio jobs, on an empty disk, against your own vSphere VM.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 78, Measure and tune ODF storage performance for ROVS VM disks, has the full procedure, every figure and what was not tested.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

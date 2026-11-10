@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" data-course="home">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IBM Cloud courses</title>
+<meta name="description" content="Short, interactive courses on IBM Cloud for VMware, server and backup admins. No account or cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<style>
+  .catalog{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px;padding-block:8px 32px}
+  .catalog li{border-top:4px solid var(--mark);background:var(--soft);padding:18px 20px 22px;display:grid;gap:10px;align-content:start}
+  .catalog h2{font-size:1.3rem}
+  .catalog h2 a{color:var(--ink);text-decoration:none}
+  .catalog h2 a:hover{color:var(--mark)}
+  .catalog p{margin:0;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb">IBM Cloud courses</span>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+  <section class="home-hero">
+    <span class="kicker">No account or cluster needed</span>
+    <h1>Learn IBM Cloud one short unit at a time</h1>
+    <p class="lead">Each course follows Northgate Freight, a made-up haulier, as it moves to IBM Cloud. Predict what will happen, click through the real console, and check what you learned. Every fact comes from a tested tutorial.</p>
+  </section>
+
+  <ul class="catalog">
+    <li>
+      <span class="kicker">For VMware admins</span>
+      <h2><a href="rovs/course/">Learn ROVS without a cluster</a></h2>
+      <p>Red Hat OpenShift Virtualization Service on IBM Cloud: VMs, networking, storage, day two, migration and disaster recovery.</p>
+      <div class="facts"><span>6 modules</span><span>24 units</span></div>
+    </li>
+    <li>
+      <span class="kicker">For VMware admins</span>
+      <h2><a href="vpc/course/">Learn IBM Cloud VPC without an account</a></h2>
+      <p>Virtual Private Cloud: subnets, security, servers, storage, connectivity and a hub VPC with firewalls.</p>
+      <div class="facts"><span>6 modules</span><span>24 units</span></div>
+    </li>
+    <li>
+      <span class="kicker">For server and VM admins</span>
+      <h2><a href="backup/course/">Learn IBM Cloud Backup and Recovery without an account</a></h2>
+      <p>Back up and restore servers, SQL Server and ROVS VMs, and handle what goes wrong.</p>
+      <div class="facts"><span>6 modules</span><span>24 units</span></div>
+    </li>
+    <li>
+      <span class="kicker">For backup and security admins</span>
+      <h2><a href="backup/course/vault/">Learn IBM Cloud Cyber Vault without an account</a></h2>
+      <p>Cyber Vault (Beta) with IBM Storage Defender Data Protect: keep a copy an attacker cannot delete, and rebuild from it.</p>
+      <div class="facts"><span>4 modules</span><span>16 units</span></div>
+    </li>
+  </ul>
+
+  <p class="small">Your progress is kept in your browser only.</p>
+</div></main>
+</body>
+</html>

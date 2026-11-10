@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Register the cluster as a source · BRS course</title>
+<meta name="description" content="Course unit 5.2: say what registering a ROVS cluster needs, register it in the BRS console, and read the failure messages our lab met. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m5-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 5 · OpenShift Virtualization VMs</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 5</span>
+      <h1>Register the cluster as a source</h1>
+      <p class="lead">By the end you can say what registering a ROVS cluster needs, click through the registration, and tell what each failure message our lab met was pointing at.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: an endpoint and a token go in, a registered source comes out."
+        data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,30,160,50],"title":"endpoint, token","detail":"what BRS needs"},{"line":[174,55,226,55],"arrow":true,"tone":"mark"},{"box":[230,30,180,50],"tone":"mark","title":"source","detail":"registered"},{"text":"some messages say why not","at":[90,150],"hand":true,"size":17,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its ROVS cluster, ng-cluster-01, now has a connector. The next job is to register the cluster as a source.</p>
+    </div>
+  </div>
+  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names, endpoints and IDs in messages were changed. Every screen and result comes from our lab on 1 and 2 October and 9 November 2026, recorded in tutorial B3e.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>What registration needs</h2>
+  <p class="lead">Registering the cluster as a source needs four things. Three go in the form; the fourth is the connection from unit 5.1.</p>
+<svg class="sketch" role="img" aria-label="Hand-drawn diagram. Four boxes, connection, cluster endpoint, service account token and distribution, each with an arrow to one box, Kubernetes source, which showed 340 GiB in our lab."
+        data-drawing='{"w":560,"h":230,"shapes":[{"box":[10,10,230,40],"title":"connection (-RoksVpc)"},{"box":[10,60,230,40],"title":"cluster endpoint"},{"box":[10,110,230,40],"title":"service account token"},{"box":[10,160,230,40],"title":"distribution"},{"line":[244,30,326,90],"arrow":true,"tone":"mark"},{"line":[244,80,326,100],"arrow":true,"tone":"mark"},{"line":[244,130,326,120],"arrow":true,"tone":"mark"},{"line":[244,180,326,140],"arrow":true,"tone":"mark"},{"box":[330,70,220,80],"tone":"mark","title":"Kubernetes source","detail":"340 GiB in our lab"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which token goes in the Password-Bearer Token field?</p>
+      <div class="opts">
+        <button class="opt">The Helm registration token from unit 5.1</button>
+        <button class="opt" data-ok>The token of the service account secret brs-sa-token</button>
+        <button class="opt">A token from your own login to the BRS console</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The field takes the service account token. Do not use the Helm registration token: on 1 October 2026 it was tried and BRS answered <code>Unauthorized access. Please check the credentials.[kUnauthorized]</code>. In our lab on 9 November 2026 the service account <code>brs-sa</code>, a cluster-admin role binding and the secret <code>brs-sa-token</code> were made on the cluster, and the token was copied from the secret without showing it.</p></details>
+    </div>
+    <div class="q">
+      <p>Which Kubernetes Distribution do you pick for a ROVS cluster?</p>
+      <div class="opts">
+        <button class="opt">IBM Kubernetes Service</button>
+        <button class="opt" data-ok>IBM Red Hat OpenShift Kubernetes Service</button>
+        <button class="opt">Either: they behave the same</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The form offers those two. The lab chose IBM Red Hat OpenShift Kubernetes Service. In the command line the same choice is <code>kROKS</code>, and a wrong value gave: &quot;Only IKS and ROKS kubernetes distributions are supported in IBM environment&quot;.</p></details>
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Step 2 · Click through the console</span>
+  <h2>Register the source</h2>
+  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026, with the connection from unit 5.1. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="2.1,63.1,48.8,9.3" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B3e-2-connection.png" alt="Register Kubernetes Source, step 1: the RoksVpc connection picked." width="758" height="428"></div>
+      <figcaption>
+        <h3>The form asks for a Data Source Connection. Where do you pick it?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Pick the connection whose name ends in <b>-RoksVpc</b> and click Continue. Do not use Create Data Source Connection on this page: it gives the VMware flow (unit 5.1).</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="47,26.2,44.9,5.8" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B3e-3-details.png" alt="Source Details: the endpoint (blurred), the token field and the distribution." width="758" height="694"></div>
+      <figcaption>
+        <h3>Source Details asks for the cluster endpoint and a token. Click the field for the service account token.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Password-Bearer Token</b>. The endpoint field above it holds the API server URL, blurred here. Below it, Kubernetes Distribution is IBM Red Hat OpenShift Kubernetes Service.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="2.1,20,38.5,5.9" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B3e-4-optional.png" alt="Source Details, Optional: priority class, labels, annotations and image paths, all empty." width="758" height="694"></div>
+      <figcaption>
+        <h3>Optional settings are listed under the form. Where would you set a priority class?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Priority Class Name (Optional)</b>. Optional also holds the Datamover connection type (Host Port), labels, annotations and image paths. The lab kept every default.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="64.3,91.9,5.8,7.2" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B3e-5-registered.png" alt="Sources: the Kubernetes source (blurred), not protected, 340 GiB." width="1164" height="640"></div>
+      <figcaption>
+        <h3>You clicked Complete and the source appeared. Where is its size?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Total Size</b>, 340 GiB. On 9 November 2026 at 07:30 UTC the console said &quot;Registered Kubernetes Source successfully&quot; at the first try, and none of the errors in the next step came back.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>Read the message</h2>
+  <p class="lead">On 1 October 2026, and in later tests, our lab met these messages while registering. Each question gives a message. Pick the cause. Values in the messages were changed.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The command line answers: KInternalError, &quot;Encountered HTTP connection error&quot;. What does it tell you?</p>
+      <div class="opts">
+        <button class="opt">The token is wrong</button>
+        <button class="opt" data-ok>BRS could not reach the cluster: check that the connection has connectors and the connector pods run</button>
+        <button class="opt">The cluster is already registered</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>That is what tutorial B3e says. On 1 October 2026 the connection used had no connectors, and the same error came back every time. After that, check the network.</p></details>
+    </div>
+    <div class="q">
+      <p>The answer is: Unauthorized access. Please check the credentials.[kUnauthorized]. What went wrong?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The Helm registration token was used as the cluster token</button>
+        <button class="opt">The connection has no connectors</button>
+        <button class="opt">The cluster endpoint ends in a slash</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The field needs a valid cluster token: use the secret <code>brs-sa-token</code>, not the registration token.</p></details>
+    </div>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The answer is: Error: https://ng-api.example.com:31228 already registered to cohesity-1234567. What do you do?</p>
+      <div class="opts">
+        <button class="opt">Retry with a longer timeout</button>
+        <button class="opt" data-ok>Remove the other Cohesity registration first, or use another endpoint</button>
+        <button class="opt">Create a second connection</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the cluster endpoint was registered to a self-managed Cohesity cluster. A cluster can have only one Cohesity registration.</p></details>
+    </div>
+    <div class="q">
+      <p>Every command answers: Authentication failed: Neither session cookie nor token is present in the request. The token is fine. What else?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The tenant ID is missing its trailing slash, or the service URL is another instance&apos;s</button>
+        <button class="opt">The instance is in the wrong region</button>
+        <button class="opt">The cluster has no storage class</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab, without the trailing <code>/</code> on the tenant ID, every command gave <code>KStatusUnauthorized</code>; with it, the same command worked. Once the service URL pointed at another instance and gave the same error. These two came from the command line, not the console.</p></details>
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Step 4 · Predict</span>
+  <h2>Eight attempts, then a success</h2>
+  <p class="lead">Here are the eight attempts of 1 October 2026 that did not register the cluster. On 2 October the registration worked.</p>
+  <pre class="def" aria-label="The eight attempts">What was run (1 Oct 2026, instance in au-syd)            Result
+CLI register, no connection ID                            KInternalError: Encountered HTTP connection error
+CLI register, connection with no connectors               same error
+CLI register, VPE endpoint as the cluster endpoint        failed (command not recorded)
+curl POST to the registrations path                       same error
+eu-de instance, registration token as the cluster token   Unauthorized access. ... [kUnauthorized]
+eu-de instance, brs-sa-token, one API port                already registered to cohesity-&lt;number>
+eu-de instance, brs-sa-token, another API port            no answer in 120 s: Cloudflare error code: 524
+au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encountered HTTP timeout error</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What did our lab establish as the reason it worked on 2 October?</p>
+      <div class="opts">
+        <button class="opt">The BRS instance must be in the same region as the cluster</button>
+        <button class="opt" data-ok>Nothing for sure: one fact fits, the connection used on 1 October had no connectors and the one used on 2 October had two</button>
+        <button class="opt">An upgrade of the cluster</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The tutorial says what changed between the two days is not established. An earlier version said the instance must be in the same region; that was wrong, because the au-syd instance registered the eu-de cluster on 2 October 2026. On 9 November 2026 an eu-de instance and an eu-de cluster worked too. IBM&apos;s pages still say the VM feature is for testing in au-syd.</p></details>
+    </div>
+    <div class="q">
+      <p>Which attempt failed because the cluster endpoint was not the cluster API server?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The last: the BRS private URL was given as the cluster endpoint</button>
+        <button class="opt">The first: the connection ID was left out</button>
+        <button class="opt">The one with the registration token</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The last one. That value is the BRS URL, not the cluster API server, so it was a wrong input. The Cloudflare 524 means BRS waited 120 seconds for the cluster and got no answer.</p></details>
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>How many Cohesity registrations can one cluster have?</p>
+      <div class="opts">
+        <button class="opt" data-ok>One</button>
+        <button class="opt">One for each namespace</button>
+        <button class="opt">As many as you like</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A cluster can have only one Cohesity registration. A second one gives the &quot;already registered&quot; message.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 5.1.</b> The Helm command says deployed, and a minute later the connector pod is Pending. What is the likely cause on a ROVS cluster?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The chart&apos;s default storage class is not on the cluster</button>
+        <button class="opt">The token is wrong</button>
+        <button class="opt">The source is already registered</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the claim was Pending for that reason; setting the cluster&apos;s own storage class fixed it.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Registration says Encountered HTTP connection error. What do you check first?</p>
+      <div class="opts">
+        <button class="opt" data-ok>That the connection has connectors and the connector pods run</button>
+        <button class="opt">The cluster&apos;s CPU</button>
+        <button class="opt">The instance&apos;s region</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Then check network access. This is what tutorial B3e lists first.</p></details>
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can register a cluster</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Use the service account token, not the Helm registration token. A cluster can have only one Cohesity registration. Three of our lab&apos;s eight failed attempts on 1 October 2026 gave one error, Encountered HTTP connection error, and the first thing to check is that the connection has connectors. The cause of the change to success on 2 October is not established.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B3e registers the cluster, from the command line and the console, and lists every failure.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

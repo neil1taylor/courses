@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Route tables and ingress routing · VPC course</title>
+<meta name="description" content="Course unit 6.2: predict which route a packet takes, how priority decides, what an ingress route table matches, and why a route can advertise nowhere. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m6-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPC course</a> <span>·</span> Module 6 · Connecting and protecting the estate</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 6</span>
+      <h1>Route tables and ingress routing</h1>
+      <p class="lead">By the end you can predict which route a packet takes, which of two routes wins, and why a route that says it is advertised may go nowhere.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a subnet on the left, an arrow to a route table in the middle, and three arrows out to the right labelled deliver, delegate and drop."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[10,80,100,60],"title":"subnet"},
+          {"line":[114,110,166,110],"arrow":true},
+          {"box":[170,60,110,100],"heavy":true,"tone":"mark","title":"route table"},
+          {"line":[284,80,350,50],"arrow":true},
+          {"line":[284,110,350,110],"arrow":true},
+          {"line":[284,140,350,175],"arrow":true},
+          {"text":"deliver","at":[356,56],"hand":true,"size":18},
+          {"text":"delegate","at":[356,116],"hand":true,"size":18},
+          {"text":"drop","at":[356,181],"hand":true,"size":18}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its admins have used NSX routers. They want to control where each subnet&apos;s traffic goes, and what is allowed into a VPC.</p>
+    </div>
+  </div>
+  <p class="small">Every command and line of output in this unit comes from real runs, recorded in tutorial chapters 80, 81 and 82. The review question repeats one from unit 6.1.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Run it</span>
+  <h2>A subnet uses one route table</h2>
+  <p class="lead">Chapter 80 blocks the shared VPC, <code>10.40.0.0/16</code>, from the prod app subnet. Run each command in turn.</p>
+  <p class="hand tilt"><b>From NSX:</b> an NSX Tier-0 or Tier-1 router maps roughly to a route table and a Transit Gateway.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is vpc-routing-table-route-create vpct-prod vpct-prod-default-rt --zone us-east-1 --destination 10.40.0.0/16 --action drop --name vpct-prod-default-drop-shared-rt</pre>
+          <pre class="out">Name          vpct-prod-default-drop-shared-rt
+Action        drop
+Destination   10.40.0.0/16
+Priority      2
+Zone          us-east-1</pre>
+          <p class="hand note">Priority 2 is what you get if you set none.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ssh -J ubuntu@&lt;bastion-floating-ip&gt; ubuntu@&lt;app-server&gt; &apos;nc -zv -w 4 &lt;shared-server&gt; 22&apos;</pre>
+          <pre class="out err">nc: connect to 10.40.0.14 port 22 (tcp) timed out: Operation now in progress</pre>
+          <p class="hand note">The subnet uses the default table, so the drop applies. No message says why.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is vpc-routing-table-create vpct-prod --name vpct-prod-egress-rt
+ibmcloud is subnet-update vpct-prod-app-z1 --vpc vpct-prod --rt vpct-prod-egress-rt</pre>
+          <pre class="out">Name                                       vpct-prod-egress-rt
+Status                                     pending
+Route Direct Link Ingress                  false
+Route Internet Ingress                     false
+Route Transit Gateway Ingress              false
+Route VPC Zones Ingress                    false</pre>
+          <p class="hand note">The new table has no routes.</p>
+        </div>
+        <div class="q">
+          <p>The app subnet now uses <code>vpct-prod-egress-rt</code>, which has no routes. The drop route is still in the default table. Does the same test succeed?</p>
+          <div class="opts">
+            <button class="opt" data-ok>Yes</button>
+            <button class="opt">No. The drop route still applies</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>A subnet uses the one table you attach. The empty custom table leaves the system routes, which carry the traffic to the Transit Gateway.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ssh -J ubuntu@&lt;bastion-floating-ip&gt; ubuntu@&lt;app-server&gt; &apos;nc -zv -w 4 &lt;shared-server&gt; 22&apos;</pre>
+          <pre class="out">Connection to 10.40.0.14 22 port [tcp/ssh] succeeded!</pre>
+          <p class="hand note">Watch for this: a subnet that moves to a custom table loses the default table&apos;s routes, such as a VPN route.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>Two routes, one destination: priority decides</h2>
+  <p class="lead">The custom table now holds two routes to <code>10.40.0.0/16</code>. A smaller priority number wins.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram of the table vpct-prod-egress-rt holding two routes to 10.40.0.0/16: a delegate route at priority 0 and a drop route at priority 1."
+    data-drawing='{"w":560,"h":170,"shapes":[
+      {"box":[10,10,540,150],"heavy":true,"title":"vpct-prod-egress-rt"},
+      {"box":[30,56,240,80],"title":"delegate","detail":"10.40.0.0/16 · priority 0"},
+      {"box":[290,56,240,80],"tone":"mark","title":"drop","detail":"10.40.0.0/16 · priority 1"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>As drawn, delegate at priority 0 and drop at priority 1. Does the connection to the shared server succeed?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Yes</button>
+        <button class="opt">No, it times out</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The lab&apos;s output: <code>Connection to 10.40.0.14 22 port [tcp/ssh] succeeded!</code> The lower number wins, so delegate beats drop.</p></details>
+    </div>
+    <div class="q">
+      <p>Now the delegate route is moved to priority 3. The drop route stays at 1. What happens?</p>
+      <div class="opts">
+        <button class="opt">It still succeeds. Delegate was first</button>
+        <button class="opt" data-ok>It times out</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The lab&apos;s output: <code>nc: connect to 10.40.0.14 port 22 (tcp) timed out: Operation now in progress</code> The CLI also accepted a third route to the same destination, although IBM says only two <code>deliver</code> routes may share one.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Predict</span>
+  <h2>An ingress table matches where traffic is going</h2>
+  <p class="lead">Chapter 81 adds a table that handles traffic arriving from the Transit Gateway. A VPC can have only one table for each ingress source.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram: dev at 10.30.0.0/16 and shared at 10.40.0.0/16 send traffic through the Transit Gateway into the prod VPC. An ingress table inside prod holds a drop route to 10.30.0.0/16 and a delegate route to 10.0.0.0/8. The prod app server is at 10.20.1.31."
+    data-drawing='{"w":560,"h":230,"shapes":[
+      {"box":[10,20,110,50],"title":"dev"},
+      {"box":[10,130,110,50],"title":"shared"},
+      {"box":[160,60,110,70],"heavy":true,"tone":"mark","title":"Transit","detail":"Gateway"},
+      {"line":[122,45,160,80],"arrow":true},
+      {"line":[122,155,160,110],"arrow":true},
+      {"line":[272,95,310,95],"arrow":true},
+      {"box":[312,10,240,200],"heavy":true,"title":"vpct-prod"},
+      {"box":[326,56,212,62],"dashed":true,"title":"ingress table","detail":"drop 10.30.0.0/16"},
+      {"text":"delegate 10.0.0.0/8","at":[340,142],"hand":true,"size":16},
+      {"text":"app server 10.20.1.31","at":[340,186],"hand":true,"size":16,"tone":"mark"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The table drops <code>10.30.0.0/16</code> and delegates <code>10.0.0.0/8</code>. Can dev still reach the prod app server on port 22?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Yes. Nothing is stopped</button>
+        <button class="opt">No. The drop route matches dev</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Dev and shared both reached the app server, and prod still reached dev: <code>Connection to 10.20.1.31 22 port [tcp/ssh] succeeded!</code> The destination of traffic that arrives in prod is a prod address, so a route on the dev range matches only traffic going to dev.</p></details>
+    </div>
+    <div class="q">
+      <p>You add a drop route for the prod range <code>10.20.1.0/24</code>. What stops?</p>
+      <div class="opts">
+        <button class="opt">Dev only</button>
+        <button class="opt" data-ok>Dev, shared, and prod&apos;s own connections to dev</button>
+        <button class="opt">Nothing</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>All three timed out. The replies to connections that prod starts have a prod address too, so they are dropped. An ingress route cannot tell one source from another. To stop dev alone, use a network ACL rule on the source range or a security group rule.</p></details>
+    </div>
+    <div class="q">
+      <p>Dev and shared must still reach one server, <code>10.20.1.31</code>. How, without deleting the drop route?</p>
+      <div class="opts">
+        <button class="opt">A delegate route to <code>10.20.1.31/32</code>, same priority</button>
+        <button class="opt">A second Transit Gateway ingress table with the delegate route</button>
+        <button class="opt">Nothing works while the drop exists</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The first one. The longer prefix beats the drop route at equal priority, and both paths worked again for that server. A second table with the same ingress flag is refused.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>Advertised, and still not in the report</h2>
+  <p class="lead">Chapter 82 wants the Transit Gateway to learn the on-premises range <code>192.168.0.0/24</code>. The admin turns the flag on for the VPN route in the default table.</p>
+  <div class="term">
+    <div class="bar"><span>bash</span></div>
+    <div class="cmd">
+      <pre class="in">ibmcloud is vpc-routing-table-route-update vpct-prod vpct-prod-default-rt vpct-prod-to-onprem-rt --advertise true</pre>
+      <pre class="out">Name          vpct-prod-to-onprem-rt
+Action        deliver
+Destination   192.168.0.0/24
+Advertise     true</pre>
+    </div>
+  </div>
+  <div class="q" style="margin-top:20px">
+    <p>The route says <code>Advertise true</code>. The next route report lists only <code>10.x</code> prefixes. Why?</p>
+    <div class="opts">
+      <button class="opt">Reports take an hour to update</button>
+      <button class="opt" data-ok>The table&apos;s <code>advertise_routes_to</code> is empty, so the route goes nowhere and gives no error</button>
+      <button class="opt">A deliver route cannot be advertised</button>
+    </div>
+    <details class="reveal"><summary>Show the answer</summary><p>A route goes out only if its flag is true and its table advertises to somewhere. Step 1 of the chapter shows <code>"advertise_routes_to":[]</code> for the default table.</p></details>
+  </div>
+  <div class="term" style="margin-top:20px">
+    <div class="bar"><span>bash</span></div>
+    <div class="cmd">
+      <pre class="in">ibmcloud is vpc-routing-table-update vpct-prod vpct-prod-default-rt --advertise-routes-to transit_gateway</pre>
+      <pre class="out err">FAILED
+Error code: bad_field
+Error message: The route_transit_gateway_ingress property must be set to true when transit_gateway is specified as an advertisement target</pre>
+      <pre class="in">ibmcloud is vpc-routing-table-update vpct-prod vpct-prod-default-rt --transit-gateway-ingress true</pre>
+      <pre class="out err">FAILED
+Error message: Routing table validation failed - ingress flags can not be enabled on routing table attached to a subnet</pre>
+    </div>
+  </div>
+  <div class="q" style="margin-top:20px">
+    <p>Both fixes are refused. What works?</p>
+    <div class="opts">
+      <button class="opt">Detach every subnet from the default table</button>
+      <button class="opt" data-ok>A separate Transit Gateway ingress table, with <code>--advertise-routes-to transit_gateway</code>, holding the route</button>
+      <button class="opt">A second Transit Gateway</button>
+    </div>
+    <details class="reveal"><summary>Show the answer</summary><p>Chapter 82 creates <code>vpct-prod-tgw-ingress-rt</code> that way, with the VPN connection as the next hop and <code>--advertise true</code>. About 40 seconds later the report listed <code>192.168.0.0/24</code> under the prod connection. That one route tells the gateway that prod can reach the site, and sends the arriving traffic into the VPN.</p></details>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>A drop route is in the default table. A subnet moves to a custom table. Does the drop still apply to it?</p>
+      <div class="opts">
+        <button class="opt">Yes, the default table always applies</button>
+        <button class="opt" data-ok>No. The subnet uses only the table you attach</button>
+        <button class="opt">Only for routes with priority 0</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The connection succeeded once the subnet used the empty custom table.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You try to make a second table the Transit Gateway ingress table. What happens?</p>
+      <div class="opts">
+        <button class="opt">The newest table takes over</button>
+        <button class="opt" data-ok>It is refused: a table with that flag already exists in the VPC</button>
+        <button class="opt">Both tables work, by priority</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The error was <code>bad_field</code>: routing table with RouteTransitGatewayIngress flag set to true already exists in the VPC.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 6.1.</span> A prefix filter denies <code>10.30.0.0/16</code> on the dev connection of a Transit Gateway. Who can no longer reach dev?</p>
+      <div class="opts">
+        <button class="opt">Only prod</button>
+        <button class="opt" data-ok>Every other connection on the gateway</button>
+        <button class="opt">Nobody. A filter only hides a route from reports</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A filter on one connection hides that connection&apos;s prefixes from every other connection. The lab saw prod time out against dev while shared still worked.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can read a route table</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>One table per subnet. The smaller priority number wins. An ingress route matches where traffic is going. Advertise from a separate Transit Gateway ingress table.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 80, Controlling traffic with custom VPC route tables, runs the route table steps. Chapter 81 covers ingress and chapter 82 covers advertising.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

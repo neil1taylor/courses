@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Load balancers · VPC course</title>
+<meta name="description" content="Course unit 5.1: choose an application or a network load balancer, read a pool and its health, and spot why a pool member is faulted. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m5-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPC course</a> <span>·</span> Module 5 · Services and security</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 5</span>
+      <h1>Load balancers</h1>
+      <p class="lead">By the end you can choose between an application and a network load balancer, read a pool and its health, and say why a pool member shows faulted.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a client sends requests to a load balancer, which passes them to two servers."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[10,80,80,56],"title":"Client"},
+          {"line":[96,108,150,108],"arrow":true,"tone":"mark"},
+          {"box":[156,50,110,116],"heavy":true,"fill":"hatch","tone":"mark"},
+          {"text":"load balancer","at":[160,194],"hand":true,"size":18,"tone":"mark"},
+          {"line":[272,90,330,56],"arrow":true,"tone":"muted"},
+          {"line":[272,128,330,162],"arrow":true,"tone":"muted"},
+          {"box":[336,28,74,56],"title":"Server"},
+          {"box":[336,134,74,56],"title":"Server"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its web tier and its app tier each need a load balancer. The commands and output below are real, from a test account.</p>
+    </div>
+  </div>
+  <p class="small">Every command and output in this unit comes from tutorial chapters 50 to 53, apart from the review question, which comes from chapter 37. The vSphere comparison is a rough mapping from chapter 2.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>One load balancer, four parts</h2>
+  <p class="lead">An application load balancer in front of two web servers takes four commands to build. Select a part of the drawing to see what it does and which lines make it. You can also click a line.</p>
+  <div class="explorer" data-start="pool"
+    data-map='{"security":[[1,5]],"balancer":[[6,8]],"pool":[[9,10]],"listener":[[11,12]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of a load balancer holding its listener, pool and security group, with a client on the left and two web servers on the right."
+          data-drawing='{"w":600,"h":300,"shapes":[
+            {"box":[130,8,300,284],"heavy":true},
+            {"box":[146,20,268,52],"part":"balancer","title":"Load balancer","detail":"public · three subnets"},
+            {"box":[146,84,268,52],"part":"listener","title":"Listener","detail":"http · port 80"},
+            {"box":[146,148,268,60],"part":"pool","title":"Pool","detail":"round_robin · health check"},
+            {"box":[146,220,268,60],"part":"security","title":"Security group","detail":"80 in · 80 out"},
+            {"box":[10,100,90,56],"dashed":true,"title":"Client"},
+            {"line":[104,128,146,110],"arrow":true,"tone":"mark"},
+            {"box":[470,60,120,64],"part":"pool","dashed":true,"title":"Server","detail":"zone 2"},
+            {"box":[470,170,120,64],"part":"pool","dashed":true,"title":"Server","detail":"zone 3"},
+            {"line":[414,170,470,100],"part":"pool","arrow":true},
+            {"line":[414,190,470,200],"part":"pool","arrow":true}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="balancer">
+          <h3>Load balancer</h3>
+          <p>A public application load balancer gets a host name that maps to one or more public addresses. IBM says the addresses can change with maintenance and scaling, so you send traffic to the name, not to an address.</p>
+          <p class="hand tilt"><b>From vSphere:</b> the closest term is the NSX load balancer. It is a rough match.</p>
+          <p class="watch"><b>Watch for this.</b> Create it on three subnets in three zones. IBM says that gives the load balancer appliances in each zone, which is how it keeps working if a zone fails. In the run it took 234 seconds to become active.</p>
+        </div>
+        <div class="part-info" data-part="listener">
+          <h3>Listener</h3>
+          <p>The front-end port that receives requests. A load balancer takes up to 10 listeners. This one listens for HTTP on port 80 and sends what it receives to the pool.</p>
+          <p class="watch"><b>Watch for this.</b> The listener takes the pool&apos;s ID. The pool&apos;s name gives <code>pool_not_found</code>.</p>
+        </div>
+        <div class="part-info" data-part="pool">
+          <h3>Pool</h3>
+          <p>The back-end servers, with a method for choosing between them and a health check. IBM offers round-robin (the default), weighted round-robin and least connections. A pool holds up to 50 servers, and they must be in the same region and VPC as the load balancer.</p>
+          <p>The health check here is an HTTP request for <code>/</code> on port 80, every 5 seconds, with 2 retries and a 2 second timeout.</p>
+          <p class="watch"><b>Watch for this.</b> A weight from 0 to 100 only counts under weighted round-robin. A weight of 0 sends no new connections and lets existing ones finish.</p>
+        </div>
+        <div class="part-info" data-part="security">
+          <h3>Security group</h3>
+          <p>The load balancer gets its own security group. It sends its health checks and its requests from that group.</p>
+          <p class="watch"><b>Watch for this.</b> A new security group allows nothing outbound. Without the outbound rule every pool member is <code>faulted</code> and requests get a 503.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The commands that build the load balancer">ibmcloud is security-group-create vpct-prod-web-alb-sg vpct-prod --resource-group-name vpct-lab
+ibmcloud is security-group-rule-add vpct-prod-web-alb-sg inbound tcp \
+  --port-min 80 --port-max 80 --name alb-http-in --vpc vpct-prod
+ibmcloud is security-group-rule-add vpct-prod-web-alb-sg outbound tcp --port-min 80 --port-max 80 \
+  --remote vpct-prod-web-sg --name alb-http-out --vpc vpct-prod
+ibmcloud is load-balancer-create vpct-prod-web-alb public \
+  --subnet vpct-prod-web-z1 --subnet vpct-prod-web-z2 --subnet vpct-prod-web-z3 --vpc vpct-prod \
+  --family application --sg vpct-prod-web-alb-sg --resource-group-name vpct-lab
+ibmcloud is load-balancer-pool-create vpct-prod-web-pool vpct-prod-web-alb round_robin http 5 2 2 http \
+  --members "$M" --health-monitor-url / --health-monitor-port 80 --vpc vpct-prod
+ibmcloud is load-balancer-listener-create vpct-prod-web-alb --protocol http --port 80 \
+  --default-pool $POOL --vpc vpct-prod
+</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>Send requests through it</h2>
+  <p class="lead">The two web servers write their own host name into their page, so you can see which one answered. Run each command in turn. The output is what the test account returned.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="q">
+          <p>The pool uses round-robin and has two healthy servers. You send six requests. What do you see?</p>
+          <div class="opts">
+            <button class="opt">The same server six times</button>
+            <button class="opt" data-ok>Both servers&apos; names</button>
+            <button class="opt">An error, because the load balancer has no public gateway</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>Both servers&apos; host names appear. Run the command to see the order.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">for i in $(seq 1 6); do curl -s -m 5 http://$LB/; done</pre>
+          <pre class="out">vpct-prod-web-z2-01
+vpct-prod-web-z3-01
+vpct-prod-web-z3-01
+vpct-prod-web-z2-01
+vpct-prod-web-z3-01
+vpct-prod-web-z2-01</pre>
+          <p class="hand note">Both servers answered, in no fixed order.</p>
+        </div>
+        <div class="cmd">
+          <p class="pre"># switch the pool's method first: weights count only under weighted round-robin</p>
+          <pre class="in">ibmcloud is load-balancer-pool-update ... --algorithm weighted_round_robin</pre>
+          <pre class="out">Algorithm                                  weighted_round_robin</pre>
+        </div>
+        <div class="cmd">
+          <p class="pre"># give one member weight 0</p>
+          <pre class="in">ibmcloud is load-balancer-pool-member-update ... --weight 0</pre>
+          <pre class="out">Weight             0</pre>
+        </div>
+        <div class="q">
+          <p>One member now has weight 0. Where do the next six requests go?</p>
+          <div class="opts">
+            <button class="opt">Three to each server, as before</button>
+            <button class="opt" data-ok>All six to the other server</button>
+            <button class="opt">They fail until the weight is restored</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>A weight of 0 sends no new connections to that server. Run the command to see them.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">for i in $(seq 1 6); do curl -s -m 5 http://$LB/; done</pre>
+          <pre class="out">vpct-prod-web-z3-01
+vpct-prod-web-z3-01
+vpct-prod-web-z3-01
+vpct-prod-web-z3-01
+vpct-prod-web-z3-01
+vpct-prod-web-z3-01</pre>
+          <p class="hand note">That is how you take a server out of rotation without deleting it.</p>
+        </div>
+        <div class="cmd">
+          <p class="pre"># later, after an HTTPS listener was added and HTTP set to redirect to it</p>
+          <pre class="in">curl -s -I -m 5 http://$LB/</pre>
+          <pre class="out">HTTP/1.1 301 Moved Permanently
+content-length: 0
+location: https://f935fd10-us-east.lb.appdomain.cloud:443/</pre>
+          <p class="hand note">The certificate was self-signed, so the HTTPS side needed curl -k.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Design it</span>
+  <h2>Which kind of load balancer?</h2>
+  <p class="lead">This is IBM&apos;s comparison, as chapter 52 records it. Northgate has two tiers to cover.</p>
+  <div class="cols">
+    <svg class="sketch" role="img" aria-label="Hand-drawn comparison. Application load balancer: layer 4 and 7; HTTP, HTTPS and TCP; ends TLS; active-active with several addresses; spans zones. Network load balancer: layer 4; TCP and UDP; does not end TLS; active-standby with one address; sits in the zone of its subnet."
+      data-drawing='{"w":640,"h":250,"shapes":[
+        {"box":[6,6,306,238],"heavy":true},
+        {"text":"Application","at":[22,36],"hand":true,"size":22,"tone":"mark"},
+        {"text":"layers 4 and 7","at":[22,72]},
+        {"text":"HTTP, HTTPS, TCP","at":[22,102]},
+        {"text":"ends TLS: yes","at":[22,132]},
+        {"text":"active-active, several addresses","at":[22,162],"size":15},
+        {"text":"spans zones","at":[22,192]},
+        {"text":"servers, bare metal, FQDN members","at":[22,222],"size":15},
+        {"box":[328,6,306,238],"heavy":true},
+        {"text":"Network","at":[344,36],"hand":true,"size":22,"tone":"mark"},
+        {"text":"layer 4","at":[344,72]},
+        {"text":"TCP, UDP","at":[344,102]},
+        {"text":"ends TLS: no","at":[344,132]},
+        {"text":"active-standby, one address","at":[344,162],"size":15},
+        {"text":"in the zone of its subnet","at":[344,192]},
+        {"text":"virtual server members","at":[344,222],"size":15}]}'></svg>
+    <div>
+      <div class="q">
+        <p>Northgate&apos;s web tier takes HTTPS from the internet, and the load balancer must end TLS. Which one?</p>
+        <div class="opts">
+          <button class="opt" data-ok>An application load balancer</button>
+          <button class="opt">A network load balancer</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>Only the application load balancer ends TLS. Chapter 51 adds an HTTPS listener with a certificate from Secrets Manager, and the pool stays plain HTTP.</p></details>
+      </div>
+      <div class="q">
+        <p>The app tier listens on TCP port 8080. Only the web servers call it, and it needs low latency. Which one, and public or private?</p>
+        <div class="opts">
+          <button class="opt">An application load balancer, public</button>
+          <button class="opt" data-ok>A network load balancer, private</button>
+          <button class="opt">A network load balancer, public</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>IBM says network load balancers suit workloads that need low latency and high data throughput. Chapter 52 puts a private one in front of the app tier. The web servers call its one address on port 8080.</p></details>
+      </div>
+      <div class="q">
+        <p>The app tier must stay reachable if a whole zone fails. A network load balancer sits in one zone. What does IBM say to do?</p>
+        <div class="opts">
+          <button class="opt">Nothing. A network load balancer spans zones.</button>
+          <button class="opt" data-ok>Use several zonal network load balancers, with Private DNS or a global load balancer in front</button>
+          <button class="opt">Switch to a floating IP on each server</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>Chapter 52 records IBM&apos;s advice: use Cloud Internet Services Global Load Balancer or Private DNS with several zonal network load balancers for multi-zone availability. Its members can be in all three zones; the load balancer itself is in one.</p></details>
+      </div>
+      <p class="hand tilt">A floating IP on each server gives no spreading and no health check.</p>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>The pool member that will not go</h2>
+  <p class="lead">Northgate has attached an instance group to the web pool, so the group fills it. An admin tries to remove one member by hand.</p>
+  <pre class="def" aria-label="The failed command and the pool afterwards">$ ibmcloud is load-balancer-pool-member-delete vpct-prod-web-alb vpct-prod-web-pool &lt;member-id&gt; --vpc vpct-prod -f
+Deleting member r014-f6b0…b4f1 from pool vpct-prod-web-pool
+FAILED
+Failed to delete member r014-f6b0…b4f1.
+
+FAILED
+Error code: member_managed_pool_create_conflict
+Error message: Member can not be created. Pool is managed by instance group 'r014-65d0…d2ab'.</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Why did the delete fail?</p>
+      <div class="opts">
+        <button class="opt">The member is still healthy</button>
+        <button class="opt" data-ok>An instance group manages the pool, so nobody edits its members by hand</button>
+        <button class="opt">The admin has the wrong role</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says that with a group attached, members are added to and removed from the pool by the group, based on health checks and its policies. To replace one server, delete its membership. The membership deletes its server, and the group builds a replacement.</p></details>
+    </div>
+    <div class="q">
+      <p>The admin deletes a membership. A moment later the pool lists the old server&apos;s address as <code>faulted</code>. Do you delete that pool member?</p>
+      <div class="opts">
+        <button class="opt">Yes, it is a stale entry</button>
+        <button class="opt" data-ok>No. Wait while the group builds the replacement</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>For a short time the pool lists the replaced server&apos;s address as <code>faulted</code>. The replacement comes back with generated names for the server, its boot volume, its interface and its membership, so rename them afterwards.</p></details>
+    </div>
+    <div class="q">
+      <p>A new pool shows every member <code>faulted</code>, and requests get a 503. The listener and pool settings look right. What do you check first?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The load balancer&apos;s security group has an outbound rule to the servers</button>
+        <button class="opt">The DNS record for the host name</button>
+        <button class="opt">The instance group&apos;s cooldown</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A new security group allows nothing outbound, and the load balancer sends its health checks and requests from its own group. The chapter adds an outbound rule on port 80 to the load balancer&apos;s group, with the web servers&apos; group as the remote.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 3.4.</span> An instance group has four servers at 80%, 70%, 65% and 85% CPU. The policy target is 70%. What does the group do?</p>
+      <div class="opts">
+        <button class="opt">Nothing, because the average is near 70%</button>
+        <button class="opt" data-ok>Adds one server</button>
+        <button class="opt">Adds four servers</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Each window the manager adds up the servers&apos; CPU and divides the sum by the target. 300% divided by 70% is 4.29, which rounds up to 5, so the group adds one server.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Where do you send traffic for a public application load balancer?</p>
+      <div class="opts">
+        <button class="opt">To one of its public addresses</button>
+        <button class="opt" data-ok>To its host name</button>
+        <button class="opt">To the addresses of the pool members</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says the addresses can change with maintenance and scaling. The host name always maps to the current ones.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>The load balancer has an HTTPS listener with a certificate, and the pool is HTTP. What is this called?</p>
+      <div class="opts">
+        <button class="opt">A redirect listener</button>
+        <button class="opt" data-ok>SSL offloading</button>
+        <button class="opt">Direct Server Return</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The load balancer ends TLS and talks plain HTTP to the servers. A redirect listener is the separate setting that sends port 80 clients to the HTTPS listener.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A pool uses round-robin. You set one member&apos;s weight to 0. What happens?</p>
+      <div class="opts">
+        <button class="opt">It gets no new connections</button>
+        <button class="opt" data-ok>Nothing. Weights only count under weighted round-robin</button>
+        <button class="opt">The member is deleted</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Weights apply only to weighted round-robin. Switch the pool&apos;s method first, as in step 2. Under that method a weight of 0 sends no new connections and lets existing ones finish.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can choose and read a load balancer</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Application for HTTP and HTTPS, network for TCP and UDP. Send traffic to the host name. Give the load balancer&apos;s group an outbound rule. Do not edit a pool that a group manages.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 50, Putting an application load balancer before the web tier, builds the first one. Chapter 51, Adding an HTTPS listener with a Secrets Manager certificate, adds TLS. Chapter 52, Putting a private network load balancer before the app tier, builds the second kind, and chapter 53, Attaching an instance group to a load balancer pool, joins a group to the pool.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>
