@@ -45,7 +45,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Tonight it patches two servers: <code>ng-app-01</code> (Linux) and <code>ng-win-01</code> (Windows). Both are already protected, and both must reboot.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab, on 7 October and 9 November 2026, recorded in tutorials B7b and B7c. Server names and addresses were changed to made-up ones, and the server name is blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab, on 7 October and 9 November 2026. Server names and addresses were changed to made-up ones, and the server name is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -78,7 +78,7 @@
         <button class="opt">The backup agent</button>
         <button class="opt" data-ok>SQL Server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both agents came back. SQL Server showed <code>Stopped</code> at 14:09:23 and again at 14:10:35 on 9 November. Its start type is Automatic (Delayed Start), which Windows starts about two minutes after boot. The tutorial advises you to check your database services too.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Both agents came back. SQL Server showed <code>Stopped</code> at 14:09:23 and again at 14:10:35 on 9 November. Its start type is Automatic (Delayed Start), which Windows starts about two minutes after boot. Check your database services too.</p></details>
     </div>
   </div>
 </section>
@@ -132,7 +132,7 @@ connector_agent_exec is not running.</pre>
             <button class="opt">Connected: the backup agent is running</button>
             <button class="opt" data-ok>Not connected</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The next command shows it. The CLI&apos;s <code>connector-agent list</code> is the only place in the tutorials that shows this.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>The next command shows it. The CLI&apos;s <code>connector-agent list</code> is the only place we found that shows this.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud backup-recovery connector-agent list --tenant-id $T --xibm-tenant-id $T --output json | jq -c '.connectorAgents[]|{c:.connectivityStatus.isConnected}'</pre>
@@ -154,7 +154,7 @@ connector_agent_exec is not running.</pre>
     </div>
     <div class="notes js-only" aria-live="polite"></div>
   </div>
-  <p class="small">The installer makes no systemd unit and no cron entry for the Connector Agent, checked in our lab. Whether a boot script fixes this is untested in the tutorial.</p>
+  <p class="small">The installer makes no systemd unit and no cron entry for the Connector Agent, checked in our lab. Whether a boot script fixes this is untested.</p>
 </section>
 
 <section class="screen">
@@ -213,7 +213,7 @@ connector_agent_exec is not running.</pre>
         <button class="opt" data-ok>It is not a final result: it went back to 0 when the run succeeded</button>
         <button class="opt">The group is wedged</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It showed during the wait and cleared when the agent came back. The tutorial says to watch <code>connector-agent list</code> as well as the run status.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It showed during the wait and cleared when the agent came back. Watch <code>connector-agent list</code> as well as the run status.</p></details>
     </div>
     <div class="q" data-check>
       <p>After a Windows reboot, both agents are back. What else did Northgate find stopped in our lab?</p>
@@ -233,7 +233,6 @@ connector_agent_exec is not running.</pre>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>After a reboot, a Windows server&apos;s agents come back in about half a minute in our lab. On Linux the backup agent comes back and the Connector Agent does not, so backups wait, with no error. A run can show 1 Failed while it is only waiting.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B7b reboots a Linux and a Windows server and shows what comes back. Tutorial B7c runs a backup while the Connector Agent is down, from the command line and the console.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

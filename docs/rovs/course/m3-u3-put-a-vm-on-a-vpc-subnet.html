@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output and screens in this unit are real. Its migrated VMs must sit on VPC subnets with their own addresses.</p>
     </div>
   </div>
-  <p class="small">Every statement, definition, screenshot and output in this unit comes from tutorial chapters 14, 22, 23 and 31, apart from the review question, which comes from chapter 36. Chapter 31 shortens some names, and so does this page. The VMware comparison is a rough mapping, not an IBM statement.</p>
+  <p class="small">Every statement, definition, screenshot and output in this unit comes from real runs on lab clusters, apart from the review question. This page shortens some names. The VMware comparison is a rough mapping, not an IBM statement.</p>
 </section>
 
 <section class="screen">
@@ -130,13 +130,13 @@ spec:
           id: 250
 </pre>
   </div>
-  <p class="small">Chapter 14 leaves the physical network name as a value to read off your cluster. <code>vpc-vlans</code> is what the cluster in chapters 22 and 23 returned.</p>
+  <p class="small">The physical network name is a value to read off your cluster. <code>vpc-vlans</code> is what the lab cluster returned.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 2 · Run it</span>
   <h2>Check the network, then the VM</h2>
-  <p class="lead">Run each command in turn. The output is what ROVS clusters returned in chapters 22, 23 and 31.</p>
+  <p class="lead">Run each command in turn. The output is what ROVS lab clusters returned.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -172,7 +172,7 @@ vpc-vlans   Available   SuccessfullyConfigured</pre>
           <pre class="in">ibmcloud ks vni ls --cluster-id $cluster_id</pre>
           <pre class="out">VNI ID         Worker Node                    IP Address   VLAN   Floating   Auto-delete
 02d7-f6216add  kube-...-default-0000021e      10.250.1.5   250    yes        yes</pre>
-          <p class="hand note">Chapter 31 shows only this row.</p>
+          <p class="hand note">This page shows only this row.</p>
           <p class="hand note">Floating yes: the attachment follows the VM to whichever worker runs it.</p>
         </div>
         <div class="cmd">
@@ -286,7 +286,7 @@ No rules were found.</pre><p>A new security group starts empty, and an empty gro
         <button class="opt" data-ok>bootcmd</button>
         <button class="opt">packages</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p><code>bootcmd</code> runs on every boot. Cloud-init otherwise runs on first boot only, and <code>runcmd</code> runs once. For the static address on a localnet VM, chapter 31 uses <code>runcmd</code>, because <code>nmcli connection add</code> is not safe to repeat: each reboot would add another profile with the same name.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p><code>bootcmd</code> runs on every boot. Cloud-init otherwise runs on first boot only, and <code>runcmd</code> runs once. For the static address on a localnet VM, the worked example uses <code>runcmd</code>, because <code>nmcli connection add</code> is not safe to repeat: each reboot would add another profile with the same name.</p></details>
     </div>
     <div class="q" data-check>
       <p>On localnet, which interface mode does the VM&apos;s network card use?</p>

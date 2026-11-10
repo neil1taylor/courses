@@ -64,7 +64,7 @@
         <button class="opt" data-ok>Normal answers: HTTP 200 for lists and reads</button>
         <button class="opt">Only reads</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A control from the lab VSI inside the allowed VPC got HTTP 200 (V7, 6 October 2026). That is why this is logical isolation: the vault is reachable, by the networks on its list, and refuses the rest.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A control from the lab VSI inside the allowed VPC got HTTP 200 (6 October 2026). That is why this is logical isolation: the vault is reachable, by the networks on its list, and refuses the rest.</p></details>
     </div>
     <div class="q">
       <p>Whose account holds the vault&apos;s bucket?</p>
@@ -73,7 +73,7 @@
         <button class="opt" data-ok>An account that IBM manages</button>
         <button class="opt">It is not known</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Our notes record the answer of 12 October 2026: the vault is in an IBM-managed account. Consistent with that, the bucket was not in our COS instance&apos;s bucket list and the configuration API gave the owner 403 (V7, section 4.3).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Our notes record the answer of 12 October 2026: the vault is in an IBM-managed account. Consistent with that, the bucket was not in our COS instance&apos;s bucket list and the configuration API gave the owner 403.</p></details>
     </div>
   </div>
 </section>
@@ -130,7 +130,7 @@ Use in production          not for production</pre></details>
         <button class="opt" data-ok>A list works with a role alone; only a create shows whether the account is allowed in</button>
         <button class="opt">The vault service was down for a week</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Six creates went to <code>failed</code> in 17 to 40 seconds with no error text. A create on 5 October 2026 went to <code>active</code> in about 30 seconds. IBM did not confirm the cause; the most likely one is that the account was not yet on the list. An account on Basic support cannot open the onboarding case; the product team allow-lists it when asked (V1).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Six creates went to <code>failed</code> in 17 to 40 seconds with no error text. A create on 5 October 2026 went to <code>active</code> in about 30 seconds. IBM did not confirm the cause; the most likely one is that the account was not yet on the list. An account on Basic support cannot open the onboarding case; the product team allow-lists it when asked.</p></details>
     </div>
   </div>
 </section>
@@ -202,7 +202,6 @@ Use in production          not for production</pre></details>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>Logical isolation, not a physical air gap. A Beta in us-south only, allow-listed, with no SLA and no support, and not for production. It is not the Deployable Architecture &quot;COS Cyber Vault for Storage Defender&quot;. In our lab the owner could not see audit events for it.</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial V1 covers the allow-list and roles. The five Beta findings are in the feedback record.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

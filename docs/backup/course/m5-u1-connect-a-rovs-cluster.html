@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It runs VMs on a ROVS (OpenShift Virtualization) cluster, here called ng-cluster-01, and wants BRS to back them up. First BRS needs a connector on that cluster.</p>
     </div>
   </div>
-  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names were changed. Every screen and result comes from our lab on 1 and 2 October and 9 November 2026, recorded in tutorial B2d.</p>
+  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names were changed. Every screen and result comes from our lab on 1 and 2 October and 9 November 2026.</p>
 </section>
 
 <section class="screen">
@@ -63,7 +63,7 @@
         <button class="opt" data-ok>2 replicas: 4 CPU and 10 Gi of memory in all, and 5 Gi of storage for each replica</button>
         <button class="opt">A whole worker of its own</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Those are the figures in tutorial B2d, taken from IBM&apos;s guide. A dedicated worker pool for the connector is optional: our lab ran it on the default pool.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Those are the figures in IBM&apos;s guide. A dedicated worker pool for the connector is optional: our lab ran it on the default pool.</p></details>
     </div>
   </div>
 </section>
@@ -144,7 +144,7 @@
         <button class="opt" data-ok>No: stop, and go back to installing the connector</button>
         <button class="opt">Yes, with a longer timeout</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Tutorial B3e says: if the connection has no connectors, stop. In our lab on 1 October 2026, registrations through a connection with no connectors failed with <code>Encountered HTTP connection error</code>. Unit 5.2 comes back to this.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The rule is: if the connection has no connectors, stop. In our lab on 1 October 2026, registrations through a connection with no connectors failed with <code>Encountered HTTP connection error</code>. Unit 5.2 comes back to this.</p></details>
     </div>
   </div>
 </section>
@@ -187,7 +187,6 @@
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>The connection is made in Data Source Connections, platform ROKS VPC. The copied Helm command sets no storage class, so on our lab cluster the pod stayed Pending until we set <code>ocs-storagecluster-ceph-rbd</code>. A healthy connection shows 2 connectors. OpenShift Virtualization VM backup was not generally available when tested, and IBM lists it for au-syd only.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B2d installs the connector, from the console and the command line. IBM&apos;s own install guide is in <code>ibm-brs/k8-install.md</code>.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

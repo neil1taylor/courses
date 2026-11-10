@@ -43,13 +43,13 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. In vSphere it had one answer for protecting a VM. In VPC there are four, and they are not interchangeable. The company is made up; the output is real.</p>
     </div>
   </div>
-  <p class="small">The comparison comes from chapter 49, which is marked cited. The recorded runs come from chapters 43 to 48 and 58. Unit 4.3 covered snapshots and VPC Backup in detail.</p>
+  <p class="small">The comparison rests on IBM&apos;s pages. The recorded runs come from a lab account. Unit 4.3 covered snapshots and VPC Backup in detail.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Four options side by side</h2>
-  <p class="lead">Chapter 49 compares them in a table. Here each option is one block of its rows. Select a box to see what it is for and which lines describe it. You can also click a line.</p>
+  <p class="lead">A table compares them. Here each option is one block of its rows. Select a box to see what it is for and which lines describe it. You can also click a line.</p>
   <div class="explorer" data-start="snap"
     data-map='{"snap":[[1,9]],"backup":[[10,18]],"replica":[[19,27]],"brs":[[28,36]]}'>
     <div class="cols">
@@ -86,7 +86,7 @@
         </div>
       </div>
     </div>
-    <pre class="def" aria-label="The comparison table of chapter 49, one block for each option">SNAPSHOT (chapter 43)
+    <pre class="def" aria-label="The comparison table, one block for each option">SNAPSHOT
 What it copies: One volume, or several in a consistency group
 Schedule: None. By hand
 Retention: Until you delete it
@@ -95,7 +95,7 @@ Cross-region copy: Yes, one copy per region
 Application-consistent: No. Crash-consistent
 Runs as: Part of VPC
 Billed by: GB stored per month
-BACKUP FOR VPC (chapter 44)
+BACKUP FOR VPC
 What it copies: Volumes or file shares, chosen by tag
 Schedule: A cron schedule in a plan
 Retention: A set period or count, then deleted
@@ -104,7 +104,7 @@ Cross-region copy: Yes, for block volumes. Not for file shares
 Application-consistent: No
 Runs as: Part of VPC
 Billed by: GB stored per month
-FILE SHARE REPLICATION (chapter 45)
+FILE SHARE REPLICATION
 What it copies: A file share
 Schedule: A cron schedule, as often as every 15 minutes
 Retention: The replica stays until deleted
@@ -113,7 +113,7 @@ Cross-region copy: Yes, in the same account
 Application-consistent: No
 Runs as: Part of VPC
 Billed by: Share capacity in each location
-BACKUP AND RECOVERY (chapters 47 and 48)
+BACKUP AND RECOVERY
 What it copies: Files, folders, databases, Kubernetes, VMs, through agents
 Schedule: Policies, such as daily or every 4 hours
 Retention: Policy retention
@@ -128,7 +128,7 @@ Billed by: GB-hour of backup stored</pre>
 <section class="screen">
   <span class="kicker">Step 2 · Design it</span>
   <h2>Pick the option for each need</h2>
-  <p class="lead">Five Northgate needs. Pick an answer, then read the worked answer from chapter 49. IBM says backups and snapshots are not a disaster recovery solution: restoring from either is a manual operation that takes time.</p>
+  <p class="lead">Five Northgate needs. Pick an answer, then read the worked answer. IBM says backups and snapshots are not a disaster recovery solution: restoring from either is a manual operation that takes time.</p>
   <div class="pair">
     <div class="q">
       <p>Before Friday&apos;s change, one copy of the app server&apos;s boot and data volumes that agree with each other.</p>
@@ -137,7 +137,7 @@ Billed by: GB-hour of backup stored</pre>
         <button class="opt">File share replication</button>
         <button class="opt">Backup and Recovery</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Chapter 49: one copy of a volume now is a snapshot, and copies of several volumes of one server that agree are a consistency group, by hand or by a VPC Backup policy on the server.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>One copy of a volume now is a snapshot, and copies of several volumes of one server that agree are a consistency group, by hand or by a VPC Backup policy on the server.</p></details>
     </div>
     <div class="q">
       <p>A copy of the app volumes every night, with old copies deleted automatically.</p>
@@ -155,7 +155,7 @@ Billed by: GB-hour of backup stored</pre>
         <button class="opt" data-ok>File share replication</button>
         <button class="opt">A snapshot copy</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Chapter 45 created a replica in a second zone, failed over to it, mounted it, and read the file written before the failover.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A test run created a replica in a second zone, failed over to it, mounted it, and read the file written before the failover.</p></details>
     </div>
     <div class="q">
       <p>Restore one deleted folder, or one SQL Server database, with the application&apos;s help.</p>
@@ -164,7 +164,7 @@ Billed by: GB-hour of backup stored</pre>
         <button class="opt">VPC Backup</button>
         <button class="opt" data-ok>Backup and Recovery</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Restore of single files, or of a database, with the application&apos;s help is Backup and Recovery. The chapter 48 run restored a folder; the chapter 58 run restored a SQL Server database.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Restore of single files, or of a database, with the application&apos;s help is Backup and Recovery. One run restored a folder; another restored a SQL Server database.</p></details>
     </div>
     <div class="q">
       <p>A copy of the shared folder outside the region.</p>
@@ -173,7 +173,7 @@ Billed by: GB-hour of backup stored</pre>
         <button class="opt" data-ok>A cross-region file share replica, in the same account</button>
         <button class="opt">Backup and Recovery, which documents cross-region copy</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>VPC Backup copies across regions for block volumes, not for file shares. Backup and Recovery&apos;s cross-region copy is not documented. Chapter 45 built a replica in us-south; it could not be mounted until a VPC existed there.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>VPC Backup copies across regions for block volumes, not for file shares. Backup and Recovery&apos;s cross-region copy is not documented. A test run built a replica in us-south; it could not be mounted until a VPC existed there.</p></details>
     </div>
   </div>
 </section>
@@ -181,7 +181,7 @@ Billed by: GB-hour of backup stored</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>What Backup and Recovery did with a folder and a database</h2>
-  <p class="lead">Three runs of one protection group on <code>/data</code>, a restore, and a SQL Server restore. Output is copied from chapters 48 and 58. Times and IDs are cut.</p>
+  <p class="lead">Three runs of one protection group on <code>/data</code>, a restore, and a SQL Server restore. Output is copied from real runs. Times and IDs are cut.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -219,7 +219,7 @@ Billed by: GB-hour of backup stored</pre>
           <p class="hand note">All 100 restored files match the checksum list made before the delete.</p>
         </div>
         <div class="cmd">
-          <p class="pre"># chapter 58, SQL Server: the row count and a checksum, before the drop and after the restore</p>
+          <p class="pre"># SQL Server: the row count and a checksum, before the drop and after the restore</p>
           <pre class="in">sqlcmd -S localhost -E -Q "SELECT COUNT(*), CHECKSUM_AGG(CHECKSUM(id,val,note)) FROM vpct_db.dbo.vpct_rows"</pre>
           <pre class="out">before      100000  1620878498
 after      100000  1620878498</pre>
@@ -238,7 +238,7 @@ after      100000  1620878498</pre>
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>Join the connector to the service</h2>
-  <p class="lead">Backup and Recovery needs a connector server in your VPC. A new connector has the login <code>admin</code> with the password <code>admin</code>, and that password has expired, so you change it first. Then you open its page. This is the real page from chapter 47. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">Backup and Recovery needs a connector server in your VPC. A new connector has the login <code>admin</code> with the password <code>admin</code>, and that password has expired, so you change it first. Then you open its page. This is the real page. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="2,44,10,3.6" data-width="760px">
       <div class="shot"><img src="../images/47/claim-page.png" alt="The connector's configuration page, status Not Configured. Primary Network shows the connector's address 10.20.1.5, subnet mask 255.255.255.0, gateway 10.20.1.1, two DNS servers and the NTP server time.google.com. The Domain Names field is empty, Connector Name reads Data-Source-Connector, and the Description and Connection Claim Token fields are empty above the Save button." width="2800" height="1758"></div>
@@ -265,7 +265,7 @@ after      100000  1620878498</pre>
       <div class="shot"><img src="../images/47/claim-page.png" alt="The connector's configuration page with the Save button at the bottom left of the form, below the Connection Claim Token field." width="2800" height="1758"></div>
       <figcaption>
         <h3>The domain name and the token are filled in. Which button claims the connector?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Save. Afterwards <code>data-source-connector list</code> shows <code>isConnected</code> true. The chapter notes it can read false for a short time after the claim.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Save. Afterwards <code>data-source-connector list</code> shows <code>isConnected</code> true. It can read false for a short time after the claim.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -282,7 +282,7 @@ after      100000  1620878498</pre>
         <button class="opt" data-ok>Port 11117 between the agent and the connector is not open</button>
         <button class="opt">The protection policy has no full backup</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Chapter 58 says to open the port: inbound TCP 11117 in the connector&apos;s security group, from the server&apos;s group. The service retried the run by itself, and the third attempt succeeded. A policy with no full backup shows a different symptom: the host ends as <code>SucceededWithWarning</code> and mentions a periodic full backup.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Open the port: inbound TCP 11117 in the connector&apos;s security group, from the server&apos;s group. The service retried the run by itself, and the third attempt succeeded. A policy with no full backup shows a different symptom: the host ends as <code>SucceededWithWarning</code> and mentions a periodic full backup.</p></details>
     </div>
     <div class="q" data-check>
       <p>Are VPC Backup and IBM Cloud Backup and Recovery the same service?</p>
@@ -291,7 +291,7 @@ after      100000  1620878498</pre>
         <button class="opt" data-ok>No. IBM&apos;s Backup and Recovery documents say they are different services</button>
         <button class="opt">Yes, but only for Linux</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>VPC Backup is the scheduled-snapshot service of chapter 44. Backup and Recovery, with the service name <code>backup-recovery</code> in IAM and the CLI, is the managed service of chapters 47 and 48. Names such as BRS and baas are other labels for it, not separate products.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>VPC Backup is the scheduled-snapshot service. Backup and Recovery, with the service name <code>backup-recovery</code> in IAM and the CLI, is the managed service. Names such as BRS and baas are other labels for it, not separate products.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which of the four options is application-consistent?</p>

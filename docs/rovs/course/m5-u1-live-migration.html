@@ -45,7 +45,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its admins know vMotion. Here a live migration is an object you can read, and a few conditions decide whether it runs.</p>
     </div>
   </div>
-  <p class="small">Every command, output and fact in this unit comes from real runs on a test cluster, recorded in tutorial chapters 41 and 45. The review question repeats one from unit 2.2.</p>
+  <p class="small">Every command, output and fact in this unit comes from real runs on a test cluster. The review question repeats one from unit 2.2.</p>
 </section>
 
 <section class="screen">
@@ -72,7 +72,7 @@
         </div>
         <div class="part-info" data-part="nodes">
           <h3>Nodes</h3>
-          <p>The VM moved from one worker to another. On ROVS a live migration works within a single zone only, and a move across zones needs a shutdown. That rests on IBM&apos;s documentation: our cluster has one zone, so chapter 41 shows no run of it.</p>
+          <p>The VM moved from one worker to another. On ROVS a live migration works within a single zone only, and a move across zones needs a shutdown. That rests on IBM&apos;s documentation: our cluster has one zone, so no run of it is shown here.</p>
           <p class="hand tilt"><b>From vSphere:</b> there is no long-distance vMotion between sites.</p>
         </div>
         <div class="part-info" data-part="pods">
@@ -208,7 +208,7 @@ kubevirt-migrate-vm-vs6cf   Succeeded   scratch-w2c-vm-generic</pre>
         <button class="opt" data-ok>An address from a localnet or Layer 2 network</button>
         <button class="opt">No address stays</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Chapter 41 says a localnet address from the VPC subnet, or a Layer 2 overlay address, follows the VM and the pod IP does not. It shows no run of either case. A localnet VM also needs its VLAN attachment at cluster scope, so the network can float with it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A localnet address from the VPC subnet, or a Layer 2 overlay address, follows the VM and the pod IP does not. No run of either case is shown here. A localnet VM also needs its VLAN attachment at cluster scope, so the network can float with it.</p></details>
     </div>
   </div>
 </section>
@@ -216,7 +216,7 @@ kubevirt-migrate-vm-vs6cf   Succeeded   scratch-w2c-vm-generic</pre>
 <section class="screen">
   <span class="kicker">Step 4 · Predict</span>
   <h2>A migration that does not run</h2>
-  <p class="lead">Three symptoms from chapter 41&apos;s troubleshooting table. Pick the likely cause.</p>
+  <p class="lead">Three symptoms from the troubleshooting table. Pick the likely cause.</p>
   <div class="pair">
     <div class="q">
       <p>A migration sits in <code>Scheduling</code>. What do you check?</p>

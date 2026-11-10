@@ -45,7 +45,7 @@
       <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output in this unit is real. Its first job is to lay out the address space, before any server exists.</p>
     </div>
   </div>
-  <p class="small">Every statement and output in this unit comes from tutorial chapters 20 and 21. The review question comes from chapter 13. The vSphere comparison is a rough mapping from chapter 02. Some columns and blank lines are left out of the output, and IDs are shortened.</p>
+  <p class="small">Every statement and output in this unit comes from real runs in a lab account. The vSphere comparison is a rough mapping. Some columns and blank lines are left out of the output, and IDs are shortened.</p>
 </section>
 
 <section class="screen">
@@ -80,7 +80,7 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="prefix">
           <h3>Address prefix</h3>
-          <p>An address range that a VPC owns in one zone. Subnets in that zone are created inside it. The plan in chapter 21 gives each VPC one <code>/16</code>, each zone one <code>/18</code> and each subnet a <code>/24</code>.</p>
+          <p>An address range that a VPC owns in one zone. Subnets in that zone are created inside it. The lab plan gives each VPC one <code>/16</code>, each zone one <code>/18</code> and each subnet a <code>/24</code>.</p>
           <p class="watch"><b>Watch for this.</b> This VPC was made with manual prefix management, so it had no prefixes at all until you created them. A prefix takes no resource group option: it belongs to the VPC.</p>
         </div>
         <div class="part-info" data-part="subnet">
@@ -154,7 +154,7 @@ vpct-prod-web-z3    us-east-3   10.20.128.0/24   251   vpct-lab   vpct-prod-defa
         <button class="opt" data-ok>It is refused</button>
         <button class="opt">It is created in us-east-2 anyway</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The zone must be the zone of the prefix that holds the block. A different zone is refused with <code>address prefix not associated with provided zone</code>. The chapter leaves the zone out, because the block’s prefix already sets it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The zone must be the zone of the prefix that holds the block. A different zone is refused with <code>address prefix not associated with provided zone</code>. The lab leaves the zone out, because the block’s prefix already sets it.</p></details>
     </div>
   </div>
 </section>
@@ -175,7 +175,7 @@ vpct-prod-web-z3    us-east-3   10.20.128.0/24   251   vpct-lab   vpct-prod-defa
       <div class="shot"><img src="../images/20/course-vpc-overview-details.png" alt="The same console overview page, with the default ACL link vpct-prod-default-acl in the top row." width="1166" height="331"></div>
       <figcaption>
         <h3>A new subnet takes a network ACL until you give it its own. Which link names it?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Default ACL, <code>vpct-prod-default-acl</code>. Chapter 21’s subnets all show it until chapter 22 attaches their own.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Default ACL, <code>vpct-prod-default-acl</code>. The lab’s subnets all show it until their own ACLs are attached.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="25.5,8.5,14,7" data-width="720px">
@@ -191,7 +191,7 @@ vpct-prod-web-z3    us-east-3   10.20.128.0/24   251   vpct-lab   vpct-prod-defa
 <section class="screen">
   <span class="kicker">Step 4 · Design it</span>
   <h2>Choose how to give the ranges</h2>
-  <p class="lead">Choose one, then open the worked answer. The answers come from chapters 20 and 21.</p>
+  <p class="lead">Choose one, then open the worked answer.</p>
   <div class="pair">
     <div class="q">
       <p><b>Need A.</b> Northgate has an address plan. Each subnet must take the range the plan gives it. Which way of creating a subnet?</p>

@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is moving its vSphere estate to IBM Cloud VPC. The company is made up; the output in this unit is real. Its admins ask first: what do we get when we create a VPC?</p>
     </div>
   </div>
-  <p class="small">Every line of output and every statement in this unit comes from tutorial chapters 13 and 20. The vSphere comparisons come from chapters 02 and 13.</p>
+  <p class="small">Every line of output and every statement in this unit comes from real runs in a lab account. The vSphere comparisons are rough mappings.</p>
 </section>
 
 <section class="screen">
@@ -78,7 +78,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Explore the parts</span>
   <h2>One VPC, read from its own output</h2>
-  <p class="lead">This is the output of <code>ibmcloud is vpc vpct-prod</code> from chapter 20, with IDs and some lines left out. Select a part of the drawing to see who sets it. You can also click a line.</p>
+  <p class="lead">This is the output of <code>ibmcloud is vpc vpct-prod</code>, with IDs and some lines left out. Select a part of the drawing to see who sets it. You can also click a line.</p>
   <div class="explorer" data-start="identity"
     data-map='{"identity":[[1,5]],"group":[[6,6]],"defaults":[[8,10]],"dns":[[12,17]]}'>
     <div class="cols">
@@ -96,7 +96,7 @@
         <div class="part-info" data-part="identity">
           <h3>Identity</h3>
           <p><b>You choose the name. IBM sets the rest.</b> <code>Status available</code> is what IBM reports once the VPC exists.</p>
-          <p class="watch"><b>Watch for this.</b> Chapter 20 does not pass <code>--classic-access</code>, so Classic access is false. IBM marks that flag as deprecated and says to use a Transit Gateway to connect VPCs to the classic network.</p>
+          <p class="watch"><b>Watch for this.</b> The VPC is created without <code>--classic-access</code>, so Classic access is false. IBM marks that flag as deprecated and says to use a Transit Gateway to connect VPCs to the classic network.</p>
         </div>
         <div class="part-info" data-part="group">
           <h3>Resource group</h3>
@@ -106,7 +106,7 @@
         <div class="part-info" data-part="defaults">
           <h3>Three defaults</h3>
           <p><b>IBM creates these with every VPC.</b> A server made with no security group joins the default one. A subnet made with no network ACL gets the default ACL. A subnet made with no route table uses the default one.</p>
-          <p class="watch"><b>Watch for this.</b> The names here were chosen by you. <code>vpc-create</code> has no option to name the defaults, so IBM gives them random words, such as <code>tremble-admit-study-angelic</code>. Chapter 20 renames each one straight away.</p>
+          <p class="watch"><b>Watch for this.</b> The names here were chosen by you. <code>vpc-create</code> has no option to name the defaults, so IBM gives them random words, such as <code>tremble-admit-study-angelic</code>. The lab renames each one straight away.</p>
         </div>
         <div class="part-info" data-part="dns">
           <h3>DNS</h3>
@@ -115,7 +115,7 @@
         </div>
       </div>
     </div>
-    <pre class="def" aria-label="The VPC output, shortened from chapter 20">ID                       r014-…-f567
+    <pre class="def" aria-label="The VPC output, shortened">ID                       r014-…-f567
 Name                     vpct-prod
 Status                   available
 Classic access           false
@@ -138,7 +138,7 @@ DNS Resolver Type        system</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>Find the regions and zones</h2>
-  <p class="lead">Run each command in turn. The output is what the CLI returned in chapter 13 when it was targeted at <code>us-east</code>.</p>
+  <p class="lead">Run each command in turn. The output is what the CLI returned when it was targeted at <code>us-east</code>.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -254,7 +254,7 @@ us-south-3   us-south   available   DAL14         us-south-dal14-a</pre>
         <button class="opt" data-ok>A default security group, network ACL and route table</button>
         <button class="opt">A public gateway</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM creates the three defaults. With <code>manual</code> address prefix management it creates no address prefixes, and chapter 20 creates no subnets either. You create those.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM creates the three defaults. With <code>manual</code> address prefix management it creates no address prefixes, and it creates no subnets either. You create those.</p></details>
     </div>
   </div>
 </section>

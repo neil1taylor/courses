@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It archives three groups from Defender Data Protect to a Cyber Vault, with a policy that keeps each archive for 1 day. Its auditor asks: how long can nobody delete this data?</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab on 10 November 2026 (tutorial V4), with the first finding from 5 October (tutorial V7). The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab on 10 November 2026, with the first finding from 5 October. The vault is a Beta in us-south, with no SLA.</p>
 </section>
 
 <section class="screen">
@@ -65,7 +65,7 @@
         <button class="opt" data-ok>The read key</button>
         <button class="opt">Neither: only the account owner can</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our tests the read key could read an object&apos;s lock and the write key could not (V7, test V8). That is why the check in this unit was made with the read key.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our tests the read key could read an object&apos;s lock and the write key could not. That is why the check in this unit was made with the read key.</p></details>
     </div>
     <div class="q">
       <p>Northgate&apos;s policy says: archive, retain for 1 day. Who decides the lock date of each object in the vault?</p>
@@ -74,7 +74,7 @@
         <button class="opt" data-ok>Data Protect sets it on each write; the vault does not limit it</button>
         <button class="opt">The person who made the vault, once, for all objects</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In V7 (5 October) Data Protect locked data for 18 days in a vault whose maximum was 3 days. A second test vault with a minimum of 2 days locked a 1-day request for 1 day and a 5-day request for 5 days: the minimum and maximum did not limit a lock the writer set (ISS-132, ISS-145).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On 5 October Data Protect locked data for 18 days in a vault whose maximum was 3 days. A second test vault with a minimum of 2 days locked a 1-day request for 1 day and a 5-day request for 5 days: the minimum and maximum did not limit a lock the writer set.</p></details>
     </div>
   </div>
 </section>
@@ -148,7 +148,7 @@ configs                   -       no lock</pre></details>
         <button class="opt" data-ok>The vault holds locked data until 25 November 2026 at 20:50:48Z; IBM says it cannot be deleted before then</button>
         <button class="opt">Only the data chunks are removed</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The newest data lock in the vault runs to 25 November. IBM&apos;s page says a vault with locked objects cannot be deleted. In our October test the delete call was accepted anyway and the vault stayed in &quot;deleting&quot; for at least 50 minutes, with its locked objects still readable (ISS-146). So do not plan around a delete before the last lock ends.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The newest data lock in the vault runs to 25 November. IBM&apos;s page says a vault with locked objects cannot be deleted. In our October test the delete call was accepted anyway and the vault stayed in &quot;deleting&quot; for at least 50 minutes, with its locked objects still readable. So do not plan around a delete before the last lock ends.</p></details>
     </div>
     <div class="q">
       <p>What should the auditor be told about how long the data cannot be deleted?</p>
@@ -192,7 +192,7 @@ configs                   -       no lock</pre></details>
         <button class="opt" data-ok>No: in our tests the maximum did not limit a lock the writer set</button>
         <button class="opt">Only for the read key</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>18 days on 5 October in a vault with a 3-day maximum, and a 5-day lock on a vault with the same maximum on 6 October (ISS-132, ISS-145).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>18 days on 5 October in a vault with a 3-day maximum, and a 5-day lock on a vault with the same maximum on 6 October.</p></details>
     </div>
   </div>
 </section>
@@ -202,8 +202,7 @@ configs                   -       no lock</pre></details>
   <h2>You know what the lock really is</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>The console showed one day. The vault held the data chunks for 9 to 15 days. Read the lock from the vault with the read key; the vault enforces it, and plan on the vault staying until the last lock ends: IBM says a vault with locked data cannot be deleted, and our October delete test left the vault stuck in &quot;deleting&quot; (ISS-146).</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial V4 runs the archive from the console and reads the lock dates from the vault. Tutorial V7 holds the October finding and the minimum and maximum test.</p></div>
+    <div><span class="label">Remember</span><p>The console showed one day. The vault held the data chunks for 9 to 15 days. Read the lock from the vault with the read key; the vault enforces it, and plan on the vault staying until the last lock ends: IBM says a vault with locked data cannot be deleted, and our October delete test left the vault stuck in &quot;deleting&quot;.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

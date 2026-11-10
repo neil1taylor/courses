@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the rules and output in this unit are real. Its web tier takes traffic from the internet, and its app tier takes none.</p>
     </div>
   </div>
-  <p class="small">Every statement and output in this unit comes from tutorial chapters 22, 23 and 25, apart from the review question, which comes from chapter 21. The NSX comparisons are rough mappings from chapter 02. Some columns are left out of the output, and IDs are shortened.</p>
+  <p class="small">Every statement and output in this unit comes from real runs in a lab account, apart from the review question. The NSX comparisons are rough mappings. Some columns are left out of the output, and IDs are shortened.</p>
 </section>
 
 <section class="screen">
@@ -91,11 +91,11 @@
         <div class="part-info" data-part="sgout">
           <h3>Security group, outbound</h3>
           <p>A security group is stateful: a rule that allows traffic one way also allows the replies.</p>
-          <p class="watch"><b>Watch for this.</b> A new group has no rules at all, outbound as well. That is why every group in the chapter gets an outbound allow rule, here <code>web-all-out</code>.</p>
+          <p class="watch"><b>Watch for this.</b> A new group has no rules at all, outbound as well. That is why every group in the lab gets an outbound allow rule, here <code>web-all-out</code>.</p>
         </div>
       </div>
     </div>
-    <pre class="def" aria-label="The web network ACL and the web security group, as the chapters list them">Web network ACL, vpct-prod-web-acl. Rules run top to bottom.
+    <pre class="def" aria-label="The web network ACL and the web security group, as listed in the lab">Web network ACL, vpct-prod-web-acl. Rules run top to bottom.
 Direction   Action   Protocol       Source          Destination     Port                    Name
 inbound     allow    icmp_tcp_udp   10.20.0.0/16    0.0.0.0/0       any                     allow-vpc-in
 inbound     allow    tcp            0.0.0.0/0       10.20.0.0/16    destination 443         allow-https-in
@@ -159,7 +159,7 @@ outbound    0.0.0.0/0          icmp_tcp_udp                  app-all-out</pre>
         <button class="opt" data-ok>The ACL rule <code>allow-http-in</code> and the security group rule <code>web-http-in</code></button>
         <button class="opt">Only the ACL rule <code>allow-http-in</code></button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both. The packet needs an allow at both layers. In the chapter’s test the ACL allowed port 80 inbound and so did the security group.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Both. The packet needs an allow at both layers. In the lab’s test the ACL allowed port 80 inbound and so did the security group.</p></details>
     </div>
     <div class="q">
       <p><b>Path A, the reply.</b> The page comes back. Which layer needs a rule of its own for the reply?</p>
@@ -194,7 +194,7 @@ outbound    0.0.0.0/0          icmp_tcp_udp                  app-all-out</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>Block the page twice</h2>
-  <p class="lead">A web server serves a page on port 80 through its floating IP. Run each command in turn. The output is what the lab returned in chapter 25.</p>
+  <p class="lead">A web server serves a page on port 80 through its floating IP. Run each command in turn. The output is what the lab returned.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -261,7 +261,7 @@ Rule r014-…-46be is deleted.</pre>
             <button class="opt">The security group</button>
             <button class="opt" data-ok>The line cannot tell you</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The two timeouts look the same. In the chapter you knew the layer only because of the rule you had just added or deleted.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>The two timeouts look the same. In the lab you knew the layer only because of the rule you had just added or deleted.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud is security-group-rule-add vpct-prod-web-sg inbound tcp --port-min 80 --port-max 80 --name web-http-in --vpc vpct-prod</pre>
@@ -295,7 +295,7 @@ Remote                 0.0.0.0/0</pre>
 <section class="screen">
   <span class="kicker">Step 4 · Design it</span>
   <h2>Pick the layer for each need</h2>
-  <p class="lead">Choose one, then open the worked answer. The answers come from chapters 22 and 23.</p>
+  <p class="lead">Choose one, then open the worked answer.</p>
   <div class="pair">
     <div class="q">
       <p><b>Need A.</b> Web servers added next year must reach the app tier on port 8080. Nobody should have to edit the app rules.</p>
@@ -336,7 +336,7 @@ Remote                 0.0.0.0/0</pre>
         <button class="opt" data-ok>The VPC’s default network ACL</button>
         <button class="opt">A new ACL that IBM creates for it</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Each new subnet takes the VPC’s default network ACL and default route table. The chapter then attaches an ACL for each tier.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Each new subnet takes the VPC’s default network ACL and default route table. The lab then attaches an ACL for each tier.</p></details>
     </div>
     <div class="q" data-check>
       <p>A new security group has just been created and has no rules. What can the servers in it send?</p>
@@ -345,7 +345,7 @@ Remote                 0.0.0.0/0</pre>
         <button class="opt" data-ok>Nothing, until you add an outbound rule</button>
         <button class="opt">Only replies to inbound traffic</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A new group has no rules at all, outbound as well. The chapter adds an outbound allow rule to each group.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A new group has no rules at all, outbound as well. The lab adds an outbound allow rule to each group.</p></details>
     </div>
     <div class="q" data-check>
       <p>Two security groups are on one interface. One allows port 22 and the other does not mention it. Is port 22 open?</p>

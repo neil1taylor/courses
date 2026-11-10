@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It has Linux servers in a VPC in Frankfurt and wants BRS to back them up. Its first job is to build the server that links the VPC to the service.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from runs in our lab, on 7 October and 8 November 2026, recorded in tutorial B2a. Server names and addresses were changed to made-up Northgate values, for example <code>ng-app-01</code> and <code>10.0.0.10</code>. The screenshots show the lab&apos;s own resource names; the registration token is blurred.</p>
+  <p class="small">Every number and screen in this unit comes from runs in our lab, on 7 October and 8 November 2026. Server names and addresses were changed to made-up Northgate values, for example <code>ng-app-01</code> and <code>10.0.0.10</code>. The screenshots show the lab&apos;s own resource names; the registration token is blurred.</p>
 </section>
 
 <section class="screen">
@@ -77,7 +77,7 @@
         <button class="opt" data-ok>4 vCPU and 16 GB, and it runs all the time</button>
         <button class="opt">Nothing to run: it is part of the service</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In tutorial B2a the connector is a 4-vCPU, 16 GB server that runs all the time. IBM&apos;s pricing notes say at least two connectors for production. The lab test used one.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the connector is a 4-vCPU, 16 GB server that runs all the time. IBM&apos;s pricing notes say at least two connectors for production. The lab test used one.</p></details>
     </div>
   </div>
 </section>
@@ -96,7 +96,7 @@ Failed dependencies: lsof is needed by cohesity-agent-7.3.12-1.x86_64, wget is n
         <button class="opt" data-ok>Packages that the agent needs are missing: <code>lsof</code> and <code>wget</code></button>
         <button class="opt">The service is not running</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The message names <code>lsof</code> and <code>wget</code>. Tutorial B2a records this as a pass with two missing packages.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The message names <code>lsof</code> and <code>wget</code>. In our lab this was a pass with two missing packages.</p></details>
     </div>
     <div class="q">
       <p>What fixes it?</p>
@@ -105,7 +105,7 @@ Failed dependencies: lsof is needed by cohesity-agent-7.3.12-1.x86_64, wget is n
         <button class="opt" data-ok>Install the missing packages, then run <code>rpm</code> again</button>
         <button class="opt">Download the agent as a different file type</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tutorial installed <code>nfs-utils</code>, <code>lvm2</code>, <code>lsof</code> and <code>wget</code> with <code>dnf</code> and ran <code>rpm</code> again:</p><pre class="def" aria-label="The fix">sudo dnf -y install nfs-utils lvm2 lsof wget &amp;&amp; sudo rpm -Uvh /tmp/brs-agent.rpm
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab we installed <code>nfs-utils</code>, <code>lvm2</code>, <code>lsof</code> and <code>wget</code> with <code>dnf</code> and ran <code>rpm</code> again:</p><pre class="def" aria-label="The fix">sudo dnf -y install nfs-utils lvm2 lsof wget &amp;&amp; sudo rpm -Uvh /tmp/brs-agent.rpm
 sudo systemctl is-active cohesity-agent; sudo ss -ltn | grep -E "50051|59999"
 active; listening on 50051 and 59999</pre></details>
     </div>
@@ -136,7 +136,7 @@ active; listening on 50051 and 59999</pre></details>
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2a-6-connector-unhealthy-first.png" alt="The connector's status page: cohesity-lab-dsc, Unhealthy, 'Connection dropped to dataplane due to internal error'." width="520" height="500"></div>
       <figcaption>
         <h3>You pasted the token and clicked Save. The page shows this. Where does it say what is wrong?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: Unhealthy, with &quot;Connection dropped to dataplane due to internal error&quot;. Tutorial B2a says to wait. Reload the page later to see Healthy.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: Unhealthy, with &quot;Connection dropped to dataplane due to internal error&quot;. The fix is to wait. Reload the page later to see Healthy.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -184,7 +184,7 @@ active; listening on 50051 and 59999</pre></details>
         <button class="opt">Delete the file and download it again</button>
         <button class="opt">Nothing: the agent installs itself later</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Tutorial B2a installed <code>nfs-utils</code>, <code>lvm2</code>, <code>lsof</code> and <code>wget</code> with <code>dnf</code>, then ran <code>rpm</code> again.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab we installed <code>nfs-utils</code>, <code>lvm2</code>, <code>lsof</code> and <code>wget</code> with <code>dnf</code>, then ran <code>rpm</code> again.</p></details>
     </div>
     <div class="q" data-check>
       <p>The Virtual server for VPC form opens with the connector image chosen. What should you do before you click Create virtual server?</p>
@@ -196,7 +196,7 @@ active; listening on 50051 and 59999</pre></details>
       <details class="reveal"><summary>Show the answer</summary><p>In our lab the form started at another zone, resource group, profile and VPC, with that VPC&apos;s default security group and no SSH key.</p></details>
     </div>
     <div class="q" data-check>
-      <p>Right after you save the connector&apos;s setup page, its status says Unhealthy. What does tutorial B2a say to do?</p>
+      <p>Right after you save the connector&apos;s setup page, its status says Unhealthy. What should you do?</p>
       <div class="opts">
         <button class="opt">Delete the connector and build it again</button>
         <button class="opt" data-ok>Wait, then reload the page</button>
@@ -213,7 +213,6 @@ active; listening on 50051 and 59999</pre></details>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>The connector server links your VPC to the service and serves many hosts, but every host still needs the backup agent, and its packages first. Check each field of the server form. A new connector may show Unhealthy for a few minutes: wait.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B2a installs the backup agent, makes the connection, builds the connector server and claims it, from the console and the command line.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It backs up with Defender Data Protect and wants to know exactly what IBM puts in a Cyber Vault before it trusts one.</p>
     </div>
   </div>
-  <p class="small">The screens come from the IBM Cloud console in our lab on 10 November 2026 (tutorial V2). The test results come from 5 and 7 October 2026 (tutorial V7). The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">The screens come from the IBM Cloud console in our lab on 10 November 2026. The test results come from 5 and 7 October 2026. The vault is a Beta in us-south, with no SLA.</p>
 </section>
 
 <section class="screen">
@@ -65,7 +65,7 @@
         <button class="opt" data-ok>S3 object lock on, with versioning on and no default rule</button>
         <button class="opt">No lock: the lock is set later by the owner</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Versioning was Enabled and object lock was Enabled with no default rule. It is not the Immutable Object Storage retention policy (V7, section 4.3, 5 October 2026).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Versioning was Enabled and object lock was Enabled with no default rule. It is not the Immutable Object Storage retention policy (5 October 2026).</p></details>
     </div>
     <div class="q">
       <p>Which of the four parts is optional?</p>
@@ -91,7 +91,7 @@
         <button class="opt" data-ok>0</button>
         <button class="opt">3650, the largest allowed</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The form fills in 30 days by itself, so every object would be locked for a month. The form says: "Enter 0 to apply locks manually per-object". With 0, Data Protect sets each object&apos;s lock from its archive retention (V2, in the console, 10 November 2026).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The form fills in 30 days by itself, so every object would be locked for a month. The form says: "Enter 0 to apply locks manually per-object". With 0, Data Protect sets each object&apos;s lock from its archive retention (in the console, 10 November 2026).</p></details>
     </div>
     <div class="q">
       <p>Northgate gets the retention wrong. Can the owner edit the vault later?</p>
@@ -201,7 +201,6 @@
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>A locked bucket, a write key, a read key and an allow-list come with every vault. The write window is optional. Nothing can be changed after creation. In our lab the window blocked reads as well as writes.</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial V1 gets access and roles. Tutorial V2 creates the vault in the console. Tutorial V7 holds the window test.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

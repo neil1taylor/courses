@@ -40,7 +40,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect. Its board asks: what if an attacker gets the backup admin&apos;s keys? The answer is a Cyber Vault. First, the account needs access.</p>
     </div>
   </div>
-  <p class="small">Everything here comes from runs in our lab on 25 September and 5 October 2026 (tutorials V1 and V2). The vault is a Beta in us-south, with no SLA, no warranty and no support.</p>
+  <p class="small">Everything here comes from runs in our lab on 25 September and 5 October 2026. The vault is a Beta in us-south, with no SLA, no warranty and no support.</p>
 </section>
 
 <section class="screen">
@@ -62,7 +62,7 @@
         <button class="opt" data-ok>Cyber Vault Manager</button>
         <button class="opt">Neither: only IBM can create vaults</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Cyber Vault Reader lists vaults. Cyber Vault Manager creates them (V1, section 2).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Cyber Vault Reader lists vaults. Cyber Vault Manager creates them.</p></details>
     </div>
     <div class="q">
       <p>Northgate&apos;s admin already has the &quot;all IAM services&quot; admin policy. Is that enough?</p>
@@ -93,7 +93,7 @@
         <button class="opt" data-ok>The role works. It does not prove the account is on the allow list</button>
         <button class="opt">The Manager role is in place too</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 25 September 2026 the list returned 200 after the Reader role was granted. The same day, six creates failed. The list only proves the role works (V1, section 3).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On 25 September 2026 the list returned 200 after the Reader role was granted. The same day, six creates failed. The list only proves the role works.</p></details>
     </div>
     <div class="q">
       <p>What is the only real check that an account has access?</p>
@@ -124,7 +124,7 @@ HTTP 500
         <button class="opt" data-ok>The token still starts with &quot;Bearer &quot;, so the header reads &quot;Bearer Bearer &lt;IAM_TOKEN&gt;&quot;</button>
         <button class="opt">The Manager role has not arrived yet</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The CLI prints the token with the word <code>Bearer </code> in front. Remove it with <code>sed &apos;s/^Bearer //&apos;</code> before you build the header (V1, section 3; V2, section 2). In our lab this was ISS-32, on 25 September 2026.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The CLI prints the token with the word <code>Bearer </code> in front. Remove it with <code>sed &apos;s/^Bearer //&apos;</code> before you build the header. Our lab hit this on 25 September 2026.</p></details>
     </div>
     <div class="q">
       <p>The call failed. What did it leave behind?</p>
@@ -179,7 +179,6 @@ HTTP 500
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 4.</span></div>
     <div><span class="label">Remember</span><p>Access is three things: IBM puts the account on the allow list, the user holds the Reader and Manager roles, and the user has Editor or Administrator on the COS instance. Only a create proves the allow list. Strip &quot;Bearer &quot; from the token before you use it.</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial V1 has the role commands and the check. Tutorial V2 has the create call and the clean-up.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect. Before it adds a vault, its team learns the four words the console uses.</p>
     </div>
   </div>
-  <p class="small">Everything here comes from the Data Protect builds and runs in our lab on 5 October and 10 November 2026 (tutorials D1, D2a, D3, V3 and V4). Product: IBM Storage Defender 2.2.1 Data Protect, version 7.4.1.</p>
+  <p class="small">Everything here comes from the Data Protect builds and runs in our lab on 5 October and 10 November 2026. Product: IBM Storage Defender 2.2.1 Data Protect, version 7.4.1.</p>
 </section>
 
 <section class="screen">
@@ -68,7 +68,7 @@
         <button class="opt" data-ok>The policy</button>
         <button class="opt">The cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The policy from tutorial V3 is a daily backup, 1 day on the cluster, and every run archived to the vault for 1 day.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The policy is a daily backup, 1 day on the cluster, and every run archived to the vault for 1 day.</p></details>
     </div>
     <div class="q">
       <p>You click Run Now. On which of the four do you click it?</p>
@@ -77,7 +77,7 @@
         <button class="opt" data-ok>A protection group</button>
         <button class="opt">A source</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In tutorial V4 each of three groups was run with Run Now. The dialog carried the policy&apos;s archive line, so no archive target had to be chosen. On the Policies page the console counts the groups that use each policy.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab each of three groups was run with Run Now. The dialog carried the policy&apos;s archive line, so no archive target had to be chosen. On the Policies page the console counts the groups that use each policy.</p></details>
     </div>
   </div>
   <p class="small">In our lab a source was a VPC virtual server with an agent and 19 GiB of test data. The cluster serves its own Linux agent, so no separate download was needed.</p>
@@ -102,7 +102,7 @@
         <button class="opt" data-ok>On a bare metal server, with the KVM image</button>
         <button class="opt">On an OpenShift cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM ships no image for VPC virtual servers, OpenShift or OCI, and Cohesity does not support a cluster on VPC virtual servers (D1).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM ships no image for VPC virtual servers, OpenShift or OCI, and Cohesity does not support a cluster on VPC virtual servers.</p></details>
     </div>
     <div class="q">
       <p>Which software version did the lab install?</p>
@@ -111,7 +111,7 @@
         <button class="opt" data-ok>7.4.1, inside IBM Storage Defender 2.2.1</button>
         <button class="opt">Any version, they are all supported</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Only 7.3.x and 7.4.x are supported. Support for 7.2.x ended on 8 June 2026 (D1).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Only 7.3.x and 7.4.x are supported. Support for 7.2.x ended on 8 June 2026.</p></details>
     </div>
   </div>
 </section>
@@ -137,7 +137,7 @@ Cluster create            call to cluster: ?</pre>
 Bare metal server         18 min
 Image pull                8 min 16 s
 Guest created             15 min
-Cluster create            6 min</pre><p>The guest took about 15 minutes. The bare metal server costs about $4.26 an hour. The source server costs about $0.20 an hour (D2a).</p></details>
+Cluster create            6 min</pre><p>The guest took about 15 minutes. The bare metal server costs about $4.26 an hour. The source server costs about $0.20 an hour.</p></details>
     </div>
     <div class="q">
       <p>Is a licence needed to run backups?</p>
@@ -163,7 +163,7 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
         <button class="opt" data-ok>The script downloaded without its execute bit; run chmod +x on the copy first</button>
         <button class="opt">The bare metal server has no KVM</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 10 November 2026 the download had no execute bit. After <code>chmod +x</code> on the copy it ran (D2a).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 10 November 2026 the download had no execute bit. After <code>chmod +x</code> on the copy it ran.</p></details>
     </div>
     <div class="q">
       <p>In October the boot disk was nvme3n1. What do you do on 10 November?</p>
@@ -172,10 +172,10 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
         <button class="opt" data-ok>Check with findmnt every time: this time it was nvme0n1</button>
         <button class="opt">Format every disk</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The boot disk changed between builds. On 10 November 2026 the lab checked first, then formatted the other two disks (D2a).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The boot disk changed between builds. On 10 November 2026 the lab checked first, then formatted the other two disks.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> Set the cluster&apos;s host name when you create it. A cluster built without one cannot back up OpenShift VMs, and the name cannot be changed later (ISS-179).</p>
+  <p class="watch"><b>Watch for this.</b> Set the cluster&apos;s host name when you create it. A cluster built without one cannot back up OpenShift VMs, and the name cannot be changed later.</p>
 </section>
 
 <section class="screen">
@@ -218,7 +218,6 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>A cluster backs up sources. A policy says when, how long and where to archive. A protection group joins what you protect to a policy. A cluster on IBM Cloud VPC is a KVM guest on a bare metal server.</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial D2a builds the cluster. Tutorial D1 covers the download and the licence, and D3 the settings.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

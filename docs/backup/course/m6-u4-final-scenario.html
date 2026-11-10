@@ -46,7 +46,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It runs a Linux server <code>ng-app-01</code> with files in <code>/data</code>, a Windows server <code>ng-win-01</code> with files in <code>C:\data</code> and a SQL Server database <code>labdb</code>, and two VMs on OpenShift Virtualization. It wants all of it backed up, restorable, and tidy at the end of the pilot.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab, recorded in the tutorials named at the end. Server names and addresses were changed to made-up ones, and server names are blurred in the screenshots. The unit reviews what Modules 3 to 6 covered. Allow about 20 minutes.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab. Server names and addresses were changed to made-up ones, and server names are blurred in the screenshots. The unit reviews what Modules 3 to 6 covered. Allow about 20 minutes.</p>
 </section>
 
 <section class="screen">
@@ -65,7 +65,7 @@
 Gold     every 4 hours  1 week   1 week
 Silver   every 12 hours 2 weeks  2 weeks
 Bronze   daily          30 days  30 days
-Basic    daily          30 days  none</pre><p>Gold, Silver and Bronze carry a Compliance data lock equal to their retention. A backup made with them cannot be deleted until the lock ends. The tutorial says to use Basic, or your own policy, for a test.</p></details>
+Basic    daily          30 days  none</pre><p>Gold, Silver and Bronze carry a Compliance data lock equal to their retention. A backup made with them cannot be deleted until the lock ends. For a test, use Basic or your own policy.</p></details>
     </div>
     <div class="q">
       <p>What type of protection group backs up the folder <code>/data</code> on <code>ng-app-01</code>?</p>
@@ -110,7 +110,7 @@ Second  128.86 GB   5.50 GB    1,357 s</pre><p>In our lab on 5 October 2026 the 
         <button class="opt" data-ok>It checks every file against a checksum list made before the backup</button>
         <button class="opt">It counts the folders</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the check <code>sha256sum -c</code> gave 503 of 503 files matching, after a restore of about 12 seconds in October and 23 seconds in the console run. BRS and Defender restores have returned hard-linked files empty and still reported success, which is why the tutorials check by SHA-256.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the check <code>sha256sum -c</code> gave 503 of 503 files matching, after a restore of about 12 seconds in October and 23 seconds in the console run. BRS and Defender restores have returned hard-linked files empty and still reported success, which is why the lab runs check by SHA-256.</p></details>
     </div>
     <div class="q">
       <p>From the command line, Northgate restores <code>C:\data\docs</code> and writes the path that way. What happens?</p>
@@ -146,7 +146,7 @@ Second  128.86 GB   5.50 GB    1,357 s</pre><p>In our lab on 5 October 2026 the 
         <button class="opt">About 20 minutes</button>
         <button class="opt" data-ok>About an hour</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 5 October 2026 the recovery ended Succeeded after 3,803 s (63.4 min). The restored VMs were Running 35 seconds after BRS created them. The tutorial checked the VMs and their files, not only the job status.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On 5 October 2026 the recovery ended Succeeded after 3,803 s (63.4 min). The restored VMs were Running 35 seconds after BRS created them. We checked the VMs and their files, not only the job status.</p></details>
     </div>
   </div>
 </section>
@@ -289,7 +289,6 @@ Second  128.86 GB   5.50 GB    1,357 s</pre><p>In our lab on 5 October 2026 the 
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>Use a policy with no lock for a pilot. Check every restore against figures taken before: a Succeeded status is not proof. Expect a Linux Connector Agent to stay down after a reboot, and delete groups with Delete Snapshots on, then sources, then the instance. VM backup was not generally available when we tested it.</p></div>
-    <div><span class="label">When you have an account</span><p>Start with tutorial B1 and finish with B6, which deletes everything in the right order. The restores are in B5a, B5b, B5c and B5e. The failure tests are in B7b, B7c and B7e.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

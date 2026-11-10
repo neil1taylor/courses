@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It has decided to try BRS and orders its first instance in Frankfurt. Then it looks at what it was given.</p>
     </div>
   </div>
-  <p class="small">Every screen and number in this unit comes from tutorial B1 and from tutorial B3a, run in our lab on 8 November 2026. Names of people, servers and addresses are blurred or left out; the lab&apos;s instance name and resource group appear as they were.</p>
+  <p class="small">Every screen and number in this unit comes from real runs in our lab on 8 November 2026. Names of people, servers and addresses are blurred or left out; the lab&apos;s instance name and resource group appear as they were.</p>
 </section>
 
 <section class="screen">
@@ -102,7 +102,7 @@ Basic    1 day          30 days   none</pre></details>
         <button class="opt" data-ok>It cannot be deleted until the lock ends, 1 week later</button>
         <button class="opt">Only an administrator can delete it</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Tutorial B1 says a backup made with Gold, Silver or Bronze cannot be deleted until the lock ends, and advises Basic or your own policy for a test. Tutorial B3a adds that a locked backup cannot be deleted &quot;not even by an administrator&quot;.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A backup made with Gold, Silver or Bronze cannot be deleted until the lock ends, so use Basic or your own policy for a test. A locked backup also cannot be deleted &quot;not even by an administrator&quot;.</p></details>
     </div>
   </div>
 </section>
@@ -156,7 +156,7 @@ Basic    1 day          30 days   none</pre></details>
         <button class="opt">Click Authorize, to use the key on the page</button>
         <button class="opt" data-ok>Turn the Encryption switch off</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 8 November 2026 the switch was <b>on by default</b>, already filled in with a Key Protect instance and root key from another project in the account, with a warning &quot;Service authorization required&quot;. Switching it off gives an instance with provider-managed keys. Tutorial B7g covers using your own key.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On 8 November 2026 the switch was <b>on by default</b>, already filled in with a Key Protect instance and root key from another project in the account, with a warning &quot;Service authorization required&quot;. Switching it off gives an instance with provider-managed keys. Unit 4.4 covers using your own key.</p></details>
     </div>
     <div class="q">
       <p>After the order, the instance page shows Encryption: <b>Provider managed</b>. Does that prove the switch was off?</p>
@@ -165,7 +165,7 @@ Basic    1 day          30 days   none</pre></details>
         <button class="opt" data-ok>No: the page shows it for an instance with your own key too</button>
         <button class="opt">Yes, unless it is Pending</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The page shows &quot;Provider managed&quot; for an instance with your own key too, so it does not prove the switch was off. The Key Protect registrations list does (the <code>kp registrations</code> command in the tutorial).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The page shows &quot;Provider managed&quot; for an instance with your own key too, so it does not prove the switch was off. The Key Protect registrations list does (the <code>kp registrations</code> command).</p></details>
     </div>
   </div>
 </section>
@@ -211,7 +211,6 @@ Basic    1 day          30 days   none</pre></details>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>The create page shows Plan: Premium, and its Encryption switch may be on by default. The instance goes from Pending to Active, and you open its dashboard with Launch dashboard. A new instance has four policies: Gold, Silver and Bronze carry a data lock equal to their retention; Basic has none. The Create Policy dialog adds a 2-week lock by default.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B1 orders the instance from the console and the command line and looks at the starting state. Tutorial B3a makes a policy, with the default lock removed.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

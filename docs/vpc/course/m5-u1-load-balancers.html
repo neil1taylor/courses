@@ -45,7 +45,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its web tier and its app tier each need a load balancer. The commands and output below are real, from a test account.</p>
     </div>
   </div>
-  <p class="small">Every command and output in this unit comes from tutorial chapters 50 to 53, apart from the review question, which comes from chapter 37. The vSphere comparison is a rough mapping from chapter 2.</p>
+  <p class="small">Every command and output in this unit comes from real runs in a lab account, apart from the review question. The vSphere comparison is a rough mapping.</p>
 </section>
 
 <section class="screen">
@@ -189,7 +189,7 @@ location: https://f935fd10-us-east.lb.appdomain.cloud:443/</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Design it</span>
   <h2>Which kind of load balancer?</h2>
-  <p class="lead">This is IBM&apos;s comparison, as chapter 52 records it. Northgate has two tiers to cover.</p>
+  <p class="lead">This is IBM&apos;s comparison. Northgate has two tiers to cover.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn comparison. Application load balancer: layer 4 and 7; HTTP, HTTPS and TCP; ends TLS; active-active with several addresses; spans zones. Network load balancer: layer 4; TCP and UDP; does not end TLS; active-standby with one address; sits in the zone of its subnet."
       data-drawing='{"w":640,"h":250,"shapes":[
@@ -216,7 +216,7 @@ location: https://f935fd10-us-east.lb.appdomain.cloud:443/</pre>
           <button class="opt" data-ok>An application load balancer</button>
           <button class="opt">A network load balancer</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>Only the application load balancer ends TLS. Chapter 51 adds an HTTPS listener with a certificate from Secrets Manager, and the pool stays plain HTTP.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>Only the application load balancer ends TLS. The lab adds an HTTPS listener with a certificate from Secrets Manager, and the pool stays plain HTTP.</p></details>
       </div>
       <div class="q">
         <p>The app tier listens on TCP port 8080. Only the web servers call it, and it needs low latency. Which one, and public or private?</p>
@@ -225,7 +225,7 @@ location: https://f935fd10-us-east.lb.appdomain.cloud:443/</pre>
           <button class="opt" data-ok>A network load balancer, private</button>
           <button class="opt">A network load balancer, public</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>IBM says network load balancers suit workloads that need low latency and high data throughput. Chapter 52 puts a private one in front of the app tier. The web servers call its one address on port 8080.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>IBM says network load balancers suit workloads that need low latency and high data throughput. The lab puts a private one in front of the app tier. The web servers call its one address on port 8080.</p></details>
       </div>
       <div class="q">
         <p>The app tier must stay reachable if a whole zone fails. A network load balancer sits in one zone. What does IBM say to do?</p>
@@ -234,7 +234,7 @@ location: https://f935fd10-us-east.lb.appdomain.cloud:443/</pre>
           <button class="opt" data-ok>Use several zonal network load balancers, with Private DNS or a global load balancer in front</button>
           <button class="opt">Switch to a floating IP on each server</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>Chapter 52 records IBM&apos;s advice: use Cloud Internet Services Global Load Balancer or Private DNS with several zonal network load balancers for multi-zone availability. Its members can be in all three zones; the load balancer itself is in one.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>IBM advises: use Cloud Internet Services Global Load Balancer or Private DNS with several zonal network load balancers for multi-zone availability. Its members can be in all three zones; the load balancer itself is in one.</p></details>
       </div>
       <p class="hand tilt">A floating IP on each server gives no spreading and no health check.</p>
     </div>
@@ -278,7 +278,7 @@ Error message: Member can not be created. Pool is managed by instance group 'r01
         <button class="opt">The DNS record for the host name</button>
         <button class="opt">The instance group&apos;s cooldown</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A new security group allows nothing outbound, and the load balancer sends its health checks and requests from its own group. The chapter adds an outbound rule on port 80 to the load balancer&apos;s group, with the web servers&apos; group as the remote.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A new security group allows nothing outbound, and the load balancer sends its health checks and requests from its own group. The lab adds an outbound rule on port 80 to the load balancer&apos;s group, with the web servers&apos; group as the remote.</p></details>
     </div>
   </div>
 </section>

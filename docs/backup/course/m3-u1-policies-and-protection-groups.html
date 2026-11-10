@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It has just ordered a BRS instance and wants to protect the folder <code>/data</code> on a Linux server. Before the first backup it must choose a policy and make a group.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab on 8 November 2026, recorded in tutorials B1 and B3a. The server name is blurred in the screenshots; no address appears.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab on 8 November 2026. The server name is blurred in the screenshots; no address appears.</p>
 </section>
 
 <section class="screen">
@@ -75,7 +75,7 @@ Basic    none</pre></details>
         <button class="opt" data-ok>Basic, or a policy of its own</button>
         <button class="opt">Any of them: an administrator can delete a locked backup</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A backup made with a locked policy cannot be deleted until the lock ends, not even by an administrator. The tutorial&apos;s advice for a test is to use Basic, or your own policy.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A backup made with a locked policy cannot be deleted until the lock ends, not even by an administrator. For a test, use Basic or your own policy.</p></details>
     </div>
   </div>
 </section>
@@ -130,7 +130,7 @@ Basic    none</pre></details>
         <button class="opt" data-ok>A file-based group reads only what changed on an incremental run; a volume-based one reads the whole volume every time</button>
         <button class="opt">File-based keeps backups longer</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That is what tutorial B3a states. The console makes the choice for you: it offers no volume-based type.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>That is what our lab run shows. The console makes the choice for you: it offers no volume-based type.</p></details>
     </div>
     <div class="q">
       <p>In the group&apos;s options for the server, Include Path starts as <code>/</code>. What does that protect?</p>
@@ -226,7 +226,6 @@ Basic    none</pre></details>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>A new instance has four policies; Gold, Silver and Bronze lock their backups and Basic does not. The Create Policy dialog adds a lock of its own: remove it for a test. A new group runs from the moment you open the form unless you pause it.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B1 orders the instance and shows its four policies. Tutorial B3a registers the server, makes the policy and makes the paused group, from the console and the command line.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Before a change it wants a copy of an app server&apos;s two disks that agree with each other, and later a copy every night. The company is made up; the names and output are real.</p>
     </div>
   </div>
-  <p class="small">Every command and line of output here comes from real runs, recorded in tutorial chapters 43 and 44. IDs are shortened.</p>
+  <p class="small">Every command and line of output here comes from real runs. IDs are shortened.</p>
 </section>
 
 <section class="screen">
@@ -170,7 +170,7 @@ Zone                                   us-south-1
 ...
 Source snapshot                        ID                                          Name
                                        r006-06090eef-…   vpct-dr-app-z1-01-data1-snap</pre>
-          <p class="hand note">A new volume, in the other region. The chapter stopped here: mounting it needs a server in us-south.</p>
+          <p class="hand note">A new volume, in the other region. The run stopped here: mounting it needs a server in us-south.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -222,7 +222,7 @@ Health State          ok</pre>
             <button class="opt" data-ok>No jobs yet. A job can start up to 90 minutes after the scheduled time</button>
             <button class="opt">An error, because the policy is pending</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>IBM says a backup job can start up to 90 minutes after the scheduled time. Until then the command lists no jobs. The chapter says to allow at least that long.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>IBM says a backup job can start up to 90 minutes after the scheduled time. Until then the command lists no jobs. Allow at least that long.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud is backup-policy-jobs vpct-prod-daily-bp</pre>
@@ -230,7 +230,7 @@ Health State          ok</pre>
 ID                  Auto delete   Auto delete after   Completed at                Created at                  Job type   Status      Match resource type
 r014-4e23f737-…   true          30                  2026-10-30T08:24:14+00:00   2026-10-30T08:23:15+00:00   creation   succeeded   -</pre>
           <p class="hand note">Auto delete after 30, although the plan said 1 day.</p>
-          <p class="hand note">The chapter says that figure is not the snapshot&apos;s retention.</p>
+          <p class="hand note">That figure is not the snapshot&apos;s retention.</p>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud is snapshot-consistency-groups --backup-policy vpct-prod-daily-bp --backup-policy-plan vpct-prod-daily-plan</pre>
@@ -263,19 +263,19 @@ r014-4e23f737-…   true          30                  2026-10-30T08:24:14+00:00 
           <button class="opt" data-ok>The members are of different storage generations</button>
           <button class="opt">The volumes are in different zones</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>Chapter 40 tried exactly this and got this error. A group of one <code>sdp</code> volume alone was created. Chapter 43 lists the rule: a group cannot include snapshots of mixed storage generations.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>A test run tried exactly this and got this error. A group of one <code>sdp</code> volume alone was created. The rule: a group cannot include snapshots of mixed storage generations.</p></details>
       </div>
     </div>
     <div style="display:grid;gap:10px;align-content:start">
       <p>Northgate makes a policy with <code>--match-resource-type instance</code>. It then puts the tag <code>backup:vpct-daily</code> on the two volumes, not on the server.</p>
       <div class="q">
-        <p>What does the chapter say?</p>
+        <p>What does IBM say?</p>
         <div class="opts">
           <button class="opt">Either place works</button>
           <button class="opt" data-ok>IBM says the tag goes on the server, so the volumes are backed up as a group</button>
           <button class="opt">The tag goes on the policy</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>Matching by <code>instance</code> backs up a server&apos;s volumes as a consistency group, and for that IBM says the tag goes on the server. The chapter tagged the server.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>Matching by <code>instance</code> backs up a server&apos;s volumes as a consistency group, and for that IBM says the tag goes on the server. The lab tagged the server.</p></details>
       </div>
     </div>
   </div>
@@ -292,7 +292,7 @@ r014-4e23f737-…   true          30                  2026-10-30T08:24:14+00:00 
         <button class="opt" data-ok>It holds what was on disk at that moment, not what the guest held in memory</button>
         <button class="opt">It is checked by the application first</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That is why IBM says to flush cached data to disk first. Chapter 49 puts application-consistent backups in Backup and Recovery, through an agent. Unit 4.4 covers that.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>That is why IBM says to flush cached data to disk first. Application-consistent backups are done by Backup and Recovery, through an agent. Unit 4.4 covers that.</p></details>
     </div>
     <div class="q" data-check>
       <p>You want a copy of a consistency group in us-south. What do you do?</p>
@@ -310,7 +310,7 @@ r014-4e23f737-…   true          30                  2026-10-30T08:24:14+00:00 
         <button class="opt" data-ok>No. It creates a new volume</button>
         <button class="opt">Only with a backup policy</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both chapters restored to a new volume and left the source untouched. IBM also says backups and snapshots are not a disaster recovery solution, because restoring from either is a manual operation that takes time.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Both runs restored to a new volume and left the source untouched. IBM also says backups and snapshots are not a disaster recovery solution, because restoring from either is a manual operation that takes time.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 4.2.</b> A volume&apos;s <code>Encryption</code> line reads <code>provider_managed</code>. What does that tell you?</p>

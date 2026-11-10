@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its backup cluster is destroyed. The only thing left is the vault, and the one key Northgate holds for it: the read key.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from a real run in our lab on 10 November 2026 (tutorial V7b). The screenshots show a second registration of the vault, named <code>cv-console-vault-shots</code>. When you do this yourself, type a name of your own. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">Every number and screen in this unit comes from a real run in our lab on 10 November 2026. The screenshots show a second registration of the vault, named <code>cv-console-vault-shots</code>. When you do this yourself, type a name of your own. The vault is a Beta in us-south, with no SLA.</p>
 </section>
 
 <section class="screen">
@@ -80,7 +80,7 @@
         <button class="opt" data-ok>An agent trusts one cluster, so it must be replaced</button>
         <button class="opt">The vault will only talk to a new agent</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The agent trusts one cluster (ISS-140). In the lab the new cluster&apos;s agent went on each server before the sources were registered.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The agent trusts one cluster. In the lab the new cluster&apos;s agent went on each server before the sources were registered.</p></details>
     </div>
   </div>
 </section>
@@ -108,7 +108,7 @@ Encryption           ?</pre>
         <button class="opt" data-ok>Off, because the archive was written without it</button>
         <button class="opt">It does not appear on this form</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The form opens with Encryption on, using the internal key manager. The lab turned it off, because the archive was written with no encryption (V7, test 10.3).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The form opens with Encryption on, using the internal key manager. The lab turned it off, because the archive was written with no encryption.</p></details>
     </div>
     <div class="q">
       <p>What should Archive Object Lock be on a read-only registration?</p>
@@ -181,7 +181,7 @@ Encryption           ?</pre>
         <button class="opt" data-ok>It fails with a TLS error: the old trust is kept</button>
         <button class="opt">It works, but only for SQL</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A plain <code>rpm -Uvh --force</code> keeps the old trust and registration fails with a TLS error (V7b, section 2). The lab removed the package and the saved configuration first.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A plain <code>rpm -Uvh --force</code> keeps the old trust and registration fails with a TLS error. The lab removed the package and the saved configuration first.</p></details>
     </div>
     <div class="q">
       <p>On Windows, what did the lab check, and do, around the agent install?</p>
@@ -190,7 +190,7 @@ Encryption           ?</pre>
         <button class="opt" data-ok>Check the download is 21,896,312 bytes, and reboot after the install</button>
         <button class="opt">Install twice, to be sure</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The lab checked the size of the download (ISS-214) and rebooted after the install (ISS-170). Then the sources were registered: Linux source 3, Windows source 7, with SQL turned on at source 7, and all four checks passed.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The lab checked the size of the download and rebooted after the install. Then the sources were registered: Linux source 3, Windows source 7, with SQL turned on at source 7, and all four checks passed.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> A server still trusts the old cluster until its agent is replaced. A registration that fails with a TLS error points at the agent, not at the vault.</p>
@@ -236,7 +236,6 @@ Encryption           ?</pre>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>A new cluster with only the read key found every group in the vault. Add the vault with Encryption off and Archive Object Lock off, replace each server&apos;s agent, search, pick the run from before the attack, and download.</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial V7b has the console steps and the screens. Tutorial V7, section 10, has the first rebuild from the vault alone.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

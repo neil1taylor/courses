@@ -49,7 +49,7 @@
       <p class="hand tilt">Northgate Freight is moving its vSphere estate to IBM Cloud VPC. The company is made up; the output in this unit is real. Its admins have a list of vSphere words and want the VPC word for each.</p>
     </div>
   </div>
-  <p class="small">The word pairs come from chapter 02, which calls its map approximate. Every statement about how a VPC works comes from the tested chapters named at the end.</p>
+  <p class="small">The word pairs are approximate. Every statement about how a VPC works comes from tests in a lab account.</p>
 </section>
 
 <section class="screen">
@@ -83,7 +83,7 @@
         <div class="part-info" data-part="servers">
           <h3>Servers</h3>
           <p>A VM becomes a virtual server instance, called a server here. IBM makes it from an image, which is the operating system of its boot volume, and a profile, which is its size. An instance group repairs and scales servers.</p>
-          <p class="watch"><b>Watch for this.</b> The closest word to vMotion is live migration, which IBM does for its own host maintenance. Chapter 38 describes it. Step 3 shows what it records.</p>
+          <p class="watch"><b>Watch for this.</b> The closest word to vMotion is live migration, which IBM does for its own host maintenance. Step 3 shows what it records.</p>
         </div>
         <div class="part-info" data-part="storage">
           <h3>Storage</h3>
@@ -97,7 +97,7 @@
         </div>
       </div>
     </div>
-    <pre class="def" aria-label="vSphere and NSX words, with the closest VPC word, from chapter 02">Datacenter or cluster          ->  Region and zone
+    <pre class="def" aria-label="vSphere and NSX words, with the closest VPC word">Datacenter or cluster          ->  Region and zone
 Port group, VLAN               ->  Subnet
 Distributed switch, NSX segment ->  VPC and its subnets
 NSX Tier-0 or Tier-1 router    ->  Route table, Transit Gateway
@@ -126,7 +126,7 @@ Site Recovery Manager          ->  Snapshots, replicas, Backup and Recovery, a r
 <section class="screen">
   <span class="kicker">Step 2 · Run it</span>
   <h2>Two firewalls, two places</h2>
-  <p class="lead">Chapter 20 lists the rules of the two defaults IBM creates with <code>vpct-prod</code>. Run each command and compare what each one attaches to.</p>
+  <p class="lead">These are the rules of the two defaults IBM creates with <code>vpct-prod</code>. Run each command and compare what each one attaches to.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -176,7 +176,7 @@ r014-…    allow-outbound   allow    ipv4         icmp_tcp_udp   0.0.0.0/0   0.
 
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
-  <h2>Pick an answer, then see what the chapters record</h2>
+  <h2>Pick an answer, then see what the lab recorded</h2>
   <div class="pair">
     <div class="q">
       <p>Northgate&apos;s VMs have fixed addresses. By default, where does a new server&apos;s primary address come from?</p>
@@ -194,7 +194,7 @@ r014-…    allow-outbound   allow    ipv4         icmp_tcp_udp   0.0.0.0/0   0.
         <button class="opt" data-ok>A pause of about 10 seconds, sometimes up to 30, and no restart</button>
         <button class="opt">Nothing at all</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Not a move you ask for.</span><p>Chapter 38 records, from IBM&apos;s maintenance page: a nondisruptive live migration pauses the server for about 10 seconds, sometimes up to 30, with no restart and no notice in advance. A disruptive migration restarts the server, with notice. Servers with a GPU profile are not live-migrated: they restart, with notice.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Not a move you ask for.</span><p>IBM&apos;s maintenance page says a nondisruptive live migration pauses the server for about 10 seconds, sometimes up to 30, with no restart and no notice in advance. A disruptive migration restarts the server, with notice. Servers with a GPU profile are not live-migrated: they restart, with notice.</p></details>
     </div>
   </div>
 </section>

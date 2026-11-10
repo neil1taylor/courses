@@ -49,7 +49,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its servers now sit in several VPCs and it still has a data centre. This module joins them and protects what passes between them.</p>
     </div>
   </div>
-  <p class="small">Every command and line of output in this unit comes from a real run, recorded in tutorial chapters 71, 73, 74 and 77. The choices come from chapter 79, which cites IBM&apos;s pages. The review question repeats one from unit 2.2.</p>
+  <p class="small">Every command and line of output in this unit comes from a real run. The choices come from IBM&apos;s pages. The review question repeats one from unit 2.2.</p>
 </section>
 
 <section class="screen">
@@ -91,7 +91,7 @@
         <button class="opt">Direct Link on Classic</button>
         <button class="opt">Transit Gateway Connect</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Direct Link on Classic has had no new orders since 15 September 2025. &quot;Transit Gateway Connect&quot; is not an IBM product: there is no such page, command or type. The Direct Link row in chapter 79 is cited from IBM&apos;s pages, not built in the lab.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Direct Link on Classic has had no new orders since 15 September 2025. &quot;Transit Gateway Connect&quot; is not an IBM product: there is no such page, command or type. The Direct Link row is cited from IBM&apos;s pages, not built in the lab.</p></details>
     </div>
   </div>
 </section>
@@ -128,7 +128,7 @@ vpct-tgw-hub vpc ... attached</pre>
             <button class="opt">Yes. The gateway joins them</button>
             <button class="opt" data-ok>No. Both time out</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>A gateway only joins networks. The prod subnet&apos;s network ACL allowed traffic only inside <code>10.20.0.0/16</code>. Chapter 22 explains why each direction needs its own rule.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>A gateway only joins networks. The prod subnet&apos;s network ACL allowed traffic only inside <code>10.20.0.0/16</code>. Each direction needs its own rule.</p></details>
         </div>
         <div class="cmd">
           <p class="pre"># on a vpct-prod server, before any network ACL change</p>
@@ -185,7 +185,7 @@ Error message: The requested network is already connected to an existing transit
       <button class="opt" data-ok>A VPC joins only one global gateway, and the hub is on one already</button>
       <button class="opt">A gateway takes at most one VPC connection</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>The hub is on <code>vpct-tgw-global</code>. A VPC joins one global gateway and many local ones, so in this design the prod, dev and shared VPCs stay on the local gateway. Chapter 77 says to delete the second gateway once you have seen the error.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>The hub is on <code>vpct-tgw-global</code>. A VPC joins one global gateway and many local ones, so in this design the prod, dev and shared VPCs stay on the local gateway. Delete the second gateway once you have seen the error.</p></details>
   </div>
 </section>
 

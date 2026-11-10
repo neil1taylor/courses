@@ -44,13 +44,13 @@
       <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output in this unit is real. Its first ROVS cluster lives in an IBM Cloud VPC. Before any VM, its network admins want to know what is under it.</p>
     </div>
   </div>
-  <p class="small">Every statement, error message and diagram in this unit comes from tutorial chapters 10, 11, 12 and 14, apart from the review question, which comes from chapter 05. The VMware comparisons are rough mappings, not IBM statements.</p>
+  <p class="small">Every statement, error message and diagram in this unit comes from real runs on lab clusters, apart from the review question. The VMware comparisons are rough mappings, not IBM statements.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Predict</span>
   <h2>Region, zone, prefix, subnet</h2>
-  <p class="lead">A VPC spans the zones of a region. Inside one zone, an address prefix holds subnets. This is the example layout from chapter 10.</p>
+  <p class="lead">A VPC spans the zones of a region. Inside one zone, an address prefix holds subnets. This is an example layout.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn nesting diagram. The region us-south holds the zone us-south-1. The zone holds the address prefix 10.240.0.0/18. The prefix holds two subnets: cluster-nodes, 10.240.0.0/24, and vm-workloads, 10.240.1.0/24. A note says that zones 2 and 3 have layers of their own."
       data-drawing='{"w":560,"h":290,"shapes":[
@@ -88,7 +88,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>Which VPC thing is which?</h2>
-  <p class="lead">Chapter 10 gives a rough mapping from VMware words. It is not an IBM statement.</p>
+  <p class="lead">This is a rough mapping from VMware words. It is not an IBM statement.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn two-column diagram. A vDS port group matches a VPC subnet. NSX DFW rules match security groups. A NAT gateway matches a public gateway. A 1 to 1 NAT public IP matches a floating IP. IPAM or IP reservation matches a reserved IP. A vNIC on a port group matches a VNI plus a VLAN attachment."
       data-drawing='{"w":640,"h":262,"shapes":[

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Final scenario: design Northgate's estate · VPC course</title>
-<meta name="description" content="Course unit 6.4: the last unit. Decide the hub and spokes, the ways in, the firewalls, the site link, the backup and the recovery region for Northgate Freight, and compare each decision with the answer in the tutorials. No account needed.">
+<meta name="description" content="Course unit 6.4: the last unit. Decide the hub and spokes, the ways in, the firewalls, the site link, the backup and the recovery region for Northgate Freight, and compare each decision with the worked answer. No account needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 4 of Module 6 · the last unit</span>
       <h1>Final scenario: design Northgate&apos;s estate</h1>
-      <p class="lead">By the end you have made the main decisions for a whole estate, from the hub to the recovery region, and compared each one with the answer the tutorials give.</p>
+      <p class="lead">By the end you have made the main decisions for a whole estate, from the hub to the recovery region, and compared each one with the worked answer.</p>
       <div class="facts"><span>About 20 minutes</span><span>No account needed</span><span>7 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -46,16 +46,16 @@
           {"box":[390,60,160,130],"heavy":true,"title":"Recovery region"},
           {"line":[302,120,388,120],"tone":"mark","arrow":true},
           {"text":"global gateway","at":[306,108],"hand":true,"size":15,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier. Its needs are made up. The answers are not: each one is a statement already tested or cited in the tutorial chapters.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its needs are made up. The answers are not: each one is a statement already tested in a lab or cited from IBM&apos;s pages.</p>
     </div>
   </div>
-  <p class="small">The worked answers come from chapters 49, 73, 77, 79, 82 to 84 and 87 to 94, with the conditions those chapters give. Where a chapter measured something once, the unit says so. The review question repeats one from unit 6.3.</p>
+  <p class="small">The worked answers come from lab runs and IBM&apos;s pages, with the conditions they give. Where a run measured something once, the unit says so. The review question repeats one from unit 6.3.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Design it</span>
   <h2>The hub and spokes</h2>
-  <p class="lead">This is the finished estate that chapter 90 builds: a hub with a firewall pair, three spoke VPCs joined by a Transit Gateway, a simulated site, and a recovery region.</p>
+  <p class="lead">This is the finished estate that the lab builds: a hub with a firewall pair, three spoke VPCs joined by a Transit Gateway, a simulated site, and a recovery region.</p>
   <img src="../images/target-estate.drawio.svg" alt="The finished estate: a hub VPC with a FortiGate HA pair, three spoke VPCs joined by a Transit Gateway, a simulated on-premises site, and a recovery region in us-south." style="width:100%;height:auto" loading="lazy">
   <div class="pair" style="margin-top:20px">
     <div class="q">
@@ -65,7 +65,7 @@
         <button class="opt" data-ok>Give each VPC its own range, and keep the recovery region on the same pattern</button>
         <button class="opt">Reuse prod&apos;s range in the recovery region, so addresses stay the same</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>The estate uses <code>10.10</code> for the hub, <code>10.20</code> for prod, <code>10.30</code> for dev, <code>10.40</code> for shared services, <code>192.168.0.0/16</code> for the site, and <code>10.110</code> and <code>10.120</code> for the recovery hub and spoke. Chapter 73 lists overlapping prefixes among what can go wrong, and the recovery hub follows the primary&apos;s pattern.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>The estate uses <code>10.10</code> for the hub, <code>10.20</code> for prod, <code>10.30</code> for dev, <code>10.40</code> for shared services, <code>192.168.0.0/16</code> for the site, and <code>10.110</code> and <code>10.120</code> for the recovery hub and spoke. Overlapping prefixes are among what can go wrong, and the recovery hub follows the primary&apos;s pattern.</p></details>
     </div>
     <div class="q">
       <p>Which VPCs sit on which Transit Gateway?</p>
@@ -135,7 +135,7 @@
         <button class="opt">A client-to-site VPN</button>
         <button class="opt">A dynamic VPN, with BGP</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Static suits a few prefixes. Dynamic needs a Transit Gateway. A route-mode gateway needs a route whose next hop is the connection, and the two sides each need their own: one route gives a one-way path. For a private link instead, chapter 79 says Direct Link Dedicated or Connect, joined to a Transit Gateway. The lab did not build Direct Link.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Static suits a few prefixes. Dynamic needs a Transit Gateway. A route-mode gateway needs a route whose next hop is the connection, and the two sides each need their own: one route gives a one-way path. For a private link instead, IBM&apos;s pages say Direct Link Dedicated or Connect, joined to a Transit Gateway. The lab did not build Direct Link.</p></details>
     </div>
     <div class="q">
       <p>How does the Transit Gateway learn <code>192.168.0.0/24</code>, so shared services can reach the site&apos;s DNS server?</p>
@@ -153,7 +153,7 @@
         <button class="opt" data-ok>The site has a route back for <code>10.20.0.0/16</code> only, not for shared services</button>
         <button class="opt">DNS cannot cross a VPN</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Chapter 71 added a route in the site for <code>10.20.0.0/16</code> only. The chapter then adds a route for <code>10.40.0.0/16</code>, and names resolve. Security groups and network ACLs also need rules in both directions.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A route was added in the site for <code>10.20.0.0/16</code> only. A second route is then added for <code>10.40.0.0/16</code>, and names resolve. Security groups and network ACLs also need rules in both directions.</p></details>
     </div>
   </div>
 </section>
@@ -231,7 +231,7 @@
 <section class="screen">
   <span class="kicker">Step 6 · Spot the fault</span>
   <h2>Review Northgate&apos;s draft plan</h2>
-  <p class="lead">A colleague wrote the draft plan. Each line is checked against the tutorials. Does it hold?</p>
+  <p class="lead">A colleague wrote the draft plan. Each line is checked against the lab results. Does it hold?</p>
   <div class="pair">
     <div class="q">
       <p>Draft: &quot;Send the app subnet&apos;s outbound traffic through the firewall with a <code>0.0.0.0/0</code> route in the default table.&quot;</p>
@@ -280,7 +280,7 @@ Error message: Unable to create share replica for the source share ... The sourc
         <button class="opt" data-ok>No. IBM says restoring from either is a manual operation that takes time</button>
         <button class="opt">Yes, with a backup policy</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A cross-regional snapshot copy or a cross-region file share replica gives you the data outside the region. Recovery is still the steps of chapter 92.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A cross-regional snapshot copy or a cross-region file share replica gives you the data outside the region. Recovery is still a set of steps you run.</p></details>
     </div>
     <div class="q" data-check>
       <p>How many copies of one snapshot can exist in a region?</p>

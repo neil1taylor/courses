@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its ROVS cluster, ng-cluster-01, now has a connector. The next job is to register the cluster as a source.</p>
     </div>
   </div>
-  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names, endpoints and IDs in messages were changed. Every screen and result comes from our lab on 1 and 2 October and 9 November 2026, recorded in tutorial B3e.</p>
+  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names, endpoints and IDs in messages were changed. Every screen and result comes from our lab on 1 and 2 October and 9 November 2026.</p>
 </section>
 
 <section class="screen">
@@ -114,7 +114,7 @@
         <button class="opt" data-ok>BRS could not reach the cluster: check that the connection has connectors and the connector pods run</button>
         <button class="opt">The cluster is already registered</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That is what tutorial B3e says. On 1 October 2026 the connection used had no connectors, and the same error came back every time. After that, check the network.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>That is the rule. On 1 October 2026 the connection used had no connectors, and the same error came back every time. After that, check the network.</p></details>
     </div>
     <div class="q">
       <p>The answer is: Unauthorized access. Please check the credentials.[kUnauthorized]. What went wrong?</p>
@@ -168,7 +168,7 @@ au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encoun
         <button class="opt" data-ok>Nothing for sure: one fact fits, the connection used on 1 October had no connectors and the one used on 2 October had two</button>
         <button class="opt">An upgrade of the cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tutorial says what changed between the two days is not established. An earlier version said the instance must be in the same region; that was wrong, because the au-syd instance registered the eu-de cluster on 2 October 2026. On 9 November 2026 an eu-de instance and an eu-de cluster worked too. IBM&apos;s pages still say the VM feature is for testing in au-syd.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>What changed between the two days is not established. An earlier version said the instance must be in the same region; that was wrong, because the au-syd instance registered the eu-de cluster on 2 October 2026. On 9 November 2026 an eu-de instance and an eu-de cluster worked too. IBM&apos;s pages still say the VM feature is for testing in au-syd.</p></details>
     </div>
     <div class="q">
       <p>Which attempt failed because the cluster endpoint was not the cluster API server?</p>
@@ -210,7 +210,7 @@ au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encoun
         <button class="opt">The cluster&apos;s CPU</button>
         <button class="opt">The instance&apos;s region</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Then check network access. This is what tutorial B3e lists first.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Then check network access. It is the first thing to try.</p></details>
     </div>
   </div>
 </section>
@@ -220,7 +220,6 @@ au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encoun
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>Use the service account token, not the Helm registration token. A cluster can have only one Cohesity registration. Three of our lab&apos;s eight failed attempts on 1 October 2026 gave one error, Encountered HTTP connection error, and the first thing to check is that the connection has connectors. The cause of the change to success on 2 October is not established.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B3e registers the cluster, from the command line and the console, and lists every failure.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

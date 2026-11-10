@@ -37,13 +37,13 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It wants to back up the folder <code>/data</code> on a Linux server. Today it learns what it must set up, and in what order.</p>
     </div>
   </div>
-  <p class="small">The facts here come from IBM&apos;s pages as read on 24 September 2026, and from tutorials B1, B2a, B2b and B3a, run in our lab on 7 October and 8 November 2026. Addresses, the server&apos;s name and IDs were replaced with made-up values or blurred.</p>
+  <p class="small">The facts here come from IBM&apos;s pages as read on 24 September 2026, and from runs in our lab on 7 October and 8 November 2026. Addresses, the server&apos;s name and IDs were replaced with made-up values or blurred.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Seven pieces, one backup</h2>
-  <p class="lead">These are the three commands from tutorial B3a that register a server, make a policy and make a group. The values are placeholders. Select a part of the drawing to see what it is, and which lines belong to it.</p>
+  <p class="lead">These are the three commands that register a server, make a policy and make a group. The values are placeholders. Select a part of the drawing to see what it is, and which lines belong to it.</p>
   <div class="explorer" data-start="source"
     data-map='{"source":[[1,2]],"policy":[[3,4]],"group":[[5,7]]}'>
     <div class="cols">
@@ -84,7 +84,7 @@
         </div>
       </div>
     </div>
-    <pre class="def" aria-label="Three commands from tutorial B3a that register a source, make a policy and make a protection group">ibmcloud backup-recovery protection-source register --environment kPhysical --xibm-tenant-id $T \
+    <pre class="def" aria-label="Three commands that register a source, make a policy and make a protection group">ibmcloud backup-recovery protection-source register --environment kPhysical --xibm-tenant-id $T \
   --data-source-connection-id &lt;CONNECTION_ID> --physical-params '{"endpoint":"&lt;SERVER_IP>","hostType":"kLinux","physicalType":"kHost"}'
 ibmcloud backup-recovery protection-policy create --xibm-tenant-id $T --name &lt;POLICY_NAME> --description "daily, kept 7 days" \
   --backup-policy '{"regular":{"incremental":{"schedule":{"unit":"Days","daySchedule":{"frequency":1}}},"primaryBackupTarget":{"useDefaultBackupTarget":true},"retention":{"unit":"Days","duration":7}}}'
@@ -107,7 +107,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
         <button class="opt" data-ok>A connected connector or agent, whose connection ID goes into the command</button>
         <button class="opt">A policy with a data lock</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Tutorial B3a needs &quot;a connected connector or agent; you need its connection ID&quot;. The server also needs the backup agent installed, as the Sources page says. The policy and the group come after the source.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Registering a source needs &quot;a connected connector or agent; you need its connection ID&quot;. The server also needs the backup agent installed, as the Sources page says. The policy and the group come after the source.</p></details>
     </div>
     <div class="q">
       <p>Which route needs no connector server running all the time?</p>
@@ -178,7 +178,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
         <button class="opt" data-ok>Wait, then reload the page</button>
         <button class="opt">Add vCPUs to the server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tutorial says to wait. In our lab on 8 November 2026 the connector went from connected to disconnected twice, then stayed connected from 11:32:54 to the last check at 11:36:26. Reload the page to see Healthy.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The fix is to wait. In our lab on 8 November 2026 the connector went from connected to disconnected twice, then stayed connected from 11:32:54 to the last check at 11:36:26. Reload the page to see Healthy.</p></details>
     </div>
   </div>
 </section>
@@ -223,7 +223,6 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>A backup needs an instance, a connection with a connector (or a Connector Agent on the host), the backup agent on the server, a registered source, a policy, and a protection group that joins a source to a policy. The Connector Agent needs no connector server but must be on every protected host.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B2a installs the backup agent and builds the connector server. Tutorial B2b does the same with the Connector Agent. Tutorial B3a registers the source and makes the policy and group.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

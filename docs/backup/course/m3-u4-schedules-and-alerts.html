@@ -45,7 +45,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. While it tests, it gives one group a backup every five minutes. It also wants to know whether BRS will warn it when a backup or a restore fails.</p>
     </div>
   </div>
-  <p class="small">The schedule numbers and screens come from a run in our lab on 9 November 2026, recorded in tutorial B7d. The alerts come from a run on 7 October 2026 and from the console on 9 November 2026, recorded in tutorial B7h. Server addresses and job names in recorded output are replaced with made-up names, and server names are blurred in the screenshots.</p>
+  <p class="small">The schedule numbers and screens come from a run in our lab on 9 November 2026. The alerts come from a run on 7 October 2026 and from the console on 9 November 2026. Server addresses and job names in recorded output are replaced with made-up names, and server names are blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -108,13 +108,13 @@
       </figcaption>
     </figure>
   </div>
-  <p class="small">To put the group back, Northgate edited it again, chose the original policy, switched Pause Future Runs on and deleted the test policy. The tutorial does not cover alerts for this, blackout windows, a daily or weekly schedule over a real day, or retention expiry.</p>
+  <p class="small">To put the group back, Northgate edited it again, chose the original policy, switched Pause Future Runs on and deleted the test policy. This unit does not cover alerts for this, blackout windows, a daily or weekly schedule over a real day, or retention expiry.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
   <h2>The failure that no alert reported</h2>
-  <p class="lead">Northgate plans to learn about problems from the alert list. In our lab, tutorial B7h read the alerts raised by the failures of the earlier tutorials. For each failure below, say whether BRS raised an alert.</p>
+  <p class="lead">Northgate plans to learn about problems from the alert list. In our lab we read the alerts raised by the failures of earlier units. For each failure below, say whether BRS raised an alert.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>A restore of Windows files fails.</p>
@@ -143,7 +143,7 @@
       <button class="opt" data-ok>Yes: a warning, ProtectionPolicyDeleted</button>
       <button class="opt">Yes: a critical alert</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>On 7 October the deletion raised <code>ProtectionPolicyDeleted</code> (<code>CE00610017</code>), severity Warning, still Open. The tutorial calls it an audit event.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>On 7 October the deletion raised <code>ProtectionPolicyDeleted</code> (<code>CE00610017</code>), severity Warning, still Open. It is an audit event.</p></details>
   </div>
   <p class="watch"><b>Watch for this.</b> In our lab, a Linux backup that waited with 0 bytes read raised no alert, and neither did an agent outage. A connector alert on 7 October did not match any outage of ours.</p>
 </section>
@@ -175,7 +175,7 @@
       </figcaption>
     </figure>
   </div>
-  <p class="small">Delivery to a webhook was not tested: it needs an endpoint the service can reach. The tutorial also did not test whether a rule delivers mail or a script, resolving an alert by hand, or the Helios page for alerts.</p>
+  <p class="small">Delivery to a webhook was not tested: it needs an endpoint the service can reach. We also did not test whether a rule delivers mail or a script, resolving an alert by hand, or the Helios page for alerts.</p>
 </section>
 
 <section class="screen">
@@ -218,7 +218,6 @@
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>A policy of every 5 minutes started runs a little under 5 minutes apart in our lab. A failed restore raised a critical alert; an agent outage and a waiting backup raised none. The console offers only a webhook for sending alerts, and webhook delivery was not tested.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B7d gives a group a short schedule and watches it run, from the console and the command line. Tutorial B7h reads the alerts and the notification rules.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

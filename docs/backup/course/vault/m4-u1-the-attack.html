@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It already backs up with Defender Data Protect. Its board asks: what happens if an attacker gets the backup admin&apos;s keys? In this module you rebuild from the vault alone. First, the attack.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from a real run in our lab on 10 November 2026 (tutorial V7b, section &quot;In the console, a second run&quot;). The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">Every number and screen in this unit comes from a real run in our lab on 10 November 2026. The vault is a Beta in us-south, with no SLA.</p>
 </section>
 
 <section class="screen">
@@ -158,7 +158,7 @@ SQL labdb        UPDATE dbo.items SET payload = NEWID()       checksum -42685994
         <button class="opt">By the newest snapshot in the list</button>
         <button class="opt">By the vault, which marks the infected run</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The picker in the console lists the snapshots by time, and the lab picked the runs from before the attack. This tutorial does not show the vault marking a run as infected.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The picker in the console lists the snapshots by time, and the lab picked the runs from before the attack. This course does not show the vault marking a run as infected.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> A backup that runs after an attack archives the attacked data too. If you know the time of the attack, pick a run from before it.</p>
@@ -204,7 +204,6 @@ SQL labdb        UPDATE dbo.items SET payload = NEWID()       checksum -42685994
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>The attack changed every source. The vault held a clean and an infected run of each group, and the newest run was the infected one. Choose a run by its time, from before the attack.</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial V7b holds the attack and the run times. Tutorial V4 archives the groups from the console.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

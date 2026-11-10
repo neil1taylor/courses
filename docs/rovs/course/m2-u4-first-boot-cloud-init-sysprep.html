@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It wants each new VM to come up with its own name, users and address, with no one logging in to set them. This unit shows how, with real output.</p>
     </div>
   </div>
-  <p class="small">Every definition, command and output in this unit comes from real runs on test clusters, recorded in tutorial chapters 36 and 38.</p>
+  <p class="small">Every definition, command and output in this unit comes from real runs on test clusters.</p>
 </section>
 
 <section class="screen">
@@ -204,7 +204,7 @@ must have at least one userdatasource or one networkdatasource set.</pre>
         <button class="opt" data-ok>unattend.xml</button>
         <button class="opt">Either one</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>KubeVirt accepts either name and raises no error, so a wrong key looks as if it worked. On a Windows Server 2022 evaluation image that had already been through setup, the key <code>autounattend.xml</code> left Windows on the "Hi there" region page. With <code>unattend.xml</code>, setup logged "Found unattend file", the first-logon command ran and <code>Administrator</code> logged on with no one at the console. The installer pipeline in chapter 38 is a different case: it installs from an ISO, and there <code>autounattend.xml</code> was read.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>KubeVirt accepts either name and raises no error, so a wrong key looks as if it worked. On a Windows Server 2022 evaluation image that had already been through setup, the key <code>autounattend.xml</code> left Windows on the "Hi there" region page. With <code>unattend.xml</code>, setup logged "Found unattend file", the first-logon command ran and <code>Administrator</code> logged on with no one at the console. The installer pipeline is a different case: it installs from an ISO, and there <code>autounattend.xml</code> was read.</p></details>
     </div>
   </div>
 </section>

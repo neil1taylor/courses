@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It has files on a Classic server, <code>ng-classic-01</code>, and wants them on a VPC server, <code>ng-vpc-01</code>. IBM publishes a tool for exactly that.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab in October and on 9 November 2026, recorded in tutorials M1, M1b and M1c. Server names, addresses and IDs were changed to made-up ones, and server names are blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab in October and on 9 November 2026. Server names, addresses and IDs were changed to made-up ones, and server names are blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -150,7 +150,7 @@ Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The bac
         <button class="opt" data-ok>No backup and no restore</button>
         <button class="opt">A delete of the target&apos;s files</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 10 October 2026 the plan was &quot;1 to add&quot;, a local file that holds the API key. The tool treats the first copy as final. When we forced the steps to run again, the restore used the first snapshot: six files differed, three new files were missing, and two deleted files were still on the target. The tutorial&apos;s advice for a real move: run the tool once, at the moment of the switch.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On 10 October 2026 the plan was &quot;1 to add&quot;, a local file that holds the API key. The tool treats the first copy as final. When we forced the steps to run again, the restore used the first snapshot: six files differed, three new files were missing, and two deleted files were still on the target. The advice for a real move: run the tool once, at the moment of the switch.</p></details>
     </div>
   </div>
   <div class="q" style="margin-top:20px">
@@ -246,7 +246,6 @@ Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The bac
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>The tool makes one backup and one restore of files and folders. It never checks the copy, a second run copies nothing, and <code>terraform destroy</code> leaves the snapshot and the agents. With the network rules added first, one apply took about 15 minutes in our lab on 9 November 2026.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial M1 runs the tool for Linux files. Tutorial M1b does the same for Windows, and M1c tests a second run and a crash.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

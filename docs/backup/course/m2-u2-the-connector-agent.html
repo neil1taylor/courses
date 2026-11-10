@@ -44,13 +44,13 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its Linux server <code>ng-app-01</code> and its Windows server <code>ng-win-01</code> each get their own Connector Agent, so Northgate builds no connector server for them.</p>
     </div>
   </div>
-  <p class="small">Every number and message in this unit comes from runs in our lab on 7 October and 8 November 2026, recorded in tutorials B2b and B2c. Server names, addresses and the connection name were changed to made-up Northgate values, and the registration token is blurred in the screenshots.</p>
+  <p class="small">Every number and message in this unit comes from runs in our lab on 7 October and 8 November 2026. Server names, addresses and the connection name were changed to made-up Northgate values, and the registration token is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>What the Connector Agent replaces</h2>
-  <p class="lead">The Connector Agent is a small program on the source host. It opens a direct connection to the service and replaces the connector server for that host. You still install the normal backup agent. IBM&apos;s page (19 August 2026), quoted in tutorial B2b, says it needs outbound TCP 443, 29991 (broker) and 11117 (bridge).</p>
+  <p class="lead">The Connector Agent is a small program on the source host. It opens a direct connection to the service and replaces the connector server for that host. You still install the normal backup agent. IBM&apos;s page (19 August 2026) says it needs outbound TCP 443, 29991 (broker) and 11117 (bridge).</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. On the server, the backup agent and the Connector Agent. The Connector Agent connects directly to the BRS service on outbound ports 443, 29991 and 11117."
     data-drawing='{"w":560,"h":210,"shapes":[
       {"box":[10,15,175,60],"title":"backup agent","detail":"still installed"},
@@ -144,7 +144,7 @@ HTTP 400, "platform in path should be one of [kLinux kWindows]"</pre>
         <button class="opt" data-ok>No: it gave the same HTTP 400</button>
         <button class="opt">Only on Windows</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tutorial tested both <code>linux</code> and <code>Linux</code>. Both gave HTTP 400 with the same message.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>We tested both <code>linux</code> and <code>Linux</code>. Both gave HTTP 400 with the same message.</p></details>
     </div>
   </div>
 </section>
@@ -189,7 +189,7 @@ HTTP 400, "platform in path should be one of [kLinux kWindows]"</pre>
         <button class="opt">Delete the file and download it again</button>
         <button class="opt">Nothing: the agent installs itself later</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Tutorial B2a installed <code>nfs-utils</code>, <code>lvm2</code>, <code>lsof</code> and <code>wget</code> with <code>dnf</code>, then ran <code>rpm</code> again.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab we installed <code>nfs-utils</code>, <code>lvm2</code>, <code>lsof</code> and <code>wget</code> with <code>dnf</code>, then ran <code>rpm</code> again.</p></details>
     </div>
     <div class="q" data-check>
       <p>How do you claim a Connector Agent that is installed on a server?</p>
@@ -218,7 +218,6 @@ HTTP 400, "platform in path should be one of [kLinux kWindows]"</pre>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>The Connector Agent replaces the connector server for its own host, and you still install the backup agent. The platform names are kLinux and kWindows. The claim is a POST to 127.0.0.1:8080 on the server: the console has no step for it.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B2b does it on Linux. Tutorial B2c does it on Windows.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

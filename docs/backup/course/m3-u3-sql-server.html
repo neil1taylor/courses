@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its orders database, <code>labdb</code>, runs on a Windows server. It wants it backed up natively, and it wants to know what a backup problem looks like.</p>
     </div>
   </div>
-  <p class="small">The console screens and numbers come from real runs in our lab on 8 November 2026, recorded in tutorials B3c and B4c. The restore case comes from a run on 7 October 2026. The server address in the recorded output is replaced with a made-up name, <code>ng-sql-01</code>, and the server name is blurred in the screenshots.</p>
+  <p class="small">The console screens and numbers come from real runs in our lab on 8 November 2026. The restore case comes from a run on 7 October 2026. The server address in the recorded output is replaced with a made-up name, <code>ng-sql-01</code>, and the server name is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -90,7 +90,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>The second run, and its warning</h2>
-  <p class="lead">Northgate pauses the group, then runs it by hand with Run Now. After the first run it adds 5,000 rows to the database and runs again. The policy is the daily 7-day policy from tutorial B3a, with no periodic full backup.</p>
+  <p class="lead">Northgate pauses the group, then runs it by hand with Run Now. After the first run it adds 5,000 rows to the database and runs again. The policy is the daily 7-day policy, with no periodic full backup.</p>
   <pre class="def" aria-label="What the first run recorded">Run                       Rows      Read      Status
 First (13:59:52 UTC)      100,000   50.5 MB   Warning
 Second, 5,000 rows added  105,000   ?         ?</pre>
@@ -102,7 +102,7 @@ Second, 5,000 rows added  105,000   ?         ?</pre>
         <button class="opt" data-ok>About 25 MB: half of the first</button>
         <button class="opt">About 50 MB: it reads everything again</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">25.3 MB against 50.5 MB.</span><p>SQL reads changed pages, not changed rows, and the new rows were spread over fresh pages. The tutorial did not investigate the exact reason.</p><pre class="def" aria-label="What both runs recorded">Run                       Rows      Read      Status
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">25.3 MB against 50.5 MB.</span><p>SQL reads changed pages, not changed rows, and the new rows were spread over fresh pages. We did not investigate the exact reason.</p><pre class="def" aria-label="What both runs recorded">Run                       Rows      Read      Status
 First (13:59:52 UTC)      100,000   50.5 MB   Warning
 Second, 5,000 rows added  105,000   25.3 MB   Warning</pre></details>
     </div>
@@ -154,7 +154,7 @@ Second, 5,000 rows added  105,000   25.3 MB   Warning</pre></details>
       </figcaption>
     </figure>
   </div>
-  <p class="small">The tutorial says the same change applies to file groups, but it did not check what a weekly full does to their incremental runs.</p>
+  <p class="small">The same change applies to file groups, but we did not check what a weekly full does to their incremental runs.</p>
 </section>
 
 <section class="screen">
@@ -228,7 +228,6 @@ message     none</pre>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>A SQL group points at the database&apos;s ID. The run page explains the warnings, and a weekly periodic full backup in the policy removes them. A run with 0 bytes read and no database listed means the group lost the database.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B3c registers SQL Server and makes the group. Tutorial B4c runs the backups, shows what the warnings mean and the new-ID fix, from the console and the command line.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

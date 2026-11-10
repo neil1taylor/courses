@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It keeps the agents on <code>ng-app-01</code> and its other servers current, and wants to know how an upgrade is made and what it looks like when one cannot happen.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab, on 7 October and 9 November 2026, recorded in tutorials B7e and M1. Addresses were changed to made-up ones, and server names are blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab, on 7 October and 9 November 2026. Addresses were changed to made-up ones, and server names are blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -68,7 +68,7 @@
         <button class="opt" data-ok>Every agent was already on the newest version, and BRS gives no way to download an older one</button>
         <button class="opt">The agent needs a licence</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A new instance always gives the current agent. The tutorial marks a real upgrade as untested, and says to try it when IBM ships a new agent version: install the old one first, keep its installer, then make the task.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A new instance always gives the current agent. A real upgrade is untested; try it when IBM ships a new agent version: install the old one first, keep its installer, then make the task.</p></details>
     </div>
   </div>
 </section>
@@ -82,9 +82,9 @@
       <div class="term">
         <div class="bar"><span>bash</span><span data-term-count></span></div>
         <div class="cmd">
-          <pre class="in">ibmcloud backup-recovery agent-upgrade-task create --xibm-tenant-id $T --name b7e-test --description "BRS B7e test" --agent-ids &lt;AGENT_ID&gt; --schedule-time-usecs &lt;NOW_PLUS_90S_USECS&gt; --schedule-end-time-usecs &lt;NOW_PLUS_30MIN_USECS&gt;</pre>
+          <pre class="in">ibmcloud backup-recovery agent-upgrade-task create --xibm-tenant-id $T --name agent-upgrade-test --description "BRS agent upgrade test" --agent-ids &lt;AGENT_ID&gt; --schedule-time-usecs &lt;NOW_PLUS_90S_USECS&gt; --schedule-end-time-usecs &lt;NOW_PLUS_30MIN_USECS&gt;</pre>
           <pre class="out">Result: task 161892, status "Scheduled". The reply shows the name "create_upgrade_task" and the description
-"Selective agent upgrade via CreateUpgradeTask API", not the ones we gave (ISS-169).</pre>
+"Selective agent upgrade via CreateUpgradeTask API", not the ones we gave.</pre>
           <p class="hand note">The task is made and scheduled.</p>
           <p class="hand note">The reply shows other name and description than the ones given.</p>
         </div>
@@ -165,7 +165,7 @@
         <button class="opt">Yes: nothing could run</button>
         <button class="opt" data-ok>No: the backup and the restore worked on 7.2.18 all the same</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tutorial records the alerts as a result of the run and says the backup and the restore worked on 7.2.18. This is issue ISS-213 in our lab&apos;s list.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The run raised alerts, and the backup and the restore worked on 7.2.18.</p></details>
     </div>
   </div>
 </section>
@@ -209,8 +209,7 @@
   <h2>You can read an upgrade screen</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>In our lab an upgrade task for a current agent was made, then failed by design with the agent skipped. The console starts an upgrade only when Upgradable is above 0. A real upgrade, a Windows agent upgrade and the Connector Agent are not covered by the tutorial.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B7e makes and watches an upgrade task, from the command line and the console. The connector alerts are in tutorial M1.</p></div>
+    <div><span class="label">Remember</span><p>In our lab an upgrade task for a current agent was made, then failed by design with the agent skipped. The console starts an upgrade only when Upgradable is above 0. A real upgrade, a Windows agent upgrade and the Connector Agent are not covered.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

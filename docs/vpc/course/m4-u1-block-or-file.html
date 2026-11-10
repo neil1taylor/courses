@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its app servers each need a disk of their own, and a folder that every app server can read. The company is made up; the names and output are real.</p>
     </div>
   </div>
-  <p class="small">Every name and line of output in this unit comes from a real run, recorded in tutorial chapters 40, 41 and 45. Chapter 40 is marked cited: it rests on IBM&apos;s pages, plus a short run with <code>sdp</code> volumes.</p>
+  <p class="small">Every name and line of output in this unit comes from a real run. The comparison of storage options rests on IBM&apos;s pages, plus a short run with <code>sdp</code> volumes.</p>
 </section>
 
 <section class="screen">
@@ -91,7 +91,7 @@
         <div class="part-info" data-part="mount">
           <h3>Mount target</h3>
           <p>The network endpoint through which servers mount the share. It needs a network interface and a security group.</p>
-          <p class="watch"><b>Watch for this.</b> The security group must allow inbound NFS over TCP from the servers that mount the share. The chapter used port 2049.</p>
+          <p class="watch"><b>Watch for this.</b> The security group must allow inbound NFS over TCP from the servers that mount the share. The lab used port 2049.</p>
         </div>
       </div>
     </div>
@@ -126,7 +126,7 @@ ibmcloud is share-mount-target-create vpct-prod-app-share --name vpct-prod-app-s
             <button class="opt">The first disk after the boot disk</button>
             <button class="opt" data-ok>The 10 GB disk with no partitions</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The chapter says not to take the first disk after the boot disk. Run the next command and look at the sizes.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>Do not take the first disk after the boot disk. Run the next command and look at the sizes.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">lsblk</pre>
@@ -143,7 +143,7 @@ vdd     253:48   0   10G  0 disk </pre>
           <p class="hand note">vdd is the data disk. Formatting vdb would overwrite a configuration disk.</p>
         </div>
         <div class="cmd">
-          <p class="pre"># DEV=/dev/vdd, as in the chapter</p>
+          <p class="pre"># DEV=/dev/vdd, as in the lab</p>
           <pre class="in">sudo mkfs.ext4 $DEV</pre>
           <pre class="out">Discarding device blocks:       0/2621440               done                            
 Creating filesystem with 2621440 4k blocks and 655360 inodes
@@ -170,7 +170,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Design it</span>
   <h2>Disk, folder or object store?</h2>
-  <p class="lead">Three Northgate needs. Pick a choice, then read the worked answer from chapter 40.</p>
+  <p class="lead">Three Northgate needs. Pick a choice, then read the worked answer.</p>
   <div class="pair">
     <div class="q">
       <p>Each app server needs its own data disk.</p>
@@ -197,7 +197,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
         <button class="opt" data-ok>Object Storage</button>
         <button class="opt">A larger boot volume</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Chapter 40&apos;s table sends backups and logs outside the VPC to Object Storage. Objects are reached over HTTP, not files over NFS.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>The comparison table sends backups and logs outside the VPC to Object Storage. Objects are reached over HTTP, not files over NFS.</p></details>
     </div>
   </div>
 </section>
@@ -213,7 +213,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
         <button class="opt" data-ok>Grow the file system into the new space</button>
         <button class="opt">Stop the server, then start it</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Two steps, not one.</span><p>The chapter ran <code>sudo resize2fs /dev/vdd</code> and then <code>df -h /data</code> showed 20G. The file written before was still there. IBM says capacity of a tiered volume can only grow, and only while it is attached to a running server.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Two steps, not one.</span><p>The lab ran <code>sudo resize2fs /dev/vdd</code> and then <code>df -h /data</code> showed 20G. The file written before was still there. IBM says capacity of a tiered volume can only grow, and only while it is attached to a running server.</p></details>
     </div>
     <div style="display:grid;gap:10px;align-content:start">
       <p>A Northgate admin mounts the share on an Ubuntu 26.04 server with no extra options:</p>
@@ -226,7 +226,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
           <button class="opt" data-ok>The option <code>-o sec=sys</code></button>
           <button class="opt">Encryption in transit</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>Without it the client mounted with <code>sec=null</code>, and every write failed. The chapter used <code>sudo mount -t nfs4 -o sec=sys &lt;mount-path&gt; /mnt/share</code>.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>Without it the client mounted with <code>sec=null</code>, and every write failed. The lab used <code>sudo mount -t nfs4 -o sec=sys &lt;mount-path&gt; /mnt/share</code>.</p></details>
       </div>
     </div>
   </div>
@@ -243,7 +243,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
         <button class="opt" data-ok>The two profiles are different storage generations and cannot be mixed this way</button>
         <button class="opt">The snapshot is still pending</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Chapter 40 tried it: an <code>sdp</code> snapshot to a <code>general-purpose</code> volume was refused with this error, and so was an <code>sdp</code> volume from a first-generation boot snapshot. An <code>sdp</code> volume from an <code>sdp</code> snapshot worked, in the same zone and in another.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A test run tried it: an <code>sdp</code> snapshot to a <code>general-purpose</code> volume was refused with this error, and so was an <code>sdp</code> volume from a first-generation boot snapshot. An <code>sdp</code> volume from an <code>sdp</code> snapshot worked, in the same zone and in another.</p></details>
     </div>
     <div class="q" data-check>
       <p>A data volume was attached with auto-delete true. You delete the server. What happens to the volume?</p>
@@ -252,7 +252,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
         <button class="opt">It stays, unattached</button>
         <button class="opt">It moves to a file share</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The chapter deleted server 01 and its volume went with it. Server 02&apos;s volume, detached first, was still listed.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The lab deleted server 01 and its volume went with it. Server 02&apos;s volume, detached first, was still listed.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which statement about a file share&apos;s mount target is right?</p>
@@ -270,7 +270,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
         <button class="opt" data-ok>Instance storage: temporary disks on the host, which can be lost</button>
         <button class="opt">A dedicated host</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Chapter 30: instance storage is temporary solid-state disks on the host, for scratch space and swap that can be lost.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Instance storage is temporary solid-state disks on the host, for scratch space and swap that can be lost.</p></details>
     </div>
   </div>
 </section>

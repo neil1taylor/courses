@@ -46,13 +46,13 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its admins have used NSX routers. They want to control where each subnet&apos;s traffic goes, and what is allowed into a VPC.</p>
     </div>
   </div>
-  <p class="small">Every command and line of output in this unit comes from real runs, recorded in tutorial chapters 80, 81 and 82. The review question repeats one from unit 6.1.</p>
+  <p class="small">Every command and line of output in this unit comes from real runs. The review question repeats one from unit 6.1.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Run it</span>
   <h2>A subnet uses one route table</h2>
-  <p class="lead">Chapter 80 blocks the shared VPC, <code>10.40.0.0/16</code>, from the prod app subnet. Run each command in turn.</p>
+  <p class="lead">The lab blocks the shared VPC, <code>10.40.0.0/16</code>, from the prod app subnet. Run each command in turn.</p>
   <p class="hand tilt"><b>From NSX:</b> an NSX Tier-0 or Tier-1 router maps roughly to a route table and a Transit Gateway.</p>
   <div class="term-block termgrid">
     <div class="termcol">
@@ -138,7 +138,7 @@ Route VPC Zones Ingress                    false</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
   <h2>An ingress table matches where traffic is going</h2>
-  <p class="lead">Chapter 81 adds a table that handles traffic arriving from the Transit Gateway. A VPC can have only one table for each ingress source.</p>
+  <p class="lead">The lab adds a table that handles traffic arriving from the Transit Gateway. A VPC can have only one table for each ingress source.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram: dev at 10.30.0.0/16 and shared at 10.40.0.0/16 send traffic through the Transit Gateway into the prod VPC. An ingress table inside prod holds a drop route to 10.30.0.0/16 and a delegate route to 10.0.0.0/8. The prod app server is at 10.20.1.31."
     data-drawing='{"w":560,"h":230,"shapes":[
       {"box":[10,20,110,50],"title":"dev"},
@@ -184,7 +184,7 @@ Route VPC Zones Ingress                    false</pre>
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>Advertised, and still not in the report</h2>
-  <p class="lead">Chapter 82 wants the Transit Gateway to learn the on-premises range <code>192.168.0.0/24</code>. The admin turns the flag on for the VPN route in the default table.</p>
+  <p class="lead">The lab wants the Transit Gateway to learn the on-premises range <code>192.168.0.0/24</code>. The admin turns the flag on for the VPN route in the default table.</p>
   <div class="term">
     <div class="bar"><span>bash</span></div>
     <div class="cmd">
@@ -202,7 +202,7 @@ Advertise     true</pre>
       <button class="opt" data-ok>The table&apos;s <code>advertise_routes_to</code> is empty, so the route goes nowhere and gives no error</button>
       <button class="opt">A deliver route cannot be advertised</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>A route goes out only if its flag is true and its table advertises to somewhere. Step 1 of the chapter shows <code>"advertise_routes_to":[]</code> for the default table.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>A route goes out only if its flag is true and its table advertises to somewhere. Step 1 shows <code>"advertise_routes_to":[]</code> for the default table.</p></details>
   </div>
   <div class="term" style="margin-top:20px">
     <div class="bar"><span>bash</span></div>
@@ -223,7 +223,7 @@ Error message: Routing table validation failed - ingress flags can not be enable
       <button class="opt" data-ok>A separate Transit Gateway ingress table, with <code>--advertise-routes-to transit_gateway</code>, holding the route</button>
       <button class="opt">A second Transit Gateway</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>Chapter 82 creates <code>vpct-prod-tgw-ingress-rt</code> that way, with the VPN connection as the next hop and <code>--advertise true</code>. About 40 seconds later the report listed <code>192.168.0.0/24</code> under the prod connection. That one route tells the gateway that prod can reach the site, and sends the arriving traffic into the VPN.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>The lab creates <code>vpct-prod-tgw-ingress-rt</code> that way, with the VPN connection as the next hop and <code>--advertise true</code>. About 40 seconds later the report listed <code>192.168.0.0/24</code> under the prod connection. That one route tells the gateway that prod can reach the site, and sends the arriving traffic into the VPN.</p></details>
   </div>
 </section>
 

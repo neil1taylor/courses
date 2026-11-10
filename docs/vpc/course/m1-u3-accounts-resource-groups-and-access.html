@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is moving its vSphere estate to IBM Cloud VPC. The company is made up; the output and screens in this unit are real. In vCenter its admins used roles and permissions. They ask what replaces them.</p>
     </div>
   </div>
-  <p class="small">Every screenshot and line of output in this unit comes from tutorial chapters 10, 11 and 12. The vCenter comparison comes from chapter 02.</p>
+  <p class="small">Every screenshot and line of output in this unit comes from real runs in a lab account. The vCenter comparison is a rough mapping.</p>
 </section>
 
 <section class="screen">
@@ -96,7 +96,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>Make a key, then read an access group</h2>
-  <p class="lead">These are real screens from chapters 10 and 11. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These are real screens. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="2,34,96,20" data-width="640px">
       <div class="shot"><img src="../images/10/iam-create-api-key-form-vpct-lab-cli.png" alt="The Create IBM Cloud API key form with the name vpct-lab-cli, the description CLI key for the VPC tutorials, Disable the leaked key selected, Set expiration cleared and Session management set to No." width="700" height="601"></div>
@@ -139,7 +139,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>Build the same group with the CLI</h2>
-  <p class="lead">Run each command in turn. The output is what the CLI returned in chapter 11.</p>
+  <p class="lead">Run each command in turn. The output is what the CLI returned.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -240,7 +240,7 @@ Resources:
         <div class="cmd">
           <pre class="in">ibmcloud iam access-group-service-id-add vpct-lab-admins vpct-lab-tester</pre>
           <pre class="out err">Service ID 'vpct-lab-tester' was not found.</pre>
-          <p class="hand note">Chapter 12 records this message in text, not the whole output.</p>
+          <p class="hand note">This message is recorded in text, not the whole output.</p>
         </div>
         <div class="cmd">
           <pre class="in">SID=$(ibmcloud iam service-id vpct-lab-tester --uuid)
@@ -285,7 +285,7 @@ ServiceId-&lt;service-id-uuid&gt;   iam-ServiceId-&lt;service-id-uuid&gt;   vpct
         <button class="opt" data-ok>Into the Default resource group, and the choice cannot be changed afterwards</button>
         <button class="opt">The command fails until you name one</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM says that if you do not specify a resource group, the resource is created in the Default resource group. The choice is made when the resource is created and cannot be changed afterwards. Every create command in the chapters names the resource group.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says that if you do not specify a resource group, the resource is created in the Default resource group. The choice is made when the resource is created and cannot be changed afterwards. Every create command in the lab names the resource group.</p></details>
     </div>
     <div class="q" data-check>
       <p>The service ID <code>vpct-lab-tester</code> is in <code>vpct-lab-admins</code>. It logs in and lists the resource groups. What does it see?</p>
@@ -294,7 +294,7 @@ ServiceId-&lt;service-id-uuid&gt;   iam-ServiceId-&lt;service-id-uuid&gt;   vpct
         <button class="opt" data-ok>Only vpct-lab</button>
         <button class="opt">None, because a service ID has no access</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Chapter 12 records that the service ID sees the <code>vpct-lab</code> resource group and nothing else, which is the access chapter 11 gave the group.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In the lab the service ID sees the <code>vpct-lab</code> resource group and nothing else, which is the access the group was given.</p></details>
     </div>
   </div>
 </section>
