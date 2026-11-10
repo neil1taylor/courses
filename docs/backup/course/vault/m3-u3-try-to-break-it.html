@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its board asks what happens if an attacker gets the backup admin&apos;s keys. Here is what we tried, in our lab, with each key.</p>
     </div>
   </div>
-  <p class="small">Every result comes from real tests in our lab on 5 and 6 October 2026 (tutorial V7). The vault is a Beta in us-south, with no SLA. Vault names, hosts and keys are made-up or placeholders: the values were changed.</p>
+  <p class="small">Every result comes from real tests in our lab on 5 and 6 October 2026. The vault is a Beta in us-south, with no SLA. Vault names, hosts and keys are made-up or placeholders: the values were changed.</p>
 </section>
 
 <section class="screen">
@@ -70,7 +70,7 @@
         <button class="opt" data-ok>The read key</button>
         <button class="opt">Both</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The read key could read the lock (test V8). The write key could list, read and write with a lock, but could not read the lock.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The read key could read the lock. The write key could list, read and write with a lock, but could not read the lock.</p></details>
     </div>
     <div class="q">
       <p>Which key could write a new object with a lock?</p>
@@ -79,7 +79,7 @@
         <button class="opt">The read key</button>
         <button class="opt">Neither</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The write key wrote with a lock (HTTP 200). The read key got 403 on a write (V8).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The write key wrote with a lock (HTTP 200). The read key got 403 on a write.</p></details>
     </div>
   </div>
 </section>
@@ -107,7 +107,7 @@ owner token, in the VPC   ?</pre>
 write key                 403 Access Denied because object protected by object lock
 read key                  403 Access Denied
 instance HMAC key         403 Access Denied (it could not even list)
-owner token, in the VPC   403 on GET, HEAD and DELETE</pre><p>Both objects still answered HEAD 200 afterwards. The instance HMAC key was the strongest key we had: an account-owner HMAC key does not exist in our account (V1, 5 October).</p></details>
+owner token, in the VPC   403 on GET, HEAD and DELETE</pre><p>Both objects still answered HEAD 200 afterwards. The instance HMAC key was the strongest key we had: an account-owner HMAC key does not exist in our account (5 October).</p></details>
     </div>
     <div class="q">
       <p>Same delete with the write key, now with the header <code>x-amz-bypass-governance-retention: true</code>. What happened?</p>
@@ -116,7 +116,7 @@ owner token, in the VPC   403 on GET, HEAD and DELETE</pre><p>Both objects still
         <button class="opt" data-ok>403, with the same text</button>
         <button class="opt">The vault asked for the read key</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>403 with the same text (V2). The lock is COMPLIANCE, not GOVERNANCE.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>403 with the same text. The lock is COMPLIANCE, not GOVERNANCE.</p></details>
     </div>
   </div>
 </section>
@@ -137,7 +137,7 @@ PUT /probe/p1.txt        other content              write key</pre>
         <button class="opt" data-ok>Both got 403 &quot;protected by object lock&quot;</button>
         <button class="opt">The vault ignored them and answered 200</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both got 403 &quot;protected by object lock&quot;, on both real objects and on the probe (V3). At bucket level, a default retention change and a versioning change to Suspended also got 403, and the configuration was unchanged afterwards (V6).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Both got 403 &quot;protected by object lock&quot;, on both real objects and on the probe. At bucket level, a default retention change and a versioning change to Suspended also got 403, and the configuration was unchanged afterwards.</p></details>
     </div>
     <div class="q">
       <p>The write key writes new content to the key <code>probe/p1.txt</code>, which already holds locked content. What does the vault do?</p>
@@ -167,7 +167,7 @@ latest version                   -> the new content</pre><p><b>Caveat.</b> The l
         <button class="opt" data-ok>The owner got 403 on the bucket&apos;s event settings, and no event for the vault reached either log route</button>
         <button class="opt">It worked, but only after one day</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The owner got 403 for the change and for a read, from the Mac and from the lab VPC. We searched two log instances: no vault events, not even for the refused delete. In our lab the account owner could not audit this vault (ISS-133).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The owner got 403 for the change and for a read, from the Mac and from the lab VPC. We searched two log instances: no vault events, not even for the refused delete. In our lab the account owner could not audit this vault.</p></details>
     </div>
     <div class="q">
       <p>&quot;A Defender admin who deletes the archive and the target removes the data from the vault.&quot; What happened on 6 October?</p>
@@ -176,7 +176,7 @@ latest version                   -> the new content</pre><p><b>Caveat.</b> The l
         <button class="opt">The vault data was deleted after 45 seconds</button>
         <button class="opt">The vault turned inactive</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Three archive copies were marked deleted and the target was removed. The versions under the checked prefix were still 7, with the same key list, and the lock was unchanged. The vault stayed active. That cluster held only the read key, so the test did not show what the archive-delete task would do with a write key (V11).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Three archive copies were marked deleted and the target was removed. The versions under the checked prefix were still 7, with the same key list, and the lock was unchanged. The vault stayed active. That cluster held only the read key, so the test did not show what the archive-delete task would do with a write key.</p></details>
     </div>
   </div>
   <div class="q" style="margin-top:20px">
@@ -186,7 +186,7 @@ latest version                   -> the new content</pre><p><b>Caveat.</b> The l
       <button class="opt" data-ok>The call was accepted and the vault stuck in &quot;deleting&quot;; the end state is not known</button>
       <button class="opt">The vault was deleted in one minute</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s page says it cannot be done. In our lab on 6 October the call returned 202 and the vault stayed in &quot;deleting&quot;. At 16:25 UTC the write key still listed and read all three locked objects (V5, ISS-146). This was a test vault with no data of value.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s page says it cannot be done. In our lab on 6 October the call returned 202 and the vault stayed in &quot;deleting&quot;. At 16:25 UTC the write key still listed and read all three locked objects. This was a test vault with no data of value.</p></details>
   </div>
 </section>
 
@@ -230,7 +230,6 @@ latest version                   -> the new content</pre><p><b>Caveat.</b> The l
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>In our lab, no key and not the account owner could delete a locked version or shorten its lock. A write key could add a new latest version over an old key; the old version stayed. The owner could not audit the vault.</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial V7 holds the tests V1 to V8 in section 7, the audit try in section 14, and the delete tests in section 17.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

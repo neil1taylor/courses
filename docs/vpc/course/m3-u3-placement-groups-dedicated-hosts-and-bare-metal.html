@@ -34,10 +34,10 @@
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: three hosts. A shared host holds servers from several accounts, a dedicated host holds only your servers, and a bare metal server is the whole machine."
         data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,30,110,120],"heavy":true},{"box":[22,44,86,30]},{"box":[22,84,86,30],"fill":"hatch","tone":"mark"},{"box":[22,118,86,24]},{"text":"shared","at":[34,176],"hand":true,"tone":"muted","size":17},{"box":[150,30,110,120],"heavy":true},{"box":[162,50,86,40],"fill":"hatch","tone":"mark"},{"box":[162,100,86,40],"fill":"hatch","tone":"mark"},{"text":"dedicated","at":[170,176],"hand":true,"tone":"muted","size":17},{"box":[290,30,110,120],"heavy":true,"fill":"hatch","tone":"mark"},{"text":"bare metal","at":[300,176],"hand":true,"tone":"muted","size":17}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the commands and output are real, recorded in tutorial chapters 33 to 35. Two of its app servers must not fail together, and one workload must not share a host with anyone. Each need has a different answer.</p>
+      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the commands and output are real. Two of its app servers must not fail together, and one workload must not share a host with anyone. Each need has a different answer.</p>
     </div>
   </div>
-  <p class="small">Every command and line of output in this unit comes from real runs in a test account, recorded in tutorial chapters 33 and 34. Bare metal comes from IBM's own pages, cited in chapter 35.</p>
+  <p class="small">Every command and line of output in this unit comes from real runs in a test account. Bare metal comes from IBM's own pages.</p>
 </section>
 
 <section class="screen">
@@ -71,7 +71,7 @@
         <div class="part-info" data-part="servers">
           <h3>Servers on the host</h3>
           <p>The host lists the servers placed on it. The server's own record names the host in its <code>dedicated_host</code> field.</p>
-          <p class="hand tilt"><b>From vSphere:</b> chapter 02 maps a resource pool or cluster to an instance group or a placement group. This is a rough mapping.</p>
+          <p class="hand tilt"><b>From vSphere:</b> a resource pool or cluster maps to an instance group or a placement group. This is a rough mapping.</p>
         </div>
       </div>
     </div>
@@ -183,7 +183,7 @@ Error message: placement group is referenced by one or more instances</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
   <h2>Two real errors</h2>
-  <p class="lead">Both errors are copied from the chapter's run on a dedicated host.</p>
+  <p class="lead">Both errors are copied from the lab run on a dedicated host.</p>
   <pre class="def" aria-label="Two errors from the dedicated host chapter">$ ibmcloud is instance-create vpct-prod-app-z1-bad ... mx2-2x16 ... --dedicated-host vpct-dh-z1-01
 FAILED
 Error code: bad_field_instance_profile

@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It protects the folder <code>C:\data</code> on a Windows server. Today it deletes <code>C:\data\docs</code> on purpose and restores it.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 8 November 2026 for the console, recorded in tutorials B4b and B5b. The server name is blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 8 November 2026 for the console. The server name is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -67,7 +67,7 @@
         <button class="opt" data-ok>The restore looks the path up in the snapshot&apos;s file view, where the drive is a folder named C</button>
         <button class="opt">Restores cannot use folders</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That is the tutorial&apos;s explanation. The error text shows the path it looked for in the view, ending <code>.../fs/C:\data\docs</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>That is the explanation. The error text shows the path it looked for in the view, ending <code>.../fs/C:\data\docs</code>.</p></details>
     </div>
   </div>
 </section>
@@ -101,7 +101,7 @@ Error while calling FileStat for C:\data\docs: [kNotFound]: Bridge error: Direct
         <button class="opt" data-ok>Nothing: a sed error left the path unchanged</button>
         <button class="opt">The server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In the tutorial, a sed error left the body unchanged, so <code>C:\data\docs</code> went in again.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab, a sed error left the body unchanged, so <code>C:\data\docs</code> went in again.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> In the console this does not happen. You pick the folder, you do not type its path.</p>
@@ -187,13 +187,13 @@ Second  512     3.2 MB    18 s</pre><p>These are the console runs of 8 November 
       <details class="reveal"><summary>Show the answer</summary><p>The browser shows the drive as a folder named <code>C</code>. You open it and tick <code>docs</code>; the selection reads <code>/C/data</code>.</p></details>
     </div>
     <div class="q" data-check>
-      <p><b>Review from unit 4.1.</b> What is the proof, in tutorial B5a, that a restore worked?</p>
+      <p><b>Review from unit 4.1.</b> What is the proof that a restore worked?</p>
       <div class="opts">
         <button class="opt">The recovery says Succeeded</button>
         <button class="opt" data-ok>Every file is checked against the checksum list: 503 of 503 match</button>
         <button class="opt">The folder opens on the server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Delete a folder, restore it, and check every file against the checksum list. The tutorial calls this the proof that the backup works.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Delete a folder, restore it, and check every file against the checksum list. This is the proof that the backup works.</p></details>
     </div>
   </div>
 </section>
@@ -204,7 +204,6 @@ Second  512     3.2 MB    18 s</pre><p>These are the console runs of 8 November 
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>A command-line restore of a Windows folder needs <code>/C/data/docs</code>, not <code>C:\data\docs</code>: in the snapshot the drive is a folder named C. In the console you pick the folder, so the problem does not arise.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B4b backs up the Windows folder in full and then incrementally. Tutorial B5b restores it from the console and the command line and checks every file.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

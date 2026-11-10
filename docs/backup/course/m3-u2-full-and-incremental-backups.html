@@ -46,7 +46,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It protects the folder <code>/data</code> on a Linux server with a daily policy that keeps backups for 7 days. Today it runs its first two backups by hand.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab on 8 November 2026, recorded in tutorials B3a and B4a. The server name is blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab on 8 November 2026. The server name is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -77,7 +77,7 @@
         <button class="opt" data-ok>A file-based incremental reads only what changed; a volume-based one reads the whole volume every time</button>
         <button class="opt">File-based is cheaper per GB</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That is what the tutorials measured. In the BRS console, <b>Protect &gt; Physical Server</b> offers <b>File-based</b> and no volume-based type, so the choice is made for you there.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>That is what our lab runs showed. In the BRS console, <b>Protect &gt; Physical Server</b> offers <b>File-based</b> and no volume-based type, so the choice is made for you there.</p></details>
     </div>
   </div>
 </section>
@@ -213,7 +213,6 @@ Second  512     3.2 MB    15 s</pre></details>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>The first run reads everything; a file-based incremental reads little more than what changed: 3.2 MB against 97.1 MB in our lab. The console calls both runs Incremental, so read Data Read. A run started right after a Connector Agent registration stuck once in our lab.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B3a makes the source, policy and group. Tutorial B4a runs the full and incremental backups, from the console and the command line.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

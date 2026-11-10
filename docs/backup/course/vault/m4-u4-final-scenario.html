@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It backs up Linux files, Windows files and a SQL database with Defender Data Protect, and archives them to a Cyber Vault. Its board asks what happens if an attacker gets the backup admin&apos;s keys. You write the plan.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab, with the date given each time. The unit reviews Module 4 and uses the tests in tutorials V4, V5, V7 and V7b. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab, with the date given each time. The unit reviews Module 4 and uses the tests from the earlier units. The vault is a Beta in us-south, with no SLA.</p>
 </section>
 
 <section class="screen">
@@ -73,7 +73,7 @@
         <button class="opt" data-ok>In the plan</button>
         <button class="opt">Left out</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>An agent trusts one cluster (ISS-140). A plain <code>rpm -Uvh --force</code> keeps the old trust and registration fails with a TLS error, so the lab removed the old package and its saved configuration first.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>An agent trusts one cluster. A plain <code>rpm -Uvh --force</code> keeps the old trust and registration fails with a TLS error, so the lab removed the old package and its saved configuration first.</p></details>
     </div>
     <div class="q">
       <p>Item: add the vault to the new cluster with the read key, Encryption off and Archive Object Lock off.</p>
@@ -89,7 +89,7 @@
         <button class="opt">In the plan</button>
         <button class="opt" data-ok>Left out: restore to a new location</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A retrieved group cannot restore to the original (ISS-141). In our lab on 10 November the restores went to <code>/v7restore/data</code>, <code>C:\v7restore\data</code> and a new database <code>labdb_v7b</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A retrieved group cannot restore to the original. In our lab on 10 November the restores went to <code>/v7restore/data</code>, <code>C:\v7restore\data</code> and a new database <code>labdb_v7b</code>.</p></details>
     </div>
     <div class="q">
       <p>Item: treat a restore that says Succeeded as proof.</p>
@@ -97,7 +97,7 @@
         <button class="opt">In the plan</button>
         <button class="opt" data-ok>Left out: check every file and the database</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In an earlier test a Linux recovery reported Succeeded while hard-linked files came back empty (ISS-143). The check against a manifest found it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In an earlier test a Linux recovery reported Succeeded while hard-linked files came back empty. The check against a manifest found it.</p></details>
     </div>
     <div class="q">
       <p>Item: promise that the OpenShift VMs rebuild from the vault alone on a new cluster.</p>
@@ -105,7 +105,7 @@
         <button class="opt">In the plan</button>
         <button class="opt" data-ok>Left out: it failed in October and was not run on 10 November</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 9 October the retrieve of the VM group failed on a new cluster (ISS-190). The 10 November run did not include the VMs. Say it is not proven.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On 9 October the retrieve of the VM group failed on a new cluster. The 10 November run did not include the VMs. Say it is not proven.</p></details>
     </div>
     <div class="q">
       <p>Item: delete the vault when the exercise ends.</p>
@@ -140,7 +140,7 @@
         <button class="opt" data-ok>No: the vault refused it</button>
         <button class="opt">Only with the read key as well</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 5 October 2026 a delete of a locked version was refused, with &quot;Access Denied because object protected by object lock&quot;, for the write key. It was also refused for the read key, for another key on the same storage instance, and for the account owner&apos;s token from inside the VPC (V7, test V1).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 5 October 2026 a delete of a locked version was refused, with &quot;Access Denied because object protected by object lock&quot;, for the write key. It was also refused for the read key, for another key on the same storage instance, and for the account owner&apos;s token from inside the VPC.</p></details>
     </div>
     <div class="q">
       <p>The same attacker writes a new version of an existing object with the write key. What is left?</p>
@@ -149,7 +149,7 @@
         <button class="opt" data-ok>A new latest version, and the old version still readable</button>
         <button class="opt">The write is refused</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On a test object in our lab, the write returned 200 and made a new version. The first version could still be read, with the original content. The latest version was now the new content, so a holder of the write key can hide the latest data (V7, test V4). That is one reason the plan picks a run by its time and checks the result.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On a test object in our lab, the write returned 200 and made a new version. The first version could still be read, with the original content. The latest version was now the new content, so a holder of the write key can hide the latest data. That is one reason the plan picks a run by its time and checks the result.</p></details>
     </div>
   </div>
 </section>
@@ -166,7 +166,7 @@
         <button class="opt" data-ok>No: in October, 13,913 Linux files came back empty and the VM retrieve failed</button>
         <button class="opt">Yes: the status said Succeeded</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 10 November, Linux (503 of 503), Windows (503 of 503) and SQL (100000 rows, checksum -108923937) came back whole. In October, Linux came back with 167,639 of 181,552 files, and the OpenShift VM retrieve failed on a new cluster (ISS-143, ISS-190).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 10 November, Linux (503 of 503), Windows (503 of 503) and SQL (100000 rows, checksum -108923937) came back whole. In October, Linux came back with 167,639 of 181,552 files, and the OpenShift VM retrieve failed on a new cluster.</p></details>
     </div>
     <div class="q">
       <p>Can Northgate remove the vault once the test is over?</p>
@@ -198,7 +198,7 @@ configs                      -       no lock</pre>
         <button class="opt" data-ok>25 November 2026 at 20:50:48Z</button>
         <button class="opt">Today, if the data is removed first</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>25 November 2026 at 20:50:48Z is when the newest lock ends. In October the same rule held the first test vault until 23 October (ISS-146).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>25 November 2026 at 20:50:48Z is when the newest lock ends. In October the same rule held the first test vault until 23 October.</p></details>
     </div>
     <div class="q">
       <p>What should Northgate tell its auditor about how long the data cannot be deleted?</p>
@@ -230,7 +230,7 @@ configs                      -       no lock</pre>
       <p>Why can you not restore a retrieved group to the original server?</p>
       <div class="opts">
         <button class="opt">The vault refuses the read key</button>
-        <button class="opt" data-ok>A retrieved group cannot restore to the original (ISS-141), so restore to a new location</button>
+        <button class="opt" data-ok>A retrieved group cannot restore to the original, so restore to a new location</button>
         <button class="opt">The agent was removed</button>
       </div>
       <details class="reveal"><summary>Show the answer</summary><p>The lab restored to a new location each time.</p></details>
@@ -253,7 +253,6 @@ configs                      -       no lock</pre>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>With only the read key, a new cluster brought back Linux, Windows and SQL whole on 10 November in our lab. Choose a run from before the attack, restore to a new location, and check against a record made earlier. Do not promise the VMs. The vault cannot be deleted before 25 November 2026 at 20:50:48Z.</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial V7b holds the rebuild and both results tables. Tutorial V7 holds the key tests.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

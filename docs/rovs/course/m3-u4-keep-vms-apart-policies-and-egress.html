@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output in this unit is real. Its security team wants the same separation it had with NSX. It will not all come from one place.</p>
     </div>
   </div>
-  <p class="small">Every statement and output in this unit comes from tutorial chapters 15, 26 and 27, apart from the review question, which comes from chapter 12. The VMware comparisons are rough mappings, not IBM statements.</p>
+  <p class="small">Every statement and output in this unit comes from real runs on lab clusters, apart from the review question. The VMware comparisons are rough mappings, not IBM statements.</p>
 </section>
 
 <section class="screen">
@@ -91,7 +91,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Run it</span>
   <h2>A policy that is in force, and a VM it does not touch</h2>
-  <p class="lead">Two VMs on a secondary Layer 2 network, in two projects on two workers. Run each command in turn. The output is what the cluster returned in chapter 26.</p>
+  <p class="lead">Two VMs on a secondary Layer 2 network, in two projects on two workers. Run each command in turn. The output is what the lab cluster returned.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -151,7 +151,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Design it</span>
   <h2>Which policy covers which network?</h2>
-  <p class="lead">Chapter 26 measured this on a ROVS cluster as delivered. Security groups plus network policies are not a drop-in replacement for the NSX distributed firewall.</p>
+  <p class="lead">A test run measured this on a ROVS cluster as delivered. Security groups plus network policies are not a drop-in replacement for the NSX distributed firewall.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn two-column diagram. The pod network is covered by NetworkPolicy, enforced. A primary Layer 2 or Layer 3 network is covered by NetworkPolicy, enforced. A localnet secondary network is covered only by MultiNetworkPolicy, off by default. A Layer 2 secondary network is covered only by MultiNetworkPolicy, off by default."
       data-drawing='{"w":640,"h":220,"shapes":[

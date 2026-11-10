@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its security team wants one place where traffic between prod and dev is allowed, logged or refused.</p>
     </div>
   </div>
-  <p class="small">The offerings and prices come from chapter 83, which cites IBM&apos;s pages. The subnets, commands, firewall output and the failover come from real runs in chapters 84, 86, 88 and 89. The review question repeats one from unit 6.2.</p>
+  <p class="small">The offerings and prices come from IBM&apos;s pages. The subnets, commands, firewall output and the failover come from real runs. The review question repeats one from unit 6.2.</p>
 </section>
 
 <section class="screen">
@@ -133,7 +133,7 @@
         </div>
       </div>
     </div>
-    <pre class="def" aria-label="The hub's subnets and address ranges, from chapter 84">Subnet (zones 1, 2)          Zone 1         Zone 2         Use
+    <pre class="def" aria-label="The hub's subnets and address ranges">Subnet (zones 1, 2)          Zone 1         Zone 2         Use
 vpct-hub-public-z1, -z2      10.10.0.0/24   10.10.64.0/24  port1
 vpct-hub-private-z1, -z2     10.10.1.0/24   10.10.65.0/24  port2
 vpct-hub-hb-z1, -z2          10.10.2.0/24   10.10.66.0/24  port3
@@ -146,7 +146,7 @@ vpct-hub-vpn-z1, -z2         10.10.4.0/24   10.10.68.0/24  VPN gateways
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>Send prod to dev through the firewall</h2>
-  <p class="lead">Chapter 86 adds a route in each spoke and in the hub ingress table, so prod to dev goes to the firewall&apos;s port2, <code>10.10.1.4</code>. Then a policy allows and logs it, and the same policy is changed to deny.</p>
+  <p class="lead">The lab adds a route in each spoke and in the hub ingress table, so prod to dev goes to the firewall&apos;s port2, <code>10.10.1.4</code>. Then a policy allows and logs it, and the same policy is changed to deny.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -158,7 +158,7 @@ Status        stable
 Destination   10.30.0.0/16
 Next hop      10.10.1.4
 Zone          us-east-1</pre>
-          <p class="hand note">The next hop is in another VPC, the hub. The API accepted it. The chapter makes the same kind of route in dev and in the hub ingress table.</p>
+          <p class="hand note">The next hop is in another VPC, the hub. The API accepted it. The lab makes the same kind of route in dev and in the hub ingress table.</p>
         </div>
         <div class="cmd">
           <p class="pre"># on the FortiGate: policy 1 accepts port2 to port2 and logs it</p>
@@ -186,7 +186,7 @@ execute log display</pre>
         set action deny
     next
 end</pre>
-          <p class="hand note">The chapter records no output for this command.</p>
+          <p class="hand note">No output was recorded for this command.</p>
         </div>
         <div class="cmd">
           <pre class="in">ssh -J ubuntu@$BASTION ubuntu@$APP1 &quot;nc -zv -w 3 $DEV 22&quot;</pre>
@@ -242,7 +242,7 @@ C       10.10.65.0/24 is directly connected, port2, 00:08:07</pre></div></div>
       <button class="opt">It adds a third firewall</button>
       <button class="opt" data-ok>It plans to replace both firewall servers and reset IP spoofing, and the apply fails with the servers gone</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>The plan removed the <code>version_crn</code> of the catalogue offering from each server and set IP spoofing on both port2 interfaces back to <code>false</code>. The apply failed with <code>Field validation for 'CatalogOffering' failed on the 'required' tag</code>, and the two firewall servers were gone afterwards. Chapter 88 says not to run the workspace again after the first apply.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>The plan removed the <code>version_crn</code> of the catalogue offering from each server and set IP spoofing on both port2 interfaces back to <code>false</code>. The apply failed with <code>Field validation for 'CatalogOffering' failed on the 'required' tag</code>, and the two firewall servers were gone afterwards. Do not run the workspace again after the first apply.</p></details>
   </div>
 </section>
 
@@ -266,7 +266,7 @@ C       10.10.65.0/24 is directly connected, port2, 00:08:07</pre></div></div>
         <button class="opt" data-ok>port2</button>
         <button class="opt">port4</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Port2 is the private port. Port1 is untrusted and port4 is for management. Spoke routes in chapter 86 name the firewall&apos;s port2.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Port2 is the private port. Port1 is untrusted and port4 is for management. Spoke routes name the firewall&apos;s port2.</p></details>
     </div>
     <div class="q" data-check>
       <p><span class="kicker">Review question from Unit 6.2.</span> An ingress route table drops traffic to <code>10.30.0.0/16</code>, the dev range. Does that stop dev reaching the prod VPC?</p>

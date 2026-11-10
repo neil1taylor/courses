@@ -41,7 +41,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its auditor asks one question about the new app servers&apos; disks: who holds the key? The company is made up; the commands and output are real.</p>
     </div>
   </div>
-  <p class="small">Every command and line of output here comes from a real run, recorded in tutorial chapter 42 (and chapter 45 for one error). Account and key IDs are shortened.</p>
+  <p class="small">Every command and line of output here comes from a real run. Account and key IDs are shortened.</p>
 </section>
 
 <section class="screen">
@@ -76,7 +76,7 @@
         <div class="part-info" data-part="auth">
           <h3>The rule</h3>
           <p>A service-to-service authorization: an IAM rule that lets Block Storage (<code>server-protect</code>) use Key Protect (<code>kms</code>) with the Reader role. Here it is scoped to this one instance.</p>
-          <p class="watch"><b>Watch for this.</b> IBM&apos;s own command omits the instance ID, which covers every Key Protect instance in the account. The chapter scopes it, so the rule is yours and no other team&apos;s rule makes it work.</p>
+          <p class="watch"><b>Watch for this.</b> IBM&apos;s own command omits the instance ID, which covers every Key Protect instance in the account. The lab scopes it, so the rule is yours and no other team&apos;s rule makes it work.</p>
         </div>
         <div class="part-info" data-part="volume">
           <h3>The volume</h3>
@@ -176,7 +176,7 @@ Error response from server. Status code: 409; description: {"trace":"…","statu
           <button class="opt" data-ok>Nothing. The existing rule does the work</button>
           <button class="opt">Ask IBM to raise the quota</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>Chapters 42 and 45 both say that if the account already holds a rule with the same attributes, the command fails with <code>policy_conflict_error</code> (status 409) and names the existing rule. That rule then does the work, and you need no new one. The output above is from chapter 45.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>Test runs showed that if the account already holds a rule with the same attributes, the command fails with <code>policy_conflict_error</code> (status 409) and names the existing rule. That rule then does the work, and you need no new one.</p></details>
       </div>
     </div>
     <div style="display:grid;gap:10px;align-content:start">
@@ -197,7 +197,7 @@ Error response from server. Status code: 409; description: {"trace":"…","statu
 <section class="screen">
   <span class="kicker">Step 4 · Design it</span>
   <h2>Whose key?</h2>
-  <p class="lead">Four Northgate situations. Pick an answer, then read the worked answer from chapters 40 and 42.</p>
+  <p class="lead">Four Northgate situations. Pick an answer, then read the worked answer.</p>
   <div class="pair">
     <div class="q">
       <p>Northgate has no requirement to own the keys.</p>
@@ -213,7 +213,7 @@ Error response from server. Status code: 409; description: {"trace":"…","statu
         <button class="opt" data-ok>Customer-managed, with Key Protect standard</button>
         <button class="opt">IBM-managed encryption</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Standard is the chapter&apos;s choice: a multi-tenant service, FIPS 140-2 Level 3. A single-tenant key service is Key Protect dedicated, FIPS 140-3 Level 4.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Standard is the lab&apos;s choice: a multi-tenant service, FIPS 140-2 Level 3. A single-tenant key service is Key Protect dedicated, FIPS 140-3 Level 4.</p></details>
     </div>
     <div class="q">
       <p>Northgate already holds an instance of Hyper Protect Crypto Services.</p>
@@ -221,7 +221,7 @@ Error response from server. Status code: 409; description: {"trace":"…","statu
         <button class="opt">Build on it for new volumes without a plan</button>
         <button class="opt" data-ok>Plan to migrate its keys to a dedicated Key Protect instance</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>It is deprecated. Existing instances are usable until 20 March 2027, and chapter 40 says to migrate keys to a dedicated Key Protect instance.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>It is deprecated. Existing instances are usable until 20 March 2027, and the advice is to migrate keys to a dedicated Key Protect instance.</p></details>
     </div>
     <div class="q">
       <p>A file share was created with IBM-managed keys. Later the auditor wants a customer root key on it.</p>
@@ -239,7 +239,7 @@ Error response from server. Status code: 409; description: {"trace":"…","statu
   <h2>Four questions</h2>
   <div>
     <div class="q" data-check>
-      <p>Why does the chapter scope the rule with <code>--target-service-instance-id</code>?</p>
+      <p>Why does the lab scope the rule with <code>--target-service-instance-id</code>?</p>
       <div class="opts">
         <button class="opt">IBM requires it</button>
         <button class="opt" data-ok>So the rule is yours, and no other team&apos;s rule makes it work</button>
@@ -263,7 +263,7 @@ Error response from server. Status code: 409; description: {"trace":"…","statu
         <button class="opt" data-ok>For as long as the volume exists</button>
         <button class="opt">Until the first backup</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>With the rule and the key in place, Block Storage can open the volume when it attaches. IBM lists disabling, rotating and deleting keys as things to plan for. The chapter does not disable or delete the key, so it did not test what then happens.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>With the rule and the key in place, Block Storage can open the volume when it attaches. IBM lists disabling, rotating and deleting keys as things to plan for. The lab does not disable or delete the key, so it did not test what then happens.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 4.1.</b> A data volume is 20 GB. Can you make it 10 GB with <code>volume-update</code>?</p>

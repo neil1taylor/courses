@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its VMs on ng-cluster-01 are backed up. Now it must restore them, and plan around how long that takes.</p>
     </div>
   </div>
-  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names were changed. Every number and screen comes from real runs in our lab on 5 October and 9 November 2026, recorded in tutorials B5e and B4e. Some screens show lab object names, such as the namespace brs-c1; cluster and location names are blurred.</p>
+  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names were changed. Every number and screen comes from real runs in our lab on 5 October and 9 November 2026. Some screens show lab object names, such as the namespace brs-c1; cluster and location names are blurred.</p>
 </section>
 
 <section class="screen">
@@ -64,7 +64,7 @@ Our lab:  two VMs, four disks, 128.85 GB (120 GiB)  ->  ?</pre>
         <button class="opt" data-ok>The distance: the cluster was in eu-de and the BRS service in au-syd</button>
         <button class="opt">The disks on the cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tutorial&apos;s network check, from a worker on 5 October 2026, timed a 2 GiB transfer:</p><pre class="def">From a ROVS worker, 2 GiB      au-syd      eu-de
+      <details class="reveal"><summary>Show the answer</summary><p>Our network check, from a worker on 5 October 2026, timed a 2 GiB transfer:</p><pre class="def">From a ROVS worker, 2 GiB      au-syd      eu-de
 Round trip (TCP connect)      0.30 s      0.002-0.008 s
 Download, 1 stream            32.2 MB/s   83.0 MB/s
 Download, 10 streams          30.8 MB/s   368.0 MB/s</pre><p>The restore sat at the au-syd download ceiling, about 31 MB/s. The distance limits it.</p></details>
@@ -135,7 +135,7 @@ Download, 10 streams          30.8 MB/s   368.0 MB/s</pre><p>The restore sat at 
         <button class="opt" data-ok>By booting it and comparing its files with the manifest saved before that run</button>
         <button class="opt">By the duration</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tutorial checks the restored VMs, not the job status. After the restore from run 1, manifest 1 came back, not manifest 2, which the disk held before the VM was deleted:</p><pre class="def">now 8b32e06ca506d0b94e061343698cb43bd1e758885fa7f76fe92a1148cb947d46   (= manifest 1)
+      <details class="reveal"><summary>Show the answer</summary><p>The check is on the restored VMs, not the job status. After the restore from run 1, manifest 1 came back, not manifest 2, which the disk held before the VM was deleted:</p><pre class="def">now 8b32e06ca506d0b94e061343698cb43bd1e758885fa7f76fe92a1148cb947d46   (= manifest 1)
 match-1 20 of 20
 zero=0 nonzero=1734</pre></details>
     </div>
@@ -205,7 +205,6 @@ zero=0 nonzero=1734</pre></details>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>IBM says about six to seven minutes for a restore. In our lab on 5 October 2026, 120 GiB took 63 minutes, with the BRS service in au-syd and the cluster in eu-de; the distance limited it. With both in eu-de on 9 November 2026, two disks of 30 GiB took about 5.5 minutes. Check the restored VM against its saved manifest; the status alone does not tell you. VM backup was not generally available when tested, and IBM lists it for au-syd only.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B5e restores the VMs, from the console and the command line, and checks them. The speed comparison is in section 10 of tutorial B4e.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

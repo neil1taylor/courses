@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its security team asks who changed a rule, what was blocked, and what the estate fails. The commands, output and screenshots below are real, from a test account.</p>
     </div>
   </div>
-  <p class="small">Every command, output and screenshot in this unit comes from tutorial chapters 62 to 66, apart from the review question, which comes from chapter 61.</p>
+  <p class="small">Every command, output and screenshot in this unit comes from real runs in a lab account, apart from the review question.</p>
 </section>
 
 <section class="screen">
@@ -85,7 +85,7 @@
         <div class="part-info" data-part="metrics">
           <h3>Monitoring</h3>
           <p>IBM Cloud Monitoring holds the metrics. An agent on the server collects host CPU, memory, storage, process and network metrics and sends them to a collector endpoint on port 6443.</p>
-          <p class="watch"><b>Watch for this.</b> IBM adds a setting, <code>monitor_light</code>, for a Linux server that is not orchestrated. With it the agent connected and then lost the connection every three minutes, and no metrics arrived in seven minutes. Chapter 64 does not use it.</p>
+          <p class="watch"><b>Watch for this.</b> IBM adds a setting, <code>monitor_light</code>, for a Linux server that is not orchestrated. With it the agent connected and then lost the connection every three minutes, and no metrics arrived in seven minutes. The lab does not use it.</p>
         </div>
         <div class="part-info" data-part="logs">
           <h3>Cloud Logs</h3>
@@ -142,7 +142,7 @@ ibmcloud resource service-instance-create vpct-scc sysdig-secure free-trial us-e
       <details class="reveal"><summary>Show the answer</summary><p>IBM says a security group or a network ACL can cause a rejection, and the flow log does not say which. Compare the rules of <code>vpct-prod-app-sg</code> and of the app subnet&apos;s ACL with port 9090.</p></details>
     </div>
   </div>
-  <p class="lead" style="margin-top:20px">Later, a rule from chapter 61 that allows only the VPC was enforced on the bucket&apos;s Object Storage instance, and the flow log collector stayed active. The object list, newest last:</p>
+  <p class="lead" style="margin-top:20px">Later, a rule that allows only the VPC was enforced on the bucket&apos;s Object Storage instance, and the flow log collector stayed active. The object list, newest last:</p>
   <pre class="def" aria-label="Flow log objects and the rule's times">$ ibmcloud cbr rule-create --description "vpct-cos-vpc-only" ...    (19:05:25 UTC, enforced)
 $ ibmcloud cbr rule-delete $RULE                                     (19:13:20 UTC)
 $ ibmcloud cos objects ... | sort | tail -6                           (19:20 UTC)
@@ -215,14 +215,14 @@ Security group vpct-prod-audit-test-sg is deleted.</pre>
         </div>
         <div class="cmd">
           <p class="pre"># on the server</p>
-          <pre class="in">sudo mkdir -p /var/log/vpct &amp;&amp; echo "vpct chapter 65 test line $(date -u +%FT%TZ)" | sudo tee -a /var/log/vpct/test.log</pre>
-          <pre class="out">vpct chapter 65 test line 2026-10-31T08:14:01Z</pre>
+          <pre class="in">sudo mkdir -p /var/log/vpct &amp;&amp; echo "vpct test line $(date -u +%FT%TZ)" | sudo tee -a /var/log/vpct/test.log</pre>
+          <pre class="out">vpct test line 2026-10-31T08:14:01Z</pre>
         </div>
         <div class="cmd">
           <p class="pre"># 34 seconds later, from a laptop</p>
           <pre class="in">ibmcloud logs query --query "source logs | filter \$d.applicationName == 'vpct-prod'" --since 30m --output json</pre>
           <pre class="out">timestamp: 2026-10-31T08:14:04.486177758
-user_data: {"applicationName":"vpct-prod","file":"/var/log/vpct/test.log","log":"vpct chapter 65 test line 2026-10-31T08:14:01Z","meta":{"hostname":"vpct-prod-client-z1-01"},"subsystemName":"app","tag":"host.var.log.vpct.test.log"}</pre>
+user_data: {"applicationName":"vpct-prod","file":"/var/log/vpct/test.log","log":"vpct test line 2026-10-31T08:14:01Z","meta":{"hostname":"vpct-prod-client-z1-01"},"subsystemName":"app","tag":"host.var.log.vpct.test.log"}</pre>
           <p class="hand note">In the instance 3 seconds after it was written. The query found it 34 seconds later.</p>
         </div>
       </div>
@@ -238,7 +238,7 @@ user_data: {"applicationName":"vpct-prod","file":"/var/log/vpct/test.log","log":
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>Scan the account for compliance</h2>
-  <p class="lead">These are real screens from chapter 66. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These are real screens. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="91,84,7.5,8.5">
       <div class="shot"><img src="../images/66/aggregator-recording.png" alt="The Configuration aggregator page of an App Configuration instance. Active collection reads Periodic, Coverage reads Entire account, and the Periodic collection switch at the bottom right is On." width="1166" height="505"></div>
@@ -285,13 +285,13 @@ user_data: {"applicationName":"vpct-prod","file":"/var/log/vpct/test.log","log":
       <details class="reveal"><summary>Show the answer</summary><p>IBM says flow logs collect TCP and UDP traffic, not ICMP. A ping is ICMP.</p></details>
     </div>
     <div class="q" data-check>
-      <p>The monitoring agent runs with <code>monitor_light</code> set. It connects, but no metrics arrive. What did chapter 64 find?</p>
+      <p>The monitoring agent runs with <code>monitor_light</code> set. It connects, but no metrics arrive. What did the lab find?</p>
       <div class="opts">
         <button class="opt">The agent needs a longer wait, as metrics can take an hour</button>
         <button class="opt" data-ok>With the setting the agent lost its connection every three minutes and sent no metrics in seven. Without it the first metrics arrived 32 seconds after the restart</button>
         <button class="opt">The setting is required on every Linux server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM adds the setting for a Linux server that is not orchestrated. On the lab server it broke metrics, so the chapter leaves it out.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM adds the setting for a Linux server that is not orchestrated. On the lab server it broke metrics, so the lab leaves it out.</p></details>
     </div>
     <div class="q" data-check>
       <p>You fix a failed control. An hour later the results still show it failing. What do you do?</p>

@@ -46,7 +46,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its backups and keys live in IBM Cloud services, and its security team wants that traffic kept private and refused from anywhere else. The commands and output below are real, from a test account.</p>
     </div>
   </div>
-  <p class="small">Every command and output in this unit comes from tutorial chapters 56, 60 and 61, apart from the review question, which comes from chapter 54.</p>
+  <p class="small">Every command and output in this unit comes from real runs in a lab account, apart from the review question.</p>
 </section>
 
 <section class="screen">
@@ -88,7 +88,7 @@
         </div>
         <div class="part-info" data-part="sg">
           <h3>Security group</h3>
-          <p>IBM says a gateway with no security group takes the VPC&apos;s default group. Chapter 60 makes a group that allows only HTTPS, port 443, from the app servers&apos; group.</p>
+          <p>IBM says a gateway with no security group takes the VPC&apos;s default group. The lab makes a group that allows only HTTPS, port 443, from the app servers&apos; group.</p>
           <p class="watch"><b>Watch for this.</b> Delete that one rule and a connection to port 443 times out. Add it back and it succeeds.</p>
         </div>
         <div class="part-info" data-part="ips">
@@ -109,7 +109,7 @@
         <div class="part-info" data-part="mode">
           <h3>Enforcement mode</h3>
           <p><code>Enable</code> denies requests that do not match and reports them. <code>Report-only</code> allows everything and logs what a rule would deny. <code>Disable</code> does nothing.</p>
-          <p class="watch"><b>Watch for this.</b> Chapter 61 creates both rules in report-only mode, looks at what they would block, and only then enforces them.</p>
+          <p class="watch"><b>Watch for this.</b> The lab creates both rules in report-only mode, looks at what they would block, and only then enforces them.</p>
         </div>
       </div>
     </div>
@@ -222,7 +222,7 @@ Access to the IBM Cloud account was denied — please verify that the Service In
 <section class="screen">
   <span class="kicker">Step 3 · Design it</span>
   <h2>How does a VPC reach a service in another VPC?</h2>
-  <p class="lead">Chapter 56 sets Private Path beside the other ways. Northgate&apos;s shared-services team runs a web service in one VPC, and the prod VPC needs it.</p>
+  <p class="lead">This sets Private Path beside the other ways. Northgate&apos;s shared-services team runs a web service in one VPC, and the prod VPC needs it.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn list of four options. Private Path: the provider controls who connects; the consumer sees one private address. Transit Gateway: the VPCs trust each other; whole networks are joined by routes. Public load balancer: the service is for the internet. VPN: two sites."
       data-drawing='{"w":640,"h":220,"shapes":[
@@ -256,7 +256,7 @@ Access to the IBM Cloud account was denied — please verify that the Service In
           <button class="opt">Private Path</button>
           <button class="opt" data-ok>Transit Gateway</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>Chapter 56 lists Transit Gateway for VPCs that trust each other, because it joins whole networks by routes. Module 6 covers it.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>Transit Gateway is for VPCs that trust each other, because it joins whole networks by routes. Module 6 covers it.</p></details>
       </div>
     </div>
   </div>
@@ -311,7 +311,7 @@ Error message: You are not authorized to access the provided volume encryption k
         <button class="opt">Yes. Delete it and start again</button>
         <button class="opt" data-ok>No. It takes about four minutes to apply everywhere</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>During that time the same request sometimes succeeds and sometimes fails. The chapter&apos;s advice is to wait until it fails every time before you trust a denial. The Object Storage rule was denied at once.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>During that time the same request sometimes succeeds and sometimes fails. The advice is to wait until it fails every time before you trust a denial. The Object Storage rule was denied at once.</p></details>
     </div>
   </div>
 </section>
@@ -344,7 +344,7 @@ Error message: You are not authorized to access the provided volume encryption k
         <button class="opt">Yes, it comes from the VPC</button>
         <button class="opt" data-ok>No. It carries the public gateway&apos;s address</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM says that to allow access from a VPC to public endpoints, you add the public gateway addresses to the zone as well. This chapter&apos;s zone has none, so requests that leave through the public gateway do not match.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says that to allow access from a VPC to public endpoints, you add the public gateway addresses to the zone as well. The lab&apos;s zone has none, so requests that leave through the public gateway do not match.</p></details>
     </div>
     <div class="q" data-check>
       <p>In a shared account you write a rule for the whole Object Storage service, not one instance. What is the risk?</p>
@@ -352,7 +352,7 @@ Error message: You are not authorized to access the provided volume encryption k
         <button class="opt">None. A rule only affects your own instance</button>
         <button class="opt" data-ok>It denies other teams&apos; requests too</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Every rule in chapter 61 names one service instance, never a whole service, for this reason.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Every rule in the lab names one service instance, never a whole service, for this reason.</p></details>
     </div>
   </div>
 </section>

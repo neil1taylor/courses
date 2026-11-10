@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its ROVS cluster, ng-cluster-01, is registered. Now it backs up VMs in a namespace, first by hand.</p>
     </div>
   </div>
-  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names were changed. Every number and screen comes from real runs in our lab on 5 October and 9 November 2026, recorded in tutorial B4e. Some screens show lab object names, such as the group b-rovs-vms; cluster names are blurred.</p>
+  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names were changed. Every number and screen comes from real runs in our lab on 5 October and 9 November 2026. Some screens show lab object names, such as the group b-rovs-vms; cluster names are blurred.</p>
 </section>
 
 <section class="screen">
@@ -63,7 +63,7 @@
         <button class="opt" data-ok>No: the guest agent froze the file systems and the VMs kept running</button>
         <button class="opt">Only Windows VMs are stopped</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The snapshots were taken in the first 3 minutes of the 5 October run. The tutorial records the indications <code>GuestAgent, Online</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The snapshots were taken in the first 3 minutes of the 5 October run. The run records the indications <code>GuestAgent, Online</code>.</p></details>
     </div>
   </div>
 </section>
@@ -135,7 +135,7 @@ Second   128.86 GB   5.50 GB    1,357 s</pre><p>In the console on 9 November 202
         <button class="opt" data-ok>The data sent, and so some of the time</button>
         <button class="opt">Nothing</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The data sent fell from 45.13 GB to 5.50 GB, and the time from 2,443 s to 1,357 s. The tutorial puts the fall in the data sent down to deduplication. In the console run the data sent fell from 22.88 GB to 2.82 GB.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The data sent fell from 45.13 GB to 5.50 GB, and the time from 2,443 s to 1,357 s. The fall in the data sent is put down to deduplication. In the console run the data sent fell from 22.88 GB to 2.82 GB.</p></details>
     </div>
   </div>
   <p class="watch"><b>Do not plan on it.</b> In unit 3.2 a file-based incremental read 3.2 MB against 97.1 MB. A VM incremental in our lab did not behave like that: it read every disk in full, on both days we tested.</p>
@@ -161,7 +161,7 @@ Second   128.86 GB   5.50 GB    1,357 s</pre><p>In the console on 9 November 202
         <button class="opt">Read the run status: Succeeded means the VM is fine</button>
         <button class="opt">There is no way to check</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tutorial gives a short script. Its recorded results:</p><pre class="def">after run 1:         zero=1086 nonzero=648
+      <details class="reveal"><summary>Show the answer</summary><p>A short script shows it. Its recorded results:</p><pre class="def">after run 1:         zero=1086 nonzero=648
 after the restart:   zero=0 nonzero=1734
 after run 2:         zero=0 nonzero=1734</pre></details>
     </div>
@@ -207,7 +207,6 @@ after run 2:         zero=0 nonzero=1734</pre></details>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>Refresh the source so a new namespace is listed, then pick the VM with VM Inclusion/Exclusion. The VMs keep running during the backup. The second run read every disk in full again: 128.86 GB twice in October, 64.43 GB twice in November. What fell was the data sent. After a backup, check the VM; ours read zeros once, and a restart cured it. VM backup was not generally available when tested, and IBM lists it for au-syd only.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B4e backs up the VMs from the console and the command line, and has the full results.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

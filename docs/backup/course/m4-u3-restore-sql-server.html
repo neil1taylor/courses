@@ -37,13 +37,13 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its SQL Server on a Windows server holds a database called <code>labdb</code>. Today it drops the database on purpose, restores it from the backup and compares the numbers.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 8 November 2026 for the console, recorded in tutorial B5c. The location of the backup is blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 8 November 2026 for the console. The location of the backup is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Drop it, restore it, compare</h2>
-  <p class="lead">The tutorial&apos;s test drops <code>labdb</code>, restores it from the backup to its original place, and compares its row count and checksum with the numbers taken before.</p>
+  <p class="lead">The test drops <code>labdb</code>, restores it from the backup to its original place, and compares its row count and checksum with the numbers taken before.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Drop the database, then restore it by overwriting. Then compare the row count and checksum before and after: 100000 rows and the same checksum."
     data-drawing='{"w":560,"h":200,"shapes":[
       {"box":[10,15,220,60],"title":"drop labdb","detail":"count is 0"},
@@ -60,7 +60,7 @@
         <button class="opt" data-ok>The row count and a checksum, with the numbers taken before the drop</button>
         <button class="opt">Only the size of the files on disk</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tutorial compares the row count and the checksum: 100,000 rows, and the checksum matches. The restore took 23 s.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The test compares the row count and the checksum: 100,000 rows, and the checksum matches. The restore took 23 s.</p></details>
     </div>
     <div class="q">
       <p>In the console run, <code>labdb</code> held 105,000 rows by then, yet the restore used the first backup, taken at 13:59 with 100,000 rows. Why?</p>
@@ -95,7 +95,7 @@
         <button class="opt">The same row count and a new checksum</button>
         <button class="opt">Fewer rows: a restore never brings back everything</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tutorial&apos;s check printed the same row count and the same checksum on both lines.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The check printed the same row count and the same checksum on both lines.</p></details>
     </div>
         <div class="cmd">
           <p class="pre">12:36:40 UTC, after the restore</p>
@@ -103,7 +103,7 @@
           <pre class="out">before: 100000,1393371002
 after:  100000,1393371002</pre>
           <p class="hand note">100,000 rows and the same checksum before and after.</p>
-          <p class="hand note">The tutorial runs this from a file, copied to the server with scp.</p>
+          <p class="hand note">Our lab ran this from a file, copied to the server with scp.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -159,9 +159,9 @@ after:  100000,1393371002</pre>
       <p>The run&apos;s Cloud Archive tab says Canceled, with a <code>[1-1-36]</code> periodic-full message. Is that the cause?</p>
       <div class="opts">
         <button class="opt">Yes</button>
-        <button class="opt" data-ok>No: it is the message from tutorial B4c, not the cause</button>
+        <button class="opt" data-ok>No: it is the periodic-full message from the backup run, not the cause</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tutorial says the message is the periodic-full message from B4c and is not the cause.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The message is the periodic-full message from the backup run and is not the cause.</p></details>
     </div>
   </div>
   <div class="tour">
@@ -223,7 +223,6 @@ after:  100000,1393371002</pre>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>Drop, restore, then compare the row count and checksum: 100,000 rows and the same checksum in our lab. After a restore over the original, the database has a new ID in BRS, so edit the group and tick it again.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B5c drops the database, restores it from the console and the command line, compares the numbers, and fixes the group.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

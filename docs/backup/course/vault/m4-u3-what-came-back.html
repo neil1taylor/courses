@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its board will ask one question: did everything come back? The honest answer has dates and numbers in it.</p>
     </div>
   </div>
-  <p class="small">The 10 November numbers come from one run in our lab (tutorial V7b). The October numbers come from one run on 9 October 2026. Each is a single run, not a promise. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">The 10 November numbers come from one run in our lab. The October numbers come from one run on 9 October 2026. Each is a single run, not a promise. The vault is a Beta in us-south, with no SLA.</p>
 </section>
 
 <section class="screen">
@@ -73,7 +73,7 @@ SQL            labdb_v7b, a new database   100000,-108923937 (the clean value)</
       <p>Why did the lab restore to a new location, not to the original server?</p>
       <div class="opts">
         <button class="opt">The original server had no space</button>
-        <button class="opt" data-ok>A retrieved group cannot restore to the original (ISS-141)</button>
+        <button class="opt" data-ok>A retrieved group cannot restore to the original</button>
         <button class="opt">The vault only allows one restore of each run</button>
       </div>
       <details class="reveal"><summary>Show the answer</summary><p>In October the same restore to the original source was refused for a retrieved group: &quot;Restore of a database to the original source is not allowed for remote jobs&quot;. On 10 November the lab restored to new locations.</p></details>
@@ -134,7 +134,7 @@ SQL Server      100000 rows, same checksum as before</pre>
       </div>
       <details class="reveal"><summary>Show the answer</summary><pre class="def" aria-label="October results">Workload        Check, 9 October 2026
 Linux files     167,639 of 181,552 match;
-                13,913 hard-linked files come back empty (ISS-143)
+                13,913 hard-linked files come back empty
 Windows files   503 of 503 match
 SQL Server      100000 rows, same checksum as before</pre><p>The lab called this &quot;pass, known gap&quot;.</p></details>
     </div>
@@ -145,7 +145,7 @@ SQL Server      100000 rows, same checksum as before</pre><p>The lab called this
         <button class="opt" data-ok>The hard-linked files</button>
         <button class="opt">The largest files</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>13,913 hard-linked files came back empty (ISS-143). The earlier test in tutorial V7 found the same gap, and says the cause is the file backup, not the vault.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>13,913 hard-linked files came back empty. An earlier test found the same gap, and says the cause is the file backup, not the vault.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> The October times, in our lab on 9 October 2026: Linux retrieve 17 minutes and restore 38 minutes; Windows retrieve about 1 minute and restore 1 minute 22 seconds; SQL restore 1 minute 32 seconds. The 10 November run did not record its times.</p>
@@ -160,10 +160,10 @@ SQL Server      100000 rows, same checksum as before</pre><p>The lab called this
       <p>Which workload does the note leave out?</p>
       <div class="opts">
         <button class="opt">Windows files</button>
-        <button class="opt" data-ok>The OpenShift VM: its retrieve failed on a new cluster in October (ISS-190)</button>
+        <button class="opt" data-ok>The OpenShift VM: its retrieve failed on a new cluster in October</button>
         <button class="opt">SQL Server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 9 October the retrieve of the VM group failed on a new cluster: indexing succeeded, but the snapshot failed with &quot;Cannot find magneto view for icebox view&quot;. The VM registration on that cluster stayed Pending for 29 minutes. The 10 November run did not try the VMs. The same VM backup did restore from the vault on its own cluster, in 6 minutes 6 seconds, with 20 of 20 files matching (V4).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On 9 October the retrieve of the VM group failed on a new cluster: indexing succeeded, but the snapshot failed with &quot;Cannot find magneto view for icebox view&quot;. The VM registration on that cluster stayed Pending for 29 minutes. The 10 November run did not try the VMs. The same VM backup did restore from the vault on its own cluster, in 6 minutes 6 seconds, with 20 of 20 files matching.</p></details>
     </div>
     <div class="q">
       <p>What found the empty Linux files?</p>
@@ -172,7 +172,7 @@ SQL Server      100000 rows, same checksum as before</pre><p>The lab called this
         <button class="opt" data-ok>A checksum check against a manifest made before the attack</button>
         <button class="opt">The vault, which reported the empty files</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In an earlier test the recovery reported Succeeded, and the checksum check found 13,902 files that differed (V7, test 10). A status is not proof that the data is whole.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In an earlier test the recovery reported Succeeded, and the checksum check found 13,902 files that differed. A status is not proof that the data is whole.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> Say what you tested, and when. On 10 November, in our lab, Linux, Windows and SQL came back whole. In October, Linux had a gap and the VM did not come back.</p>
@@ -198,16 +198,16 @@ SQL Server      100000 rows, same checksum as before</pre><p>The lab called this
         <button class="opt" data-ok>167,639 matched; 13,913 hard-linked files came back empty</button>
         <button class="opt">Nothing came back</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>ISS-143, known gap. The 10 November run checked 503 files, which matched.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A known gap. The 10 November run checked 503 files, which matched.</p></details>
     </div>
     <div class="q" data-check>
       <p>What happened to the OpenShift VM in October?</p>
       <div class="opts">
         <button class="opt">It came back, with a gap</button>
-        <button class="opt" data-ok>Its retrieve failed on a new cluster (ISS-190)</button>
+        <button class="opt" data-ok>Its retrieve failed on a new cluster</button>
         <button class="opt">It was not backed up</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The snapshot failed during the retrieve on a new cluster. On its own cluster the VM did restore from the vault (V4).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The snapshot failed during the retrieve on a new cluster. On its own cluster the VM did restore from the vault.</p></details>
     </div>
   </div>
 </section>
@@ -218,7 +218,6 @@ SQL Server      100000 rows, same checksum as before</pre><p>The lab called this
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>On 10 November, in our lab, Linux, Windows and SQL came back whole from the vault alone. In October, 13,913 hard-linked Linux files came back empty and the OpenShift VM did not come back on a new cluster. Check against a record made before the attack, not against the status.</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial V7b holds both results tables. Tutorial V5 restores from the vault with the cluster that wrote the archive.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

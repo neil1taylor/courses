@@ -34,10 +34,10 @@
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: a text file called user data goes into a new server at first boot. A metadata service lets the server read it back."
         data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,20,140,70],"heavy":true,"title":"User data","detail":"a text file"},{"line":[160,55,240,80],"arrow":true,"tone":"mark"},{"box":[250,50,150,90],"fill":"hatch","tone":"mark","title":"New server"},{"text":"read once, at first boot","at":[150,34],"hand":true,"tone":"muted","size":16},{"box":[10,120,140,60],"dashed":true,"title":"Metadata service","detail":"read it back"},{"line":[160,150,250,125],"arrow":true,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the commands and output are real, recorded in tutorial chapter 31. A new web server sets itself up from a text file, with no one logged in.</p>
+      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the commands and output are real. A new web server sets itself up from a text file, with no one logged in.</p>
     </div>
   </div>
-  <p class="small">Every command and line of output in this unit comes from a real run in a test account, recorded in tutorial chapter 31.</p>
+  <p class="small">Every command and line of output in this unit comes from a real run in a test account.</p>
 </section>
 
 <section class="screen">
@@ -55,7 +55,7 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="header">
           <h3>First line</h3>
-          <p><code>#cloud-config</code> marks the file as cloud-config, a YAML format that cloud-init reads. The other option in the chapter is a shell script, which must start with <code>#!/bin/bash</code>.</p>
+          <p><code>#cloud-config</code> marks the file as cloud-config, a YAML format that cloud-init reads. The other option is a shell script, which must start with <code>#!/bin/bash</code>.</p>
           <p class="watch"><b>Watch for this.</b> Stock images are cloud-init enabled. Fedora CoreOS takes Ignition instead, and Windows servers use Cloudbase-init.</p>
         </div>
         <div class="part-info" data-part="page">
@@ -89,7 +89,7 @@ runcmd:
       <div class="term">
         <div class="bar"><span>bash</span><span data-term-count></span></div>
         <div class="cmd">
-          <p class="pre"># the interface options are trimmed to two; the chapter lists all of them</p>
+          <p class="pre"># the interface options are trimmed to two; the full output lists all of them</p>
           <pre class="in">ibmcloud is instance-create vpct-prod-web-z1-02 vpct-prod us-east-1 bx2-2x8 vpct-prod-web-z1 \
   --image &lt;image-name&gt; \
   --keys vpct-lab-key \
@@ -163,7 +163,7 @@ WARNING:
         <button class="opt">Yes, the service is on for every server</button>
         <button class="opt" data-ok>No, access is off by default</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Off unless you turn it on.</span><p>IBM says access to the metadata service is off by default. The servers created without the option in chapters 33, 34 and 36 show <code>Metadata service Enabled false</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Off unless you turn it on.</span><p>IBM says access to the metadata service is off by default. The servers created without the option show <code>Metadata service Enabled false</code>.</p></details>
     </div>
     <div class="q">
       <p>On the server, the token request worked while the service was on. After <code>--metadata-service false</code>, the same request is made. What does curl do?</p>
@@ -236,7 +236,7 @@ WARNING:
         <button class="opt">User data for the many servers; custom image for the small changes</button>
         <button class="opt">Log in to each server over SSH in both cases</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>From the chapter's options: a custom image suits the same set-up on many servers, built once (chapter 32). Cloud-init user data on a stock image suits small changes, with no image to maintain.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A custom image suits the same set-up on many servers, built once. Cloud-init user data on a stock image suits small changes, with no image to maintain.</p></details>
     </div>
     <div class="q" data-check>
       <p>Where should a database password for a new server go?</p>

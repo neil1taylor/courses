@@ -50,7 +50,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its admins plan ESXi patching around maintenance mode. On ROVS, IBM patches the platform, and the timing of each worker reload is yours.</p>
     </div>
   </div>
-  <p class="small">Every command, output and fact in this unit comes from real runs on lab clusters, recorded in tutorial chapters 46, 50 and 41. The review question repeats one from unit 2.2.</p>
+  <p class="small">Every command, output and fact in this unit comes from real runs on lab clusters. The review question repeats one from unit 2.2.</p>
 </section>
 
 <section class="screen">
@@ -157,7 +157,7 @@ ibmcloud ks worker reload --worker &lt;worker-id&gt;</pre>
           <p class="pre"># the cluster-wide default for a VM that sets no eviction strategy</p>
           <pre class="in">oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv -o jsonpath='{.spec.evictionStrategy}'</pre>
           <pre class="out">LiveMigrate</pre>
-          <p class="hand note">That was the value on the cluster used for chapter 41, because someone had set it. A second, untouched ROVS cluster read None, and a drain destroyed and recreated its VM with no migration. Read yours.</p>
+          <p class="hand note">That was the value on the lab cluster, because someone had set it. A second, untouched ROVS cluster read None, and a drain destroyed and recreated its VM with no migration. Read yours.</p>
         </div>
         <div class="q">
           <p>The next call evicts the VM&apos;s launcher pod. It will be refused. Is that good news or bad?</p>

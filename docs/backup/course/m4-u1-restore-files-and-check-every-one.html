@@ -37,13 +37,13 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It backs up the folder <code>/data</code> on a Linux server. Today it deletes <code>/data/docs</code> on purpose, restores it and checks every file.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 8 November 2026 for the console, recorded in tutorial B5a. The server name is blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 8 November 2026 for the console. The server name is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Lose it, restore it, check it</h2>
-  <p class="lead">The tutorial&apos;s test has three parts. Northgate deletes the folder <code>/data/docs</code>, which holds 500 files, so that 3 files are left. It restores the folder to its original place. Then it checks every file against a checksum list.</p>
+  <p class="lead">The test has three parts. Northgate deletes the folder <code>/data/docs</code>, which holds 500 files, so that 3 files are left. It restores the folder to its original place. Then it checks every file against a checksum list.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Delete the folder, leaving 3 files, then restore it from the backup. Then check every file against a checksum list made before, with a result of 503 of 503 match."
     data-drawing='{"w":560,"h":200,"shapes":[
       {"box":[10,15,220,60],"title":"delete the folder","detail":"3 files are left"},
@@ -60,7 +60,7 @@
         <button class="opt" data-ok>It checks every file against the checksum list</button>
         <button class="opt">It counts the folders</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That is the tutorial&apos;s proof that the backup works: every file is checked against the checksum list. In both runs the recovery ended Succeeded, and then 503 of 503 files matched.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>That is the proof that the backup works: every file is checked against the checksum list. In both runs the recovery ended Succeeded, and then 503 of 503 files matched.</p></details>
     </div>
     <div class="q">
       <p>Which backup does a restore read from?</p>
@@ -95,10 +95,10 @@ Console, 8 November                  23 s</pre><p>The two command-line runs were
       <p>In the console run, <code>/data/docs</code> held 505 files after the restore, but the checksum list holds 500 of them. Why?</p>
       <div class="opts">
         <button class="opt">Five files failed to restore</button>
-        <button class="opt" data-ok>Five files were added in tutorial B4a, after the list was made</button>
+        <button class="opt" data-ok>Five files were added after the list was made</button>
         <button class="opt">The check skips new files</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The folder held 505 files: the 500 of the list and the 5 added in B4a. The check read 503 of 503 OK.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The folder held 505 files: the 500 of the list and the 5 added later. The check read 503 of 503 OK.</p></details>
     </div>
   </div>
 </section>
@@ -119,7 +119,7 @@ Console, 8 November                  23 s</pre><p>The two command-line runs were
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5a-2-recover-options.png" alt="Recover options: Original Server, Recover to Original Path on, Overwrite No, Preserve attributes Yes, Continue on Error Yes." width="1135" height="741"></div>
       <figcaption>
         <h3>Where does the console show whether existing files are overwritten?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Overwrite Existing File/Folder</b> is <b>No</b> by default. The command-line body in tutorial B5a sets it to true. The folder was gone, so nothing needed overwriting. <b>Recover To</b> is <b>Original Server</b> with <b>Recover to Original Path</b> on. Click <b>Recover</b>.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Overwrite Existing File/Folder</b> is <b>No</b> by default. The command-line body in our lab run sets it to true. The folder was gone, so nothing needed overwriting. <b>Recover To</b> is <b>Original Server</b> with <b>Recover to Original Path</b> on. Click <b>Recover</b>.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="11.8,41.3,5.2,7.2" data-width="900px">
@@ -147,7 +147,7 @@ rejected: recoveryAction in body should be one of
         <button class="opt" data-ok>It uses RecoverFiles</button>
         <button class="opt">It changes the target environment</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The message lists the allowed values, and <code>RecoverFiles</code> is one. The body in tutorial B5a uses it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The message lists the allowed values, and <code>RecoverFiles</code> is one. The command-line body in our lab run uses it.</p></details>
     </div>
     <div class="q">
       <p>In the console, Overwrite Existing File/Folder says No. Does the restore of the deleted folder still work?</p>
@@ -159,7 +159,7 @@ rejected: recoveryAction in body should be one of
       <details class="reveal"><summary>Show the answer</summary><p>In our lab the console restore succeeded in 23 s with the default No. The folder was gone, so nothing needed overwriting.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Not covered.</b> Tutorial B5a did not test a restore of a single file or a restore to a different path. A restore to a different server is unit 4.4.</p>
+  <p class="watch"><b>Not covered.</b> We did not test a restore of a single file or a restore to a different path. A restore to a different server is unit 4.4.</p>
 </section>
 
 <section class="screen">
@@ -167,13 +167,13 @@ rejected: recoveryAction in body should be one of
   <h2>Three questions</h2>
   <div>
     <div class="q" data-check>
-      <p>What is the proof, in tutorial B5a, that a restore worked?</p>
+      <p>What is the proof that a restore worked?</p>
       <div class="opts">
         <button class="opt">The recovery says Succeeded</button>
         <button class="opt" data-ok>Every file is checked against the checksum list: 503 of 503 match</button>
         <button class="opt">The folder opens on the server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Delete a folder, restore it, and check every file against the checksum list. The tutorial calls this the proof that the backup works.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Delete a folder, restore it, and check every file against the checksum list. This is the proof that the backup works.</p></details>
     </div>
     <div class="q" data-check>
       <p>The command-line restore is rejected with &quot;recoveryAction in body should be one of [...]&quot;. What do you change?</p>
@@ -202,7 +202,6 @@ rejected: recoveryAction in body should be one of
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>Delete, restore, then check every file against the checksum list: 503 of 503 matched in our lab. The restore took 12 s on the command line and 23 s in the console.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B5a deletes the folder, restores it from the console and the command line, and checks every file.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

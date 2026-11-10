@@ -45,7 +45,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It has a few physical servers that MTV cannot see, and some VMs that need a second copy somewhere else.</p>
     </div>
   </div>
-  <p class="small">Chapter 57 says no public source documents RMM as a ROVS migration target. Chapter 58 records runs on test clusters with RMM 7.7.4.19, and says not to carry its results to another build. Every result in this unit is quoted with that condition. The review question repeats one from unit 6.1.</p>
+  <p class="small">No public source documents RMM as a ROVS migration target. The runs here were on test clusters with RMM 7.7.4.19, and their results should not be carried to another build. Every result in this unit is quoted with that condition. The review question repeats one from unit 6.1.</p>
 </section>
 
 <section class="screen">
@@ -90,7 +90,7 @@
         </div>
       </div>
     </div>
-    <pre class="def" aria-label="The steps RMM takes for each source, from chapter 57">1. Discovers the running source over SSH and inventories its filesystems.
+    <pre class="def" aria-label="The steps RMM takes for each source">1. Discovers the running source over SSH and inventories its filesystems.
 2. Snapshots them, using LVM on Linux and VSS on Windows, so the copy is consistent while the system keeps running.
 3. Boots the target into a RackWare microkernel, via GRUB on Linux or Windows Boot Manager.
 4. Reformats and re-lays-out the target's disk to match the source's partitioning and filesystems.
@@ -135,7 +135,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
   <h2>Two failures with no clear message</h2>
-  <p class="lead">Both come from the chapter 58 runs with RMM 7.7.4.19. Read the output, then pick the cause.</p>
+  <p class="lead">Both come from test runs with RMM 7.7.4.19. Read the output, then pick the cause.</p>
   <div class="pair">
     <div style="display:grid;gap:10px;align-content:start">
       <p>A Northgate team stops its Warm target to save cost. At failover, RackWare answers:</p>
@@ -226,7 +226,7 @@ networks:   [{"name":"cudn-rackware-dr2","pod":{}}]</pre>
         <button class="opt" data-ok>No. &quot;Near-zero RPO&quot; is marketing copy with no method behind it</button>
         <button class="opt">Yes, 5 minutes</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>RackWare publishes no RPO or RTO number anywhere. The figures in chapter 58 are measurements from its own runs, each with the conditions it states.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>RackWare publishes no RPO or RTO number anywhere. The figures in this unit are measurements from test runs, each with the conditions it states.</p></details>
     </div>
     <div class="q" data-check>
       <p>Pilot Light onto a ROVS DR cluster, with the RMM outside that cluster. What happened on RMM 7.7.4.19?</p>

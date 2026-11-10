@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its board asks what happens if an attacker gets the backup admin&apos;s keys. Can the attacker use them from the attacker&apos;s own network? And can the vault be shut outside office hours?</p>
     </div>
   </div>
-  <p class="small">Every result comes from real tests in our lab on 5, 6 and 7 October 2026 (tutorial V7). The vault is a Beta in us-south, with no SLA. Hosts, IP addresses, vault names and keys are made-up or placeholders: the values were changed.</p>
+  <p class="small">Every result comes from real tests in our lab on 5, 6 and 7 October 2026. The vault is a Beta in us-south, with no SLA. Hosts, IP addresses, vault names and keys are made-up or placeholders: the values were changed.</p>
 </section>
 
 <section class="screen">
@@ -68,7 +68,7 @@
         <button class="opt" data-ok>At least one allowed VPC or one allowed private IP range</button>
         <button class="opt">A public IP address</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>At least one of the allowed VPCs and the allowed IP ranges is required. IP ranges must be private (RFC 1918) (cyber-vault.md; V7 section 4.1 gives the lab&apos;s own list: its VPC and one private range).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>At least one of the allowed VPCs and the allowed IP ranges is required. IP ranges must be private (RFC 1918) (the lab&apos;s own list was its VPC and one private range).</p></details>
     </div>
     <div class="q">
       <p>The console form for a new vault has &quot;Time-based write restrictions&quot;. In our console run on 10 November, what was its state by default?</p>
@@ -77,7 +77,7 @@
         <button class="opt">Enabled, 24 hours</button>
         <button class="opt">Not on the form</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The form showed it as Disabled, and the lab left it off (V2, console steps 3 and 4). The window is optional.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The form showed it as Disabled, and the lab left it off. The window is optional.</p></details>
     </div>
   </div>
 </section>
@@ -115,7 +115,7 @@ Lab VSI (the allowed network), control   list                  200</pre><p>The M
         <button class="opt">Only with vhost style</button>
         <button class="opt" data-ok>Neither: both got 403</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both styles got 403 &quot;Access Denied&quot; for list, get and put (V7 test, section 7).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Both styles got 403 &quot;Access Denied&quot; for list, get and put.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> One check was not run in the first round: a machine in a second VPC. The pod test on 6 October closed that gap. A valid write key from a VPC that is not on the list got nothing from the vault.</p>
@@ -143,7 +143,7 @@ list, write key                      403          200
 list, read key                       403          200
 put with a 1-day lock, write key     403          200
 get and head, both keys              403          200
-put, read key                        -            403 (the read key never writes)</pre><p>The window gates reads and writes together. Inside it, the vault works as normal. One object written inside the window is locked until 8 October 2026 at 02:05:16Z (V7, section 18).</p></details>
+put, read key                        -            403 (the read key never writes)</pre><p>The window gates reads and writes together. Inside it, the vault works as normal. One object written inside the window is locked until 8 October 2026 at 02:05:16Z.</p></details>
     </div>
     <div class="q">
       <p>IBM&apos;s own page was unclear whether the window blocks reads. What does the lab result say?</p>
@@ -152,7 +152,7 @@ put, read key                        -            403 (the read key never writes
         <button class="opt" data-ok>It blocks reads as well</button>
         <button class="opt">It blocks the read key only</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Most Beta text said reads are not windowed, but one field table said the window covers write and read (cyber-vault.md, P5). In our lab it blocked both (ISS-134).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Most Beta text said reads are not windowed, but one field table said the window covers write and read. In our lab it blocked both.</p></details>
     </div>
   </div>
 </section>
@@ -169,7 +169,7 @@ put, read key                        -            403 (the read key never writes
         <button class="opt" data-ok>403, as in our lab: reads are blocked outside the window too</button>
         <button class="opt">200, but slowly</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the read key got 403 on list, get and head outside the window. A write window therefore blocks recovery outside the window too (V7, section 18). Northgate has to weigh that when it picks the hours.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the read key got 403 on list, get and head outside the window. A write window therefore blocks recovery outside the window too. Northgate has to weigh that when it picks the hours.</p></details>
     </div>
     <div class="q">
       <p>The attacker at 14:00 holds a valid write key and sits on a home network. What stops writes?</p>
@@ -212,7 +212,7 @@ put, read key                        -            403 (the read key never writes
         <button class="opt" data-ok>Reads and writes, so it blocks recovery too</button>
         <button class="opt">Nothing: it is advice</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Outside the window both keys got 403 on list, get, head and put (V7, sections 7 and 18).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Outside the window both keys got 403 on list, get, head and put.</p></details>
     </div>
   </div>
 </section>
@@ -223,7 +223,6 @@ put, read key                        -            403 (the read key never writes
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>From outside the allowed network a valid key got 403 or no answer. From inside, 200. A write window blocked reads and writes outside its hours, so it blocks recovery too.</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial V7 holds the network tests in sections 7 and 16 and the window test in section 18. Tutorial V2 shows the console form.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

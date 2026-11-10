@@ -34,10 +34,10 @@
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: a template feeds a group, which makes three servers."
         data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,60,110,70],"heavy":true,"title":"Template"},{"line":[130,95,190,95],"arrow":true,"tone":"mark"},{"box":[200,60,90,70],"heavy":true,"title":"Group"},{"line":[300,80,340,40],"arrow":true,"tone":"mark"},{"line":[300,95,340,95],"arrow":true,"tone":"mark"},{"line":[300,110,340,150],"arrow":true,"tone":"mark"},{"box":[345,20,65,36],"fill":"hatch","tone":"mark"},{"box":[345,77,65,36],"fill":"hatch","tone":"mark"},{"box":[345,134,65,36],"fill":"hatch","tone":"mark"},{"text":"servers","at":[352,190],"hand":true,"tone":"muted","size":17}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the commands and output are real, recorded in tutorial chapters 36, 37 and 53. Its web tier must grow when it is busy and replace a server that fails, without anyone typing a create command each time.</p>
+      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the commands and output are real. Its web tier must grow when it is busy and replace a server that fails, without anyone typing a create command each time.</p>
     </div>
   </div>
-  <p class="small">Every command and line of output in this unit comes from real runs in a test account, recorded in tutorial chapters 36, 37 and 53.</p>
+  <p class="small">Every command and line of output in this unit comes from real runs in a test account.</p>
 </section>
 
 <section class="screen">
@@ -56,12 +56,12 @@
         <div class="part-info" data-part="where">
           <h3>Where</h3>
           <p>A template is a saved set of server settings: zone, profile, image, subnet, keys, volumes, network interface and user data. This one names the VPC, resource group, zone and profile.</p>
-          <p class="hand tilt"><b>From vSphere:</b> chapter 02 maps a VM template to an image and an instance template. Rough mapping: in VPC the image holds the disk and the template holds the settings.</p>
+          <p class="hand tilt"><b>From vSphere:</b> a VM template maps to an image and an instance template. Rough mapping: in VPC the image holds the disk and the template holds the settings.</p>
           <p class="watch"><b>Watch for this.</b> The template names one zone. The group in step 2 is given three subnets, and its members landed in us-east-1, us-east-2 and us-east-3.</p>
         </div>
         <div class="part-info" data-part="image">
           <h3>What it runs</h3>
-          <p>The image and the SSH keys. The template here uses the custom image from chapter 32, <code>vpct-prod-web-image-v2</code>. The user data is also stored in the template, but this command does not print it.</p>
+          <p>The image and the SSH keys. The template here uses the custom image <code>vpct-prod-web-image-v2</code>. The user data is also stored in the template, but this command does not print it.</p>
           <p class="watch"><b>Watch for this.</b> The template names no floating IP, because IBM's instance groups do not accept one.</p>
         </div>
         <div class="part-info" data-part="disk">
@@ -198,7 +198,7 @@ Managers                      ID                  Name
         <button class="opt" data-ok>Between 234 and 267 seconds</button>
         <button class="opt">After more than 10 minutes</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">About four and a half minutes.</span><p>The readings showed one member up to 234 seconds and two at 267 seconds. Trimmed from the chapter's recording:</p><pre># group over time (members, status), one reading about every 33 seconds
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">About four and a half minutes.</span><p>The readings showed one member up to 234 seconds and two at 267 seconds. Trimmed from the lab recording:</p><pre># group over time (members, status), one reading about every 33 seconds
 3s     members=1 status=healthy
 234s   members=1 status=healthy
 267s   members=2 status=healthy
@@ -220,7 +220,7 @@ Managers                      ID                  Name
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>A pool the group manages</h2>
-  <p class="lead">The error is copied from chapter 53, where an instance group is attached to a load balancer pool.</p>
+  <p class="lead">The error was copied from a run where an instance group is attached to a load balancer pool.</p>
   <pre class="def" aria-label="Errors from a pool managed by an instance group">$ ibmcloud is load-balancer-pool-member-delete vpct-prod-web-alb vpct-prod-web-pool &lt;member-id&gt; --vpc vpct-prod -f
 FAILED
 Error code: member_managed_pool_create_conflict

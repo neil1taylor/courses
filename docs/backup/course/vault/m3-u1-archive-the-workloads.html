@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect. Its board asks: what happens if an attacker gets the backup admin&apos;s keys? First, Northgate sends a copy of each backup to a Cyber Vault.</p>
     </div>
   </div>
-  <p class="small">The timings come from real runs in our lab on 8 October 2026 (tutorial V4). The console screens come from a run on 10 November 2026. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">The timings come from real runs in our lab on 8 October 2026. The console screens come from a run on 10 November 2026. The vault is a Beta in us-south, with no SLA.</p>
 </section>
 
 <section class="screen">
@@ -66,7 +66,7 @@
         <button class="opt">The read key</button>
         <button class="opt">The account owner&apos;s token</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 5 October the write key was enough to register the vault and to archive (V7). It can list, read and write. The read key can list and read.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 5 October the write key was enough to register the vault and to archive. It can list, read and write. The read key can list and read.</p></details>
     </div>
     <div class="q">
       <p>A run archives a group that already has a local backup. How many copies of the data exist afterwards?</p>
@@ -75,7 +75,7 @@
         <button class="opt" data-ok>Two: the local snapshot and the copy in the vault</button>
         <button class="opt">One: only the vault copy is kept</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The run made two snapshots of the same data: the local one, and the copy in the vault (V4, section 3).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The run made two snapshots of the same data: the local one, and the copy in the vault.</p></details>
     </div>
   </div>
 </section>
@@ -159,7 +159,7 @@ OpenShift VMs    37.6 GB        3.73 GB             about 1.5 min</pre></details
         <button class="opt" data-ok>Restored the vault copy to a new namespace and compared the files</button>
         <button class="opt">Read the lock dates of the vault</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 9 October in our lab the vault copy restored in 6 min 6 s. 20 of 20 files matched the manifest and the SHA-256 values were the same (V4, section 3).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On 9 October in our lab the vault copy restored in 6 min 6 s. 20 of 20 files matched the manifest and the SHA-256 values were the same.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> A time from one run, or a Succeeded mark, is not a promise. The restore check is what showed the data came back.</p>
@@ -205,7 +205,6 @@ OpenShift VMs    37.6 GB        3.73 GB             about 1.5 min</pre></details
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>An archive run adds a second copy of a backup in the vault, written with the write key. In our lab the Linux files took 601 s and SQL Server 4 s, because the amounts of data differed. The Run Now dialog shows the policy&apos;s archive line.</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial V4 runs the archive from the API and from the console. Tutorial V7 holds the October vault tests.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

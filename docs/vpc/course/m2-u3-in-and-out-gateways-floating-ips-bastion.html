@@ -45,7 +45,7 @@
       <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output in this unit is real. Its servers will need updates, some will need visitors, and its admins will need a way in.</p>
     </div>
   </div>
-  <p class="small">Every statement and output in this unit comes from tutorial chapters 24, 25, 27 and 28, apart from the review question, which comes from chapters 22 and 23. The NAT comparison is a rough mapping from chapter 02. Some columns and blank lines are left out of the output, and IDs are shortened.</p>
+  <p class="small">Every statement and output in this unit comes from real runs in a lab account, apart from the review question. The NAT comparison is a rough mapping. Some columns and blank lines are left out of the output, and IDs are shortened.</p>
 </section>
 
 <section class="screen">
@@ -76,7 +76,7 @@
         <div class="part-info" data-part="pgw">
           <h3>Public gateway</h3>
           <p>One per zone. Every server in a subnet attached to it can start connections to the internet. It accepts none that start on the internet. All its traffic leaves from one public address, a floating IP that the gateway holds.</p>
-          <p class="hand tilt"><b>From vSphere:</b> chapter 02 maps NAT to a public gateway or a floating IP. Source NAT here means many servers share one address.</p>
+          <p class="hand tilt"><b>From vSphere:</b> NAT maps to a public gateway or a floating IP. Source NAT here means many servers share one address.</p>
           <p class="watch"><b>Watch for this.</b> A public gateway incurs a monthly charge. The subnet’s ACL and the server’s security group still apply.</p>
         </div>
         <div class="part-info" data-part="fip">
@@ -118,7 +118,7 @@ Target           ID            Target type                 Name
 
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
-  <h2>Pick an answer, then see what the chapters say</h2>
+  <h2>Pick an answer, then see what IBM and the lab say</h2>
   <div class="pair">
     <div class="q">
       <p>A public gateway serves the app subnet. Can a host on the internet start a connection to a server in that subnet?</p>
@@ -153,7 +153,7 @@ Target           ID            Target type                 Name
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>Reach a private server through a bastion</h2>
-  <p class="lead">The route in chapter 27 is your machine, the bastion’s floating IP, the bastion, then the web server’s private address. Run each command in turn. The output is what the lab returned.</p>
+  <p class="lead">The route is your machine, the bastion’s floating IP, the bastion, then the web server’s private address. Run each command in turn. The output is what the lab returned.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn path: your machine, then the bastion on its floating IP, then the web server on its private address 10.20.0.4, joined by arrows."
     data-drawing='{"w":620,"h":130,"shapes":[
       {"box":[10,30,140,70],"heavy":true,"title":"Your machine"},
@@ -217,7 +217,7 @@ Resource type   virtual_network_interface</pre>
           <pre class="out">Warning: Permanently added '10.20.0.4' (ED25519) to the list of known hosts.
 vpct-prod-web-z1-01</pre>
           <p class="hand note">Through the bastion to the private address.</p>
-          <p class="hand note">The chapter adds hostname to the command, so that ssh prints the server’s name and returns.</p>
+          <p class="hand note">The lab adds hostname to the command, so that ssh prints the server’s name and returns.</p>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud is security-group-target-remove vpct-prod-maint-sg vpct-prod-web-z1-01-vni0 --trt virtual_network_interface --vpc vpct-prod -f</pre>
@@ -244,7 +244,7 @@ Connection to UNKNOWN port 65535 timed out</pre>
 <section class="screen">
   <span class="kicker">Step 4 · Design it</span>
   <h2>Pick a way for each need</h2>
-  <p class="lead">Choose one, then open the worked answer. The answers come from chapters 24, 27 and 28.</p>
+  <p class="lead">Choose one, then open the worked answer.</p>
   <div class="pair">
     <div class="q">
       <p><b>Need A.</b> Many app servers need package updates. None may be reached from the internet.</p>
@@ -305,7 +305,7 @@ Connection to UNKNOWN port 65535 timed out</pre>
         <button class="opt" data-ok>The login user. On this Ubuntu image it is <code>ubuntu</code></button>
         <button class="opt">The key must be uploaded again</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM’s bastion tutorial connects as <code>root</code>, but IBM’s Linux connection page gives <code>ubuntu</code> as the default user for Ubuntu images. The chapter found that <code>ssh root@</code> fails with <code>Permission denied (publickey)</code>, so the second page is right.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM’s bastion tutorial connects as <code>root</code>, but IBM’s Linux connection page gives <code>ubuntu</code> as the default user for Ubuntu images. The lab found that <code>ssh root@</code> fails with <code>Permission denied (publickey)</code>, so the second page is right.</p></details>
     </div>
     <div class="q" data-check>
       <p>One floating IP, two server interfaces at once. Possible?</p>

@@ -43,13 +43,13 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its admins read vCenter alarms. A ROVS VM has layers, and a fault shows in one of them while its cause may sit in another.</p>
     </div>
   </div>
-  <p class="small">Every command, output and fact in this unit comes from real runs on lab clusters, recorded in tutorial chapters 42, 45 and 50. The review question repeats one from unit 4.2.</p>
+  <p class="small">Every command, output and fact in this unit comes from real runs on lab clusters. The review question repeats one from unit 4.2.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Where to look, layer by layer</h2>
-  <p class="lead">Chapter 45 groups its read-only diagnostic commands by layer. Select a layer in the drawing to see what to look for and which commands belong to it. You can also click a line.</p>
+  <p class="lead">Read-only diagnostic commands group by layer. Select a layer in the drawing to see what to look for and which commands belong to it. You can also click a line.</p>
   <div class="explorer" data-start="vm"
     data-map='{"vm":[[1,4]],"pod":[[6,9]],"network":[[11,15]],"storage":[[17,20]],"operator":[[22,25]],"vpc":[[27,29]]}'>
     <div class="cols">
@@ -215,7 +215,7 @@ toobig     ErrorUnschedulable   False</pre>
         <button class="opt" data-ok>The storage class name, with <code>oc get sc</code></button>
         <button class="opt">The Ceph toolbox</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The named storage class does not exist. Chapter 45 lists this beside <code>FailedScheduling</code>, <code>ErrImagePull</code> and <code>ErrImportFailed</code> as the common start events.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The named storage class does not exist. This is listed beside <code>FailedScheduling</code>, <code>ErrImagePull</code> and <code>ErrImportFailed</code> as the common start events.</p></details>
     </div>
   </div>
 </section>

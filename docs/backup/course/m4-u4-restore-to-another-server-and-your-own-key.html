@@ -37,13 +37,13 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Today it restores a folder from one server&apos;s backup onto a second server, then looks at what it takes to order a backup instance that uses its own encryption key.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 9 November 2026 for the console, recorded in tutorials B7a, B7g and B1. The servers are blurred in the screenshots. Some lab resource names show in the key screens.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 9 November 2026 for the console. The servers are blurred in the screenshots. Some lab resource names show in the key screens.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Where the files land</h2>
-  <p class="lead">A restore can go to a different registered server, into a new folder. In the tutorial the source server held <code>/data/docs</code>. The target was a second Linux server.</p>
+  <p class="lead">A restore can go to a different registered server, into a new folder. In our lab the source server held <code>/data/docs</code>. The target was a second Linux server.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. The folder /data/docs on the source server is restored to the path /restore on the target server, where it lands as /restore/docs. The path /data is not recreated, drawn dashed."
     data-drawing='{"w":560,"h":190,"shapes":[
       {"box":[10,15,200,60],"title":"source server","detail":"/data/docs"},
@@ -68,7 +68,7 @@
         <button class="opt">It has the same name as the first</button>
         <button class="opt">It is empty</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tutorial needs a second Linux server registered as a source. In the console: <b>Sources</b>, <b>Register Source</b>, <b>Physical</b>, <b>Direct</b>, pick the Connector Agent and type the server&apos;s address. In our lab the server was then listed, not protected.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A restore to another server needs a second Linux server registered as a source. In the console: <b>Sources</b>, <b>Register Source</b>, <b>Physical</b>, <b>Direct</b>, pick the Connector Agent and type the server&apos;s address. In our lab the server was then listed, not protected.</p></details>
     </div>
   </div>
 </section>
@@ -223,7 +223,6 @@ Field alternate_restore_base_directory is not specified</pre>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>A folder restored to another server lands directly under the Path you give. A key of your own is set only when an instance is created, and the console&apos;s instance page says Provider managed either way. In our lab, disabling the key did not stop the configuration API; what it does to stored data is untested.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial B7a restores to another server from the console and the command line. Tutorial B7g orders an instance with your own key. Tutorial B1 orders an instance with the default encryption.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

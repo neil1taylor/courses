@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Add the vault as a target · Cyber Vault course</title>
-<meta name="description" content="Course unit 2.4: register a Cyber Vault as an external target in the Data Protect console, change the two defaults that go against the tutorial, and find why a policy will not create. No account needed.">
+<meta name="description" content="Course unit 2.4: register a Cyber Vault as an external target in the Data Protect console, change the two defaults that go against what the setup needs, and find why a policy will not create. No account needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 4 of Module 2</span>
       <h1>Add the vault as an external target</h1>
-      <p class="lead">By the end you can register a Cyber Vault in the Data Protect console, name the two defaults that go against the tutorial, and fix a policy that will not create.</p>
+      <p class="lead">By the end you can register a Cyber Vault in the Data Protect console, name the two defaults that go against what the setup needs, and fix a policy that will not create.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>6 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect, and it has made its vault. Now the cluster must be able to archive to it.</p>
     </div>
   </div>
-  <p class="small">The console screens come from our lab on 10 November 2026, in the Data Protect console of a 7.4.1 cluster, with a vault made as in unit 2.2 (tutorial V3).</p>
+  <p class="small">The console screens come from our lab on 10 November 2026, in the Data Protect console of a 7.4.1 cluster, with a vault made as in unit 2.2.</p>
 </section>
 
 <section class="screen">
@@ -65,7 +65,7 @@
         <button class="opt">The read key</button>
         <button class="opt">Both, in two fields</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Give the write key to the backup cluster and keep the read key apart (V2, V3).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Give the write key to the backup cluster and keep the read key apart.</p></details>
     </div>
     <div class="q">
       <p>In the policy builder you can click Add Archive or Add Vault. Which one sends data to your Cyber Vault?</p>
@@ -74,7 +74,7 @@
         <button class="opt">Add Vault</button>
         <button class="opt">Add CloudSpin</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Add Vault is Cohesity&apos;s own vault service. Your target is an archive target (V3, step 5).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Add Vault is Cohesity&apos;s own vault service. Your target is an archive target.</p></details>
     </div>
   </div>
 </section>
@@ -85,13 +85,13 @@
   <p class="lead">The Register External Target form opens with some switches already set. Two of them go against what Northgate needs.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>Which two defaults go against the tutorial?</p>
+      <p>Which two defaults go against what the setup needs?</p>
       <div class="opts">
         <button class="opt">Compression is on and the port is 443</button>
         <button class="opt" data-ok>Archive Object Lock is off, and Encryption is on</button>
         <button class="opt">HTTPS is on and Signature Version is 4</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Switch Archive Object Lock on, and switch Encryption off. Keep Compression on. The register form keeps HTTPS and AWS Signature Version 4 as they are (V3, &quot;In the console&quot;, step 2, 10 November 2026).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Switch Archive Object Lock on, and switch Encryption off. Keep Compression on. The register form keeps HTTPS and AWS Signature Version 4 as they are (10 November 2026).</p></details>
     </div>
     <div class="q">
       <p>Why switch Encryption off?</p>
@@ -100,7 +100,7 @@
         <button class="opt" data-ok>So that another cluster can read the archive later</button>
         <button class="opt">Because the vault already has no encryption</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>With Cohesity-managed keys no other cluster can read the archive later (V3, section 1). Module 4 reads the archive from a new cluster.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>With Cohesity-managed keys no other cluster can read the archive later. Module 4 reads the archive from a new cluster.</p></details>
     </div>
   </div>
 </section>
@@ -184,7 +184,7 @@
         <button class="opt" data-ok>Switch DataLock off at the top of the builder</button>
         <button class="opt">Click Add Vault instead</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>DataLock stays on after the Lock field is removed, and Create then fails. With it off, Create works: &quot;Protection Policy created.&quot; (V3, step 6, 10 November 2026).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>DataLock stays on after the Lock field is removed, and Create then fails. With it off, Create works: &quot;Protection Policy created.&quot; (10 November 2026).</p></details>
     </div>
     <div class="q">
       <p>The note in the archive section says snapshots on this target cannot be deleted. By whom?</p>
@@ -196,7 +196,7 @@
       <details class="reveal"><summary>Show the answer</summary><p>The note reads: &quot;Snapshots stored on this target cannot be deleted either from Cohesity or from storage provider interface.&quot;</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> The two defaults, Archive Object Lock off and Encryption on, cause no error. They only go against what the tutorial needs. Check both before you click Register. Archive Object Lock cannot be switched off again.</p>
+  <p class="watch"><b>Watch for this.</b> The two defaults, Archive Object Lock off and Encryption on, cause no error. They only go against what the setup needs. Check both before you click Register. Archive Object Lock cannot be switched off again.</p>
 </section>
 
 <section class="screen">
@@ -239,7 +239,6 @@
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 6.</span></div>
     <div><span class="label">Remember</span><p>Register the vault as S3Compatible with the write key. Turn Archive Object Lock on in Compliance mode, and turn Encryption off. In the policy, use Add Archive, and switch DataLock off if Create says the policy is incomplete.</p></div>
-    <div><span class="label">When you have access to the Beta</span><p>Tutorial V3 has the console steps and the API calls. Module 3 runs the archive.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

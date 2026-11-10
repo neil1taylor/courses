@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its database team asks one thing before it moves: how fast is the disk? This unit gives you real numbers, and says plainly why you must not reuse them.</p>
     </div>
   </div>
-  <p class="small">Every figure in this unit comes from one lab run, recorded in tutorial chapter 78, and is quoted with the conditions the chapter states. The chapter publishes no expected figures, and neither does this unit. The review question repeats one from unit 2.2.</p>
+  <p class="small">Every figure in this unit comes from one lab run and is quoted with the conditions of that run. No expected figures are published, and none are given here. The review question repeats one from unit 2.2.</p>
 </section>
 
 <section class="screen">
@@ -187,7 +187,7 @@
         </div>
       </div>
     </div>
-    <pre class="def" aria-label="The four fio jobs from chapter 78">DEV=/dev/vdb   # the empty test disk. CHECK IT.
+    <pre class="def" aria-label="The four fio jobs">DEV=/dev/vdb   # the empty test disk. CHECK IT.
 
 # 1. Random read and write at small blocks: the IOPS question
 sudo fio --name=rand4k --filename=$DEV --direct=1 --ioengine=libaio \
