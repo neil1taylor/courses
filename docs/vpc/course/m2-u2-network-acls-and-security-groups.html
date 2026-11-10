@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Network ACLs and security groups · VPC course</title>
+<meta name="description" content="Course unit 2.2: follow a packet on a hand-drawn path and work out which network ACL rule or security group rule lets it through or stops it. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m2-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPC course</a> <span>·</span> Module 2 · Your first VPC network</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 2</span>
+      <h1>Network ACLs and security groups</h1>
+      <p class="lead">By the end you can follow a packet and say which rule lets it through or stops it: a network ACL or a security group, inbound or outbound, stateless or stateful.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: an arrow from the internet passes through two nested boxes, a subnet box and a smaller interface box, and reaches a server."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[10,80,70,60],"heavy":true,"title":"Internet"},
+          {"line":[84,110,150,110],"arrow":true,"tone":"mark"},
+          {"box":[130,20,280,180],"heavy":true},
+          {"text":"subnet","at":[144,46],"hand":true,"tone":"muted"},
+          {"box":[190,60,210,130]},
+          {"text":"interface","at":[204,86],"hand":true,"tone":"muted"},
+          {"box":[290,110,100,56],"tone":"mark","title":"Server"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the rules and output in this unit are real. Its web tier takes traffic from the internet, and its app tier takes none.</p>
+    </div>
+  </div>
+  <p class="small">Every statement and output in this unit comes from tutorial chapters 22, 23 and 25, apart from the review question, which comes from chapter 21. The NSX comparisons are rough mappings from chapter 02. Some columns are left out of the output, and IDs are shortened.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Two layers on one path</h2>
+  <p class="lead">A packet needs an allow at both layers. Select a part of the drawing to see what it does and which rules show it. You can also click a line.</p>
+  <div class="explorer" data-start="aclin"
+    data-map='{"aclin":[[3,9]],"aclout":[[10,15]],"sgin":[[19,22]],"sgout":[[23,23]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of a path from the internet to the web server. The subnet box carries the network ACL, with an inbound and an outbound part. Inside it the interface box carries the security group, also with an inbound and an outbound part. The server sits inside both."
+          data-drawing='{"w":620,"h":330,"shapes":[
+            {"box":[10,150,110,80],"heavy":true,"title":"Internet"},
+            {"box":[150,10,460,310],"heavy":true},
+            {"text":"subnet · network ACL","at":[166,36],"hand":true,"size":18},
+            {"box":[250,60,350,250]},
+            {"text":"interface · security group","at":[266,86],"hand":true,"size":18},
+            {"box":[440,150,150,80],"title":"Server","detail":"web-z1-01"},
+            {"box":[160,100,76,34],"part":"aclin","title":"ACL in"},
+            {"box":[160,244,86,34],"part":"aclout","title":"ACL out"},
+            {"box":[262,112,76,34],"part":"sgin","title":"SG in"},
+            {"box":[262,244,86,34],"part":"sgout","title":"SG out"},
+            {"line":[124,172,436,172],"arrow":true,"tone":"mark"},
+            {"line":[436,208,124,208],"arrow":true,"tone":"mark"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="aclin">
+          <h3>Network ACL, inbound</h3>
+          <p>Applies to a subnet, not to a server. Every subnet has exactly one ACL, and one ACL can serve many subnets. Rules run top to bottom, with the deny rule last. Traffic that matches no rule is dropped.</p>
+          <p class="hand tilt"><b>From NSX:</b> roughly the gateway firewall. An ACL applies to a subnet and has no state.</p>
+          <p class="watch"><b>Watch for this.</b> An ACL is stateless. A reply is a separate packet that the ACL checks on its own, so the web ACL needs reply rules such as <code>allow-web-replies-in</code>.</p>
+        </div>
+        <div class="part-info" data-part="aclout">
+          <h3>Network ACL, outbound</h3>
+          <p>Each direction has its own rules. The web ACL lets replies to web requests leave with <code>allow-replies-out</code>, and SSH replies go back to your address only.</p>
+          <p class="watch"><b>Watch for this.</b> Two DNS rules let a server ask IBM’s resolvers for names. Without them a server cannot look up any name, even when its web traffic is allowed.</p>
+        </div>
+        <div class="part-info" data-part="sgin">
+          <h3>Security group, inbound</h3>
+          <p>Applies to a server’s network interface, not to a subnet. It holds allow rules only, and traffic that matches no rule is dropped. A rule’s remote can be an address, a CIDR block or another security group.</p>
+          <p class="hand tilt"><b>From NSX:</b> roughly the distributed firewall, applied at the interface.</p>
+        </div>
+        <div class="part-info" data-part="sgout">
+          <h3>Security group, outbound</h3>
+          <p>A security group is stateful: a rule that allows traffic one way also allows the replies.</p>
+          <p class="watch"><b>Watch for this.</b> A new group has no rules at all, outbound as well. That is why every group in the chapter gets an outbound allow rule, here <code>web-all-out</code>.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The web network ACL and the web security group, as the chapters list them">Web network ACL, vpct-prod-web-acl. Rules run top to bottom.
+Direction   Action   Protocol       Source          Destination     Port                    Name
+inbound     allow    icmp_tcp_udp   10.20.0.0/16    0.0.0.0/0       any                     allow-vpc-in
+inbound     allow    tcp            0.0.0.0/0       10.20.0.0/16    destination 443         allow-https-in
+inbound     allow    tcp            0.0.0.0/0       10.20.0.0/16    destination 80          allow-http-in
+inbound     allow    tcp            your address    10.20.0.0/16    destination 22          allow-ssh-in
+inbound     allow    tcp            0.0.0.0/0       10.20.0.0/16    source 80 or 443        allow-web-replies-in
+inbound     allow    udp            161.26.0.0/24   10.20.0.0/16    source 53               allow-dns-replies-in
+inbound     deny     any            0.0.0.0/0       0.0.0.0/0       any                     deny-all-in
+outbound    allow    icmp_tcp_udp   0.0.0.0/0       10.20.0.0/16    any                     allow-vpc-out
+outbound    allow    tcp            10.20.0.0/16    0.0.0.0/0       destination 80 or 443   allow-web-out
+outbound    allow    tcp            10.20.0.0/16    0.0.0.0/0       source 80 or 443        allow-replies-out
+outbound    allow    tcp            10.20.0.0/16    your address    source 22               allow-replies-out-22
+outbound    allow    udp            10.20.0.0/16    161.26.0.0/24   destination 53          allow-dns-out
+outbound    deny     any            0.0.0.0/0       0.0.0.0/0       any                     deny-all-out
+
+Web security group, vpct-prod-web-sg. Allow rules only.
+Direction   Remote                 Protocol                    Name
+inbound     0.0.0.0/0              tcp Ports:Min=443,Max=443   web-https-in
+inbound     0.0.0.0/0              tcp Ports:Min=80,Max=80     web-http-in
+inbound     &lt;your-public-ip&gt;/32   tcp Ports:Min=22,Max=22     web-ssh-in
+inbound     &lt;your-public-ip&gt;/32   icmp Type=8,Code=0          web-ping-in
+outbound    0.0.0.0/0              icmp_tcp_udp                web-all-out</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>Follow three packets</h2>
+  <p class="lead">The web rules are in step 1. The app tier’s rules are below. Work out which rules decide each path, then open the answer.</p>
+  <div class="cols">
+    <svg class="sketch" role="img" aria-label="Hand-drawn paths. Path A runs from the internet to the web server. Path B runs from the web server down to the app server on port 8080. Path C runs from the internet straight to the app server."
+      data-drawing='{"w":620,"h":310,"shapes":[
+        {"box":[10,100,110,80],"heavy":true,"title":"Internet"},
+        {"box":[200,10,260,130],"heavy":true,"title":"Web subnet"},
+        {"box":[230,60,200,64],"title":"Web server","detail":"web-sg"},
+        {"box":[200,170,260,130],"heavy":true,"title":"App subnet"},
+        {"box":[230,222,200,64],"title":"App server","detail":"app-sg"},
+        {"line":[124,126,226,96],"arrow":true,"tone":"mark"},
+        {"text":"A","at":[160,98],"hand":true,"size":22,"tone":"mark"},
+        {"line":[330,126,330,218],"arrow":true,"tone":"mark"},
+        {"text":"B · port 8080","at":[342,176],"hand":true,"size":18,"tone":"mark"},
+        {"line":[124,160,226,250],"arrow":true,"tone":"mark"},
+        {"text":"C","at":[150,226],"hand":true,"size":22,"tone":"mark"}]}'></svg>
+    <pre class="def" aria-label="The app network ACL inbound rules and the app security group rules">App network ACL, vpct-prod-app-acl, inbound
+inbound     allow    icmp_tcp_udp   10.20.0.0/16    10.20.0.0/16    any                 allow-vpc-in
+inbound     allow    tcp            0.0.0.0/0       10.20.0.0/16    source 80 or 443    allow-web-replies-in
+inbound     allow    udp            161.26.0.0/24   10.20.0.0/16    source 53           allow-dns-replies-in
+inbound     deny     any            0.0.0.0/0       0.0.0.0/0       any                 deny-all-in
+
+App security group, vpct-prod-app-sg
+Direction   Remote             Protocol                      Name
+inbound     vpct-prod-web-sg   tcp Ports:Min=8080,Max=8080   app-8080-in
+inbound     vpct-prod-web-sg   tcp Ports:Min=22,Max=22       app-ssh-in
+outbound    0.0.0.0/0          icmp_tcp_udp                  app-all-out</pre>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p><b>Path A.</b> A browser on the internet asks the web server for a page on port 80. Which rules let the request in?</p>
+      <div class="opts">
+        <button class="opt">Only the security group rule <code>web-http-in</code></button>
+        <button class="opt" data-ok>The ACL rule <code>allow-http-in</code> and the security group rule <code>web-http-in</code></button>
+        <button class="opt">Only the ACL rule <code>allow-http-in</code></button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Both. The packet needs an allow at both layers. In the chapter’s test the ACL allowed port 80 inbound and so did the security group.</p></details>
+    </div>
+    <div class="q">
+      <p><b>Path A, the reply.</b> The page comes back. Which layer needs a rule of its own for the reply?</p>
+      <div class="opts">
+        <button class="opt">Neither. Replies are always allowed</button>
+        <button class="opt" data-ok>The ACL: <code>allow-replies-out</code></button>
+        <button class="opt">The security group, because it is stateless</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Stateless needs a rule each way.</span><p>The ACL is stateless, so the reply is checked on its own and <code>allow-replies-out</code> lets it leave. The security group is stateful, so a rule that allows traffic one way also allows the replies.</p></details>
+    </div>
+    <div class="q">
+      <p><b>Path B.</b> The web server calls the app server on port 8080. Which two rules on the app side let it in?</p>
+      <div class="opts">
+        <button class="opt" data-ok>ACL <code>allow-vpc-in</code> and security group <code>app-8080-in</code></button>
+        <button class="opt">ACL <code>allow-web-replies-in</code> and security group <code>app-ssh-in</code></button>
+        <button class="opt">ACL <code>deny-all-in</code> and security group <code>app-8080-in</code></button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p><code>allow-vpc-in</code> takes traffic from inside the VPC range. <code>app-8080-in</code> names <code>vpct-prod-web-sg</code> as its remote, so it covers every web server in that group, now and later.</p></details>
+    </div>
+    <div class="q">
+      <p><b>Path C.</b> A host on the internet connects straight to the app server. What does the app ACL do?</p>
+      <div class="opts">
+        <button class="opt">It lets the packet in, and the security group stops it</button>
+        <button class="opt" data-ok>It stops the packet: it takes no traffic that starts on the internet</button>
+        <button class="opt">It lets the packet in, because port 8080 is open</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The app ACL takes no traffic that starts on the internet. Its rules for outside addresses cover only replies: web replies and DNS answers. Everything else meets <code>deny-all-in</code>.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Run it</span>
+  <h2>Block the page twice</h2>
+  <p class="lead">A web server serves a page on port 80 through its floating IP. Run each command in turn. The output is what the lab returned in chapter 25.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="q">
+          <p>Next you add an ACL rule that denies inbound port 80, placed before <code>allow-http-in</code>. Then you request the page with <code>curl -m 5</code>. What happens?</p>
+          <div class="opts">
+            <button class="opt">The page prints</button>
+            <button class="opt" data-ok>The request times out</button>
+            <button class="opt">It is refused at once</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>It times out. The next two commands show it.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is network-acl-rule-add vpct-prod-web-acl deny inbound tcp 0.0.0.0/0 10.20.0.0/16 --destination-port-min 80 --destination-port-max 80 --name deny-http-test --before-rule allow-http-in --vpc vpct-prod</pre>
+          <pre class="out">Adding rule for network ACL r014-…-5d74 under account &lt;redacted&gt; as user &lt;redacted&gt;...
+
+ID                     fb33…2352
+Name                   deny-http-test
+Direction              inbound
+Action                 deny
+IP version             ipv4
+Source                 0.0.0.0/0
+Destination            10.20.0.0/16
+Protocol               tcp
+Min source port        1
+Max source port        65535
+Min destination port   80
+Max destination port   80
+Created                2026-10-29T15:47:17+00:00</pre>
+          <p class="hand note">A deny rule, placed first.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">curl -m 5 http://$FIP/</pre>
+          <pre class="out err">curl: (28) Connection timed out after 5003 milliseconds</pre>
+          <p class="hand note">The ACL drops the packet before the server sees it.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is network-acl-rule-delete vpct-prod-web-acl deny-http-test -f --vpc vpct-prod</pre>
+          <pre class="out">Deleting rule deny-http-test from network ACL vpct-prod-web-acl under account &lt;redacted&gt; as user &lt;redacted&gt;...
+OK
+Rule deny-http-test is deleted.</pre>
+        </div>
+        <div class="cmd">
+          <pre class="in">curl -m 5 http://$FIP/</pre>
+          <pre class="out">vpct-prod-web-z1-01</pre>
+          <p class="hand note">Rule gone, page back.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is security-group-rule-delete vpct-prod-web-sg &lt;port-80-rule-id&gt; -f --vpc vpct-prod</pre>
+          <pre class="out">Deleting rule r014-…-46be from security group  vpct-prod-web-sg under account &lt;redacted&gt; as user &lt;redacted&gt;...
+OK
+Rule r014-…-46be is deleted.</pre>
+          <p class="hand note">Now the security group’s port 80 rule goes.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">curl -m 5 http://$FIP/</pre>
+          <pre class="out err">curl: (28) Connection timed out after 5002 milliseconds</pre>
+        </div>
+        <div class="q">
+          <p>Both blocks gave <code>curl: (28)</code> after about five seconds. From that line alone, which layer dropped the packet?</p>
+          <div class="opts">
+            <button class="opt">The ACL</button>
+            <button class="opt">The security group</button>
+            <button class="opt" data-ok>The line cannot tell you</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>The two timeouts look the same. In the chapter you knew the layer only because of the rule you had just added or deleted.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is security-group-rule-add vpct-prod-web-sg inbound tcp --port-min 80 --port-max 80 --name web-http-in --vpc vpct-prod</pre>
+          <pre class="out">Creating rule for security group vpct-prod-web-sg under account &lt;redacted&gt; as user &lt;redacted&gt;...
+
+ID                     r014-…-53e0
+Direction              inbound
+IP version             ipv4
+Protocol               tcp
+Min destination port   80
+Max destination port   80
+Local                  0.0.0.0/0
+Name                   web-http-in
+Remote                 0.0.0.0/0</pre>
+        </div>
+        <div class="cmd">
+          <pre class="in">curl -m 5 http://$FIP/</pre>
+          <pre class="out">vpct-prod-web-z1-01</pre>
+          <p class="hand note">Rule added back, page back.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Design it</span>
+  <h2>Pick the layer for each need</h2>
+  <p class="lead">Choose one, then open the worked answer. The answers come from chapters 22 and 23.</p>
+  <div class="pair">
+    <div class="q">
+      <p><b>Need A.</b> Web servers added next year must reach the app tier on port 8080. Nobody should have to edit the app rules.</p>
+      <div class="opts">
+        <button class="opt" data-ok>A security group rule that names the web group</button>
+        <button class="opt">A network ACL rule for each new web address</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A rule that names a security group applies to every target the group is attached to, now and later. A new web server needs no change to the app group.</p></details>
+    </div>
+    <div class="q">
+      <p><b>Need B.</b> No server in the app subnets may take a connection that starts on the internet.</p>
+      <div class="opts">
+        <button class="opt">A security group on each server</button>
+        <button class="opt" data-ok>The app network ACL</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>The app ACL takes no traffic that starts on the internet, and it covers the whole subnet, so it covers every server. A security group covers one interface at a time.</p></details>
+    </div>
+    <div class="q">
+      <p><b>Need C.</b> SSH must work from the admin’s address only. Where is that address named?</p>
+      <div class="opts">
+        <button class="opt">Only the security group</button>
+        <button class="opt">Only the network ACL</button>
+        <button class="opt" data-ok>Both, as a <code>/32</code></button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Both SSH rules, and the reply rule that matches each, name your own public address as a <code>/32</code>. Anyone else’s SSH packets are dropped by the ACL before they reach a server. If your address changes, replace the rules.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 2.1.</span> A subnet is created without naming a network ACL. Which one does it take?</p>
+      <div class="opts">
+        <button class="opt">None, until you attach one</button>
+        <button class="opt" data-ok>The VPC’s default network ACL</button>
+        <button class="opt">A new ACL that IBM creates for it</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Each new subnet takes the VPC’s default network ACL and default route table. The chapter then attaches an ACL for each tier.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A new security group has just been created and has no rules. What can the servers in it send?</p>
+      <div class="opts">
+        <button class="opt">Anything</button>
+        <button class="opt" data-ok>Nothing, until you add an outbound rule</button>
+        <button class="opt">Only replies to inbound traffic</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A new group has no rules at all, outbound as well. The chapter adds an outbound allow rule to each group.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Two security groups are on one interface. One allows port 22 and the other does not mention it. Is port 22 open?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Yes. The least restrictive rule wins</button>
+        <button class="opt">No. The stricter group wins</button>
+        <button class="opt">Only if both are in the same subnet</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM combines the rules of every attached group, and the least restrictive rule wins.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can follow a packet</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>A packet needs an allow at the ACL and at the security group. The ACL is on the subnet and stateless. The security group is on the interface and stateful. A timeout does not say which dropped it.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 22, Controlling subnet traffic with network ACLs in IBM VPC, and chapter 23, Controlling server traffic with security groups in IBM VPC, build the rules you read. Chapter 25 runs the blocking test.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

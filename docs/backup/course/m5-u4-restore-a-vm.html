@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Restore a VM, and how long it really takes · BRS course</title>
+<meta name="description" content="Course unit 5.4: predict how long a VM restore takes, restore into a new and into the original namespace in the console, and check the result. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m5-u4">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 5 · OpenShift Virtualization VMs</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 4 of Module 5</span>
+      <h1>Restore a VM, and how long it really takes</h1>
+      <p class="lead">By the end you can say how long a VM restore really took in our lab against IBM&apos;s figure, restore a VM in the console, and check that it came back right.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a short bar for IBM&apos;s seven minutes and a long bar for our lab&apos;s 63 minutes."
+        data-drawing='{"w":420,"h":200,"shapes":[{"text":"IBM: about 7 minutes","at":[20,50],"hand":true,"size":18,"tone":"muted"},{"box":[20,70,42,30],"tone":"muted","fill":"hatch"},{"text":"our lab, 120 GiB: 63 minutes","at":[20,140],"hand":true,"size":18,"tone":"mark"},{"box":[20,156,380,30],"tone":"mark","fill":"hatch"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its VMs on ng-cluster-01 are backed up. Now it must restore them, and plan around how long that takes.</p>
+    </div>
+  </div>
+  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names were changed. Every number and screen comes from real runs in our lab on 5 October and 9 November 2026, recorded in tutorials B5e and B4e. Some screens show lab object names, such as the namespace brs-c1; cluster and location names are blurred.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Predict</span>
+  <h2>How long does a restore take?</h2>
+  <p class="lead">IBM&apos;s pages quote two figures for restoring an OpenShift Virtualization VM. Our lab restored two VMs, four disks and 128.85 GB in all, into a new namespace on 5 October 2026.</p>
+  <pre class="def" aria-label="What IBM says and what we restored">IBM:      "about six minutes" for one VM with one PVC
+          "about seven minutes" for a restore
+Our lab:  two VMs, four disks, 128.85 GB (120 GiB)  ->  ?</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>How long did the restore take in our lab?</p>
+      <div class="opts">
+        <button class="opt">About 7 minutes</button>
+        <button class="opt" data-ok>About 63 minutes</button>
+        <button class="opt">About 6 hours</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">63 minutes: 3,803 s.</span><p>It ended Succeeded: 14:25:03 to 15:28:26 UTC, 3,803 s (63.4 min). 128.85 GB in 3,803 s is 33.9 MB/s. A second restore, one VM with two disks of 30 GiB (64.4 GB) from the older backup, took 2,242 s, which is 28.7 MB/s. IBM&apos;s figures are for small VMs.</p></details>
+    </div>
+    <div class="q">
+      <p>What limited the restore speed in October?</p>
+      <div class="opts">
+        <button class="opt">The VMs were too big for Velero</button>
+        <button class="opt" data-ok>The distance: the cluster was in eu-de and the BRS service in au-syd</button>
+        <button class="opt">The disks on the cluster</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The tutorial&apos;s network check, from a worker on 5 October 2026, timed a 2 GiB transfer:</p><pre class="def">From a ROVS worker, 2 GiB      au-syd      eu-de
+Round trip (TCP connect)      0.30 s      0.002-0.008 s
+Download, 1 stream            32.2 MB/s   83.0 MB/s
+Download, 10 streams          30.8 MB/s   368.0 MB/s</pre><p>The restore sat at the au-syd download ceiling, about 31 MB/s. The distance limits it.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Both are single runs.</b> The restore times come from one run each in our lab. The cause is the distance between the two regions in that test; a BRS instance in eu-de would remove it, but IBM offers VM protection only in au-syd today.</p>
+</section>
+<section class="screen">
+  <span class="kicker">Step 2 · Click through the console</span>
+  <h2>Restore, and where it goes</h2>
+  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026, with the instance and the cluster both in eu-de. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="1.8,39,3.9,7.6" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B5e-1-select-ns.png" alt="Recover Kubernetes Namespaces: brs-c1 ticked; the recovery point 9:05am (cluster and location blurred)." width="1136" height="629"></div>
+      <figcaption>
+        <h3>In Recoveries you searched for brs-c1. Two rows match. Tick the namespace, not the protection group.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: the row with the namespace symbol, <code>brs-c1</code>. The other row is the group <code>b-rovs-vms</code>. The latest backup is chosen.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="34.4,48.3,9.8,5.7" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B5e-2-options.png" alt="Recover options: Original Location, Rename Prefix copy-, and the other defaults." width="1138" height="741"></div>
+      <figcaption>
+        <h3>Recover To starts at Original Location. Where does it say the copy goes to a new namespace?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: <b>Rename: Prefix copy-</b>. The restore goes to a new namespace <code>copy-brs-c1</code> on the same cluster. The lab kept the defaults, and it Succeeded in 5 min 43 s.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="1,54.2,16.4,9.6" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B5e-3-recovery-point.png" alt="Edit recovery point: 9:05am and 7:40am, both Incremental; 7:40am chosen." width="1184" height="498"></div>
+      <figcaption>
+        <h3>Both recovery points say Incremental, although run 1 was the first. Click the older one.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: <b>7:40am</b>. Read the time, not the Backup Type.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="1.8,7.4,96.2,7.7" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B5e-4-overwrite.png" alt="Recovery Options with the prefix cleared, and the warning that 1 of 1 namespace will be overwritten." width="1138" height="729"></div>
+      <figcaption>
+        <h3>You cleared Add Prefix. Where does the console warn you?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: the yellow warning says the namespace already exists in the target location and <b>this action will overwrite the existing namespaces</b>. The lab clicked Recover and it Succeeded in 5 min 30 s.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="83.9,48.1,6.1,8.9" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B5e-5-both-succeeded.png" alt="Recoveries: both namespace recoveries Succeeded, 5m 30s and 5m 43s." width="1164" height="495"></div>
+      <figcaption>
+        <h3>The newest recovery is at the top. Where do you read how long it took?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: <b>Duration</b>, 5m 30s. The other namespace recovery took 5m 43s. That is about six times faster than October: two disks of 30 GiB (64.4 GB) in 343 s and 330 s, about 190 MB/s, against 28.7 to 33.9 MB/s with the service in au-syd.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Step 3 · Design it</span>
+  <h2>Go back to the older backup</h2>
+  <p class="lead">Northgate rewrote some files after run 1, and run 2 captured them. Now it wants the VM back as it was at run 1, in its own namespace, not in a copy.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which plan did our lab use?</p>
+      <div class="opts">
+        <button class="opt">Restore the latest backup over the running VM</button>
+        <button class="opt" data-ok>Delete the VM, choose the older recovery point, clear the prefix and accept the overwrite warning</button>
+        <button class="opt">Restore with the default prefix and swap the VMs by hand</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s page says existing VMs are skipped, not overwritten. The lab deleted the VM first (its DataVolumes and PVCs go with it, the cloud-init Secret stays), then restored from run 1 with the prefix cleared. It Succeeded on 9 November 2026 in 5 min 30 s.</p></details>
+    </div>
+    <div class="q">
+      <p>The recovery says Succeeded. How do you know the VM is right?</p>
+      <div class="opts">
+        <button class="opt">By the status: Succeeded is enough</button>
+        <button class="opt" data-ok>By booting it and comparing its files with the manifest saved before that run</button>
+        <button class="opt">By the duration</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The tutorial checks the restored VMs, not the job status. After the restore from run 1, manifest 1 came back, not manifest 2, which the disk held before the VM was deleted:</p><pre class="def">now 8b32e06ca506d0b94e061343698cb43bd1e758885fa7f76fe92a1148cb947d46   (= manifest 1)
+match-1 20 of 20
+zero=0 nonzero=1734</pre></details>
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>Read the result</h2>
+  <p class="lead">Two things from the restore tests that a reader could miss.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Northgate restores a namespace holding a Windows VM. What comes back besides the VM and its disks?</p>
+      <div class="opts">
+        <button class="opt">Nothing else</button>
+        <button class="opt" data-ok>The namespace&apos;s Secrets, and a new PVC for the vTPM state</button>
+        <button class="opt">Only the VM&apos;s labels</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On 5 October 2026 the restore also brought back the Secrets of the whole namespace, and a <b>new</b> vTPM state PVC for the Windows VM. Both VMs were Running 35 s after the recovery ended.</p></details>
+    </div>
+    <div class="q">
+      <p>A script restores two VMs through the API and lists each only by its entity ID. BRS answers: Entity name missing in VM resource being restored. What is missing?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The name of each VM, beside its entity ID</button>
+        <button class="opt">The recovery point</button>
+        <button class="opt">The cluster endpoint</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 5 October 2026 the first call, with no name in the resource list, gave that error. The console route in step 2 does not need it.</p></details>
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>IBM&apos;s page says about six to seven minutes. How long did our lab&apos;s restore of 120 GiB take in October?</p>
+      <div class="opts">
+        <button class="opt">About 7 minutes</button>
+        <button class="opt" data-ok>About 63 minutes</button>
+        <button class="opt">About 6 hours</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>3,803 s (63.4 min) on 5 October 2026, with the BRS service in au-syd and the cluster in eu-de.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 5.3.</b> What did the second backup of a VM read, against the first?</p>
+      <div class="opts">
+        <button class="opt">A small part: only what changed</button>
+        <button class="opt" data-ok>The same: every disk in full again</button>
+        <button class="opt">Nothing</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>128.86 GB both times on 5 October 2026. What fell was the data sent, from 45.13 GB to 5.50 GB.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Two recovery points both say Incremental. How do you tell which is the older one?</p>
+      <div class="opts">
+        <button class="opt">By the Backup Type column</button>
+        <button class="opt" data-ok>By the snapshot time: 7:40am is older than 9:05am</button>
+        <button class="opt">You cannot tell</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The console labelled both runs Incremental, although run 1 was the first. Read the time.</p></details>
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can restore a VM and plan the time</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>IBM says about six to seven minutes for a restore. In our lab on 5 October 2026, 120 GiB took 63 minutes, with the BRS service in au-syd and the cluster in eu-de; the distance limited it. With both in eu-de on 9 November 2026, two disks of 30 GiB took about 5.5 minutes. Check the restored VM against its saved manifest; the status alone does not tell you. VM backup was not generally available when tested, and IBM lists it for au-syd only.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B5e restores the VMs, from the console and the command line, and checks them. The speed comparison is in section 10 of tutorial B4e.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>First boot: cloud-init and Sysprep · ROVS course</title>
+<meta name="description" content="Course unit 2.4: read a cloud-init definition, say how a Windows answer file reaches a VM, and spot the settings the cluster silently drops. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m2-u4">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 2 · Anatomy of a VM</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 4 of Module 2</span>
+      <h1>First boot: cloud-init and Sysprep</h1>
+      <p class="lead">By the end you can read a cloud-init definition, say how a Windows answer file reaches a VM, and spot the fields the cluster accepts and then silently drops.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a small disk of settings is attached to a VM, and an arrow shows the VM reading it as it starts."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[20,60,120,60],"fill":"hatch","tone":"mark"},
+          {"text":"settings disk","at":[28,150],"hand":true,"tone":"mark"},
+          {"line":[150,90,250,90],"arrow":true,"tone":"mark"},
+          {"box":[260,40,140,100],"heavy":true},
+          {"text":"VM, first boot","at":[270,170],"hand":true,"tone":"muted"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. It wants each new VM to come up with its own name, users and address, with no one logging in to set them. This unit shows how, with real output.</p>
+    </div>
+  </div>
+  <p class="small">Every definition, command and output in this unit comes from real runs on test clusters, recorded in tutorial chapters 36 and 38.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>One cloud-init definition, six parts</h2>
+  <p class="lead">Cloud-init is how a Linux guest configures itself at first boot. Select a part of the drawing to see what it does and which lines define it. You can also click a line.</p>
+  <div class="explorer" data-start="delivery"
+    data-map='{"delivery":[[1,3]],"hostname":[[4,6]],"users":[[8,16]],"network":[[18,24]],"packages":[[26,30]],"runcmd":[[32,33]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of the six parts of a cloud-init definition: Delivery, Hostname, Users, Network, Packages and Run once. An arrow leads to the cloud-init program in the guest, which reads them at boot."
+          data-drawing='{"w":560,"h":320,"shapes":[
+            {"box":[24,40,312,270],"heavy":true},
+            {"text":"the cloud-init data","at":[30,30],"hand":true,"tone":"muted"},
+            {"box":[40,54,132,66],"part":"delivery","title":"Delivery","detail":"cloudInitNoCloud"},
+            {"box":[188,54,132,66],"part":"hostname","title":"Hostname"},
+            {"box":[40,134,132,66],"part":"users","title":"Users","detail":"keys, passwords"},
+            {"box":[188,134,132,66],"part":"network","title":"Network","detail":"bootcmd"},
+            {"box":[40,214,132,66],"part":"packages","title":"Packages"},
+            {"box":[188,214,132,66],"part":"runcmd","title":"Run once","detail":"runcmd"},
+            {"line":[336,175,392,175],"arrow":true,"tone":"mark"},
+            {"box":[392,125,150,100],"dashed":true,"title":"cloud-init","detail":"in the guest"},
+            {"text":"reads it at boot","at":[400,250],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="delivery">
+          <h3>Delivery</h3>
+          <p>The data reaches the VM as a volume named <code>cloudinitdisk</code>. The <code>cloudInitNoCloud</code> type presents it through the NoCloud datasource, which cloud-init recognises on its own.</p>
+          <p class="hand tilt"><b>From vSphere:</b> cloud-init is the counterpart of a Guest OS Customization Specification for Linux.</p>
+          <p class="watch"><b>Watch for this.</b> To keep the data in a Secret, the field is <code>secretRef</code> and the Secret's key must be <code>userData</code>. A field called <code>userDataSecretRef</code> does not exist.</p>
+        </div>
+        <div class="part-info" data-part="hostname">
+          <h3>Hostname</h3>
+          <p>Sets the hostname and fully qualified name. <code>manage_etc_hosts: true</code> updates <code>/etc/hosts</code> to include it.</p>
+        </div>
+        <div class="part-info" data-part="users">
+          <h3>Users</h3>
+          <p>Creates users, gives them SSH keys, and can set a hashed password. <code>openssl passwd -6</code> makes the hash.</p>
+          <p class="watch"><b>Watch for this.</b> The VM in unit 2.1 set a password and no key, and <code>virtctl ssh</code> failed. Put a key in.</p>
+        </div>
+        <div class="part-info" data-part="network">
+          <h3>Network</h3>
+          <p>For VMs on a localnet or Layer 2 network, <code>nmcli</code> commands in <code>bootcmd</code> set a static address. <code>bootcmd</code> runs very early, before networking is fully set up.</p>
+          <p class="watch"><b>Watch for this.</b> <code>bootcmd</code> runs on every boot. Without the <code>grep</code> guard on the first line, a CentOS Stream 9 VM had two <code>eth0-static</code> profiles after one restart.</p>
+        </div>
+        <div class="part-info" data-part="packages">
+          <h3>Packages</h3>
+          <p>Installs packages at first boot. Always include <code>qemu-guest-agent</code>: it is the counterpart of VMware Tools, and without it the platform cannot report guest IP addresses, shut the guest down gracefully or quiesce its filesystem for snapshots.</p>
+          <p class="watch"><b>Watch for this.</b> On a RHEL-family guest <code>rpm -q vim</code> says vim is not installed, because DNF resolved the name to <code>vim-enhanced</code>. The install worked. Check with <code>which vim &amp;&amp; rpm -qf $(which vim)</code>.</p>
+        </div>
+        <div class="part-info" data-part="runcmd">
+          <h3>Run once</h3>
+          <p><code>runcmd</code> runs commands once, on first boot only, after networking is up. It suits application setup, not network configuration.</p>
+          <p class="watch"><b>Watch for this.</b> A restart does not re-run cloud-init, except <code>bootcmd</code>. To test a change, delete the VM and create a new one.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="A complete cloud-init volume">cloudInitNoCloud:
+  userData: |
+    #cloud-config
+    hostname: app-server
+    fqdn: app-server.example.com
+    manage_etc_hosts: true
+
+    users:
+    - name: admin
+      groups: wheel
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      shell: /bin/bash
+      ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIExample...
+    - name: appuser
+      shell: /bin/bash
+
+    bootcmd:
+    - nmcli -g NAME connection show | grep -qx eth0-static || nmcli connection add type ethernet con-name eth0-static ifname eth0
+    - nmcli connection modify eth0-static ipv4.addresses 172.16.250.5/24
+    - nmcli connection modify eth0-static ipv4.gateway 172.16.250.1
+    - nmcli connection modify eth0-static ipv4.method manual
+    - nmcli connection modify eth0-static ipv4.dns "161.26.0.7,161.26.0.8"
+    - nmcli connection up eth0-static
+
+    packages:
+    - qemu-guest-agent
+    - vim
+    - curl
+    package_update: true
+
+    runcmd:
+    - systemctl enable --now qemu-guest-agent
+</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>Ask the cluster to check a Secret reference</h2>
+  <p class="lead">A server-side dry run asks the cluster to check a VM without creating it. Run each command in turn. The output is what the test cluster returned.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="q">
+          <p>A VM's cloud-init volume says <code>userDataSecretRef: {name: ...}</code> and has no other user data. Will the cluster accept it?</p>
+          <div class="opts">
+            <button class="opt">Yes, it reads the Secret</button>
+            <button class="opt" data-ok>No, it rejects the VM</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>The field does not exist, and with no other user-data source the webhook rejects the VM. If the volume also carried inline <code>userData</code>, the field would be dropped silently: the VM is admitted, the inline data is used, and the Secret is not.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">oc create -f vm.yaml --dry-run=server</pre>
+          <pre class="out err">The request is invalid: spec.template.spec.volumes[0].cloudInitNoCloud:
+must have at least one userdatasource or one networkdatasource set.</pre>
+          <p class="hand note">A loud failure is the good case. You find out at once.</p>
+        </div>
+        <div class="cmd">
+          <p class="pre"># the same VM, with secretRef</p>
+          <pre class="in">oc create -f vm.yaml --dry-run=server -o jsonpath='{.spec.template.spec.volumes}'</pre>
+          <pre class="out">[{"cloudInitNoCloud":{"secretRef":{"name":"my-vm-cloudinit"}},"name":"cloudinitdisk"}]</pre>
+          <p class="hand note">secretRef survives. The Secret needs the key userData.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>Windows reads an answer file, and the cluster can drop the reference</h2>
+  <p class="lead">Windows does not use cloud-init. It reads an <code>unattend.xml</code> answer file from a CD-ROM during setup. KubeVirt builds that CD-ROM from a ConfigMap or Secret with a <code>sysprep</code> volume. Sysprep is roughly the counterpart of a Windows Customization Specification in vCenter. Two submissions of a VM with a sysprep volume, checked with a server-side dry run:</p>
+  <pre class="def" aria-label="Two dry-run results for a sysprep volume">$ oc create -f vm.yaml --dry-run=server -o jsonpath='{.spec.template.spec.volumes}'
+
+# secretName: win-server-sysprep      -> the whole reference is gone
+[{"name":"sysprep","sysprep":{}}]
+
+# secret: {name: win-server-sysprep}  -> survives intact
+[{"name":"sysprep","sysprep":{"secret":{"name":"win-server-sysprep"}}}]</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Both VMs were admitted without an error. Which one will run its answer file?</p>
+      <div class="opts">
+        <button class="opt">The one written with <code>secretName</code></button>
+        <button class="opt" data-ok>The one written with <code>secret: {name: ...}</code></button>
+        <button class="opt">Both</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Check what the cluster stored.</span><p><code>sysprep.secret</code> is a Kubernetes local object reference, and its only field is <code>name</code>. The API server prunes <code>secretName</code>. The VM is admitted, finds no secret, and the sysprep never runs. Read the stored volume back before you power the VM on.</p></details>
+    </div>
+    <div class="q">
+      <p>The Secret holds the answer file under a key. For an image that has already been through setup, which key name does Windows read?</p>
+      <div class="opts">
+        <button class="opt">autounattend.xml</button>
+        <button class="opt" data-ok>unattend.xml</button>
+        <button class="opt">Either one</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>KubeVirt accepts either name and raises no error, so a wrong key looks as if it worked. On a Windows Server 2022 evaluation image that had already been through setup, the key <code>autounattend.xml</code> left Windows on the "Hi there" region page. With <code>unattend.xml</code>, setup logged "Found unattend file", the first-logon command ran and <code>Administrator</code> logged on with no one at the console. The installer pipeline in chapter 38 is a different case: it installs from an ISO, and there <code>autounattend.xml</code> was read.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Click through the console</span>
+  <h2>Before first boot: Windows setup cannot see the disk</h2>
+  <p class="lead">Windows does not ship VirtIO drivers. A VM installed from an ISO onto a <code>virtio</code> boot disk stops at the disk page until you load the storage driver. These are real screens. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="28.5,59,7.5,2.8" data-width="760px">
+      <div class="shot"><img src="../images/38/no-disks.jpg" alt="The Windows Server 2022 setup page Where do you want to install the operating system. The drive list is empty. A warning reads We couldn't find any drives. To get a storage driver, click Load driver. Refresh, Delete, Format, New, Load driver and Extend are listed below the list." width="1280" height="800"></div>
+      <figcaption>
+        <h3>The drive list is empty. Which link fixes that?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Load driver, then Browse. The storage driver is missing, so setup cannot see the disk.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="40.3,57.8,14,3" data-width="760px">
+      <div class="shot"><img src="../images/38/browse-cd-drives.jpg" alt="The Browse for Folder dialog over the Select the driver to install page. The tree lists This PC with Downloads, Desktop, 3D Objects, Documents, Music, Videos and Pictures, then CD Drive (D:) SSS_X64FREE_EN-US_DV9, CD Drive (E:) virtio-win-1.9.57 and Boot (X:)." width="1280" height="800"></div>
+      <figcaption>
+        <h3>Which drive holds the VirtIO drivers?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The CD drive named virtio-win. Here D: was the Windows ISO and E: was virtio-win, so check the volume name, not the letter. For Windows Server 2022 the folder is <code>viostor\2k22\amd64</code>.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>You restart a Linux VM. Which cloud-init section runs again?</p>
+      <div class="opts">
+        <button class="opt">runcmd</button>
+        <button class="opt" data-ok>bootcmd</button>
+        <button class="opt">packages</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p><code>bootcmd</code> runs on every boot. Cloud-init otherwise runs on first boot only, and <code>runcmd</code> runs once. That is why the <code>grep</code> guard matters on a network command.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Where does a sysprep volume attach to the VM?</p>
+      <div class="opts">
+        <button class="opt">As a disk on the virtio bus</button>
+        <button class="opt" data-ok>As a CD-ROM on the sata bus</button>
+        <button class="opt">As a CD-ROM on the virtio bus</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>KubeVirt rejects a virtio CD-ROM at admission with <code>Bus type virtio is invalid for CD-ROM device</code>. The answer file is also read before any VirtIO driver is loaded, so virtio would be no use even if it were accepted.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Northgate leaves <code>qemu-guest-agent</code> out of a Linux image to keep it small. What stops working?</p>
+      <div class="opts">
+        <button class="opt">Nothing. It is optional.</button>
+        <button class="opt" data-ok>Graceful shutdown, guest IP reporting and filesystem quiescing for snapshots</button>
+        <button class="opt">Only the web console</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>It is the counterpart of VMware Tools. Without it the platform cannot report guest IP addresses, cannot perform graceful shutdowns and cannot quiesce the filesystem for snapshots. Always install it.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 2.1.</b> A VM's guest setup sets a password and no SSH key. Will <code>virtctl ssh</code> log you in?</p>
+      <div class="opts">
+        <button class="opt">Yes, with the password</button>
+        <button class="opt" data-ok>No, it needs an SSH key</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>CentOS Stream 9's SSH server has password login turned off for cloud images, so <code>virtctl ssh</code> fails with "Too many authentication failures". Use <code>virtctl console</code>, or put a key in the cloud-init data.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can set up a VM's first boot</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Linux: cloud-init, with secretRef and a key called userData. Windows: a sysprep volume, a CD-ROM on sata, the key unattend.xml. Check what the cluster stored, not what you sent.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 36, Configure ROVS VMs on first boot with cloud-init and sysprep, runs everything you just saw. Chapter 38, Install Windows Server VMs on ROVS with VirtIO and RDP, builds the Windows VM end to end.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

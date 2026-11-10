@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en" data-course="vault">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What IBM builds · Cyber Vault course</title>
+<meta name="description" content="Course unit 1.2: name the parts of a Cyber Vault (a locked bucket, two keys, an allow-list and a write window), tour the create screens, and spot what the write window also blocks. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m1-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">Cyber Vault course</a> <span>·</span> Module 1 · What the vault is</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 1</span>
+      <h1>What IBM builds: a locked bucket, two keys, an allow-list, a write window</h1>
+      <p class="lead">By the end you can name the four parts of a Cyber Vault, say which key goes where, find each part on the create screens, and say what the write window also blocks.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: one create request makes a vault with a locked bucket, two keys, an allow-list and an optional write window."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"text":"one request makes","at":[14,28],"hand":true,"size":17,"tone":"muted"},
+          {"box":[10,38,190,60],"heavy":true,"tone":"mark","title":"locked bucket","detail":"object lock"},
+          {"box":[220,38,190,60],"title":"two keys","detail":"write and read"},
+          {"box":[10,110,190,60],"title":"allow-list","detail":"network rules"},
+          {"box":[220,110,190,60],"dashed":true,"title":"write window","detail":"optional"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It backs up with Defender Data Protect and wants to know exactly what IBM puts in a Cyber Vault before it trusts one.</p>
+    </div>
+  </div>
+  <p class="small">The screens come from the IBM Cloud console in our lab on 10 November 2026 (tutorial V2). The test results come from 5 and 7 October 2026 (tutorial V7). The vault is a Beta in us-south, with no SLA.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>One request, four parts</h2>
+  <p class="lead">IBM describes the vault as a managed service. One request makes a bucket with all of these already in place.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A create request makes a vault with a locked bucket, a write key, a read key, an allow-list made with context-based restrictions, and an optional write window."
+    data-drawing='{"w":560,"h":290,"shapes":[
+      {"box":[10,110,130,64],"title":"Create","detail":"one request"},
+      {"line":[144,142,186,142],"arrow":true,"tone":"mark"},
+      {"box":[190,5,350,64],"heavy":true,"tone":"mark","title":"Locked bucket","detail":"compliance object lock"},
+      {"box":[190,77,350,64],"title":"Write key","detail":"for the backup software"},
+      {"box":[190,149,350,64],"title":"Read key","detail":"for recovery"},
+      {"box":[190,221,350,64],"title":"Allow-list","detail":"network rules, always on"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What did we find when we looked at the bucket the vault made?</p>
+      <div class="opts">
+        <button class="opt">An Immutable Object Storage retention policy</button>
+        <button class="opt" data-ok>S3 object lock on, with versioning on and no default rule</button>
+        <button class="opt">No lock: the lock is set later by the owner</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Versioning was Enabled and object lock was Enabled with no default rule. It is not the Immutable Object Storage retention policy (V7, section 4.3, 5 October 2026).</p></details>
+    </div>
+    <div class="q">
+      <p>Which of the four parts is optional?</p>
+      <div class="opts">
+        <button class="opt">The allow-list</button>
+        <button class="opt" data-ok>The write window</button>
+        <button class="opt">The keys</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Network isolation is mandatory, and at least one VPC or IP range is required. The daily write window is optional. Nothing can be changed after the vault is created (IBM&apos;s Beta overview, read 25 September 2026).</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>The form fills in a number for you</h2>
+  <p class="lead">Northgate&apos;s Data Protect sets a lock on each object it archives. On the create form, the field <b>Object lock retention period</b> starts with a number already in it.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What should Northgate type in the default retention field for Data Protect?</p>
+      <div class="opts">
+        <button class="opt">30, as it is</button>
+        <button class="opt" data-ok>0</button>
+        <button class="opt">3650, the largest allowed</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The form fills in 30 days by itself, so every object would be locked for a month. The form says: "Enter 0 to apply locks manually per-object". With 0, Data Protect sets each object&apos;s lock from its archive retention (V2, in the console, 10 November 2026).</p></details>
+    </div>
+    <div class="q">
+      <p>Northgate gets the retention wrong. Can the owner edit the vault later?</p>
+      <div class="opts">
+        <button class="opt">Yes, in the vault details page</button>
+        <button class="opt" data-ok>No: the form warns that the configuration cannot be modified</button>
+        <button class="opt">Only the write window can be edited</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The create form says: "Once created, the vault configuration cannot be modified." IBM&apos;s Beta overview agrees: there is no update API in the Beta.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Click through the console</span>
+  <h2>The parts on the screen</h2>
+  <p class="lead">These screens come from the IBM Cloud console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="5,32,16,8" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V2-2-create-default-retention.png" alt="Create Cyber Vault: Location Dallas (us-south); Object lock retention period, Default retention (days) 30; Time-based write restrictions Disabled" width="1227" height="762"></div>
+      <figcaption>
+        <h3>You are creating a vault for Data Protect. Which field must you change from its filled-in value?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Default retention (days) starts at 30. Set it to 0 so that Data Protect sets each object&apos;s lock.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="66,24,16,12" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V2-3-create-network-vpc.png" alt="Add Context-based restrictions: VPC chosen, cohesity-lab-vpc (eu-de)" width="1227" height="762"></div>
+      <figcaption>
+        <h3>Where do you choose what kind of network the vault will accept?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The three choices are VPC, Cross-account VPC and IP address. In our lab we picked the VPC that holds the Data Protect cluster.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="72,33,8,9" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V2-4-vault-details.png" alt="Vault details: Active, Provider Managed Key Protect Keys, private and direct us-south endpoints, Object lock default retention period 0 days, CBR Enabled; the write key listed (vault ID and CRN blurred)" width="1227" height="762"></div>
+      <figcaption>
+        <h3>The vault is active. Where does the page show that network rules are on?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. CBR says Enabled. Below the details the page lists the two access credentials, a write key and a read key, each behind View credential.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>The window that blocks more than writes</h2>
+  <p class="lead">Northgate sets a write window of 02:00 to 03:00 every day. IBM&apos;s overview says: "Writes are rejected outside this window." Northgate reads that as: recovery works at any hour.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>At 17:56 UTC, outside the window, we tried a list and a write with both keys. What happened?</p>
+      <div class="opts">
+        <button class="opt">Reads worked, writes were refused</button>
+        <button class="opt" data-ok>The list and the write were both refused with HTTP 403, with both keys</button>
+        <button class="opt">Everything worked</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On 5 October 2026 both the read key and the write key got 403 for the list and the write. On 7 October at 02:05, inside the window, list, write, read and check all returned 200. IBM&apos;s provisioning page agrees with what we saw: the window decides when the auto-created read and write policies are active.</p></details>
+    </div>
+    <div class="q">
+      <p>What follows for Northgate&apos;s recovery plan?</p>
+      <div class="opts">
+        <button class="opt">Nothing: reads are never windowed</button>
+        <button class="opt" data-ok>A recovery outside the window fails, so the window must cover when Northgate may need to recover</button>
+        <button class="opt">Only the backup job is affected</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The overview does not say that reads are blocked too. We found it in our lab and wrote it down as a finding. Not tested: whether a read identity that the customer supplies is also outside the window.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> The overview and the provisioning page disagree about reads. In our lab the provisioning page was right.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which key goes to the backup software?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The write key</button>
+        <button class="opt">The read key</button>
+        <button class="opt">Neither</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The write key goes to the backup software. The read key is kept apart for recovery.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>For a backup product that locks each object itself, what do you set the default retention to?</p>
+      <div class="opts">
+        <button class="opt">30 days</button>
+        <button class="opt" data-ok>0</button>
+        <button class="opt">3650 days</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>0. The form fills in 30, and says "Enter 0 to apply locks manually per-object".</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A vault has a write window of 02:00 to 03:00. In our lab, what happened to a read at 17:56?</p>
+      <div class="opts">
+        <button class="opt">It worked</button>
+        <button class="opt" data-ok>It was refused with HTTP 403</button>
+        <button class="opt">It was queued until 02:00</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Refused with 403 on 5 October 2026, with both keys.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know what is inside the vault</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>A locked bucket, a write key, a read key and an allow-list come with every vault. The write window is optional. Nothing can be changed after creation. In our lab the window blocked reads as well as writes.</p></div>
+    <div><span class="label">When you have access to the Beta</span><p>Tutorial V1 gets access and roles. Tutorial V2 creates the vault in the console. Tutorial V7 holds the window test.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

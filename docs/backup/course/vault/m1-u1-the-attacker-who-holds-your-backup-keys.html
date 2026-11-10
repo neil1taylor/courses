@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en" data-course="vault">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The attacker who holds your backup keys · Cyber Vault course</title>
+<meta name="description" content="Course unit 1.1: see what an attacker with stolen backup keys could try against a Cyber Vault, predict what the vault refuses, and find the one thing it does not stop. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m1-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">Cyber Vault course</a> <span>·</span> Module 1 · What the vault is</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 1</span>
+      <h1>The attacker who holds your backup keys</h1>
+      <p class="lead">By the end you can say what an attacker with stolen backup keys could try against a Cyber Vault, what the vault refused in our tests, and the one thing it does not stop.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: an attacker holds the backup keys. The backup cluster is exposed. The vault copy is locked."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"box":[10,20,120,60],"title":"Attacker","detail":"has the keys"},
+          {"line":[134,50,176,50],"arrow":true,"tone":"mark"},
+          {"box":[180,5,230,60],"tone":"muted","title":"Backup cluster","detail":"the attacker reaches it"},
+          {"box":[180,90,230,60],"heavy":true,"tone":"mark","title":"Vault copy","detail":"locked objects"},
+          {"text":"the board asks: what now?","at":[14,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with IBM Storage Defender Data Protect. Its board asks one question: what happens if an attacker gets the backup admin&apos;s keys?</p>
+    </div>
+  </div>
+  <p class="small">Every result in this unit comes from tests in our lab on 5 and 6 October 2026 (tutorial V7). The vault is IBM Cloud Cyber Vault (Beta), in us-south, with no SLA.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Who holds which key</h2>
+  <p class="lead">A Cyber Vault comes with two keys. The backup cluster gets the write key. The read key is kept apart and is used to recover. An attacker might get either, or both.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Data Protect holds the write key and archives to the vault. The read key is kept apart and is used only to recover. The vault holds locked objects."
+    data-drawing='{"w":560,"h":230,"shapes":[
+      {"box":[10,10,170,64],"title":"Data Protect","detail":"holds the write key"},
+      {"line":[184,42,236,42],"arrow":true,"tone":"mark"},
+      {"box":[240,10,300,64],"heavy":true,"tone":"mark","title":"Cyber Vault","detail":"locked objects"},
+      {"box":[10,120,170,64],"tone":"muted","title":"Read key","detail":"kept apart"},
+      {"line":[184,152,236,152],"arrow":true},
+      {"box":[240,120,300,64],"tone":"muted","title":"Recovery","detail":"reads the vault"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which key does the backup cluster hold when it archives to the vault?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The write key</button>
+        <button class="opt">The read key</button>
+        <button class="opt">Both keys, always</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The write key. The console steps say to give the write key to the backup cluster and keep the read key apart (tutorial V2, in the console). A new cluster that recovers from the vault needs only the read key; Module 4 shows that.</p></details>
+    </div>
+    <div class="q">
+      <p>In our tests, what could the write key do besides write?</p>
+      <div class="opts">
+        <button class="opt">Nothing: it could only write</button>
+        <button class="opt" data-ok>List and read objects, but not read an object&apos;s lock</button>
+        <button class="opt">Read the lock and delete versions</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The write key could write an object with a lock, read it, list and check it. It could not read the lock; the read key could (V7, test V8, 5 October 2026).</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>The attacker tries the write key</h2>
+  <p class="lead">On 5 October 2026, from a server inside the allowed network, we tried these on real locked archive objects with the write key. Predict the answer to each.</p>
+  <pre class="def" aria-label="What was tried">Try, with the write key                        Answer
+Delete a locked version                         ?
+Same, with the bypass header                    ?
+Change the lock date or mode                    ?</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What did the vault answer?</p>
+      <div class="opts">
+        <button class="opt">It accepted the first and refused the other two</button>
+        <button class="opt" data-ok>It refused all three with HTTP 403</button>
+        <button class="opt">It accepted all three after a delay</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Refused, every time.</span><p>Every attempt got HTTP 403, "Access Denied because object protected by object lock". Afterwards both objects still answered. (V7, tests V1, V2 and V3.)</p><pre class="def" aria-label="What was tried">Try, with the write key                        Answer
+Delete a locked version                         403
+Same, with the bypass header                    403
+Change the lock date or mode                    403</pre></details>
+    </div>
+    <div class="q">
+      <p>The attacker also has the Data Protect admin login and deletes the archive copies and the vault target in Data Protect. What does the vault keep?</p>
+      <div class="opts">
+        <button class="opt">Nothing: Data Protect deletes the vault&apos;s data too</button>
+        <button class="opt" data-ok>The data, still locked</button>
+        <button class="opt">The data, but unlocked</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our test on 6 October 2026 the archive records and the target were removed in Data Protect. The vault kept the same 7 object versions under the prefix we checked, and the lock on the data chunk we checked was unchanged. That cluster held only the read key, which cannot delete. The test did not show what the same delete would do with a write key.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>A sentence for the board</h2>
+  <p class="lead">Northgate&apos;s first draft for the board says: "An attacker with the write key can change nothing in the vault." Something in it is too strong.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What did our test find?</p>
+      <div class="opts">
+        <button class="opt">The write key could delete a locked version after all</button>
+        <button class="opt" data-ok>The write key could write new content under the same name; the old version stayed</button>
+        <button class="opt">The write key could shorten a lock</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On a probe object, a write with other content returned 200 and made a new version. The list showed two versions, and the first still returned the original content. But the latest version was now the new content. A holder of the write key can hide the latest data; the old version stays (V7, test V4, 5 October 2026).</p></details>
+    </div>
+    <div class="q">
+      <p>The attacker sits on a server in a different network and has a valid write key. What did the vault do in our test?</p>
+      <div class="opts">
+        <button class="opt">Listed the objects</button>
+        <button class="opt" data-ok>Refused with HTTP 403 &quot;Access Denied&quot;</button>
+        <button class="opt">Accepted writes but refused reads</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On 6 October 2026 a pod in a second VPC, with a valid write key, got 403 on the direct and the public name and no answer on the private name. A control from the allowed network got 200. From a laptop on the VPN, with a valid write key, the public endpoint also gave 403 (V7, test V7).</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> A locked object cannot be deleted or shortened. That does not stop a new version being written on top. The tested case is a probe object, not a Data Protect archive.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Design it</span>
+  <h2>Northgate&apos;s answer to the board</h2>
+  <p class="lead">You can now write the answer. Pick the sentence that says only what our tests support.</p>
+  <div class="q">
+    <p>Which sentence should Northgate give the board?</p>
+    <div class="opts">
+      <button class="opt">With stolen keys an attacker can do nothing to the vault.</button>
+      <button class="opt" data-ok>In our lab tests, stolen keys could not delete or shorten locked data, and a key used from outside the allowed networks was refused; a write key could still add a new version on top.</button>
+      <button class="opt">The keys do not matter, because the vault is a physical air gap.</button>
+    </div>
+    <details class="reveal"><summary>Show the answer</summary><p>The second sentence matches the tests in this unit. The first is too strong, as step 3 showed. The third is wrong: the vault is logically isolated, not a physical air gap. Unit 1.3 covers that.</p></details>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>In our lab, what did the vault answer when the write key tried to delete a locked version?</p>
+      <div class="opts">
+        <button class="opt">It deleted it</button>
+        <button class="opt" data-ok>HTTP 403, refused</button>
+        <button class="opt">It asked for the read key</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>HTTP 403, "Access Denied because object protected by object lock", on 5 October 2026.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>What could a write key still do to a test object?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Write a new latest version that hides the old one</button>
+        <button class="opt">Remove the old version</button>
+        <button class="opt">Turn the lock off</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The old version stayed and still returned its original content.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A valid write key is used from a VPC that is not on the allow-list. What happened in our test?</p>
+      <div class="opts">
+        <button class="opt">The vault gave access</button>
+        <button class="opt" data-ok>The vault refused it</button>
+        <button class="opt">The vault gave read access only</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>HTTP 403 from a pod in a second VPC on 6 October 2026.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can answer the board&apos;s question</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>In our lab, stolen keys could not delete or shorten locked data, and a key from outside the allowed network was refused. A write key could still write a new latest version on top of a test object. Say "in our tests", not "nothing can happen".</p></div>
+    <div><span class="label">When you have access to the Beta</span><p>Tutorial V7 holds every test in this unit, with the exact requests. Tutorial V2 creates the vault.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

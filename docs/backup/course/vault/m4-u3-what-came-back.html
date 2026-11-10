@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en" data-course="vault">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What came back and what did not · Cyber Vault course</title>
+<meta name="description" content="Course unit 4.3: read the results of the rebuild from the vault alone, on 10 November and in October, and say what came back whole and what did not. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m4-u3">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">Cyber Vault course</a> <span>·</span> Module 4 · Recover from the vault alone</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 3 of Module 4</span>
+      <h1>What came back and what did not</h1>
+      <p class="lead">By the end you can say what the rebuild brought back whole, what came back with a gap in October, and what did not come back at all.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: three groups came back whole on 10 November. In October, some Linux files came back empty and the OpenShift VM did not come back."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"text":"10 November","at":[14,30],"hand":true,"size":17,"tone":"muted"},
+          {"box":[10,40,180,60],"heavy":true,"title":"came back whole"},
+          {"text":"in October","at":[234,30],"hand":true,"size":17,"tone":"muted"},
+          {"box":[230,40,180,60],"heavy":true,"tone":"mark","title":"gaps"},
+          {"text":"say what, with the date","at":[100,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its board will ask one question: did everything come back? The honest answer has dates and numbers in it.</p>
+    </div>
+  </div>
+  <p class="small">The 10 November numbers come from one run in our lab (tutorial V7b). The October numbers come from one run on 9 October 2026. Each is a single run, not a promise. The vault is a Beta in us-south, with no SLA.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>The 10 November results</h2>
+  <p class="lead">The lab restored each clean run to a new location and checked it against a record made before the attack. All three Succeeded.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Linux files: 503 of 503 match. Windows files: 503 of 503 match. SQL database labdb_v7b: 100000 rows, checksum -108923937, the clean value."
+    data-drawing='{"w":560,"h":150,"shapes":[
+      {"box":[10,20,170,64],"tone":"mark","title":"Linux files","detail":"503 of 503 match"},
+      {"box":[195,20,170,64],"tone":"mark","title":"Windows files","detail":"503 of 503 match"},
+      {"box":[380,20,170,64],"tone":"mark","title":"SQL labdb_v7b","detail":"checksum -108923937"},
+      {"text":"restored to a new location, 10 November 2026","at":[60,125],"hand":true,"size":17,"tone":"muted"}]}'></svg>
+  <pre class="def" aria-label="Restore and check, 10 November 2026">Workload       Restored to                 Check
+Linux files    /v7restore/data             sha256sum -c against the clean manifest: 503 of 503
+Windows files  C:\v7restore\data           SHA-256 against the clean list: 503 match, 0 bad, 0 missing
+SQL            labdb_v7b, a new database   100000,-108923937 (the clean value)</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The restored database <code>labdb_v7b</code> read <code>100000,-108923937</code>. What does that mean?</p>
+      <div class="opts">
+        <button class="opt" data-ok>It equals the clean value from before the attack</button>
+        <button class="opt">It equals the attacked database, which reads -426859948</button>
+        <button class="opt">It cannot be compared</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The clean value was <code>100000,-108923937</code>. The attacked <code>labdb</code> still read -426859948 after the restore, so the restored database was not the attacked one.</p></details>
+    </div>
+    <div class="q">
+      <p>Why did the lab restore to a new location, not to the original server?</p>
+      <div class="opts">
+        <button class="opt">The original server had no space</button>
+        <button class="opt" data-ok>A retrieved group cannot restore to the original (ISS-141)</button>
+        <button class="opt">The vault only allows one restore of each run</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In October the same restore to the original source was refused for a retrieved group: &quot;Restore of a database to the original source is not allowed for remote jobs&quot;. On 10 November the lab restored to new locations.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Click through the console</span>
+  <h2>What the console shows before the restore</h2>
+  <p class="lead">After the download, each retrieved group lists its snapshots. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="75,61.5,21,23" data-width="900px">
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-10-retrieved-groups-success.png" alt="CloudRetrieve, Downloaded Protection Groups: three groups, cv-sql-labdb, cv-linux-data and cv-win-data, all Success. Snapshot times are 11:44am, 11:43am and 11:43am. Three protection groups, six tasks, all successful." width="1036" height="568"></div>
+      <figcaption>
+        <h3>The three groups are retrieved. Where do you see the time of the run each one holds?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Snapshot column: 11:44am for SQL and 11:43am for Linux and Windows. Those are the clean runs, from before the attack. Next you restore each one through Recoveries.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>In Recoveries, each retrieved object has three snapshots. Which one do you restore?</p>
+      <div class="opts">
+        <button class="opt">The metadata-only local copy</button>
+        <button class="opt" data-ok>The clean vault copy: the vault copy whose snapshot ID decodes with <code>h_vaultId</code>, from before the attack</button>
+        <button class="opt">The infected vault copy</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The three are a metadata-only local copy, the clean vault copy and the infected vault copy. In October the metadata-only copy failed with &quot;File lookup failed&quot;. The lab used the clean vault copy.</p></details>
+    </div>
+    <div class="q">
+      <p>How did the lab check the Linux files?</p>
+      <div class="opts">
+        <button class="opt">By the Succeeded status of the recovery</button>
+        <button class="opt" data-ok>With <code>sha256sum -c</code> against the clean manifest</button>
+        <button class="opt">By counting the files</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The manifest was made before the attack. 503 of 503 matched. The next steps show why a Succeeded status is not enough.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Predict</span>
+  <h2>The October results</h2>
+  <p class="lead">On 9 October 2026 the lab ran an attack and a rebuild like these, on a third cluster that had only the read key. The results table is below, with the question marks to fill.</p>
+  <pre class="def" aria-label="October results">Workload        Check, 9 October 2026
+Linux files     ?
+Windows files   503 of 503 match
+SQL Server      100000 rows, same checksum as before</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Linux has 181,552 files. How many matched in October?</p>
+      <div class="opts">
+        <button class="opt">All 181,552</button>
+        <button class="opt" data-ok>167,639</button>
+        <button class="opt">About half</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><pre class="def" aria-label="October results">Workload        Check, 9 October 2026
+Linux files     167,639 of 181,552 match;
+                13,913 hard-linked files come back empty (ISS-143)
+Windows files   503 of 503 match
+SQL Server      100000 rows, same checksum as before</pre><p>The lab called this &quot;pass, known gap&quot;.</p></details>
+    </div>
+    <div class="q">
+      <p>Which files came back empty?</p>
+      <div class="opts">
+        <button class="opt">The newest files</button>
+        <button class="opt" data-ok>The hard-linked files</button>
+        <button class="opt">The largest files</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>13,913 hard-linked files came back empty (ISS-143). The earlier test in tutorial V7 found the same gap, and says the cause is the file backup, not the vault.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> The October times, in our lab on 9 October 2026: Linux retrieve 17 minutes and restore 38 minutes; Windows retrieve about 1 minute and restore 1 minute 22 seconds; SQL restore 1 minute 32 seconds. The 10 November run did not record its times.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>&quot;Everything came back&quot;</h2>
+  <p class="lead">Northgate&apos;s admin drafts a note for the board: &quot;We rebuilt every workload from the vault alone, and every restore said Succeeded.&quot;</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which workload does the note leave out?</p>
+      <div class="opts">
+        <button class="opt">Windows files</button>
+        <button class="opt" data-ok>The OpenShift VM: its retrieve failed on a new cluster in October (ISS-190)</button>
+        <button class="opt">SQL Server</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On 9 October the retrieve of the VM group failed on a new cluster: indexing succeeded, but the snapshot failed with &quot;Cannot find magneto view for icebox view&quot;. The VM registration on that cluster stayed Pending for 29 minutes. The 10 November run did not try the VMs. The same VM backup did restore from the vault on its own cluster, in 6 minutes 6 seconds, with 20 of 20 files matching (V4).</p></details>
+    </div>
+    <div class="q">
+      <p>What found the empty Linux files?</p>
+      <div class="opts">
+        <button class="opt">The recovery status, which said Failed</button>
+        <button class="opt" data-ok>A checksum check against a manifest made before the attack</button>
+        <button class="opt">The vault, which reported the empty files</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In an earlier test the recovery reported Succeeded, and the checksum check found 13,902 files that differed (V7, test 10). A status is not proof that the data is whole.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> Say what you tested, and when. On 10 November, in our lab, Linux, Windows and SQL came back whole. In October, Linux had a gap and the VM did not come back.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>How many files matched on the Windows server on 10 November in our lab?</p>
+      <div class="opts">
+        <button class="opt">498 of 503</button>
+        <button class="opt" data-ok>503 of 503, with 0 bad and 0 missing</button>
+        <button class="opt">Not checked</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>SHA-256 against the clean list: 503 match, 0 bad, 0 missing.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>In October, how did the Linux check come out?</p>
+      <div class="opts">
+        <button class="opt">All 181,552 matched</button>
+        <button class="opt" data-ok>167,639 matched; 13,913 hard-linked files came back empty</button>
+        <button class="opt">Nothing came back</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>ISS-143, known gap. The 10 November run checked 503 files, which matched.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>What happened to the OpenShift VM in October?</p>
+      <div class="opts">
+        <button class="opt">It came back, with a gap</button>
+        <button class="opt" data-ok>Its retrieve failed on a new cluster (ISS-190)</button>
+        <button class="opt">It was not backed up</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The snapshot failed during the retrieve on a new cluster. On its own cluster the VM did restore from the vault (V4).</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can say what came back</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>On 10 November, in our lab, Linux, Windows and SQL came back whole from the vault alone. In October, 13,913 hard-linked Linux files came back empty and the OpenShift VM did not come back on a new cluster. Check against a record made before the attack, not against the status.</p></div>
+    <div><span class="label">When you have access to the Beta</span><p>Tutorial V7b holds both results tables. Tutorial V5 restores from the vault with the cluster that wrote the archive.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

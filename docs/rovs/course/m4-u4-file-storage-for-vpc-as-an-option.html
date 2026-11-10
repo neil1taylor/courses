@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>File Storage for VPC as an option · ROVS course</title>
+<meta name="description" content="Course unit 4.4: compare ODF with File Storage for VPC, choose one for a stated need, and find the setup faults that leave the add-on Ready but unable to make a disk. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m4-u4">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 4 · Storage</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 4 of Module 4</span>
+      <h1>File Storage for VPC as an option</h1>
+      <p class="lead">By the end you can say how File Storage for VPC differs from ODF, choose between them for a stated need, and spot the setup faults that leave its add-on Ready but unable to make a disk.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: two storage choices side by side. The left one is a worker holding drives. The right one is a cloud shape linked to a worker by a line."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[20,30,150,110],"heavy":true},
+          {"box":[50,60,90,40],"fill":"hatch","tone":"mark"},
+          {"text":"local drives","at":[36,170],"hand":true,"size":18,"tone":"muted"},
+          {"box":[250,30,150,50],"heavy":true,"title":"worker"},
+          {"line":[325,84,325,124],"arrow":true,"tone":"mark"},
+          {"box":[250,126,150,50],"heavy":true,"tone":"mark","title":"file share"},
+          {"text":"over the network","at":[262,204],"hand":true,"size":18,"tone":"muted"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its cluster order form asks for storage, and one of the two choices is not ODF. This unit says what the other choice is, and what to check before you rely on it.</p>
+    </div>
+  </div>
+  <p class="small">Every command, output and fact in this unit comes from real runs on test clusters, recorded in tutorial chapter 103, apart from the order-form fact from chapter 35 and the review question, which repeats one from unit 1.3.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Two ways to store a VM disk</h2>
+  <p class="lead">On ROVS you pick the storage option when you order the cluster, and at least one of ODF or File Storage for VPC (Beta) is mandatory. VPC Block Storage is not deployed or used on ROVS at all.</p>
+  <div class="pair">
+    <div>
+      <svg class="sketch" role="img" aria-label="Hand-drawn comparison in two columns. ODF: backing is local NVMe on the workers, performance is high, best for production workloads. File Storage for VPC: backing is network-attached file storage, performance is moderate, best for non-production, dev and test."
+        data-drawing='{"w":560,"h":272,"shapes":[
+          {"text":"ODF","at":[12,26],"size":22,"bold":true},
+          {"text":"File Storage for VPC","at":[290,26],"size":22,"bold":true,"tone":"mark"},
+          {"box":[10,40,260,60],"title":"Backing","detail":"Local NVMe on the workers"},
+          {"box":[290,40,260,60],"tone":"mark","title":"Backing","detail":"Network-attached file storage"},
+          {"box":[10,116,260,60],"title":"Performance","detail":"High (local disks)"},
+          {"box":[290,116,260,60],"tone":"mark","title":"Performance","detail":"Moderate (network storage)"},
+          {"box":[10,192,260,60],"title":"Best for","detail":"Production workloads"},
+          {"box":[290,192,260,60],"tone":"mark","title":"Best for","detail":"Non-production, dev, test"}]}'></svg>
+    </div>
+    <div>
+      <p class="hand tilt"><b>From vSphere:</b> ODF is closest to vSAN. File Storage for VPC is closest to an NFS datastore. The trade-offs are the ones you know from choosing NFS over vSAN.</p>
+      <div class="q">
+        <p>Which statement about File Storage for VPC is true?</p>
+        <div class="opts">
+          <button class="opt">It uses the workers&apos; local NVMe drives</button>
+          <button class="opt" data-ok>It is network-attached file storage, and live migration works with the storage profile configured correctly</button>
+          <button class="opt">It cannot live migrate</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>It is network-attached file storage in place of local NVMe. IBM labels it Beta and says it suits non-production, development, test and lower-I/O workloads. Live migration is supported once the CDI storage profile is set up, which step 4 shows.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Design it</span>
+  <h2>ODF or File Storage for Northgate?</h2>
+  <p class="lead">Four Northgate needs. Pick an answer for each, then read the chapter&apos;s answer.</p>
+  <div class="pair">
+    <div class="q">
+      <p>Production VMs that need the highest I/O.</p>
+      <div class="opts">
+        <button class="opt" data-ok>ODF</button>
+        <button class="opt">File Storage for VPC</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>ODF. Its performance is high because the disks are local. File Storage for VPC is moderate, because it is network storage. Remember the price of local disks: IBM warns of data unavailability when a node fails.</p></details>
+    </div>
+    <div class="q">
+      <p>A development and test environment with light I/O.</p>
+      <div class="opts">
+        <button class="opt">ODF</button>
+        <button class="opt" data-ok>File Storage for VPC</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>File Storage for VPC is best suited for non-production, development, test and lower-I/O workloads.</p></details>
+    </div>
+    <div class="q">
+      <p>Northgate needs snapshots on File Storage for VPC. IBM&apos;s pages disagree about whether they are supported. What do you do?</p>
+      <div class="opts">
+        <button class="opt">Trust the comparison table: not supported</button>
+        <button class="opt">Assume they work, because snapshot classes exist</button>
+        <button class="opt" data-ok>Check your own cluster, then get the support position in writing</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">A class that exists is not support.</span><p>One IBM page says snapshots and cloning are not supported. Another says only that support differs from ODF. On a cluster with both storage options and the right IAM role, a VM snapshot, a restore and a CDI clone all booted. For one disk the snapshot of the running VM was ready in 53 s, the restore of the stopped VM took 85 s and the clone 202 s. IBM labels snapshots on this storage Beta. Check with <code>oc get volumesnapshotclass</code>.</p></details>
+    </div>
+    <div class="q">
+      <p>Can one cluster carry both ODF and File Storage for VPC?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Yes</button>
+        <button class="opt">No, the order form allows one</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>They are not exclusive. One test cluster had four ODF classes and seventeen File Storage classes side by side, with <code>ocs-storagecluster-ceph-rbd-virtualization</code> still the default virtualization class.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>Ready, and nothing provisions</h2>
+  <p class="lead">A cluster has the File Storage add-on. It reports <code>normal</code> and <code>Addon Ready</code>, and all the storage classes exist. A plain PVC with no VM stays <code>Pending</code>. The driver&apos;s log says:</p>
+  <pre class="def" aria-label="The driver error">Error fetching iam token using trusted profile
+BackendError: IAM 'get token' error, status code 400 received from
+'https://private.iam.cloud.ibm.com/identity/token':
+Selected trusted profile not eligible.</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The cluster reports a trusted profile, set at create time. What is missing?</p>
+      <div class="opts">
+        <button class="opt">A second trusted profile</button>
+        <button class="opt" data-ok>A link for each of the two driver service accounts</button>
+        <button class="opt">A restart of the driver pods</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">A profile says what; a link says who.</span><p>The profile had a policy and no link, so nothing could assume it. <code>ibmcloud iam trusted-profile-links</code> returning &quot;No Trusted Profile Links found&quot; is the symptom. One link for <code>ibm-vpc-file-controller-sa</code> and one for <code>ibm-vpc-file-node-sa</code>, both in <code>kube-system</code>, cleared the error at once with no pod restart. The add-on checks neither, so test with a throwaway PVC.</p></details>
+    </div>
+    <div class="q">
+      <p>With the links in, the error becomes <code>shares_access_forbidden</code>. What do you grant?</p>
+      <div class="opts">
+        <button class="opt">More access to shares, such as Manager</button>
+        <button class="opt" data-ok>Viewer on the resource group itself, and Editor plus Share Snapshot Operator on <code>is</code></button>
+        <button class="opt">Nothing: wait for the token to refresh</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The error names the wrong thing. With the driver&apos;s log turned up it failed earlier, listing subnets: <code>not_authorized</code>. That set of roles let a PVC reach <code>Bound</code> in about 40 seconds. IAM rejects Manager, Writer and Reader for the share resource type with &quot;Invalid role(s)&quot;. <code>Editor</code> alone makes volumes but not snapshots.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> The CSI controller caches its IAM token, so a permission change is tested against permissions from up to an hour ago. Restart the driver before you test: <code>oc delete pod -n kube-system -l app=ibm-vpc-file-csi-driver</code>. A permission test that passes without a restart tells you nothing.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Explore the parts</span>
+  <h2>Tell CDI what the storage supports</h2>
+  <p class="lead">CDI does not recognise File Storage for VPC properties on its own. Without this step, VM disk imports fail or bind with the wrong access mode. Select a part to see what it does. You can also click a line.</p>
+  <div class="explorer" data-start="find"
+    data-map='{"find":[[1,2]],"patch":[[3,5]],"verify":[[7,7]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of three boxes in order: find the storage profiles, patch them, verify. Arrows join them."
+          data-drawing='{"w":560,"h":120,"shapes":[
+            {"box":[10,20,160,70],"part":"find","title":"1 Find","detail":"File profiles"},
+            {"line":[172,55,198,55],"arrow":true},
+            {"box":[200,20,160,70],"part":"patch","title":"2 Patch","detail":"RWX, Filesystem"},
+            {"line":[362,55,388,55],"arrow":true},
+            {"box":[390,20,160,70],"part":"verify","title":"3 Verify","detail":"read it back"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="find">
+          <h3>Find</h3>
+          <p>The loop picks every storage profile whose provisioner is <code>vpc.file.csi.ibm.io</code>, so it covers every File Storage class.</p>
+        </div>
+        <div class="part-info" data-part="patch">
+          <h3>Patch</h3>
+          <p>Sets <code>ReadWriteMany</code> with <code>Filesystem</code> on each profile.</p>
+          <p class="watch"><b>Watch for this.</b> VM disks on File Storage for VPC are Filesystem, not Block. That is the opposite of the ODF advice, and it is a property of the storage: network file storage cannot present a raw RBD block device.</p>
+        </div>
+        <div class="part-info" data-part="verify">
+          <h3>Verify</h3>
+          <p>Check that each profile reports access modes that include <code>ReadWriteMany</code> and <code>volumeMode: Filesystem</code>.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="Patch every File Storage profile for CDI">for sp in $(oc get storageprofile.cdi.kubevirt.io -o json \
+  | jq -r '.items[] | select(.status.provisioner == "vpc.file.csi.ibm.io") | .metadata.name'); do
+  oc patch storageprofile.cdi.kubevirt.io "$sp" --type=merge \
+    -p '{"spec":{"claimPropertySets":[{"accessModes":["ReadWriteMany"],"volumeMode":"Filesystem"}]}}'
+done
+
+oc get storageprofile.cdi.kubevirt.io -o yaml | grep -A4 claimPropertySets</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which volume mode do VM disks on File Storage for VPC use?</p>
+      <div class="opts">
+        <button class="opt">Block, as on ODF</button>
+        <button class="opt" data-ok>Filesystem</button>
+        <button class="opt">Either, it makes no difference</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Filesystem, with ReadWriteMany. Network file storage cannot present a raw RBD block device.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A VM snapshot on File Storage for VPC times out. What do you check first?</p>
+      <div class="opts">
+        <button class="opt">That the VM has more memory</button>
+        <button class="opt" data-ok>That the driver&apos;s trusted profile has the Share Snapshot Operator role</button>
+        <button class="opt">That the VM is on ODF</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The first snapshot attempt on the test cluster timed out for this reason. Check with <code>ibmcloud iam trusted-profile-policies</code> on the cluster&apos;s trusted profile. VPC also allows only one snapshot a minute for each share.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You clone the disks of a running VM on File Storage. The clone stays in <code>SnapshotForSmartCloneInProgress</code>. Why?</p>
+      <div class="opts">
+        <button class="opt">The clone needs a Block disk</button>
+        <button class="opt" data-ok>The source VM is running. Stop it before you clone its disks.</button>
+        <button class="opt">The clone needs ODF</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The CDI log said <code>CloneSourceInUse</code>. After the source VM was stopped, both clones finished in 215 s in the two-disk test.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 1.3.</b> A three-worker cluster has one worker in planned maintenance. Another worker then fails. What happens to the VMs whose data was on those copies?</p>
+      <div class="opts">
+        <button class="opt">They fail over to the third worker</button>
+        <button class="opt" data-ok>They hang until a copy comes back</button>
+        <button class="opt">They live-migrate to the third worker</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">They hang. They do not fail over.</span><p>With one copy left, ODF&apos;s default <code>min_size=2</code> blocks I/O rather than risk the data. Build to three and you can survive a failure or a maintenance window, but not both at once. This is not the failure a VMware admin expects.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can weigh the two options</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>ODF is local and fast. File Storage for VPC is network storage for lighter work, and Beta. Prove it with a throwaway PVC. Links first, then roles, then the CDI profile.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 103, Use File Storage for VPC for VM disks on ROVS, has every command, the IAM setup and the snapshot and clone tests.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

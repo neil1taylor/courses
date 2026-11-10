@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Profiles and images · VPC course</title>
+<meta name="description" content="Course unit 3.1: read a VPC server profile name, list profiles and stock images, and check which profile an image accepts. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m3-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPC course</a> <span>·</span> Module 3 · Servers</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 3</span>
+      <h1>Profiles and images</h1>
+      <p class="lead">By the end you can read a profile name, say what it gives a server, and check which image and profile go together.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a profile and an image, with arrows into one server."
+        data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,20,120,60],"heavy":true,"title":"Profile","detail":"bx2-2x8"},{"box":[10,110,120,60],"heavy":true,"title":"Image","detail":"ibm-ubuntu"},{"line":[140,50,250,95],"arrow":true,"tone":"mark"},{"line":[140,140,250,110],"arrow":true,"tone":"mark"},{"box":[260,70,150,70],"fill":"hatch","tone":"mark","title":"Server"},{"text":"size + speed","at":[150,28],"hand":true,"tone":"muted","size":16},{"text":"operating system","at":[140,184],"hand":true,"tone":"muted","size":16}]}'></svg>
+      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the commands and output are real, recorded in tutorial chapters 30 and 32. In IBM Cloud VPC a server is made from a profile, which sets its size, and an image, which holds its operating system.</p>
+    </div>
+  </div>
+  <p class="small">Every command and line of output in this unit comes from real runs in a test account, recorded in tutorial chapter 30.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Read one profile</h2>
+  <p class="lead">A profile is the size and capabilities of a server. Select a part of the drawing to see what it means and which lines show it. You can also click a line.</p>
+  <div class="explorer" data-start="family"
+    data-map='{"family":[[1,4],[6,6]],"size":[[7,9],[11,13]],"speed":[[16,17]],"nics":[[20,23]],"zones":[[25,28],[30,30]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of what a profile fixes: family and architecture, size, speed, number of interfaces, zones and status."
+        data-drawing='{"w":560,"h":330,"shapes":[{"box":[20,10,520,66],"part":"family","title":"Family and architecture","detail":"bx2-2x8 \u00b7 balanced \u00b7 amd64"},{"box":[20,90,250,66],"part":"size","title":"Size","detail":"2 vCPUs \u00b7 8 GiB"},{"box":[290,90,250,66],"part":"speed","title":"Speed","detail":"4000 Mbps"},{"box":[20,170,250,66],"part":"nics","title":"Interfaces","detail":"1 to 5"},{"box":[290,170,250,66],"part":"zones","title":"Zones and status","detail":"3 zones \u00b7 current"},{"text":"one profile, read with: ibmcloud is instance-profile","at":[40,276],"hand":true,"tone":"mark","size":17}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="family">
+          <h3>Family and architecture</h3>
+          <p>The name <code>bx2-2x8</code> is a code. IBM's rules: <code>b</code> is the family (balanced), <code>x</code> is the CPU architecture (x86-64) and <code>2</code> is the generation. A <code>d</code> as the fourth character would mean a defined amount of instance storage comes with the server.</p>
+          <p class="hand tilt"><b>From vSphere:</b> a vSphere VM maps roughly to a server, which is made from an image and a profile.</p>
+          <p class="watch"><b>Watch for this.</b> There are ten families. The first letter tells you which: <code>b</code> balanced, <code>c</code> compute, <code>m</code> memory.</p>
+        </div>
+        <div class="part-info" data-part="size">
+          <h3>Size</h3>
+          <p>After the dash, vCPUs come first, then memory in GiB. <code>2x8</code> is 2 vCPUs and 8 GiB.</p>
+          <p class="watch"><b>Watch for this.</b> A third generation profile can be resized to a second generation profile, and the reverse.</p>
+        </div>
+        <div class="part-info" data-part="speed">
+          <h3>Speed</h3>
+          <p>The profile caps total bandwidth at 4000 Mbps. IBM splits that between storage and network: for <code>bx2-2x8</code>, 1 Gbps for storage and 3 Gbps for the network. Both parts must be at least 500 MBps.</p>
+          <p class="watch"><b>Watch for this.</b> The <code>Volume bandwidth</code> line shows <code>-</code> here. The server's own output shows the split: volume 1000, network 3000.</p>
+        </div>
+        <div class="part-info" data-part="nics">
+          <h3>Interfaces</h3>
+          <p>The NIC and NAC lines both show one to five for this profile.</p>
+          <p class="watch"><b>Watch for this.</b> The limit grows with size. In the listing, <code>bx2-128x512</code> allows one to fifteen.</p>
+        </div>
+        <div class="part-info" data-part="zones">
+          <h3>Zones and status</h3>
+          <p>The profile is offered in all three zones of us-east. Its status is <code>current</code>.</p>
+          <p class="watch"><b>Watch for this.</b> IBM's tables show fourth generation profiles (<code>bx4</code>) in the Dallas region. us-east lists none of them.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The profile bx2-2x8 as ibmcloud is instance-profile prints it, trimmed">Name                               bx2-2x8
+Architecture                       amd64
+vCPU Manufacturer                  Type    Value
+                                   fixed   intel
+
+Family                             balanced
+vCPUs                              2
+Threads per core                   Default   Values
+                                   2         2
+
+Memory(GiB)                        8
+GPU                                Model   Manufacturer   Count   Memory(GiB)
+                                   -       -              -       -
+
+Numa Count                         -
+Bandwidth(Mbps)                    4000
+Volume bandwidth(Mbps)             -
+Instance Storage Disks             Quantity   Size   Supported interface types
+
+Min NIC Count                      1
+Max NIC Count                      5
+Min NAC Count                      1
+Max NAC Count                      5
+...
+Zones                              Name        Href
+                                   us-east-1   https://us-east.iaas.cloud.ibm.com/v1/regions/us-east/us-east-1
+                                   us-east-2   https://us-east.iaas.cloud.ibm.com/v1/regions/us-east/us-east-2
+                                   us-east-3   https://us-east.iaas.cloud.ibm.com/v1/regions/us-east/us-east-3
+
+Status                             current
+...</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>List profiles and images, then check they fit</h2>
+  <p class="lead">Run each command in turn. The output is what the test account returned, with the long rows trimmed.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <p class="pre"># the second generation profiles, trimmed to four rows</p>
+          <pre class="in">ibmcloud is instance-profiles | grep -E '^(bx2|cx2|mx2)-'</pre>
+          <pre class="out">bx2-2x8                 amd64   4000              1000                  -      -             1-5    1-5    current   divided                   100               standard             us-east-1,us-east-2,us-east-3   2
+cx2-2x4                 amd64   4000              1000                  -      -             1-5    1-5    current   divided                   100               standard             us-east-1,us-east-2,us-east-3   2
+mx2-2x16                amd64   4000              1000                  -      -             1-5    1-5    current   divided                   100               standard             us-east-1,us-east-2,us-east-3   2
+bx2-128x512             amd64   80000             20000                 -      -             1-15   1-15   current   divided                   100               standard             us-east-1,us-east-2,us-east-3   2</pre>
+          <p class="hand note">Same 2 vCPUs, three memory sizes: 4, 8 and 16 GiB.</p>
+          <p class="hand note">The largest balanced second generation profile listed has 20000 Mbps for volumes and 1 to 15 interfaces.</p>
+        </div>
+        <div class="cmd">
+          <p class="pre"># stock images, trimmed to four rows (IDs shortened)</p>
+          <pre class="in">ibmcloud is images --visibility public | grep -i -E 'ubuntu|debian|rocky'</pre>
+          <pre class="out">r014-…-45a4   ibm-rocky-linux-9-7-minimal-amd64-6                 available   public       Default          cloud_init         811f…8fa6
+r014-…-8003   ibm-ubuntu-24-04-5-minimal-amd64-2                  available   public       Default          cloud_init         811f…8fa6
+r014-…-fd5c   ibm-ubuntu-26-04-1-minimal-amd64-2                  available   public       Default          cloud_init         811f…8fa6
+r014-…-41b0   ibm-ubuntu-22-04-5-minimal-s390x-9                  available   public       Default          cloud_init         811f…8fa6</pre>
+          <p class="hand note">Stock image names start with <code>ibm-</code> and end with the architecture and a build number.</p>
+          <p class="hand note">Check the status column: a deprecated image does not include the most current support.</p>
+        </div>
+        <div class="q">
+          <p>Before you run the next command: the Ubuntu image is on screen. Will every second generation profile appear in its list of accepted profiles?</p>
+          <div class="opts">
+            <button class="opt">Yes, every profile works with every image</button>
+            <button class="opt" data-ok>No, only some profiles appear, and there are two reasons</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>A profile can be absent from the list for two reasons: the server has more network interfaces than the profile allows, or the image has an allowed-use expression that does not fit the profile. In the recorded run all 27 second generation profiles appeared.</p></details>
+        </div>
+        <div class="cmd">
+          <p class="pre"># profiles the image accepts, first three and the last</p>
+          <pre class="in">ibmcloud is image-instance-profiles &lt;image-name&gt; | awk '{print $2}' | grep -E '^(bx2|cx2|mx2)-'</pre>
+          <pre class="out">bx2-128x512
+bx2-16x64
+bx2-2x8
+...
+mx2-96x768</pre>
+          <p class="hand note"><code>bx2-2x8</code> is accepted, so the lab can pair it with the Ubuntu image.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Predict</span>
+  <h2>Pick an answer, then see what the chapter says</h2>
+  <div class="pair">
+    <div class="q">
+      <p>Northgate sees the profile name <code>bx2d-4x16</code>. What does the name say?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Balanced family, x86-64, second generation, with instance storage, 4 vCPUs and 16 GiB</button>
+        <button class="opt">Balanced family, 4 GiB of memory and 16 vCPUs</button>
+        <button class="opt">Compute family, with a confidential computing option</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Read it left to right.</span><p>IBM's rules for this example: <code>b</code> balanced, <code>x</code> x86-64, <code>2</code> second generation, <code>d</code> a defined amount of instance storage, then 4 vCPUs and 16 GiB after the dash. The vCPUs always come first.</p></details>
+    </div>
+    <div class="q">
+      <p>The list holds <code>ibm-ubuntu-22-04-5-minimal-amd64-20</code> and <code>ibm-ubuntu-24-04-5-minimal-amd64-2</code>. A script picks the first because its build number, 20, is larger. Is that the newer image?</p>
+      <div class="opts">
+        <button class="opt">Yes, 20 is larger than 2</button>
+        <button class="opt" data-ok>No, build numbers compare only for the same family, version and type</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Different versions.</span><p>For two images with the same family, version and type, the larger build number is newer. These two have different versions. IBM also says the naming convention can change and names are not meant to be parsed in scripts: for scripts, use <code>ibmcloud is images --output json</code>.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Design it</span>
+  <h2>Match the tier to the family</h2>
+  <div>
+    <div class="q">
+      <p>Design it. Northgate's customer-facing web servers take moderate to high web traffic. Which family does IBM say suits that?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Compute, <code>c</code></button>
+        <button class="opt">Memory, <code>m</code></button>
+        <button class="opt">Balanced, <code>b</code></button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says Compute suits moderate to high web traffic, production batch processing and front-end web servers. Fewer GiB of memory per vCPU than Balanced.</p></details>
+    </div>
+    <div class="q">
+      <p>Design it. Northgate's order system is an in-memory cache. Which family?</p>
+      <div class="opts">
+        <button class="opt">Compute, <code>c</code></button>
+        <button class="opt" data-ok>Memory, <code>m</code></button>
+        <button class="opt">Balanced, <code>b</code></button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says Memory suits memory caching, intensive database applications and in-memory analytics. More GiB of memory per vCPU than Balanced.</p></details>
+    </div>
+    <div class="q">
+      <p>Design it. A midsize database with moderate traffic, and the team does not yet know the load. Which family?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Balanced, <code>b</code></button>
+        <button class="opt">Compute, <code>c</code></button>
+        <button class="opt">Memory, <code>m</code></button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says Balanced suits midsize databases and common cloud applications with moderate traffic. The tutorial series keeps <code>bx2-2x8</code> for its web and app servers: that is a choice for the lab, not IBM's advice.</p></details>
+    </div>
+    <p class="hand tilt">A <code>d</code> in the name means instance storage: temporary disks on the host that can be lost. Use it for scratch space, not for data you keep.</p>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><b>Review from unit 2.1.</b> IBM reserves five addresses in every subnet: the first four and the last. How many addresses does a <code>/24</code> subnet leave for resources?</p>
+      <div class="opts">
+        <button class="opt">256</button>
+        <button class="opt" data-ok>251</button>
+        <button class="opt">254</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A <code>/24</code> has 256 addresses. IBM reserves five, so 251 are left for resources.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Which part of the profile name <code>cx2d-8x16</code> tells you it comes with instance storage?</p>
+      <div class="opts">
+        <button class="opt">The <code>c</code> at the start</button>
+        <button class="opt" data-ok>The <code>d</code> after the generation number</button>
+        <button class="opt">The <code>8x16</code> at the end</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The fourth character <code>d</code> means a defined amount of instance storage comes with the server. Instance storage is temporary.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A custom image is shown as <code>obsolete</code>. What can you do with it?</p>
+      <div class="opts">
+        <button class="opt">Create servers from it, at a lower price</button>
+        <button class="opt">Create servers from it, but it keeps billing</button>
+        <button class="opt" data-ok>You cannot create a server from it, and it is still billed until deleted</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>An image can be <code>available</code>, <code>deprecated</code> or <code>obsolete</code>. A deprecated or obsolete image is still billed until it is deleted, and you cannot create a server from an obsolete image.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can read a profile now</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Family letter first, then architecture and generation, then <code>d</code> for instance storage, then vCPUs and GiB. Not every profile fits every image: check with <code>image-instance-profiles</code>.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 30, Choosing a profile and a stock image for a VPC server, runs everything you just saw. Chapter 32, custom images, covers images you make yourself.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

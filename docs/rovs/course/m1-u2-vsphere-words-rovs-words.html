@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>vSphere words, ROVS words · ROVS course</title>
+<meta name="description" content="Course unit 1.2: match the vSphere words you know to their ROVS words, read the shape of a resource definition, and see why OpenShift works by declaring desired state. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m1-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 1 · ROVS for a VMware admin</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 1</span>
+      <h1>vSphere words, ROVS words</h1>
+      <p class="lead">By the end you can match the vSphere words you use every day to their ROVS words, read the shape of any resource definition, and explain why OpenShift works by declaring what you want.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: the word vCenter on the left, an arrow, and the words API server on the right."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[10,70,150,60],"heavy":true,"title":"vCenter"},
+          {"line":[178,100,240,100],"arrow":true,"tone":"mark"},
+          {"box":[258,70,150,60],"heavy":true,"tone":"mark","title":"API server"},
+          {"text":"same job, new word","at":[150,176],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the words and definitions in this unit are real. Its admins know vSphere well. They need the new words fast.</p>
+    </div>
+  </div>
+  <p class="small">Every comparison in this unit is a rough mapping for orientation, not an IBM statement, as chapters 01 and 03 say. It comes from those chapters.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Match the words</span>
+  <h2>Nine words you already know</h2>
+  <p class="lead">Each vSphere word on the left has a close ROVS word on the right. Most matches are close, not exact.</p>
+  <div class="cols">
+    <svg class="sketch" role="img" aria-label="Hand-drawn two-column diagram. vCenter Server matches API server and console. ESXi host matches bare metal worker node. Resource pool and VM folder match namespace. Datastore matches StorageClass. VMDK matches PVC. VM matches VirtualMachine. VMware Tools matches QEMU Guest Agent. vMotion matches live migration. Maintenance mode matches cordon and drain."
+      data-drawing='{"w":580,"h":356,"shapes":[
+        {"box":[10,6,250,34],"title":"vCenter Server"},{"line":[270,23,330,23],"arrow":true,"tone":"mark"},{"box":[340,6,230,34],"title":"API server + console","tone":"mark"},
+        {"box":[10,44,250,34],"title":"ESXi host"},{"line":[270,61,330,61],"arrow":true,"tone":"mark"},{"box":[340,44,230,34],"title":"Bare metal worker node","tone":"mark"},
+        {"box":[10,82,250,34],"title":"Resource pool / VM folder"},{"line":[270,99,330,99],"arrow":true,"tone":"mark"},{"box":[340,82,230,34],"title":"Namespace","tone":"mark"},
+        {"box":[10,120,250,34],"title":"Datastore"},{"line":[270,137,330,137],"arrow":true,"tone":"mark"},{"box":[340,120,230,34],"title":"StorageClass","tone":"mark"},
+        {"box":[10,158,250,34],"title":"VMDK"},{"line":[270,175,330,175],"arrow":true,"tone":"mark"},{"box":[340,158,230,34],"title":"PVC","tone":"mark"},
+        {"box":[10,196,250,34],"title":"VM"},{"line":[270,213,330,213],"arrow":true,"tone":"mark"},{"box":[340,196,230,34],"title":"VirtualMachine","tone":"mark"},
+        {"box":[10,234,250,34],"title":"VMware Tools"},{"line":[270,251,330,251],"arrow":true,"tone":"mark"},{"box":[340,234,230,34],"title":"QEMU Guest Agent","tone":"mark"},
+        {"box":[10,272,250,34],"title":"vMotion"},{"line":[270,289,330,289],"arrow":true,"tone":"mark"},{"box":[340,272,230,34],"title":"Live migration","tone":"mark"},
+        {"box":[10,310,250,34],"title":"Maintenance mode"},{"line":[270,327,330,327],"arrow":true,"tone":"mark"},{"box":[340,310,230,34],"title":"cordon + drain","tone":"mark"}]}'></svg>
+    <div style="display:grid;gap:14px">
+      <p><b>PVC</b> is a PersistentVolumeClaim: a request for storage from a StorageClass. Each VM disk is backed by one. A <b>namespace</b> groups resources; OpenShift calls it a project.</p>
+      <p class="hand tilt"><b>From vSphere:</b> there is no single vCenter VM. The API server is the control point, and the web console gives you the GUI.</p>
+      <p class="watch"><b>Watch for this.</b> Host Profile has no match on ROVS. The workers are IBM's, so no MachineConfigPool exists. Host configuration is IBM's, reached through <code>ibmcloud ks worker update|replace|reload</code>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Explore the parts</span>
+  <h2>Every resource has the same shape</h2>
+  <p class="lead">In vSphere you click through a wizard. On OpenShift you write a definition in YAML, and the definition is the source of truth. Select a part to see what it does, or click a line.</p>
+  <div class="explorer" data-start="spec"
+    data-map='{"kind":[[1,2]],"where":[[3,5]],"labels":[[6,8],[12,14]],"spec":[[9,11],[15,29]],"status":[[30,32]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of the five parts of a resource definition, from the top: type, name and namespace, labels, spec for the desired state, and status for the current state."
+          data-drawing='{"w":420,"h":350,"shapes":[
+            {"box":[10,8,330,60],"part":"kind","title":"Type","detail":"apiVersion and kind"},
+            {"box":[10,78,330,60],"part":"where","title":"Name and namespace","detail":"metadata"},
+            {"box":[10,148,330,60],"part":"labels","title":"Labels","detail":"key-value pairs"},
+            {"box":[10,218,330,60],"part":"spec","title":"spec","detail":"desired state: you write it"},
+            {"box":[10,288,330,56],"part":"status","title":"status","detail":"current state: the system writes it"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="kind">
+          <h3>Type</h3>
+          <p><code>apiVersion</code> and <code>kind</code> say what you are creating, a VM rather than a template or a network. <code>VirtualMachine</code> is a type that the OpenShift Virtualization operator adds, through a custom resource definition (CRD).</p>
+        </div>
+        <div class="part-info" data-part="where">
+          <h3>Name and namespace</h3>
+          <p>The name, and the namespace the resource lives in. Every resource you create lives in a namespace.</p>
+          <p class="hand tilt"><b>From vSphere:</b> roughly a resource pool plus a VM folder.</p>
+          <p class="watch"><b>Watch for this.</b> A namespace scopes names, RBAC and quotas. It does not isolate network traffic by default: a pod accepts connections from any source until a NetworkPolicy selects it.</p>
+        </div>
+        <div class="part-info" data-part="labels">
+          <h3>Labels</h3>
+          <p>Key-value pairs. A Service, a NetworkPolicy or a node selector finds its targets by label.</p>
+          <p class="hand tilt"><b>From vSphere:</b> roughly vCenter tags and categories. In VMware, tags are mostly for organisation and reporting. In Kubernetes, labels are the main way resources are linked together.</p>
+        </div>
+        <div class="part-info" data-part="spec">
+          <h3>spec</h3>
+          <p>The desired state: what you want. Here, a VM that should always be running, with a virtio boot disk, 4Gi of memory and 2 CPUs requested.</p>
+          <p class="watch"><b>Watch for this.</b> Edit a running VM's spec and nothing changes live. KubeVirt sets a <code>RestartRequired</code> condition and the change applies at the next restart.</p>
+        </div>
+        <div class="part-info" data-part="status">
+          <h3>status</h3>
+          <p>The current state, written by the controller. You read it and never write it.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="Anatomy of a Kubernetes resource, from chapter 01">apiVersion: kubevirt.io/v1          # API group and version
+kind: VirtualMachine                 # Resource type
+metadata:
+  name: my-first-vm                  # Resource name
+  namespace: my-vms                  # Which namespace it belongs to
+  labels:                            # Key-value pairs for organisation
+    app: web-server
+    env: dev
+spec:                                # Desired state -- what you want
+  runStrategy: Always
+  template:
+    metadata:
+      labels:
+        app: web-server
+    spec:
+      domain:
+        resources:
+          requests:
+            memory: 4Gi
+            cpu: "2"
+        devices:
+          disks:
+            - name: boot-disk
+              disk:
+                bus: virtio
+      volumes:
+        - name: boot-disk
+          persistentVolumeClaim:
+            claimName: my-vm-boot
+status:                              # Current state -- set by the system
+  ready: true
+  printableStatus: Running
+</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Predict</span>
+  <h2>Which command is it?</h2>
+  <p class="lead">You know the PowerCLI commands. Pick the OpenShift one, then see the pair. <code>oc</code> is the general cluster tool; <code>virtctl</code> does the VM-specific work.</p>
+  <div>
+    <div class="q">
+      <p>In PowerCLI you run <code>Get-VM</code>. What lists every VM on the cluster?</p>
+      <div class="opts">
+        <button class="opt" data-ok><code>oc get virtualmachines -A</code></button>
+        <button class="opt"><code>oc get nodes -o wide</code></button>
+        <button class="opt"><code>virtctl start my-vm</code></button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Get-VM, then oc get</span><p><code>Get-VM</code> pairs with <code>oc get virtualmachines -A</code>. The <code>-A</code> means all namespaces. <code>oc get nodes -o wide</code> is <code>Get-VMHost</code>.</p></details>
+    </div>
+    <div class="q">
+      <p>You run <code>Start-VM -VM "my-vm"</code> today. What starts it on OpenShift?</p>
+      <div class="opts">
+        <button class="opt"><code>oc apply -f my-vm.yaml</code></button>
+        <button class="opt" data-ok><code>virtctl start my-vm</code></button>
+        <button class="opt"><code>oc adm cordon my-vm</code></button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Start-VM, then virtctl start</span><p><code>virtctl start my-vm</code> starts it. You can also set <code>spec.runStrategy</code> to <code>Always</code>, and the console has start and stop buttons.</p></details>
+    </div>
+    <div class="q">
+      <p>You put an ESXi host in maintenance mode with <code>Set-VMHost -State Maintenance</code>. What is the OpenShift way?</p>
+      <div class="opts">
+        <button class="opt"><code>virtctl migrate</code> on every VM</button>
+        <button class="opt" data-ok><code>oc adm cordon</code>, then <code>oc adm drain</code></button>
+        <button class="opt"><code>oc delete node</code></button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">cordon, then drain</span><p><code>cordon</code> stops new workloads landing on the node, like entering maintenance mode. <code>drain</code> evicts what is already there, live migrating VMs if possible. The full form is <code>oc adm drain &lt;node-name&gt; --ignore-daemonsets --delete-emptydir-data</code>.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · The reconciliation loop</span>
+  <h2>You declare. A controller makes it so.</h2>
+  <p class="lead">In vSphere each command happens once: power on, add a NIC, migrate. On OpenShift you declare the state you want, and controllers keep working until the platform matches.</p>
+  <div class="cols">
+    <div style="display:grid;gap:14px">
+      <svg class="sketch" role="img" aria-label="Hand-drawn loop of four boxes from top to bottom: you declare the desired state in YAML; the controller compares desired with actual state; the controller acts to create, update or delete; the actual state is the live platform. An arrow runs from the actual state back up to the comparison."
+        data-drawing='{"w":480,"h":300,"shapes":[
+          {"box":[10,8,300,52],"title":"You declare","detail":"the desired state, in YAML","tone":"mark"},
+          {"line":[160,60,160,84],"arrow":true},
+          {"box":[10,86,300,52],"title":"Controller compares","detail":"desired state with actual state"},
+          {"line":[160,138,160,162],"arrow":true},
+          {"box":[10,164,300,52],"title":"Controller acts","detail":"create, update or delete"},
+          {"line":[160,216,160,240],"arrow":true},
+          {"box":[10,242,300,52],"title":"Actual state","detail":"the live platform"},
+          {"line":[310,268,340,268]},{"line":[340,268,340,112]},{"line":[340,112,312,112],"arrow":true,"tone":"mark"},
+          {"text":"repeats, always","at":[352,190],"hand":true,"tone":"mark"}]}'></svg>
+      <p class="hand tilt"><b>From vSphere:</b> the nearest idea is a vSphere HA restart policy. In Kubernetes the same pattern covers everything: network configuration, storage and security policies too.</p>
+    </div>
+    <div>
+      <div class="q">
+        <p>Your VM has <code>runStrategy: Always</code>. You delete its virt-launcher pod. What happens?</p>
+        <div class="opts">
+          <button class="opt">The VM stays stopped until you start it</button>
+          <button class="opt" data-ok>The controller creates a new pod, because the desired state is still running</button>
+          <button class="opt">The VirtualMachine is deleted too</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><span class="hand">Desired state wins.</span><p>The controller sees the mismatch between running and not running, and creates a new pod. The same happens if the pod crashes or the node fails.</p></details>
+      </div>
+      <div class="q">
+        <p>How do you actually stop the VM and keep it stopped?</p>
+        <div class="opts">
+          <button class="opt">Delete its pod</button>
+          <button class="opt" data-ok>Change the desired state: set <code>runStrategy: Halted</code>, or delete the VirtualMachine</button>
+          <button class="opt">Edit <code>status</code> to Stopped</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>You stop it by changing the desired state. You never write <code>status</code>.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 1.1.</span> Which of these can you install from OperatorHub on a ROVS cluster?</p>
+      <div class="opts">
+        <button class="opt">NMState</button>
+        <button class="opt">Node Maintenance</button>
+        <button class="opt" data-ok>The Migration Toolkit for Virtualization</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Only OpenShift Virtualization, NMState and Node Maintenance are blocked. Every other operator installs normally, and you own its lifecycle.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Which vSphere idea is a namespace closest to?</p>
+      <div class="opts">
+        <button class="opt">A datastore</button>
+        <button class="opt" data-ok>A resource pool and a VM folder together</button>
+        <button class="opt">A vDS port group</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A namespace groups related resources, and you can apply resource limits and access controls to it. Resource quotas cap its CPU, memory and storage, like resource pool limits. The port group is a CUDN, which a later module covers.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>What backs a VM disk on ROVS, in the place of a VMDK?</p>
+      <div class="opts">
+        <button class="opt">A StorageClass</button>
+        <button class="opt" data-ok>A PersistentVolumeClaim, which requests storage from a StorageClass</button>
+        <button class="opt">A container image</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Each VM disk is backed by a PVC. A StorageClass is the type of storage the PVC asks for, so it is closer to a datastore.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You speak the new words</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Declare what you want in YAML; a controller makes it so. Stop a VM by changing its desired state. A running VM's edits wait for a restart.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 01, Learn OpenShift concepts for VMware admins on ROVS, runs these commands. Keep chapter 03, Map VMware concepts to OpenShift Virtualization on ROVS, open as a lookup.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

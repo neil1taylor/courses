@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What a VPC is, and who runs what · VPC course</title>
+<meta name="description" content="Course unit 1.1: say what a VPC is, what is regional and what is zonal, which parts IBM creates for you and which are yours. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m1-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPC course</a> <span>·</span> Module 1 · VPC for a VMware admin</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 1</span>
+      <h1>What a VPC is, and who runs what</h1>
+      <p class="lead">By the end you can say what a VPC is, which parts of it are regional and which are zonal, what IBM creates for you with a new VPC, and what you create yourself.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a box for IBM with the implicit router and the default security group, network ACL and route table inside, and a box for you with address prefixes, subnets and servers inside."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"text":"IBM creates","at":[22,32],"hand":true,"tone":"muted"},
+          {"box":[10,40,180,140],"heavy":true},
+          {"box":[24,54,152,36],"title":"implicit router"},
+          {"box":[24,98,152,36],"title":"3 default resources"},
+          {"text":"you create","at":[246,32],"hand":true,"tone":"mark"},
+          {"box":[234,40,176,140],"heavy":true,"tone":"mark"},
+          {"grid":[250,60,3,3,34,24,46,34],"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is moving its vSphere estate to IBM Cloud VPC. The company is made up; the output in this unit is real. Its admins ask first: what do we get when we create a VPC?</p>
+    </div>
+  </div>
+  <p class="small">Every line of output and every statement in this unit comes from tutorial chapters 13 and 20. The vSphere comparisons come from chapters 02 and 13.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · The shape</span>
+  <h2>A VPC is regional. A subnet is zonal.</h2>
+  <p class="lead">A VPC is a private network in one region. A region holds separate data centres called zones, and the VPC can span all of them.</p>
+  <div class="cols">
+    <div>
+      <svg class="sketch" role="img" aria-label="Hand-drawn diagram of one region holding one VPC. The VPC spans three zones. Each zone holds one subnet. A line under the subnets is labelled implicit router, no routes to add."
+        data-drawing='{"w":600,"h":300,"shapes":[
+          {"text":"region us-east","at":[16,22],"hand":true,"tone":"muted"},
+          {"box":[10,30,580,262],"dashed":true},
+          {"box":[24,52,552,224],"heavy":true,"title":"VPC","tone":"mark"},
+          {"box":[40,88,160,120],"title":"zone 1"},
+          {"box":[220,88,160,120],"title":"zone 2"},
+          {"box":[400,88,160,120],"title":"zone 3"},
+          {"box":[54,128,132,56],"title":"subnet","dashed":true},
+          {"box":[234,128,132,56],"title":"subnet","dashed":true},
+          {"box":[414,128,132,56],"title":"subnet","dashed":true},
+          {"line":[40,232,560,232],"tone":"mark"},
+          {"text":"implicit router: every subnet reaches every other","at":[130,262],"hand":true,"tone":"mark"}]}'></svg>
+    </div>
+    <div style="display:grid;gap:14px">
+      <p>A subnet is bound to one zone and cannot span zones or regions. A server also lives in one zone. Every subnet in a VPC reaches every other subnet through the implicit router, across zones, with no routes to add. IBM provides that router in every VPC.</p>
+      <p class="hand tilt"><b>From vSphere:</b> roughly, a region is a separate site with its own vCenter, a zone is a separate cluster with its own power and network, a VPC is an NSX tenant network, and a subnet is an NSX segment placed in one zone. These are rough mappings, not IBM statements.</p>
+      <p class="watch"><b>Watch for this.</b> IBM maps zone names such as <code>us-east-1</code> to physical zones separately for each account. The data centre behind a zone name can differ in your account.</p>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Explore the parts</span>
+  <h2>One VPC, read from its own output</h2>
+  <p class="lead">This is the output of <code>ibmcloud is vpc vpct-prod</code> from chapter 20, with IDs and some lines left out. Select a part of the drawing to see who sets it. You can also click a line.</p>
+  <div class="explorer" data-start="identity"
+    data-map='{"identity":[[1,5]],"group":[[6,6]],"defaults":[[8,10]],"dns":[[12,17]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of the VPC output in four parts: identity with name and status, the resource group, the three default resources, and the DNS settings."
+          data-drawing='{"w":420,"h":330,"shapes":[
+            {"box":[10,8,400,314],"heavy":true,"title":"vpct-prod"},
+            {"box":[28,44,364,56],"part":"identity","title":"Identity","detail":"name · status"},
+            {"box":[28,110,364,56],"part":"group","title":"Resource group","detail":"vpct-lab"},
+            {"box":[28,176,364,68],"part":"defaults","title":"Three defaults","detail":"ACL · security group · route table"},
+            {"box":[28,254,364,56],"part":"dns","title":"DNS","detail":"system resolver"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="identity">
+          <h3>Identity</h3>
+          <p><b>You choose the name. IBM sets the rest.</b> <code>Status available</code> is what IBM reports once the VPC exists.</p>
+          <p class="watch"><b>Watch for this.</b> Chapter 20 does not pass <code>--classic-access</code>, so Classic access is false. IBM marks that flag as deprecated and says to use a Transit Gateway to connect VPCs to the classic network.</p>
+        </div>
+        <div class="part-info" data-part="group">
+          <h3>Resource group</h3>
+          <p><b>You choose it when you create the VPC.</b> Every IAM-enabled resource belongs to one resource group, and you cannot change the choice afterwards.</p>
+          <p class="watch"><b>Watch for this.</b> If you name no resource group, IBM puts the resource in the Default resource group. Name it in every create command.</p>
+        </div>
+        <div class="part-info" data-part="defaults">
+          <h3>Three defaults</h3>
+          <p><b>IBM creates these with every VPC.</b> A server made with no security group joins the default one. A subnet made with no network ACL gets the default ACL. A subnet made with no route table uses the default one.</p>
+          <p class="watch"><b>Watch for this.</b> The names here were chosen by you. <code>vpc-create</code> has no option to name the defaults, so IBM gives them random words, such as <code>tremble-admit-study-angelic</code>. Chapter 20 renames each one straight away.</p>
+        </div>
+        <div class="part-info" data-part="dns">
+          <h3>DNS</h3>
+          <p><b>IBM sets this, and you can change it.</b> The resolver type names where the VPC gets its DNS servers. <code>system</code> is IBM&apos;s default type, and the two servers are IBM&apos;s DNS servers.</p>
+          <p class="hand tilt">A later module changes the type for DNS sharing.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The VPC output, shortened from chapter 20">ID                       r014-…-f567
+Name                     vpct-prod
+Status                   available
+Classic access           false
+Created                  2026-10-28T16:38:52+00:00
+Resource group           vpct-lab
+
+Default network ACL      vpct-prod-default-acl
+Default security group   vpct-prod-default-sg
+Default routing table    vpct-prod-default-rt
+
+Health state             ok
+DNS Hub                  false
+
+DNS Resolver Servers     161.26.0.10
+                         161.26.0.11
+DNS Resolver Type        system</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Run it</span>
+  <h2>Find the regions and zones</h2>
+  <p class="lead">Run each command in turn. The output is what the CLI returned in chapter 13 when it was targeted at <code>us-east</code>.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is regions</pre>
+          <pre class="out">Listing regions under account &lt;redacted&gt; as user &lt;redacted&gt;...
+Name       Endpoint                              Status
+au-syd     https://au-syd.iaas.cloud.ibm.com     available
+br-sao     https://br-sao.iaas.cloud.ibm.com     available
+ca-mon     https://ca-mon.iaas.cloud.ibm.com     available
+ca-tor     https://ca-tor.iaas.cloud.ibm.com     available
+eu-de      https://eu-de.iaas.cloud.ibm.com      available
+eu-es      https://eu-es.iaas.cloud.ibm.com      available
+eu-gb      https://eu-gb.iaas.cloud.ibm.com      available
+jp-osa     https://jp-osa.iaas.cloud.ibm.com     available
+jp-tok     https://jp-tok.iaas.cloud.ibm.com     available
+us-east    https://us-east.iaas.cloud.ibm.com    available
+us-south   https://us-south.iaas.cloud.ibm.com   available</pre>
+          <p class="hand note">Each region has its own API endpoint.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is zones</pre>
+          <pre class="out">Listing zones in target region us-east under account &lt;redacted&gt; as user &lt;redacted&gt;...
+Name        Region    Status      Data center   Universal name
+us-east-1   us-east   available   WDC04         us-east-wdc04-a
+us-east-2   us-east   available   WDC06         us-east-wdc06-a
+us-east-3   us-east   available   WDC07         us-east-wdc07-a</pre>
+          <p class="hand note">Three zones in us-east.</p>
+          <p class="hand note">The Data center column can differ in your account. IBM maps zone names to physical zones separately for each account.</p>
+        </div>
+        <div class="q">
+          <p>You are targeted at <code>us-east</code>. You run <code>ibmcloud is zones us-south</code>. What happens?</p>
+          <div class="opts">
+            <button class="opt">It lists the zones of us-south</button>
+            <button class="opt">It stops with an error</button>
+            <button class="opt" data-ok>It lists the zones of us-east, with no error</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>A region name after <code>zones</code> is ignored with no error, and the command lists the targeted region. Read the first line of the output: it names the region it lists. To list us-south, target it first.</p></details>
+        </div>
+        <div class="cmd">
+          <p class="pre"># after: ibmcloud target -r us-south</p>
+          <pre class="in">ibmcloud is zones</pre>
+          <pre class="out">Listing zones in target region us-south under account &lt;redacted&gt; as user &lt;redacted&gt;...
+Name         Region     Status      Data center   Universal name
+us-south-1   us-south   available   DAL10         us-south-dal10-a
+us-south-2   us-south   available   DAL12         us-south-dal12-a
+us-south-3   us-south   available   DAL14         us-south-dal14-a</pre>
+          <p class="hand note">The first line names us-south. Check it every time.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Predict</span>
+  <h2>Pick an answer, then see what really happened</h2>
+  <p class="lead">Northgate creates <code>vpct-prod</code> with <code>--address-prefix-management manual</code>. The VPC exists and reports <code>available</code>.</p>
+  <div class="pair">
+    <div class="q">
+      <p>Straight after, you run <code>ibmcloud is vpc-address-prefixes vpct-prod</code>. What does it print?</p>
+      <div class="opts">
+        <button class="opt">One address prefix for each zone</button>
+        <button class="opt" data-ok>No address prefixes were found.</button>
+        <button class="opt">An error, because there are no subnets</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">You add them.</span><p>With <code>manual</code>, IBM creates no address prefixes. With <code>auto</code>, the setting IBM uses when you leave the flag out, IBM creates one default address prefix in each zone. Northgate chose <code>manual</code> because it will join this VPC to others with a Transit Gateway, and the prefixes must not overlap.</p></details>
+    </div>
+    <div class="q">
+      <p>You list the routes in the default route table with <code>ibmcloud is vpc-routing-table-routes</code>. How many are there?</p>
+      <div class="opts">
+        <button class="opt">One route for each zone</button>
+        <button class="opt" data-ok>None. It prints No route was found.</button>
+        <button class="opt">One default route to the internet</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Empty on purpose.</span><p>The default route table has no routes. Traffic that matches no route in it is looked up in the VPC&apos;s system-implicit routing table, which holds a route to the CIDR of each subnet in the VPC.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which of these can span the zones of a region?</p>
+      <div class="opts">
+        <button class="opt">A subnet</button>
+        <button class="opt" data-ok>A VPC</button>
+        <button class="opt">A server</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A VPC is regional and spans the zones of its region. A subnet belongs to one zone, and so does a server.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A server in zone 1 must reach a server in zone 2 of the same VPC. What routing do you add?</p>
+      <div class="opts">
+        <button class="opt">A route in the default route table</button>
+        <button class="opt">A Transit Gateway</button>
+        <button class="opt" data-ok>None. The implicit router connects every subnet in the VPC.</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Every subnet in a VPC reaches every other subnet through the implicit router, across zones, with no routes to add. Whether the traffic is allowed is a separate question, which Module 2 covers.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Which of these does IBM create for you with a new VPC?</p>
+      <div class="opts">
+        <button class="opt">A subnet in each zone</button>
+        <button class="opt" data-ok>A default security group, network ACL and route table</button>
+        <button class="opt">A public gateway</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM creates the three defaults. With <code>manual</code> address prefix management it creates no address prefixes, and chapter 20 creates no subnets either. You create those.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can say what a VPC is</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>A VPC is regional, a subnet is zonal. IBM creates the router and three defaults. You choose the resource group every time.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 13, Choosing IBM Cloud VPC regions and zones for the estate, and chapter 20, Create a VPC in IBM Cloud with manual address prefixes, run everything you just saw.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en" data-course="vault">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Get access: two roles and an allow list · Cyber Vault course</title>
+<meta name="description" content="Course unit 2.1: name the two roles and the allow list that a Cyber Vault Beta account needs, say what a successful list does not prove, and find why a create call says the token is malformed. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m2-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">Cyber Vault course</a> <span>·</span> Module 2 · Build and connect</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 2</span>
+      <h1>Get access: two roles and an allow list</h1>
+      <p class="lead">By the end you can name what an account needs before it can create a Cyber Vault, say what a successful list call does not prove, and find the fault when a create call says the token is malformed.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>4 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: an account needs to be on IBM's allow list and needs two roles. Only a create call proves the account has access."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"box":[10,20,190,60],"heavy":true,"title":"Allow list","detail":"IBM adds the account"},
+          {"box":[220,20,190,60],"heavy":true,"title":"Two roles","detail":"Reader and Manager"},
+          {"text":"only a create proves it","at":[100,140],"hand":true,"size":20,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect. Its board asks: what if an attacker gets the backup admin&apos;s keys? The answer is a Cyber Vault. First, the account needs access.</p>
+    </div>
+  </div>
+  <p class="small">Everything here comes from runs in our lab on 25 September and 5 October 2026 (tutorials V1 and V2). The vault is a Beta in us-south, with no SLA, no warranty and no support.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>What an account needs</h2>
+  <p class="lead">The Beta is closed. IBM must put the account on an allow list. Then the user needs two roles, set by name, and a role on the storage instance.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. On the left, the IBM allow list. On the right, three things the user needs: the Cyber Vault Reader role, the Cyber Vault Manager role, and Editor or Administrator on the COS instance."
+    data-drawing='{"w":560,"h":240,"shapes":[
+      {"box":[10,80,200,64],"dashed":true,"title":"Allow list","detail":"IBM adds the account"},
+      {"text":"and also","at":[222,118],"hand":true,"size":17,"tone":"muted"},
+      {"box":[270,5,280,64],"title":"Cyber Vault Reader","detail":"lists vaults"},
+      {"box":[270,88,280,64],"tone":"mark","title":"Cyber Vault Manager","detail":"creates vaults"},
+      {"box":[270,171,280,64],"title":"Editor or Administrator","detail":"on the COS instance"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Which role lets the user create a vault?</p>
+      <div class="opts">
+        <button class="opt">Cyber Vault Reader</button>
+        <button class="opt" data-ok>Cyber Vault Manager</button>
+        <button class="opt">Neither: only IBM can create vaults</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Cyber Vault Reader lists vaults. Cyber Vault Manager creates them (V1, section 2).</p></details>
+    </div>
+    <div class="q">
+      <p>Northgate&apos;s admin already has the &quot;all IAM services&quot; admin policy. Is that enough?</p>
+      <div class="opts">
+        <button class="opt">Yes, it covers every service</button>
+        <button class="opt" data-ok>No: the two roles are specific to COS, so grant them by name at account level</button>
+        <button class="opt">Yes, but only for the Manager role</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the &quot;all IAM services&quot; policy did not include the two roles. We granted them with <code>ibmcloud iam user-policy-create</code> on 25 September 2026 and waited about 20 seconds before the next call. The user also needs Editor or Administrator on the COS instance.</p></details>
+    </div>
+  </div>
+  <p class="small">An account on Basic support cannot open the onboarding case. The notes do not record which route put our account on the list: access was missing on 25 September 2026 and present on 5 October 2026.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>What does a good answer prove?</h2>
+  <p class="lead">Northgate&apos;s admin has the Reader role. She lists the vaults with an API call. Here is what the lab saw.</p>
+  <pre class="def" aria-label="What the lab saw">When                        Result
+25 Sep, before Reader role  HTTP 403, not authorized to list
+25 Sep, after Reader role   HTTP 200, count 0, no vaults
+5 Oct, one create           HTTP 202, then active 30 s later</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The list call returns HTTP 200 with no vaults. What does that prove?</p>
+      <div class="opts">
+        <button class="opt">The account is on the allow list</button>
+        <button class="opt" data-ok>The role works. It does not prove the account is on the allow list</button>
+        <button class="opt">The Manager role is in place too</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On 25 September 2026 the list returned 200 after the Reader role was granted. The same day, six creates failed. The list only proves the role works (V1, section 3).</p></details>
+    </div>
+    <div class="q">
+      <p>What is the only real check that an account has access?</p>
+      <div class="opts">
+        <button class="opt">A list call</button>
+        <button class="opt">A Cyber Vault page in the console</button>
+        <button class="opt" data-ok>A create call</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On 5 October 2026 the lab made one vault with the shortest lock and no data, and deleted it at once. It was active after about 30 seconds. The delete left two keys, which were deleted by hand. The console page and IBM&apos;s email are weaker signs and were not tested as checks.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>&quot;Token is malformed&quot;</h2>
+  <p class="lead">Northgate&apos;s admin has both roles and access. She makes a token with the CLI and calls create. The call fails.</p>
+  <pre class="def" aria-label="The failed call">TOK=$(ibmcloud iam oauth-tokens --output json | jq -r .iam_token)
+curl -X POST .../v1/cyber_vaults -H &quot;Authorization: Bearer $TOK&quot; ...
+
+HTTP 500
+... token is malformed: tokenstring should not contain &apos;bearer &apos; ...</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What is wrong?</p>
+      <div class="opts">
+        <button class="opt">The account is not on the allow list</button>
+        <button class="opt" data-ok>The token still starts with &quot;Bearer &quot;, so the header reads &quot;Bearer Bearer &lt;IAM_TOKEN&gt;&quot;</button>
+        <button class="opt">The Manager role has not arrived yet</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The CLI prints the token with the word <code>Bearer </code> in front. Remove it with <code>sed &apos;s/^Bearer //&apos;</code> before you build the header (V1, section 3; V2, section 2). In our lab this was ISS-32, on 25 September 2026.</p></details>
+    </div>
+    <div class="q">
+      <p>The call failed. What did it leave behind?</p>
+      <div class="opts">
+        <button class="opt" data-ok>No vault and no keys</button>
+        <button class="opt">One vault in status failed</button>
+        <button class="opt">Two keys and two service IDs</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A list call afterwards returned 200 with no vaults, and the instance had only the key it had before. This is different from a failed vault, which leaves keys (unit 2.2).</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> The error says &quot;token is malformed&quot; and comes with HTTP 500. It looks like a service fault. In our lab the cause was the extra word in our own header.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which role creates vaults?</p>
+      <div class="opts">
+        <button class="opt">Cyber Vault Reader</button>
+        <button class="opt" data-ok>Cyber Vault Manager</button>
+        <button class="opt">All IAM services administrator</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Manager creates. Reader lists. The admin policy for all IAM services did not include either in our lab.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A list call returns HTTP 200 and no vaults. What do you know?</p>
+      <div class="opts">
+        <button class="opt">The account is allowed on the Beta</button>
+        <button class="opt" data-ok>The Reader role works; only a create proves the allow list</button>
+        <button class="opt">The vault was created</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The create on 5 October 2026 was the check that showed access.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A create returns HTTP 500 and &quot;token is malformed&quot;. What do you check first?</p>
+      <div class="opts">
+        <button class="opt" data-ok>That the token has no &quot;Bearer &quot; prefix before it goes into the header</button>
+        <button class="opt">That the vault name is unique</button>
+        <button class="opt">That the VPC is in eu-de</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A doubled prefix gives &quot;Bearer Bearer&quot;. The <code>sed</code> removes it.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know what access takes</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 4.</span></div>
+    <div><span class="label">Remember</span><p>Access is three things: IBM puts the account on the allow list, the user holds the Reader and Manager roles, and the user has Editor or Administrator on the COS instance. Only a create proves the allow list. Strip &quot;Bearer &quot; from the token before you use it.</p></div>
+    <div><span class="label">When you have access to the Beta</span><p>Tutorial V1 has the role commands and the check. Tutorial V2 has the create call and the clean-up.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

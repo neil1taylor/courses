@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Full and incremental backups of files · BRS course</title>
+<meta name="description" content="Course unit 3.2: say what a full and an incremental backup read, predict how much an incremental reads after a small change, and find a run's numbers in the BRS console. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m3-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 3 · Back up</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 3</span>
+      <h1>Full and incremental backups of files</h1>
+      <p class="lead">By the end you can say what a full and an incremental backup read, predict how much an incremental reads after a small change, and find a run&apos;s numbers in the BRS console.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: the first backup reads every file in the folder. The next one reads only the files that changed."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"text":"first run","at":[14,30],"hand":true,"size":17,"tone":"muted"},
+          {"box":[10,40,180,110],"heavy":true},
+          {"grid":[22,52,6,4,20,16,26,22],"tone":"mark"},
+          {"text":"next run","at":[234,30],"hand":true,"size":17,"tone":"muted"},
+          {"box":[230,40,180,110],"heavy":true},
+          {"grid":[242,52,6,4,20,16,26,22],"tone":"muted"},
+          {"box":[346,118,20,16],"tone":"mark","fill":"hatch"},
+          {"box":[372,118,20,16],"tone":"mark","fill":"hatch"},
+          {"text":"reads only what changed","at":[220,186],"hand":true,"size":17,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. It protects the folder <code>/data</code> on a Linux server with a daily policy that keeps backups for 7 days. Today it runs its first two backups by hand.</p>
+    </div>
+  </div>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab on 8 November 2026, recorded in tutorials B3a and B4a. The server name is blurred in the screenshots.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>What each kind of backup reads</h2>
+  <p class="lead">A protection group backs up its objects on the policy&apos;s schedule, or when you click Run Now. Northgate&apos;s group is <b>file-based</b>: it backs up the files under <code>/data</code>, which held 506 files, 97.1 MB.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A file-based group reads every file on the first run and only the changed files after that. A volume-based group, drawn dashed, reads the whole volume every time."
+    data-drawing='{"w":560,"h":200,"shapes":[
+      {"box":[10,15,150,60],"title":"first run","detail":"every file"},
+      {"line":[164,45,196,45],"arrow":true,"tone":"mark"},
+      {"box":[200,15,250,60],"tone":"mark","title":"file-based, later runs","detail":"only changed files"},
+      {"box":[200,100,250,60],"dashed":true,"title":"volume-based","detail":"whole volume, each run"},
+      {"text":"not offered in the console","at":[200,190],"hand":true,"size":16,"tone":"muted"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The group has never run. Northgate clicks Run Now and leaves Backup Type at Incremental. What does the run read?</p>
+      <div class="opts">
+        <button class="opt">Nothing: there is nothing to compare with</button>
+        <button class="opt" data-ok>Every file: a group with no backup yet takes a full backup anyway</button>
+        <button class="opt">Only the files changed today</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The first run read all 506 files, 97.1 MB, in 34 seconds. The Run Now dialog starts at Incremental; the other choice is Full. You need not change it for a first run.</p></details>
+    </div>
+    <div class="q">
+      <p>Why file-based and not volume-based for Northgate&apos;s folder?</p>
+      <div class="opts">
+        <button class="opt">Volume-based cannot be restored</button>
+        <button class="opt" data-ok>A file-based incremental reads only what changed; a volume-based one reads the whole volume every time</button>
+        <button class="opt">File-based is cheaper per GB</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>That is what the tutorials measured. In the BRS console, <b>Protect &gt; Physical Server</b> offers <b>File-based</b> and no volume-based type, so the choice is made for you there.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>How much does the second run read?</h2>
+  <p class="lead">After the first backup, Northgate adds six files to <code>/data</code>: five small text files and one 3 MB file. Then it runs the group again.</p>
+  <pre class="def" aria-label="What the first run recorded">Run     Files   Read      Time
+First   506     97.1 MB   34 s
+Second  512     ?         ?</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>How much does the second run read?</p>
+      <div class="opts">
+        <button class="opt">About 97 MB: it reads everything again</button>
+        <button class="opt">About 50 MB</button>
+        <button class="opt" data-ok>About 3 MB: little more than the new files</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">3.2 MB against 97.1 MB.</span><p>The second run read 3.2 MB (3 MiB). In an earlier run in our lab, on 7 October, the same change read 5.9 MB; the reason was not found. Either way it is a small fraction of the full backup.</p><pre class="def" aria-label="What both runs recorded">Run     Files   Read      Time
+First   506     97.1 MB   34 s
+Second  512     3.2 MB    15 s</pre></details>
+    </div>
+    <div class="q">
+      <p>How long does the second run take, against 34 seconds for the first?</p>
+      <div class="opts">
+        <button class="opt">About the same</button>
+        <button class="opt" data-ok>15 seconds, less than half</button>
+        <button class="opt">1 second</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>15 seconds for the server, in our lab. The run as a whole shows 19 seconds in the console. A small change does not make a backup instant.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Click through the console</span>
+  <h2>Run the group and read the result</h2>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="72.5,44,26,20" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4a-1-run-now.png" alt="The Run b-linux-files dialog: Backup all Objects in the Protection Group, Backup Type Incremental, and the Run Now and Cancel buttons." width="886" height="201"></div>
+      <figcaption>
+        <h3>You opened Run Now from the group&apos;s menu. Where do you choose between a full and an incremental backup?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Backup Type starts at Incremental; the other choice is Full. For a group with no backup yet, leave it: the first run is a full backup anyway. Open Run Now from the Protection list: the group&apos;s own page has no Run Now while the group is paused.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="44.8,86.5,9,12" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4a-2-runs.png" alt="Group Details for b-linux-files, Paused, policy b-daily-7d. Two runs on 8 November: 1:43 pm, 19 s, Incremental, 3 MiB read; and 1:41 pm, 35 s, Incremental, 92.6 MiB read." width="1227" height="420"></div>
+      <figcaption>
+        <h3>Both runs are labelled Incremental. Click the figure that shows which one read every file.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. 92.6 MiB is the 97.1 MB of the full backup, in binary units. The console labels the first run Incremental too, so read Data Read, not Backup Type, to know which run was the full one.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="47.5,87,7,12" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4a-3-run-details.png" alt="Run Details of the 1:43 pm run: Succeeded, 1 object succeeded, 0 failed, 19 s. The server row: 15 s, snapshot expires 15 November 2026, 3 MiB read, 5.5 KiB written, 95.7 MiB logical size, 8 of 512 entities changed. The server name is blurred." width="1227" height="470"></div>
+      <figcaption>
+        <h3>You opened the second run. Where is the amount it read from the server?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Data Read, 3 MiB. On the same row, Changed Entities says 8 of 512 changed, and Snapshot Expiry Time is 15 November: the policy keeps each backup for 7 days.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>A run that never moves</h2>
+  <p class="lead">On another day, Northgate registers a new server through the Connector Agent and starts a backup straight away. The run stays Running, with 0 bytes read, for ten minutes.</p>
+  <pre class="def" aria-label="Timeline of the stuck run">10:44:03  source registered
+10:44:50  run 1 starts                 (47 s later)
+10:45:10  backup agent restarts
+10:55:34  still Running, 0 bytes read</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What went wrong?</p>
+      <div class="opts">
+        <button class="opt">The policy has no schedule</button>
+        <button class="opt" data-ok>The run started while the new agent was about to restart</button>
+        <button class="opt">The folder is too big for one run</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The run started 47 seconds after the registration, and the backup agent restarted 20 seconds later. The run never recovered. The second run worked. With the connector server, which had been joined for a while before its first run, this did not happen.</p></details>
+    </div>
+    <div class="q">
+      <p>Northgate cancels the stuck run from the command line, giving the run&apos;s ID. What happens?</p>
+      <div class="opts">
+        <button class="opt">It is cancelled</button>
+        <button class="opt" data-ok>It is refused: the cancel also needs the run&apos;s archival task ID</button>
+        <button class="opt">The whole group is deleted</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The CLI answered &quot;Task Id must be specified for cancellation.&quot; With the archival task ID added, the cancel worked and the run showed Failed.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> A run can show Running for ten minutes and read nothing. In our lab this happened once, to a run started 47 seconds after a Connector Agent registration; the runs after it worked.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>A new file-based group runs for the first time with Backup Type Incremental. What does it read?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Every file in the group</button>
+        <button class="opt">Nothing</button>
+        <button class="opt">Only files changed since the group was made</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A group with no backup yet takes a full backup, whatever Backup Type says.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Two runs in the console both say Incremental. How do you tell which was the full backup?</p>
+      <div class="opts">
+        <button class="opt">By the Backup Type column</button>
+        <button class="opt" data-ok>By Data Read: the full one read the whole folder</button>
+        <button class="opt">You cannot tell</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The console labels the first run Incremental too. 92.6 MiB against 3 MiB tells them apart.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A backup runs on 8 November under a policy that keeps backups for 7 days. When does its snapshot expire?</p>
+      <div class="opts">
+        <button class="opt">8 December</button>
+        <button class="opt" data-ok>15 November</button>
+        <button class="opt">Never, unless you delete it</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The Run Details page shows Snapshot Expiry Time 15 November for the 8 November run.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can read what a backup did</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>The first run reads everything; a file-based incremental reads little more than what changed: 3.2 MB against 97.1 MB in our lab. The console calls both runs Incremental, so read Data Read. A run started right after a Connector Agent registration stuck once in our lab.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B3a makes the source, policy and group. Tutorial B4a runs the full and incremental backups, from the console and the command line.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

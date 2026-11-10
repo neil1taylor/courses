@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What it costs and where the data sits · BRS course</title>
+<meta name="description" content="Course unit 1.3: say how BRS charges for backup storage, which costs sit outside that price, and where IBM says the backups are kept. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m1-u3">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 1 · What BRS is</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 3 of Module 1</span>
+      <h1>What it costs and where the data sits</h1>
+      <p class="lead">By the end you can say how BRS charges for backup storage, which costs sit outside that price, and where IBM says the backups are kept and who can reach them.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: backup storage drawn as a grid of blocks, and your own parts (connectors, network, keys and logs) as a second box. Two kinds of cost."
+    data-drawing='{"w":420,"h":200,"shapes":[{"text":"backup storage","at":[14,30],"hand":true,"size":17,"tone":"mark"},{"box":[10,40,180,110],"heavy":true},{"grid":[22,52,6,4,20,16,26,22],"tone":"mark"},{"text":"your own parts","at":[234,30],"hand":true,"size":17,"tone":"muted"},{"box":[230,40,180,110],"heavy":true},{"box":[244,54,152,28],"title":"connectors"},{"box":[244,88,152,28],"title":"network"},{"box":[244,122,152,22],"title":"keys, logs"},{"text":"two kinds of cost","at":[130,186],"hand":true,"size":17,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its servers are in Frankfurt and its finance team wants a cost range and its security team wants to know where the copies live.</p>
+    </div>
+  </div>
+  <p class="small">Nothing in this unit was run by hand. The prices are IBM&apos;s list prices in USD for customers billed in the USA, read from IBM&apos;s public catalog on 24 September 2026 and valid 1 to 30 September 2026. IBM&apos;s prices change, so a price here is a dated reading, not a quote.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Predict</span>
+  <h2>How much for a terabyte?</h2>
+  <p class="lead">BRS has one plan, Premium, billed per GB-hour of backup storage, and the price scales linearly with backup size. The price depends on the region.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Northgate keeps about 1 TB (1,024 GB) of backups in eu-de for a month. What does the backup storage cost at list price?</p>
+      <div class="opts">
+        <button class="opt">About USD 11</button>
+        <button class="opt" data-ok>About USD 113</button>
+        <button class="opt">About USD 1,100</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">About USD 113 per TB-month.</span><p>That is IBM&apos;s list price for <code>eu-de</code> (and <code>eu-es</code>), valid 1 to 30 September 2026, read on 24 September 2026. A TB here is 1,024 GB.</p><pre class="def" aria-label="IBM list prices for backup storage, September 2026">Region                      USD per GB-hour   About USD per GB-month   About USD per TB-month
+us-south, us-east           0.000130          0.095                    97
+ca-tor                      0.000137          0.100                    102
+eu-gb                       0.000147          0.107                    110
+eu-de, eu-es                0.000151          0.110                    113
+jp-tok, jp-osa, au-syd      0.000156          0.114                    117
+br-sao                      0.000167          0.122                    125
+Backup copy, every region   0.000137          0.100                    102</pre></details>
+    </div>
+    <div class="q">
+      <p>Which region is the cheapest for backup storage, at those prices?</p>
+      <div class="opts">
+        <button class="opt">eu-de</button>
+        <button class="opt" data-ok>us-south and us-east</button>
+        <button class="opt">au-syd</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p><code>us-south</code> and <code>us-east</code>, at 0.000130 USD per GB-hour. <code>br-sao</code> is the dearest, at 0.000167. The prices are IBM&apos;s list prices of September 2026.</p></details>
+    </div>
+  </div>
+    <div class="q">
+      <p>Which GB does BRS bill: the logical size of the data, the data read, or the data written after dedup and compression?</p>
+      <div class="opts">
+        <button class="opt">The logical size</button>
+        <button class="opt">The data written after dedup and compression</button>
+        <button class="opt" data-ok>IBM&apos;s pages do not say</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s FAQ defines all three terms but does not link any of them to billing, and the catalog does not say. A cost estimate should state that gap.</p></details>
+    </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Explore the parts</span>
+  <h2>What is in the price and what is not</h2>
+  <p class="lead">IBM&apos;s catalog prices only the storage. The other costs come from the parts you run yourself, at normal IBM Cloud prices. Select a part of the drawing to see what it is.</p>
+  <div class="explorer" data-start="storage"
+    data-map='{"storage":[[1,1]],"copy":[[2,2]],"connectors":[[3,3]],"network":[[4,4]],"cluster":[[5,5]],"extras":[[6,7]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram. In a box for the BRS plan: backup storage and backup copy, each priced per GB-hour. In a box for your own parts: connectors, network, cluster worker load, and extras such as keys and logs."
+    data-drawing='{"w":580,"h":240,"shapes":[{"text":"in the BRS plan","at":[14,24],"hand":true,"tone":"mark"},{"box":[10,32,200,196],"heavy":true,"tone":"mark"},{"box":[28,46,164,60],"part":"storage","title":"Backup storage","detail":"per GB-hour"},{"box":[28,120,164,60],"part":"copy","title":"Backup copy","detail":"per GB-hour"},{"text":"your own parts","at":[244,24],"hand":true,"tone":"muted"},{"box":[240,32,330,196],"heavy":true},{"box":[254,46,150,60],"part":"connectors","title":"Connectors","detail":"at least 2"},{"box":[414,46,142,60],"part":"network","title":"Network","detail":"VPE, IPs"},{"box":[254,120,150,60],"part":"cluster","title":"Cluster","detail":"worker load"},{"box":[414,120,142,60],"part":"extras","title":"Extras","detail":"keys, logs"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="storage">
+          <h3>Backup storage</h3>
+          <p>The one plan is <b>Premium</b>. It is paid only and cannot be changed after the instance is created. IBM says the price &quot;will scale linearly depending on backup size&quot;. It is charged per GB-hour, at a price that depends on the region.</p>
+          <p class="watch"><b>Watch for this.</b> IBM does not say which GB is billed: the logical size, the data read, or the data written after dedup and compression.</p>
+        </div>
+        <div class="part-info" data-part="copy">
+          <h3>Backup copy</h3>
+          <p>A separate price line for a second copy of backups: USD 0.000137 per GB-hour in every region. What it covers is not documented.</p>
+        </div>
+        <div class="part-info" data-part="connectors">
+          <h3>Connector servers</h3>
+          <p>You pay for them at normal IBM Cloud prices: at least 2, each with 4 vCPU, 16 GB RAM and a 171 GB disk.</p>
+        </div>
+        <div class="part-info" data-part="network">
+          <h3>Network parts</h3>
+          <p>VPE gateways, floating IPs, Transit Gateway and data transfer, where you use them.</p>
+        </div>
+        <div class="part-info" data-part="cluster">
+          <h3>Cluster capacity</h3>
+          <p>For a Kubernetes or OpenShift cluster: the worker capacity used by the connector, Velero and Datamover.</p>
+        </div>
+        <div class="part-info" data-part="extras">
+          <h3>Keys and logs</h3>
+          <p>Key Protect or HPCS, if you use them. Activity Tracker, Cloud Logs and Monitoring.</p>
+          <p class="watch"><b>Watch for this.</b> IBM&apos;s getting-started page (updated 19 August 2026) shows two promotion codes: VPC1000, a USD 1,000 credit valid until 31 December 2026, and BUYBRS, a USD 5,000 credit with no end date given. We did not test either.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="What the plan prices and what you pay for yourself">Backup storage         USD per GB-hour, by region
+Backup copy            USD 0.000137 per GB-hour, every region
+Connector VSIs         at least 2, each with 4 vCPU, 16 GB RAM and 171 GB disk
+Network                VPE gateways, floating IPs, Transit Gateway and data transfer, where used
+Cluster                worker capacity used by the connector, Velero and Datamover in IKS or ROKS clusters
+Key Protect or HPCS    if used
+Logs and monitoring    Activity Tracker, Cloud Logs and Monitoring
+</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Predict</span>
+  <h2>Where the copies sit</h2>
+  <p class="lead">Northgate&apos;s security team asks where the backups will live. IBM&apos;s architecture pages give an answer for some of it and are silent on the rest.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Northgate&apos;s servers are in <code>eu-de</code>. In which region should it create the instance?</p>
+      <div class="opts">
+        <button class="opt">Any region: the region does not matter</button>
+        <button class="opt" data-ok>In <code>eu-de</code>, with the workloads</button>
+        <button class="opt">In <code>us-south</code>, because it is cheaper</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM advises putting the instance in the same region as the workloads. A connector built in a VPC must be created in the same location as the instance. In the console you set <b>Location</b> when you order.</p></details>
+    </div>
+    <div class="q">
+      <p>Where does IBM say the backups are stored?</p>
+      <div class="opts">
+        <button class="opt">In a bucket in Northgate&apos;s own account</button>
+        <button class="opt" data-ok>In regionally durable storage in the same region as the instance</button>
+        <button class="opt">In a Cohesity data centre</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM stores backups in &quot;regionally durable storage&quot;, in the zones of the instance&apos;s region. IBM&apos;s encryption pages describe the store as IBM Cloud Object Storage buckets, encrypted with keys. The customer never creates a bucket.</p></details>
+    </div>
+  </div>
+    <div class="q">
+      <p>Does BRS keep a copy of Northgate&apos;s backups in a second region?</p>
+      <div class="opts">
+        <button class="opt">Yes, always</button>
+        <button class="opt" data-ok>IBM&apos;s documents describe no cross-region copy</button>
+        <button class="opt">Only if you pay for backup copy</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>No cross-region copy is documented. The pricing lists a &quot;backup copy&quot; metric, which suggests one exists or is planned, but what it covers is not documented. The documents also describe no failover of the service or the backups if a whole region is lost.</p></details>
+    </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>Three claims about the data</h2>
+  <p class="lead">Northgate&apos;s security review lists three statements. Find the ones the documents do not support.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>A colleague writes: &quot;The backups sit in an Object Storage bucket in our own account, and we set its retention.&quot; What do IBM&apos;s documents say?</p>
+      <div class="opts">
+        <button class="opt">That is right</button>
+        <button class="opt" data-ok>You never create a bucket, and IBM does not say which account owns the buckets</button>
+        <button class="opt">The buckets are in Northgate&apos;s VPC</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM says it is responsible for tenants, endpoints, networking and storage. Which account owns the buckets is not stated. IBM&apos;s documents do not settle it, though the key authorization from the service to your Key Protect fits a store that IBM owns.</p></details>
+    </div>
+    <div class="q">
+      <p>Northgate wants its own encryption key. When must it be chosen?</p>
+      <div class="opts">
+        <button class="opt">Any time after the first backup</button>
+        <button class="opt" data-ok>When the instance is created</button>
+        <button class="opt">Never: only IBM&apos;s keys are offered</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The key is set when the instance is created, by giving the root key. The IBM Cloud authorization must exist first: from Backup and Recovery Service to Key Protect, role Reader. IBM offers Key Protect (bring your own key) and Hyper Protect Crypto Services (keep your own key). Changing the key later is not documented.</p></details>
+    </div>
+  </div>
+    <div class="q">
+      <p>Can Northgate switch off the public endpoint of its instance, so that only the private one answers?</p>
+      <div class="opts">
+        <button class="opt">Yes, in the instance settings</button>
+        <button class="opt" data-ok>No: neither endpoint can be turned off; context-based restrictions limit access</button>
+        <button class="opt">Only with a private endpoint gateway</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Public and private endpoints are both on by default and neither can be turned off. Context-based restrictions are the way to limit access. The dashboard must be reached over the public network.</p></details>
+    </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>How does BRS charge for backup storage?</p>
+      <div class="opts">
+        <button class="opt">A fixed fee per instance</button>
+        <button class="opt" data-ok>Per GB-hour, scaling linearly with backup size, at a price set by region</button>
+        <button class="opt">Per protected server</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The catalog shows a per-GB-hour metric and no instance fee or per-source fee. IBM&apos;s plan text says the price scales linearly with backup size.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 1.1.</b> Who deploys the connectors?</p>
+      <div class="opts">
+        <button class="opt">IBM</button>
+        <button class="opt" data-ok>You</button>
+        <button class="opt">Cohesity</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>You deploy and scale connectors and agents. IBM runs the back end.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Northgate runs two connector servers. Where does that cost appear?</p>
+      <div class="opts">
+        <button class="opt">Inside the backup storage price</button>
+        <button class="opt" data-ok>As its own VPC servers, at normal IBM Cloud prices, on top of the storage price</button>
+        <button class="opt">It does not cost anything</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Connector VSIs are listed among the costs that are not in the plan.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can say what it costs and where it sits</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>One plan, billed per GB-hour of backup storage, at a price by region: USD 113 per TB-month in eu-de on IBM&apos;s list of 1 to 30 September 2026. Connectors, network, keys and logs cost extra. Backups sit in regionally durable storage in the instance&apos;s region. IBM does not say which account owns the buckets, and no cross-region copy is documented.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B1 orders an instance and shows where you set the region. Unit 1.4 walks through it.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

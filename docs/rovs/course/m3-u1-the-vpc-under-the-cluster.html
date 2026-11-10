@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The VPC under the cluster · ROVS course</title>
+<meta name="description" content="Course unit 3.1: name the VPC pieces under a ROVS cluster, say which you create and which IBM creates, and follow the path from a subnet to a VM. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m3-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 3 · Networking</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 3</span>
+      <h1>The VPC under the cluster</h1>
+      <p class="lead">By the end you can name the VPC pieces under a ROVS cluster, say which ones you create and which IBM creates, and follow the path from a subnet to a VM.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a VPC containing a subnet, with a worker and a VM attached to it."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"text":"VPC","at":[22,30],"hand":true,"tone":"muted"},
+          {"box":[10,38,400,170],"heavy":true},
+          {"box":[30,60,170,130],"title":"subnet"},
+          {"box":[250,60,140,60],"fill":"hatch","tone":"mark","title":"worker"},
+          {"line":[200,110,250,90],"arrow":true,"tone":"mark"},
+          {"box":[250,136,140,46],"title":"VM"},
+          {"line":[320,122,320,136],"arrow":true,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output in this unit is real. Its first ROVS cluster lives in an IBM Cloud VPC. Before any VM, its network admins want to know what is under it.</p>
+    </div>
+  </div>
+  <p class="small">Every statement, error message and diagram in this unit comes from tutorial chapters 10, 11, 12 and 14, apart from the review question, which comes from chapter 05. The VMware comparisons are rough mappings, not IBM statements.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Predict</span>
+  <h2>Region, zone, prefix, subnet</h2>
+  <p class="lead">A VPC spans the zones of a region. Inside one zone, an address prefix holds subnets. This is the example layout from chapter 10.</p>
+  <div class="cols">
+    <svg class="sketch" role="img" aria-label="Hand-drawn nesting diagram. The region us-south holds the zone us-south-1. The zone holds the address prefix 10.240.0.0/18. The prefix holds two subnets: cluster-nodes, 10.240.0.0/24, and vm-workloads, 10.240.1.0/24. A note says that zones 2 and 3 have layers of their own."
+      data-drawing='{"w":560,"h":290,"shapes":[
+        {"text":"region us-south","at":[18,26],"hand":true,"tone":"muted"},
+        {"box":[10,34,540,236],"heavy":true},
+        {"box":[26,66,508,184],"title":"zone us-south-1"},
+        {"box":[42,108,320,130],"title":"address prefix 10.240.0.0/18"},
+        {"box":[56,150,150,70],"tone":"mark","title":"cluster-nodes","detail":"10.240.0.0/24"},
+        {"box":[214,150,136,70],"tone":"mark","title":"vm-workloads","detail":"10.240.1.0/24"},
+        {"text":"each subnet lives","at":[384,160],"hand":true,"tone":"mark"},
+        {"text":"in exactly one zone","at":[384,182],"hand":true,"tone":"mark"},
+        {"text":"zones 2 and 3 have","at":[384,212],"hand":true,"tone":"muted","size":15},
+        {"text":"layers of their own","at":[384,232],"hand":true,"tone":"muted","size":15}]}'></svg>
+    <div>
+      <div class="q">
+        <p>Northgate will have workers in two zones. Can one subnet cover both zones?</p>
+        <div class="opts">
+          <button class="opt">Yes, a subnet spans the whole VPC</button>
+          <button class="opt" data-ok>No. Each subnet lives in exactly one zone</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>VPC subnets are zone-scoped. There is no equivalent of a stretched Layer 2 network across zones. Plan one VM subnet in each zone that has workers.</p></details>
+      </div>
+      <div class="q">
+        <p>You create a second address prefix, in a different zone, with exactly the same CIDR as an existing one. What happens?</p>
+        <div class="opts">
+          <button class="opt">It works. Prefixes only need to be unique inside a zone</button>
+          <button class="opt" data-ok>It fails</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>A prefix must not overlap any other prefix in the same VPC, including one in a different zone. The attempt failed with <code>Error code: cidr_conflict -- The input cidr ... conflicts with existing vpc range ...</code></p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>Which VPC thing is which?</h2>
+  <p class="lead">Chapter 10 gives a rough mapping from VMware words. It is not an IBM statement.</p>
+  <div class="cols">
+    <svg class="sketch" role="img" aria-label="Hand-drawn two-column diagram. A vDS port group matches a VPC subnet. NSX DFW rules match security groups. A NAT gateway matches a public gateway. A 1 to 1 NAT public IP matches a floating IP. IPAM or IP reservation matches a reserved IP. A vNIC on a port group matches a VNI plus a VLAN attachment."
+      data-drawing='{"w":640,"h":262,"shapes":[
+        {"box":[10,6,270,34],"title":"Port group (vDS)"},{"line":[288,23,332,23],"arrow":true,"tone":"mark"},{"box":[340,6,290,34],"title":"VPC subnet","tone":"mark"},
+        {"box":[10,48,270,34],"title":"NSX DFW rules"},{"line":[288,65,332,65],"arrow":true,"tone":"mark"},{"box":[340,48,290,34],"title":"Security groups","tone":"mark"},
+        {"box":[10,90,270,34],"title":"NAT gateway"},{"line":[288,107,332,107],"arrow":true,"tone":"mark"},{"box":[340,90,290,34],"title":"Public gateway","tone":"mark"},
+        {"box":[10,132,270,34],"title":"1:1 NAT (public IP)"},{"line":[288,149,332,149],"arrow":true,"tone":"mark"},{"box":[340,132,290,34],"title":"Floating IP","tone":"mark"},
+        {"box":[10,174,270,34],"title":"IPAM / IP reservation"},{"line":[288,191,332,191],"arrow":true,"tone":"mark"},{"box":[340,174,290,34],"title":"Reserved IP","tone":"mark"},
+        {"box":[10,216,270,34],"title":"vNIC on a port group"},{"line":[288,233,332,233],"arrow":true,"tone":"mark"},{"box":[340,216,290,34],"title":"VNI + VLAN attachment","tone":"mark"}]}'></svg>
+    <div>
+      <div class="q">
+        <p>The VM subnet has a public gateway. Can a host on the internet start a connection to a VM on it?</p>
+        <div class="opts">
+          <button class="opt">Yes, the gateway forwards it</button>
+          <button class="opt" data-ok>No. A public gateway is outbound only</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>A public gateway rewrites the source address of outbound traffic. Return traffic for connections the VMs start comes back in. Unsolicited inbound traffic is blocked. Inbound access needs a floating IP or a load balancer.</p></details>
+      </div>
+      <div class="q">
+        <p><span class="kicker">Spot the fault.</span> Northgate creates a second public gateway in a zone that already has one, to serve another subnet. The create fails with <code>Error code: over_quota ... Allocated: 1, Requested: 1, Quota: 1</code>. What is the fix?</p>
+        <div class="opts">
+          <button class="opt">Ask for a higher quota</button>
+          <button class="opt" data-ok>Attach the existing gateway to the other subnet</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>IBM allows one public gateway per zone in a VPC, and that gateway can be attached to many subnets in the zone.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Run it</span>
+  <h2>Prefixes and gateways on the command line</h2>
+  <p class="lead">Run each command in turn. The output is what the test VPC returned.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is vpc-address-prefixes vpc-lab</pre>
+          <pre class="out">No address prefixes were found.</pre>
+          <p class="hand note">This VPC was made with no prefixes at all.</p>
+          <p class="hand note">By default VPC makes one for each zone. Manual prefix management turns that off.</p>
+        </div>
+        <div class="q">
+          <p>Describe a prefix named <code>default-prefix</code>. Will it work?</p>
+          <div class="opts">
+            <button class="opt">Yes, VPC always makes that one</button>
+            <button class="opt" data-ok>No. That name is only an example</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>VPC does not assign a name like that. Use the real name of a prefix you created.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is vpc-address-prefix vpc-lab default-prefix</pre>
+          <pre class="out err">FAILED
+Error code: not_found
+Error message: Address Prefix not found
+Error target name: id, type: parameter
+Error target value: default-prefix</pre>
+          <p class="hand note">A name from a doc example is not a name on your VPC.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is subnet-update vm-subnet-1 --pgw ""</pre>
+          <pre class="out err">FAILED
+Incorrect Usage: Please pass at least one of the flags</pre>
+          <p class="hand note">An empty value does not detach the gateway.</p>
+          <p class="hand note">Detaching has its own command: subnet-public-gateway-detach.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Follow the path</span>
+  <h2>From a subnet to a VM</h2>
+  <p class="lead">IBM creates two static VNIs on every worker. You create the rest of the chain: a VNI on a subnet, a VLAN attachment, and later a network on the cluster side.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn chain. Top row, in VPC: a subnet 10.240.1.0/24, a VNI at 10.240.1.10, and a VLAN attachment on VLAN 250. Bottom row, on the worker: the carrier VNI on eth1 and the OVS bridge br-eth1, both created by IBM, then a localnet CUDN you create, then the VM's vNIC."
+    data-drawing='{"w":720,"h":260,"shapes":[
+      {"text":"in VPC: you create these","at":[10,22],"hand":true,"tone":"mark"},
+      {"box":[10,34,210,62],"tone":"mark","title":"Subnet","detail":"10.240.1.0/24"},
+      {"line":[224,65,246,65],"arrow":true,"tone":"mark"},
+      {"box":[250,34,210,62],"tone":"mark","title":"VNI","detail":"10.240.1.10"},
+      {"line":[464,65,486,65],"arrow":true,"tone":"mark"},
+      {"box":[490,34,220,62],"tone":"mark","title":"VLAN attachment","detail":"VLAN 250"},
+      {"line":[600,98,600,128],"tone":"mark"},{"line":[600,128,90,128],"tone":"mark"},{"line":[90,128,90,168],"arrow":true,"tone":"mark"},
+      {"text":"on the worker: dashed boxes are IBM&apos;s","at":[10,156],"hand":true,"tone":"muted"},
+      {"box":[10,172,160,62],"dashed":true,"title":"eth1 carrier","detail":"carrier VNI"},
+      {"line":[174,203,196,203],"arrow":true,"tone":"mark"},
+      {"box":[200,172,160,62],"dashed":true,"title":"br-eth1","detail":"OVS bridge"},
+      {"line":[364,203,386,203],"arrow":true,"tone":"mark"},
+      {"box":[390,172,160,62],"tone":"mark","title":"localnet CUDN","detail":"VLAN 250"},
+      {"line":[554,203,576,203],"arrow":true,"tone":"mark"},
+      {"box":[580,172,130,62],"title":"VM","detail":"its vNIC"}]}'></svg>
+  <div class="pair">
+    <div class="q">
+      <p>The attachment says <code>--vlan 250</code>. The network on the cluster side says VLAN 251. What happens?</p>
+      <div class="opts">
+        <button class="opt">VPC fixes the mismatch</button>
+        <button class="opt" data-ok>Nothing flows</button>
+        <button class="opt">Traffic flows, but slowly</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Both sides must agree on the VLAN ID, or nothing flows. Careful: VPC DHCP can still answer when the numbers differ, so a VM that has an address is not proof the path works. Test with traffic.</p></details>
+    </div>
+    <div class="q">
+      <p><span class="kicker">Spot the fault.</span> <code>ibmcloud ks vni attach baremetal</code> fails with <code>VNI Attachment and target cluster have different VPC IDs, could not attach. (E8010)</code>. What is wrong?</p>
+      <div class="opts">
+        <button class="opt">The VLAN ID is out of range</button>
+        <button class="opt" data-ok>The VNI is in a different VPC from the cluster</button>
+        <button class="opt">The worker is in a different zone</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The VNI must be in the same VPC as the cluster. It can be on any subnet in that VPC. A different zone is a separate rule: the VNI&apos;s zone must match the worker&apos;s zone.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 1.1.</span> Which of these can you install from OperatorHub on a ROVS cluster?</p>
+      <div class="opts">
+        <button class="opt">NMState</button>
+        <button class="opt">Node Maintenance</button>
+        <button class="opt" data-ok>The Migration Toolkit for Virtualization</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Only OpenShift Virtualization, NMState and Node Maintenance are blocked. Every other operator installs normally, and you own its lifecycle. The add-on installs NMState for you, and the OVS bridge for VM traffic comes already built.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You create a <code>/24</code> subnet. How many addresses can you give to VMs?</p>
+      <div class="opts">
+        <button class="opt">256</button>
+        <button class="opt">254</button>
+        <button class="opt" data-ok>251</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM Cloud reserves 5 addresses in every subnet, so a subnet of N addresses has N minus 5 usable. A <code>/24</code> showed Address available 251 and Address total 256.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You see two VNIs on each worker that you did not create. What do you do?</p>
+      <div class="opts">
+        <button class="opt">Add a floating IP to the one on <code>eth0</code></button>
+        <button class="opt">Delete the extra one on <code>eth1</code></button>
+        <button class="opt" data-ok>Leave them alone</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM creates and attaches them with the worker. The one on <code>eth0</code> carries the pod network and cluster traffic. The one on <code>eth1</code> carries the VM attachments you create. IBM states that modifying a static VNI is unsupported and can break cluster connectivity.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know what is under the cluster</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>A subnet lives in one zone. A public gateway is outbound only. The static VNIs are IBM&apos;s. Both sides use the same VLAN ID.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 10, Understand VPC networking for ROVS on IBM Cloud, covers the whole picture, and chapter 11, Create VPC address prefixes and subnets for ROVS, builds the first subnet.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

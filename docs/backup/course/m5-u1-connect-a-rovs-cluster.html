@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Connect a ROVS cluster · BRS course</title>
+<meta name="description" content="Course unit 5.1: say what the Data Source Connector does on a cluster, make the connection in the BRS console, and find out why the connector pod stays Pending. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m5-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 5 · OpenShift Virtualization VMs</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 5</span>
+      <h1>Connect a ROVS cluster</h1>
+      <p class="lead">By the end you can say what the Data Source Connector does on a ROVS cluster, make the connection in the BRS console, and explain why the connector pod can stay Pending after Helm says deployed.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: the BRS service on the left, linked to a connector with two pods on your cluster on the right."
+        data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,40,120,60],"title":"BRS","detail":"the service"},{"line":[134,70,176,70],"arrow":true,"tone":"mark"},{"box":[180,40,230,60],"tone":"mark","title":"your cluster","detail":"connector, 2 pods"},{"text":"the pod must start","at":[200,150],"hand":true,"size":17,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. It runs VMs on a ROVS (OpenShift Virtualization) cluster, here called ng-cluster-01, and wants BRS to back them up. First BRS needs a connector on that cluster.</p>
+    </div>
+  </div>
+  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names were changed. Every screen and result comes from our lab on 1 and 2 October and 9 November 2026, recorded in tutorial B2d.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>What the connector is, and what it needs</h2>
+  <p class="lead">Before BRS can see a cluster, a small program must run on it. It is called the Data Source Connector. It is the channel between your cluster and the BRS service.</p>
+<svg class="sketch" role="img" aria-label="Hand-drawn diagram. The BRS instance is linked by a connection to the Data Source Connector, a StatefulSet with 2 replicas on your cluster. Datamover and Velero, drawn dashed, are added later, at registration."
+        data-drawing='{"w":600,"h":210,"shapes":[{"box":[10,50,150,60],"title":"BRS instance","detail":"the service"},{"line":[164,80,246,80],"arrow":true,"tone":"mark"},{"text":"linked by a connection","at":[10,145],"hand":true,"size":16,"tone":"muted"},{"text":"your cluster","at":[252,20],"hand":true,"size":17,"tone":"mark"},{"box":[250,28,340,172],"heavy":true},{"box":[265,45,310,60],"tone":"mark","title":"Data Source Connector","detail":"StatefulSet, 2 replicas"},{"box":[265,118,310,60],"dashed":true,"title":"Datamover and Velero","detail":"added at registration"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Northgate installs the connector. What else is on the cluster for VM backup when the install finishes?</p>
+      <div class="opts">
+        <button class="opt">Datamover and Velero, both</button>
+        <button class="opt" data-ok>Nothing else: they are added when you register the cluster as a source</button>
+        <button class="opt">Only Velero</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s guide says the Datamover (a DaemonSet) and Velero are deployed automatically during source registration. They are not part of the connector install. Unit 5.2 does the registration. In our lab, on 9 November 2026, after registration there was a Deployment <code>velero</code> and a DaemonSet <code>cohesity-dm</code> with 3 pods, one for each worker.</p></details>
+    </div>
+    <div class="q">
+      <p>How much room does the connector need on the cluster?</p>
+      <div class="opts">
+        <button class="opt">One pod, 1 CPU and 1 Gi of memory</button>
+        <button class="opt" data-ok>2 replicas: 4 CPU and 10 Gi of memory in all, and 5 Gi of storage for each replica</button>
+        <button class="opt">A whole worker of its own</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Those are the figures in tutorial B2d, taken from IBM&apos;s guide. A dedicated worker pool for the connector is optional: our lab ran it on the default pool.</p></details>
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Step 2 · Click through the console</span>
+  <h2>Make the connection</h2>
+  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="3.3,83.8,26.5,11.6" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B2d-1-platform.png" alt="Create Data Source Connection: the Deployment Platform list with VMware, VPC, ROKS Classic and ROKS VPC." width="780" height="413"></div>
+      <figcaption>
+        <h3>You opened Data Source Connections and clicked New Connection. Which platform do you choose for a ROVS cluster?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>ROKS &gt; ROKS VPC</b>, then Create. The connection is made in System &gt; Data Source Connections of the instance, not in the Sources wizard.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="83.7,42.9,6.5,13.9" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B2d-2-helm.png" alt="Install Data Source Connection: the helm install command and its copy button." width="736" height="345"></div>
+      <figcaption>
+        <h3>Step 2 shows the command that installs the connector. How do you take it?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: the copy button. The command holds the registration token. Do not paste it into a file you keep: the token carries an expiry time, so copy it when you install. Then click Done.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="12.8,38.6,18.2,7" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B2d-4-wrong-path.png" alt="The Sources wizard&apos;s own connection step: Copy OVA URL and a token (blurred)." width="736" height="544"></div>
+      <figcaption>
+        <h3>A learner makes the connection from the Register Source wizard instead, and sees this. What shows it is the wrong path?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Copy OVA URL</b>: this is the VMware flow, an OVA and a token, with no Helm command. In our lab on 9 November 2026 this path made a connection that stayed Unused. Make the connection from Data Source Connections.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>Deployed, and yet Pending</h2>
+  <p class="lead">Northgate runs the Helm command it copied, with the pull secret added and 2 replicas. Helm answers at once. One minute later, this is what the lab recorded:</p>
+  <pre class="def" aria-label="What was recorded">STATUS: deployed
+60 s later: pod brs-dsc-brs-ds-connector-chart-0 is Pending</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The pod stays Pending. What went wrong?</p>
+      <div class="opts">
+        <button class="opt">The registration token expired</button>
+        <button class="opt" data-ok>The chart asks for a storage class that is not on this cluster</button>
+        <button class="opt">The cluster has too little CPU</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The pod&apos;s claim for storage was Pending too: <code>storageclass.storage.k8s.io &quot;ibmc-vpc-block-metro-5iops-tier&quot; not found</code>. The chart uses that storage class by default, and the command as copied does not set one. That class is not on this ROVS cluster. The cluster&apos;s default class is <code>ocs-storagecluster-ceph-rbd</code>. In our lab on 2 October 2026 the pod said: &quot;pod has unbound immediate PersistentVolumeClaims&quot;.</p></details>
+    </div>
+    <div class="q">
+      <p>What fixed it?</p>
+      <div class="opts">
+        <button class="opt">Waiting: the volume binds in time</button>
+        <button class="opt" data-ok>Uninstalling, deleting the Pending claim, and installing again with the cluster&apos;s storage class set</button>
+        <button class="opt">Deleting the pod</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On 9 November 2026 the lab ran <code>helm uninstall</code>, deleted the Pending claim, and installed again with <code>--set volumeClaimTemplate.storageClass=ocs-storagecluster-ceph-rbd</code> and <code>--set replicaCount=2</code>. Pod 0 was 1/1 Running after 2 min 34 s, and pod 1 a few minutes later. Helm leaves the claim behind, so remove a Pending one by hand.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> In our lab Helm printed STATUS: deployed on 2 October and again on 9 November 2026, and the pod stayed Pending both times. Look at the pod and its claim, not at the Helm status.</p>
+</section>
+<section class="screen">
+  <span class="kicker">Step 4 · Click through the console</span>
+  <h2>Check that the connector checked in</h2>
+  <p class="lead">After the fixed install, the lab went back to Data Source Connections.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="61.2,89.9,3.8,8.2" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B2d-3-connection-healthy.png" alt="Data Source Connections: the RoksVpc connection healthy with 2 connectors." width="1164" height="465"></div>
+      <figcaption>
+        <h3>The new connection&apos;s name ends in RoksVpc. Click the figure that shows the connector pods have checked in.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. A green tick and <b>2</b> connectors. On 9 November 2026 the lab saw this at 07:07 UTC.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>A connection shows no connectors. Can you register the cluster through it?</p>
+      <div class="opts">
+        <button class="opt">Yes: the connectors join later</button>
+        <button class="opt" data-ok>No: stop, and go back to installing the connector</button>
+        <button class="opt">Yes, with a longer timeout</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Tutorial B3e says: if the connection has no connectors, stop. In our lab on 1 October 2026, registrations through a connection with no connectors failed with <code>Encountered HTTP connection error</code>. Unit 5.2 comes back to this.</p></details>
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Helm prints STATUS: deployed, and a minute later the connector pod is Pending. What do you look at?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The pod and its volume claim</button>
+        <button class="opt">The BRS instance&apos;s region</button>
+        <button class="opt">The registration token&apos;s expiry</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the claim was Pending because the chart&apos;s default storage class was not on the cluster.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Where do you make the connection for a ROVS cluster?</p>
+      <div class="opts">
+        <button class="opt" data-ok>In Data Source Connections, with the platform ROKS VPC</button>
+        <button class="opt">In the Register Source wizard, with Create Data Source Connection</button>
+        <button class="opt">In the cluster&apos;s own console</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The Sources wizard gives the VMware flow: an OVA link and a token, not a Helm command. In our lab it made a connection that stayed Unused.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>What is the sign that the connector pods have checked in?</p>
+      <div class="opts">
+        <button class="opt">The Helm release says deployed</button>
+        <button class="opt" data-ok>The connection is healthy and lists 2 connectors</button>
+        <button class="opt">The connection&apos;s name ends in a number</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On 9 November 2026 the RoksVpc connection showed a green tick and 2 connectors.</p></details>
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can connect a cluster</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>The connection is made in Data Source Connections, platform ROKS VPC. The copied Helm command sets no storage class, so on our lab cluster the pod stayed Pending until we set <code>ocs-storagecluster-ceph-rbd</code>. A healthy connection shows 2 connectors. OpenShift Virtualization VM backup was not generally available when tested, and IBM lists it for au-syd only.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B2d installs the connector, from the console and the command line. IBM&apos;s own install guide is in <code>ibm-brs/k8-install.md</code>.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

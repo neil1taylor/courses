@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Updates and node maintenance · ROVS course</title>
+<meta name="description" content="Course unit 5.2: see who updates what on ROVS, drain a worker before it is reloaded, and learn what a drain does to each kind of VM. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m5-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 5 · Day two</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 5</span>
+      <h1>Updates and node maintenance</h1>
+      <p class="lead">By the end you can say who updates what on ROVS, drain a worker safely before it is reloaded, and say what a drain does to each kind of VM.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: five boxes in a row, cordon, drain, reload, rejoin and check, with an arrow from the last back to the first for the next worker."
+        data-drawing='{"w":420,"h":190,"shapes":[
+          {"box":[10,20,72,44],"title":"cordon"},
+          {"box":[92,20,72,44],"title":"drain"},
+          {"box":[174,20,72,44],"tone":"mark","title":"reload"},
+          {"box":[256,20,72,44],"title":"rejoin"},
+          {"box":[338,20,72,44],"title":"check"},
+          {"line":[84,42,90,42],"arrow":true,"tone":"muted"},
+          {"line":[166,42,172,42],"arrow":true,"tone":"muted"},
+          {"line":[248,42,254,42],"arrow":true,"tone":"muted"},
+          {"line":[330,42,336,42],"arrow":true,"tone":"muted"},
+          {"line":[374,68,374,112],"tone":"muted"},
+          {"line":[374,112,46,112],"tone":"muted"},
+          {"line":[46,112,46,68],"arrow":true,"tone":"muted"},
+          {"text":"then the next worker, one at a time","at":[60,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its admins plan ESXi patching around maintenance mode. On ROVS, IBM patches the platform, and the timing of each worker reload is yours.</p>
+    </div>
+  </div>
+  <p class="small">Every command, output and fact in this unit comes from real runs on lab clusters, recorded in tutorial chapters 46, 50 and 41. The review question repeats one from unit 2.2.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Predict</span>
+  <h2>Who updates what</h2>
+  <p class="lead">ROVS runs on ROKS, so IBM manages more than you would on a self-managed OpenShift cluster. Pick the owner of each part.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram of five parts. The control plane and the virtualization operators are IBM's. Worker nodes are published by IBM and reloaded by you. ODF and the guest OS are yours."
+    data-drawing='{"w":560,"h":250,"shapes":[
+      {"box":[10,10,260,60],"title":"Control plane","detail":"IBM updates it"},
+      {"box":[290,10,260,60],"title":"Virtualization operators","detail":"IBM, automatic patches"},
+      {"box":[10,90,260,60],"tone":"mark","title":"Worker nodes","detail":"IBM publishes, you reload"},
+      {"box":[290,90,260,60],"tone":"mark","title":"ODF","detail":"you update the add-on"},
+      {"box":[150,170,260,60],"tone":"mark","title":"Guest OS in VMs","detail":"you patch it"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Who updates the control plane, and what does it do to your VMs?</p>
+      <div class="opts">
+        <button class="opt">You, on a schedule you set</button>
+        <button class="opt" data-ok>IBM, automatically, and running VMs are not affected</button>
+        <button class="opt">IBM, with a short outage for every VM</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM updates the API server, etcd and controllers on a regular schedule. The control plane is highly available, and VMs run on workers, not on control plane nodes.</p></details>
+    </div>
+    <div class="q">
+      <p>A patch update for the virtualization operators is coming. What do you do?</p>
+      <div class="opts">
+        <button class="opt">Approve the install plan in OLM</button>
+        <button class="opt" data-ok>Nothing: IBM applies it automatically, with at least a week&apos;s notice</button>
+        <button class="opt">Run <code>ibmcloud ks cluster addon update</code></button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The <code>openshift-virtualization</code> add-on owns the virtualization, NMState and Node Maintenance operators. Patches apply on the stable channel with automatic approval. Editing its subscriptions or approving its install plans by hand is at best pointless. Minor upgrades are a command against the add-on, after the cluster is upgraded first.</p></details>
+    </div>
+    <div class="q">
+      <p>Which command applies a fix pack to a bare metal worker?</p>
+      <div class="opts">
+        <button class="opt">ibmcloud ks worker update</button>
+        <button class="opt" data-ok>ibmcloud ks worker reload</button>
+        <button class="opt">ibmcloud ks worker replace</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p><code>worker update</code> refused a ROVS worker, and its advice was to delete the worker. <code>worker reload</code> applied the pending fix pack. <code>replace</code> deletes the worker and provisions a new one. ODF is yours to update too, as an add-on update. It restarts storage daemons, so plan it like a reload.</p></details>
+    </div>
+  </div>
+  <p class="hand tilt" style="margin-top:16px"><b>From vSphere:</b> IBM does roughly what vCenter upgrades and ESXi patching do. The add-on is the counterpart of Update Manager, but IBM runs it. A rough mapping, not an IBM statement.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Explore the parts</span>
+  <h2>Drain a worker before it is reloaded</h2>
+  <p class="lead">These four commands worked on ROVS. Select a part of the drawing to see what it does and which line defines it. You can also click a line.</p>
+  <div class="explorer" data-start="drain"
+    data-map='{"cordon":[[1,1]],"drain":[[2,2]],"verify":[[3,3]],"reload":[[4,4]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of four steps in a row: cordon, drain, check and reload. Text beneath says then wait for HEALTH_OK, and only then the next worker."
+          data-drawing='{"w":560,"h":170,"shapes":[
+            {"box":[10,20,120,70],"part":"cordon","title":"Cordon","detail":"stop new VMs"},
+            {"box":[150,20,120,70],"part":"drain","title":"Drain","detail":"VMs move off"},
+            {"box":[290,20,120,70],"part":"verify","title":"Check","detail":"none left"},
+            {"box":[430,20,120,70],"part":"reload","title":"Reload","detail":"fix pack"},
+            {"line":[132,55,148,55],"arrow":true,"tone":"muted"},
+            {"line":[272,55,288,55],"arrow":true,"tone":"muted"},
+            {"line":[412,55,428,55],"arrow":true,"tone":"muted"},
+            {"text":"then HEALTH_OK, and only then the next worker","at":[10,135],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="cordon">
+          <h3>Cordon</h3>
+          <p>Marks the node unschedulable, so no new VM lands on it. After the cordon, <code>oc get node</code> showed <code>Ready,SchedulingDisabled</code>.</p>
+          <p class="hand tilt"><b>From vSphere:</b> cordon plus drain is roughly putting an ESXi host into maintenance mode, and uncordon is leaving it. A rough mapping, not an IBM statement.</p>
+        </div>
+        <div class="part-info" data-part="drain">
+          <h3>Drain</h3>
+          <p>Evicts the pods. The selector limits it to the VMs&apos; launcher pods. A VM whose eviction strategy is <code>LiveMigrate</code> is live-migrated. A VM with <code>None</code> is shut down. In a later run this drain moved seven running VMs off a worker in 54 seconds, every migration <code>Succeeded</code>, and no VM stopped.</p>
+          <p class="watch"><b>Watch for this.</b> A reload does not wait for live migrations. A fix-pack reload of a worker running nine live-migratable VMs stopped all nine with the worker, and no migration completed. The protected DR test VM was down for 32 minutes.</p>
+        </div>
+        <div class="part-info" data-part="verify">
+          <h3>Check</h3>
+          <p>Nothing should be left on the node. In a by-hand drain of a worker that held 13 VMs, this listing returned nothing, because the VMs had moved. The drain took 3 minutes 23 seconds.</p>
+        </div>
+        <div class="part-info" data-part="reload">
+          <h3>Reload</h3>
+          <p>A reload reimages the worker and reinstalls it with the latest patch version. It is not a reboot: the node&apos;s ODF disks were kept in all three measured reloads, but its OSDs were offline for 26 to 70 minutes, with Ceph on two copies. Reload one worker at a time and wait for <code>HEALTH_OK</code> between them. Two at once on a three-worker cluster leaves one copy, and VMs hang.</p>
+          <p class="hand tilt"><b>From vSphere:</b> rolling worker updates are roughly like rolling ESXi upgrades with DRS fully automated. A rough mapping, not an IBM statement.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="Cordon, drain, check and reload a worker">oc adm cordon &lt;node&gt;
+oc adm drain &lt;node&gt; --ignore-daemonsets --delete-emptydir-data --pod-selector=kubevirt.io=virt-launcher
+oc get vmi -A -o wide | grep &lt;node&gt;        # nothing left
+ibmcloud ks worker reload --worker &lt;worker-id&gt;</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Predict, then run it</span>
+  <h2>Ask what a drain would do, without draining</h2>
+  <p class="lead">A drain is only one call to the eviction API per pod. You can make that call yourself, against your own VM, instead of draining a node that carries other people&apos;s VMs.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <p class="pre"># the cluster-wide default for a VM that sets no eviction strategy</p>
+          <pre class="in">oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv -o jsonpath='{.spec.evictionStrategy}'</pre>
+          <pre class="out">LiveMigrate</pre>
+          <p class="hand note">That was the value on the cluster used for chapter 41, because someone had set it. A second, untouched ROVS cluster read None, and a drain destroyed and recreated its VM with no migration. Read yours.</p>
+        </div>
+        <div class="q">
+          <p>The next call evicts the VM&apos;s launcher pod. It will be refused. Is that good news or bad?</p>
+          <div class="opts">
+            <button class="opt" data-ok>Good: a drain would move the VM, not stop it</button>
+            <button class="opt">Bad: the VM cannot be evicted, so maintenance is blocked</button>
+            <button class="opt">Neutral: the VM shuts down either way</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><span class="hand">Read the message, not just the refusal.</span><p>Two of the three possible results are refusals, and they mean opposite things. &quot;Eviction triggered evacuation&quot; means a drain would live-migrate the VM. &quot;Is configured with an eviction strategy but is not live-migratable&quot; means the drain would not finish. An allowed call would power the VM off.</p></details>
+        </div>
+        <div class="cmd">
+          <p class="pre"># one eviction call; $POD is the VM's virt-launcher pod</p>
+          <pre class="in">oc create --raw "/api/v1/namespaces/$(oc project -q)/pods/$POD/eviction" -f evict.json</pre>
+          <pre class="out err">Error from server: admission webhook "virt-launcher-eviction-interceptor.kubevirt.io"
+denied the request: Eviction triggered evacuation of VMI "scratch-w2c-mig/scratch-w2c-vm-virt"</pre>
+          <p class="hand note">The refusal is the success case. KubeVirt set the evacuation field on the VMI and created an evacuation migration.</p>
+        </div>
+        <div class="cmd">
+          <p class="pre"># the VMI, as the migration ran and after it finished</p>
+          <pre class="in">oc get vmi scratch-w2c-vm-virt -o custom-columns=UID:.metadata.uid,PHASE:.status.phase,NODE:.status.nodeName,EVAC:.status.evacuationNodeName</pre>
+          <pre class="out">UID                          PHASE     NODE           EVAC
+678a770a-...-0f30c504bc1b   Running   ...-00000167   ...-00000167
+678a770a-...-0f30c504bc1b   Running   ...-0000039f   &lt;none&gt;</pre>
+          <p class="hand note">Same UID, still Running, different node. The field clears once the VM has landed elsewhere.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> The eviction path was run. A drain of a shared node was not, for this probe.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>The drain that does not finish</h2>
+  <p class="lead">A VM has a 1Gi RWO disk and <code>evictionStrategy: LiveMigrate</code>. This is the probe, on OpenShift 4.21.27, in a scratch namespace.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A VM with an RWO disk and LiveMigrate is evicted; a webhook says no and creates no migration object. Text says the node never empties, so the drain does not finish."
+    data-drawing='{"w":560,"h":170,"shapes":[
+      {"box":[10,20,200,70],"title":"VM","detail":"RWO disk, LiveMigrate"},
+      {"line":[216,55,314,55],"arrow":true,"tone":"mark"},
+      {"text":"evict","at":[240,44],"hand":true,"size":16,"tone":"mark"},
+      {"box":[320,20,230,70],"dashed":true,"title":"The webhook says no","detail":"no migration object"},
+      {"text":"the node never empties, so the drain does not finish","at":[10,140],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+  <pre class="def" aria-label="Conditions of the VMI and the refused eviction">$ oc get vmi scratch-drainprobe-rwo -o jsonpath='{range .status.conditions[*]}{.type}={.status} reason={.reason}{"\n"}{end}'
+Ready=True reason=
+DataVolumesReady=True reason=AllDVsReady
+LiveMigratable=False reason=DisksNotLiveMigratable
+
+$ oc create --raw "/api/v1/namespaces/scratch-drainprobe/pods/$POD/eviction" -f evict.json
+Error from server: admission webhook "virt-launcher-eviction-interceptor.kubevirt.io" denied
+the request: VMI scratch-drainprobe-rwo is configured with an eviction strategy but is not
+live-migratable</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>IBM drains the worker for its own update. What happens to this VM and to the drain?</p>
+      <div class="opts">
+        <button class="opt">The VM is shut down and the drain finishes</button>
+        <button class="opt" data-ok>The eviction is refused, the VM keeps running, and the drain stalls</button>
+        <button class="opt">The VM live migrates anyway</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">A forgotten RWO disk blocks the platform&apos;s maintenance, not just yours.</span><p>The launcher pod stayed <code>Running</code>, the VMI stayed on the same node, and <code>oc get vmim</code> showed no migration object at all. The node does not empty and stays cordoned until you step in.</p></details>
+    </div>
+    <div class="q">
+      <p>With <code>LiveMigrateIfPossible</code> the same call returns <code>"status":"Success","code":201</code>. What does that setting trade away?</p>
+      <div class="opts">
+        <button class="opt">Nothing: every VM still migrates</button>
+        <button class="opt" data-ok>The VMs that cannot migrate take an outage, but the drain finishes</button>
+        <button class="opt">The drain blocks, but no VM is ever stopped</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A VM that can migrate still migrates. One that cannot is shut down and restarted by its <code>runStrategy</code>, so the drain completes. Know which VMs those are: <code>oc get vmi -A -o custom-columns=NS:.metadata.namespace,NAME:.metadata.name,LM:'.status.conditions[?(@.type=="LiveMigratable")].status'</code>.</p></details>
+    </div>
+    <div class="q">
+      <p>A worker dies at 02:00 and a VM with <code>runStrategy: Always</code> ran on it. By default on ROVS, what happens?</p>
+      <div class="opts">
+        <button class="opt">It restarts on another worker within seconds, as VMware HA would</button>
+        <button class="opt" data-ok>It stays down until the Node object is removed, and nothing removes it for you</button>
+        <button class="opt">IBM restarts it on a spare worker</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Red Hat says a VM with <code>runStrategy: Always</code> is not automatically relocated when machine health checks are not deployed. ROVS does not serve the Machine API, so out of the box nothing removes the Node object. When one worker was rebooted twice, the VM restarted only after the node came back, with outages of 213 and 229 seconds. A worker that stays down could not be reproduced, because IBM gives a ROVS customer no way to power one off.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>You start a fix-pack reload on a worker that runs live-migratable VMs, and you have not drained it. What did the measured run show?</p>
+      <div class="opts">
+        <button class="opt">Every VM live migrated before the worker stopped</button>
+        <button class="opt" data-ok>All nine VMs stopped with the worker, and no migration completed</button>
+        <button class="opt">The reload refused to start</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The reload does not wait for live migrations. Drain the worker yourself first, and check that no VM is left on it.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A VM sets no <code>evictionStrategy</code>. What does a drain do to it?</p>
+      <div class="opts">
+        <button class="opt">Always migrates it</button>
+        <button class="opt" data-ok>Follows the cluster-wide setting: LiveMigrate migrates it, None destroys and recreates it</button>
+        <button class="opt">Always shuts it down for good</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The VM inherits the HyperConverged setting. Read your cluster&apos;s value rather than assuming either result. Set it on the VM to own the behaviour.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>How many workers do you reload at once?</p>
+      <div class="opts">
+        <button class="opt">All of them, to finish quickly</button>
+        <button class="opt" data-ok>One, then wait for Ceph to report HEALTH_OK</button>
+        <button class="opt">Two, so one copy always stays</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>There is no MachineConfigPool on ROVS to set a limit for you. You pace the reloads yourself. Two at once on a three-worker cluster leaves one copy.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 2.2.</b> Why is a three-node cluster a lab configuration?</p>
+      <div class="opts">
+        <button class="opt">ODF needs six nodes to start</button>
+        <button class="opt" data-ok>One node in maintenance plus one failure leaves one copy, and I/O blocks</button>
+        <button class="opt">Three nodes cannot hold three copies</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Three nodes can hold three copies. The risk is losing two at once. IBM&apos;s guidance for production clusters running three copies is to start with six nodes.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can plan a worker reload</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>IBM updates the control plane and the virtualization operators. You reload workers one at a time, drain them first, and update ODF. A VM that cannot migrate and carries LiveMigrate stalls the drain. Nothing restarts the VMs of a dead worker by default.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 46, Update and maintain a ROVS cluster: workers, add-on, drains, has every command and result. Chapter 50, Keep ROVS VMs running through node failure and maintenance, covers node failure.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

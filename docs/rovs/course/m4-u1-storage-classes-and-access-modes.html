@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Storage classes and access modes · ROVS course</title>
+<meta name="description" content="Course unit 4.1: read the request behind a VM disk, choose the right ODF storage class, and see why a VM disk needs ReadWriteMany. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m4-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 4 · Storage</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 4</span>
+      <h1>Storage classes and access modes</h1>
+      <p class="lead">By the end you can read the request behind a VM disk, say what each ODF storage class is for, and say why a VM disk needs ReadWriteMany.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a request form with three lines, class, access mode and volume mode, and an arrow to a disk."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[20,20,190,150],"heavy":true},
+          {"text":"the request","at":[34,48],"hand":true,"tone":"muted"},
+          {"box":[36,62,158,26],"title":"class"},
+          {"box":[36,96,158,26],"title":"access mode"},
+          {"box":[36,130,158,26],"title":"volume mode"},
+          {"line":[218,95,290,95],"arrow":true,"tone":"mark"},
+          {"box":[300,60,100,70],"heavy":true,"tone":"mark","title":"disk"},
+          {"text":"a PVC","at":[320,160],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its admins know datastores and storage policies. Here a VM disk starts as a request, and the request carries three choices.</p>
+    </div>
+  </div>
+  <p class="small">Every command, output and fact in this unit comes from real runs on a test cluster, recorded in tutorial chapters 35 and 102. The review question repeats one from unit 1.2.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>The request that makes a VM disk</h2>
+  <p class="lead">This DataVolume names every choice, so no default decides for you. Select a part of the drawing to see what it does and which lines define it. You can also click a line.</p>
+  <div class="explorer" data-start="class"
+    data-map='{"source":[[5,8]],"class":[[10,10]],"access":[[11,12]],"volume":[[13,13]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of four boxes that all point to the VM's PVC: Source, Storage class, Access mode and Volume mode."
+          data-drawing='{"w":560,"h":300,"shapes":[
+            {"box":[10,20,260,70],"part":"source","title":"Source","detail":"DataSource centos-stream9"},
+            {"box":[290,20,260,70],"part":"class","title":"Storage class","detail":"pool and replication"},
+            {"box":[10,120,260,70],"part":"access","title":"Access mode","detail":"ReadWriteMany"},
+            {"box":[290,120,260,70],"part":"volume","title":"Volume mode","detail":"Block"},
+            {"line":[140,92,230,223],"arrow":true,"tone":"muted"},
+            {"line":[420,92,330,223],"arrow":true,"tone":"muted"},
+            {"line":[140,192,210,223],"arrow":true,"tone":"muted"},
+            {"line":[420,192,350,223],"arrow":true,"tone":"muted"},
+            {"box":[150,226,260,60],"heavy":true,"title":"The PVC","detail":"the VM disk"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="source">
+          <h3>Source</h3>
+          <p>A DataVolume is how the Containerized Data Importer (CDI) gets data into a PVC. It creates the PVC with your class and size, runs an importer pod that clones the golden image into it, and marks the DataVolume <code>Succeeded</code>.</p>
+          <p class="watch"><b>Watch for this.</b> A DataVolume that leaves out the class gets the virt default, the class marked <code>storageclass.kubevirt.io/is-default-virt-class</code>. On ROVS that is the virtualization class, not the cluster default. Name the class anyway.</p>
+        </div>
+        <div class="part-info" data-part="class">
+          <h3>Storage class</h3>
+          <p>The class decides the Ceph pool, the replication policy and the volume characteristics. ODF ships three. <code>ocs-storagecluster-ceph-rbd-virtualization</code> is for all VM disks. <code>ocs-storagecluster-ceph-rbd</code> is for container workloads, not VM disks. <code>ocs-storagecluster-cephfs</code> is a file class for shared filesystems for container workloads. Unit 2.2 showed why the generic class is wrong for VMs.</p>
+          <p class="hand tilt"><b>From vSphere:</b> a storage class is closest to an SPBM storage policy. The virtualization class is the vSAN policy for VMs. The CephFS class is the NFS datastore.</p>
+        </div>
+        <div class="part-info" data-part="access">
+          <h3>Access mode</h3>
+          <p>ReadWriteOnce (RWO) lets pods on one node mount the disk. ReadWriteMany (RWX) lets pods on several nodes mount it at once. Live migration needs RWX, because the disk must be reachable from the source and the destination node while the VM moves.</p>
+          <p class="hand tilt"><b>From vSphere:</b> RWX is a VMDK on a shared datastore, which can vMotion. RWO is a VMDK on a local datastore, which cannot.</p>
+        </div>
+        <div class="part-info" data-part="volume">
+          <h3>Volume mode</h3>
+          <p>Block gives the VM a raw block device, with no filesystem between QEMU and the device. Filesystem mounts a directory, and QEMU writes an image file in it: one more layer. Block is the default for the virtualization class. RWX with Block is the combination that lets a VM live migrate. On Ceph RBD it is the only combination that supports multi-node access.</p>
+          <p class="hand tilt"><b>From vSphere:</b> Block is like a thick eager-zeroed VMDK. Filesystem is like a VMDK on an NFS datastore.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="A DataVolume template that names class, access mode and volume mode">dataVolumeTemplates:
+- metadata:
+    name: my-vm
+  spec:
+    sourceRef:
+      kind: DataSource
+      name: centos-stream9
+      namespace: openshift-virtualization-os-images
+    storage:
+      storageClassName: ocs-storagecluster-ceph-rbd-virtualization
+      accessModes:
+      - ReadWriteMany
+      volumeMode: Block
+      resources:
+        requests:
+          storage: 30Gi</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict, then run it</span>
+  <h2>What if the request says nothing?</h2>
+  <p class="lead">CDI keeps a storage profile for each class. It lists the combinations of access mode and volume mode that the class offers.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="q">
+          <p>A disk request names no access mode and no volume mode. Which combination does it get?</p>
+          <div class="opts">
+            <button class="opt">RWO with Filesystem</button>
+            <button class="opt" data-ok>RWX with Block</button>
+            <button class="opt">RWO with Block</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>A disk that says nothing gets the first combination in the profile. Run the command to see the list.</p></details>
+        </div>
+        <div class="cmd">
+          <p class="pre"># the storage profile of the virtualization class</p>
+          <pre class="in">oc get storageprofile ocs-storagecluster-ceph-rbd-virtualization -o jsonpath='{.status.claimPropertySets}'</pre>
+          <pre class="out">[{"accessModes":["ReadWriteMany"],"volumeMode":"Block"},
+ {"accessModes":["ReadWriteOnce"],"volumeMode":"Block"},
+ {"accessModes":["ReadWriteOnce"],"volumeMode":"Filesystem"}]</pre>
+          <p class="hand note">Three combinations. RWX with Block is first, so an unnamed request gets it.</p>
+          <p class="hand note">Name both modes in the DataVolume anyway, so the order of this list never decides.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> The two RBD classes had byte-identical storage profiles on the test cluster. The access mode on a disk never tells you which class it is on.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Design it</span>
+  <h2>Which class does Northgate pick?</h2>
+  <p class="lead">Three Northgate needs. Pick a class for each, then read why.</p>
+  <div class="pair">
+    <div class="q">
+      <p>A new Northgate VM needs a boot disk.</p>
+      <div class="opts">
+        <button class="opt" data-ok>ocs-storagecluster-ceph-rbd-virtualization</button>
+        <button class="opt">ocs-storagecluster-ceph-rbd</button>
+        <button class="opt">ocs-storagecluster-cephfs</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Every VM disk uses the virtualization class. It is pre-configured for virtualization and validated for start, stop, live migration and snapshots.</p></details>
+    </div>
+    <div class="q">
+      <p>A Northgate container app, not a VM, needs a block volume.</p>
+      <div class="opts">
+        <button class="opt">ocs-storagecluster-ceph-rbd-virtualization</button>
+        <button class="opt" data-ok>ocs-storagecluster-ceph-rbd</button>
+        <button class="opt">ocs-storagecluster-cephfs</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The generic RBD class is for container workloads. It is supported but not recommended for VM disks.</p></details>
+    </div>
+    <div class="q">
+      <p>A Northgate container team needs a shared filesystem that many pods mount at once.</p>
+      <div class="opts">
+        <button class="opt">ocs-storagecluster-ceph-rbd-virtualization</button>
+        <button class="opt">ocs-storagecluster-ceph-rbd</button>
+        <button class="opt" data-ok>ocs-storagecluster-cephfs</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>CephFS is the file class, for shared filesystems for container workloads. For a VMware admin it is the closest thing to an NFS datastore.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Predict</span>
+  <h2>One RWO disk among RWX disks</h2>
+  <p class="lead">The drawing shows a VM with two disks. The boot disk is RWX with Block. Someone adds a data disk on the same class and asks for RWO.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram of a VM with two disks. The boot disk is marked RWX Block. The data disk is dashed and marked RWO Block. Text says one RWO disk stops live migration."
+    data-drawing='{"w":560,"h":210,"shapes":[
+      {"box":[200,10,160,56],"heavy":true,"title":"VM"},
+      {"line":[250,68,135,118],"arrow":true},
+      {"line":[310,68,425,118],"arrow":true,"tone":"mark"},
+      {"box":[20,120,230,64],"title":"Boot disk","detail":"RWX Block"},
+      {"box":[310,120,230,64],"dashed":true,"tone":"mark","title":"Data disk","detail":"RWO Block"},
+      {"text":"one RWO disk stops live migration","at":[130,204],"hand":true,"size":20,"tone":"mark"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>IBM maintains the worker under this VM. Can the VM live migrate?</p>
+      <div class="opts">
+        <button class="opt">Yes, and the data disk is copied</button>
+        <button class="opt" data-ok>No, the RWO data disk stops it</button>
+        <button class="opt">Yes, but only after a restart</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Every disk, not just the boot disk.</span><p>A single RWO data disk is enough to stop the whole VM live migrating. An RWO volume cannot be mounted on the destination node while it is still attached to the source.</p></details>
+    </div>
+    <div class="q">
+      <p>The data disk is already created on the wrong class. Can you edit its PVC to fix the class?</p>
+      <div class="opts">
+        <button class="opt">Yes, edit the class name</button>
+        <button class="opt" data-ok>No, the disk has to be recreated and the data copied</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Access mode and storage class cannot be changed on an existing PVC. You do not have to stop the VM to move the data: tutorial chapter 48 covers moving a running VM&apos;s disks to the right class, the Storage vMotion equivalent.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which access mode and volume mode do you name for a VM disk on the virtualization class?</p>
+      <div class="opts">
+        <button class="opt">ReadWriteOnce and Filesystem</button>
+        <button class="opt" data-ok>ReadWriteMany and Block</button>
+        <button class="opt">ReadWriteOnce and Block</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>RWX with Block is the combination that lets a VM live migrate. A custom class needs both settings too.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Which ODF class is closest to an NFS datastore?</p>
+      <div class="opts">
+        <button class="opt">ocs-storagecluster-ceph-rbd-virtualization</button>
+        <button class="opt">ocs-storagecluster-ceph-rbd</button>
+        <button class="opt" data-ok>ocs-storagecluster-cephfs</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>CephFS is the file class. The virtualization class is the vSAN policy for VMs, and the generic RBD class is the default policy for non-VM workloads.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A VM has an RWX boot disk and an RWO data disk. What does the RWO disk do?</p>
+      <div class="opts">
+        <button class="opt">Nothing. Only the boot disk matters.</button>
+        <button class="opt" data-ok>It stops the whole VM live migrating</button>
+        <button class="opt">It makes the boot disk RWO too</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Every disk attached to a VM must be RWX. A single RWO data disk is enough to stop live migration.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 1.2.</b> What backs a VM disk on ROVS, in the place of a VMDK?</p>
+      <div class="opts">
+        <button class="opt">A StorageClass</button>
+        <button class="opt" data-ok>A PersistentVolumeClaim, which requests storage from a StorageClass</button>
+        <button class="opt">A container image</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Each VM disk is backed by a PVC. A StorageClass is the type of storage the PVC asks for, so it is closer to a datastore.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can read a disk request</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>The virtualization class for every VM disk. Name ReadWriteMany and Block yourself. One RWO disk stops live migration. Class and access mode cannot change on an existing PVC.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 35, Choose ODF storage classes for VM disks on ROVS, has every command and the full audit.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

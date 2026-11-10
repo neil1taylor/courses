@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Find your way around a cluster · ROVS course</title>
+<meta name="description" content="Course unit 1.4: find a ROVS cluster, read its health in the console and with oc, and know what is missing on purpose. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m1-u4">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 1 · ROVS for a VMware admin</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 4 of Module 1</span>
+      <h1>Find your way around a cluster</h1>
+      <p class="lead">By the end you can find a ROVS cluster, read its health in the console and with <code>oc</code>, and tell what is missing on purpose from what is broken.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a console window on the left and a terminal window on the right, both pointing at a cluster."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[10,30,170,100],"heavy":true,"title":"console"},
+          {"box":[240,30,170,100],"heavy":true,"tone":"mark","title":"oc"},
+          {"line":[95,134,200,180],"arrow":true,"tone":"muted"},
+          {"line":[325,134,220,180],"arrow":true,"tone":"mark"},
+          {"box":[150,182,120,32],"title":"your cluster"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the screens and output in this unit are real. Its first ROVS cluster is ready. Where do its admins look first?</p>
+    </div>
+  </div>
+  <p class="small">Every screenshot and line of output in this unit comes from tutorial chapter 02, apart from the review question, which comes from chapter 06. Chapter 02 shortens some names, and so does this page.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Click through the console</span>
+  <h2>Three screens to know</h2>
+  <p class="lead">These are real screens. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="3.6,36.6,34.3,14.2" data-width="640px">
+      <div class="shot"><img src="../images/02/perspective-switcher.jpg" alt="The console's perspective switcher open in the top-left corner, showing exactly two options: Core platform and Virtualization." width="700" height="268"></div>
+      <figcaption>
+        <h3>Older material says to switch to the Administrator perspective. Which entry holds the VM views?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Virtualization. On OpenShift 4.21 there is no Administrator perspective. The switcher offers exactly two entries, Core platform and Virtualization. A cluster administrator can also reach the VM pages from the Core platform menu.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="20.3,71.3,11.6,6.9">
+      <div class="shot"><img src="../images/02/cluster-overview.jpg" alt="The OpenShift console Overview page. The Details card gives the Cluster API address, the Cluster ID, Infrastructure provider IBMCloud, OpenShift version 4.21.35 and Update channel Not available. The Status card shows Cluster, Dynamic Plugins, Operators, Storage and OpenShift Virtualization green. The left menu runs from Home to Administration and includes Virtualization and Migration for Virtualization." width="1563" height="722"></div>
+      <figcaption>
+        <h3>On a self-managed cluster this field names the update stream you chose. Which field reads differently on ROVS?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Update channel reads Not available, because IBM owns the upgrade path. You do not pick a channel.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="82.1,36.6,10.4,6.5">
+      <div class="shot"><img src="../images/02/nodes-list.jpg" alt="The console's Nodes list. Three nodes, all Ready, all with the role worker and the instance type mx3d.metal.64x512. No control-plane node appears. Memory reads 503.6 GiB per node and CPU 64 cores per node." width="1264" height="465"></div>
+      <figcaption>
+        <h3>Which column tells you the server flavor?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Instance type: <code>mx3d.metal.64x512</code>, a bare metal flavor. All three nodes have the role worker, and no control-plane node appears.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>Where things are</h2>
+  <p class="lead">The console layout maps to the vSphere Client roughly like this. It is a rough mapping, not an IBM statement.</p>
+  <div class="cols">
+    <svg class="sketch" role="img" aria-label="Hand-drawn two-column diagram. Hosts and Clusters view matches Compute, Nodes. VMs and Templates view matches Virtualization, VirtualMachines. Datastores view matches Storage, PersistentVolumeClaims. Networking view matches Networking, Services and Routes. Tasks and Events matches Home, Events. Monitoring and Alarms matches Observe, Dashboards and Alerting. Administration and Permissions matches User Management, RoleBindings."
+      data-drawing='{"w":660,"h":300,"shapes":[
+        {"box":[10,6,270,34],"title":"Hosts & Clusters view"},{"line":[288,23,312,23],"arrow":true,"tone":"mark"},{"box":[320,6,330,34],"title":"Compute > Nodes","tone":"mark"},
+        {"box":[10,48,270,34],"title":"VMs & Templates view"},{"line":[288,65,312,65],"arrow":true,"tone":"mark"},{"box":[320,48,330,34],"title":"Virtualization > VirtualMachines","tone":"mark"},
+        {"box":[10,90,270,34],"title":"Datastores view"},{"line":[288,107,312,107],"arrow":true,"tone":"mark"},{"box":[320,90,330,34],"title":"Storage > PersistentVolumeClaims","tone":"mark"},
+        {"box":[10,132,270,34],"title":"Networking view"},{"line":[288,149,312,149],"arrow":true,"tone":"mark"},{"box":[320,132,330,34],"title":"Networking > Services / Routes","tone":"mark"},
+        {"box":[10,174,270,34],"title":"Tasks & Events"},{"line":[288,191,312,191],"arrow":true,"tone":"mark"},{"box":[320,174,330,34],"title":"Home > Events","tone":"mark"},
+        {"box":[10,216,270,34],"title":"Monitoring / Alarms"},{"line":[288,233,312,233],"arrow":true,"tone":"mark"},{"box":[320,216,330,34],"title":"Observe > Dashboards / Alerting","tone":"mark"},
+        {"box":[10,258,270,34],"title":"Administration / Permissions"},{"line":[288,275,312,275],"arrow":true,"tone":"mark"},{"box":[320,258,330,34],"title":"User Management > RoleBindings","tone":"mark"}]}'></svg>
+    <div>
+      <div class="q">
+        <p>Northgate's admins open the IBM Cloud console to find their new cluster. Where is it listed?</p>
+        <div class="opts">
+          <button class="opt">OpenShift &gt; Clusters</button>
+          <button class="opt" data-ok>Infrastructure &gt; OpenShift virtualization</button>
+          <button class="opt">Nowhere: you can only reach it with <code>ibmcloud ks clusters</code></button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>A ROVS cluster does not appear under OpenShift &gt; Clusters. On one account that page showed no clusters at all while <code>ibmcloud ks clusters</code> listed them. Infrastructure &gt; OpenShift virtualization is the only place they appear in the console.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Run it</span>
+  <h2>Read the health of a cluster</h2>
+  <p class="lead">Run each command in turn. The output is what a ROVS cluster returned.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">oc get clusterversion</pre>
+          <pre class="out">NAME      VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
+version   4.21.27   True        False         36d     Cluster version is 4.21.27</pre>
+          <p class="hand note">ROVS needs OpenShift 4.21 or later.</p>
+          <p class="hand note">A lower version means this is not a ROVS cluster.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">oc get co</pre>
+          <pre class="out">NAME                                       VERSION   AVAILABLE   PROGRESSING   DEGRADED   SINCE   MESSAGE
+console                                    4.21.27   True        False         False      39d
+csi-snapshot-controller                    4.21.27   True        False         False      36d
+dns                                        4.21.27   True        False         False      39d
+image-registry                             4.21.27   True        False         False      39d
+ingress                                    4.21.27   True        False         False      39d
+insights                                   4.21.27   True        False         False      39d
+kube-apiserver                             4.21.27   True        False         False      39d
+kube-controller-manager                    4.21.27   True        False         False      39d
+kube-scheduler                             4.21.27   True        False         False      39d
+kube-storage-version-migrator              4.21.27   True        False         False      39d
+monitoring                                 4.21.27   True        False         False      39d
+network                                    4.21.27   True        False         False      39d
+node-tuning                                4.21.27   True        False         False      39d
+openshift-apiserver                        4.21.27   True        False         False      39d
+openshift-controller-manager               4.21.27   True        False         False      39d
+openshift-samples                          4.21.27   True        False         False      39d
+operator-lifecycle-manager                 4.21.27   True        False         False      39d
+operator-lifecycle-manager-catalog         4.21.27   True        False         False      39d
+operator-lifecycle-manager-packageserver   4.21.27   True        False         False      39d
+service-ca                                 4.21.27   True        False         False      39d
+storage                                    4.21.27   True        False         False      39d</pre>
+          <p class="hand note">AVAILABLE True and DEGRADED False for every healthy operator.</p>
+          <p class="hand note">This is the full list, not an extract.</p>
+        </div>
+        <div class="q">
+          <p>You know the self-managed list. There is no <code>authentication</code> operator here. Is that a fault?</p>
+          <div class="opts">
+            <button class="opt">Yes, something failed to install</button>
+            <button class="opt" data-ok>No. It is absent on purpose</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>On ROKS and ROVS the OAuth server runs in IBM's account, so it is not a ClusterOperator you can see. <code>machine-api</code>, <code>machine-config</code> and <code>etcd</code> are absent for the same reason.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">oc get co authentication</pre>
+          <pre class="out err"></pre>
+          <p class="hand note">The chapter records this returning NotFound.</p>
+          <p class="hand note">Do not write a health check that needs this operator.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">oc get sc</pre>
+          <pre class="out">NAME                                         PROVISIONER                             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+localblock                                   kubernetes.io/no-provisioner            Delete          WaitForFirstConsumer   false                  39d
+ocs-storagecluster-ceph-rbd (default)        openshift-storage.rbd.csi.ceph.com      Delete          Immediate              true                   39d
+ocs-storagecluster-ceph-rbd-virtualization   openshift-storage.rbd.csi.ceph.com      Delete          Immediate              true                   39d
+ocs-storagecluster-cephfs                    openshift-storage.cephfs.csi.ceph.com   Delete          Immediate              true                   39d</pre>
+          <p class="hand note">Four classes on a cluster that has only ODF.</p>
+          <p class="hand note">VM disks use ocs-storagecluster-ceph-rbd-virtualization.</p>
+          <p class="hand note">localblock is ODF's own plumbing. Never name it in a PVC.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">oc get datasources -n openshift-virtualization-os-images</pre>
+          <pre class="out">NAME              AGE
+centos-stream10   39d
+centos-stream9    39d
+fedora            39d
+rhel10            39d
+rhel7             39d
+rhel8             39d
+rhel9             39d
+win10             39d
+win11             39d
+win2k16           39d
+win2k19           39d
+win2k22           39d
+win2k25           39d</pre>
+          <p class="hand note">Thirteen stock rows on a cluster nobody has added to.</p>
+          <p class="hand note">A row you cannot name an operator for is worth asking about.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>Two things that look wrong</h2>
+  <div class="pair">
+    <figure style="margin:0;display:grid;gap:8px">
+      <img src="../images/02/virtualization-overview-no-metrics.jpg" alt="The Virtualization Overview tab with Project set to All Projects. Four cards read 0 VirtualMachines, 0 vCPU usage, 0 Memory and 0 Storage, and each card says No data available underneath." width="1567" height="630">
+      <figcaption class="small">The Virtualization Overview tab, with one VM running.</figcaption>
+    </figure>
+    <figure style="margin:0;display:grid;gap:8px">
+      <img src="../images/02/virtualmachines-list.jpg" alt="The console's VirtualMachines list. The Summary reads Virtual Machines (1) with 1 Running, and the table lists one VM in one namespace, Running, condition LiveMigratable=True." width="1567" height="470">
+      <figcaption class="small">The VirtualMachines list, at the same time.</figcaption>
+    </figure>
+  </div>
+  <div class="pair">
+    <div class="q">
+      <p>The Overview says 0 VirtualMachines. The list says 1 Running. Which is right?</p>
+      <div class="opts">
+        <button class="opt">The Overview: the VM is not really running</button>
+        <button class="opt" data-ok>The list: it reads the Kubernetes API. The Overview cards read Prometheus, which returned nothing</button>
+        <button class="opt">Neither: the cluster is broken</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Trust the list.</span><p><code>oc get vm -A</code> agreed with the list. Nothing was scraping the service that publishes VM metrics, because no ServiceMonitor selected it. Use the VirtualMachines list, not the Overview, to answer what is running.</p></details>
+    </div>
+    <div class="q">
+      <p><code>oc get datasources</code> listed thirteen rows. Is every boot image present?</p>
+      <div class="opts">
+        <button class="opt">Yes: a listed DataSource is a present image</button>
+        <button class="opt" data-ok>Not necessarily: ask for the Ready condition</button>
+        <button class="opt">Yes, but only on ODF clusters</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On one cluster seven of the thirteen stock DataSources were Ready=False. Six were the Windows ones, which are placeholders because Red Hat cannot redistribute Windows media. The seventh, <code>rhel7</code>, had no import cron, so nothing ever populated its disk. Do not conclude that Windows is the unready one.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 1.3.</span> Northgate wants to live migrate VMs to any worker and to use VNIs. Which layout?</p>
+      <div class="opts">
+        <button class="opt" data-ok>One zone</button>
+        <button class="opt">Three zones</button>
+        <button class="opt">It makes no difference</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In a single zone, live migration can go to any worker and VNI networking is simple. In three zones, live migration stays inside one zone and each VNI is tied to one zone.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><code>oc get nodes</code> shows only workers, and <code>oc get co</code> has no <code>authentication</code> operator. What do you do?</p>
+      <div class="opts">
+        <button class="opt">Install the missing operator from OperatorHub</button>
+        <button class="opt" data-ok>Nothing: IBM runs those parts in its own account</button>
+        <button class="opt">Treat it as a fault in the add-on</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The control plane and the OAuth server run in IBM's account, so they are not objects you can list. Check the masters with Master status from the IBM Cloud side.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Two storage classes carry a default mark. Which one is the default for VirtualMachines?</p>
+      <div class="opts">
+        <button class="opt"><code>ocs-storagecluster-ceph-rbd</code></button>
+        <button class="opt" data-ok><code>ocs-storagecluster-ceph-rbd-virtualization</code></button>
+        <button class="opt"><code>localblock</code></button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The console marks <code>ocs-storagecluster-ceph-rbd-virtualization</code> as the default for VirtualMachines. The cluster default is a different annotation, on <code>ocs-storagecluster-ceph-rbd</code>. Two annotations, two classes.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can find your way around</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Missing is not broken: no masters in the node list, no authentication operator. Trust the VirtualMachines list over the Overview. A listed DataSource may have no image.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 02, Explore a ROVS cluster and check it is ready for VMs, runs every check you just saw.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

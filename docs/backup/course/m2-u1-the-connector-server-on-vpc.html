@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The connector server on VPC · BRS course</title>
+<meta name="description" content="Course unit 2.1: say what the connector server does, find the missing package when the backup agent will not install, and follow the console steps that build and claim a connector server. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m2-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 2 · Connect your servers</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 2</span>
+      <h1>The connector server on VPC</h1>
+      <p class="lead">By the end you can say what the connector server does, find the missing package when the backup agent will not install, and follow the console steps that build a connector server and claim it.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a server with a backup agent talks to a connector server, which talks to the BRS service. One connector serves many servers."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"box":[8,45,125,60],"title":"server","detail":"backup agent"},
+          {"line":[137,75,162,75],"arrow":true,"tone":"mark"},
+          {"box":[166,45,135,60],"tone":"mark","title":"connector","detail":"4 vCPU, 16 GB"},
+          {"line":[305,75,326,75],"arrow":true,"tone":"mark"},
+          {"box":[330,45,85,60],"heavy":true,"title":"service"},
+          {"text":"one connector, many servers","at":[90,150],"hand":true,"size":17,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. It has Linux servers in a VPC in Frankfurt and wants BRS to back them up. Its first job is to build the server that links the VPC to the service.</p>
+    </div>
+  </div>
+  <p class="small">Every number and screen in this unit comes from runs in our lab, on 7 October and 8 November 2026, recorded in tutorial B2a. Server names and addresses were changed to made-up Northgate values, for example <code>ng-app-01</code> and <code>10.0.0.10</code>. The screenshots show the lab&apos;s own resource names; the registration token is blurred.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>What the connector server is for</h2>
+  <p class="lead">The connector is a server that links your VPC to the service. It serves many hosts. Each host still needs the backup agent installed on it.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A Linux server with a backup agent and another server with a backup agent both connect to one connector server, which connects to the BRS service."
+    data-drawing='{"w":560,"h":210,"shapes":[
+      {"box":[10,15,160,60],"title":"Linux server","detail":"backup agent"},
+      {"box":[10,100,160,60],"tone":"muted","title":"Another server","detail":"backup agent"},
+      {"line":[174,45,202,60],"arrow":true,"tone":"mark"},
+      {"line":[174,130,202,80],"arrow":true,"tone":"mark"},
+      {"box":[206,25,170,60],"tone":"mark","title":"connector server","detail":"4 vCPU, 16 GB"},
+      {"line":[380,55,410,55],"arrow":true,"tone":"mark"},
+      {"box":[414,25,140,60],"heavy":true,"title":"BRS service"},
+      {"text":"one connector serves many hosts","at":[206,130],"hand":true,"size":16,"tone":"mark"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What does the connector server do?</p>
+      <div class="opts">
+        <button class="opt">It replaces the backup agent on each host</button>
+        <button class="opt" data-ok>It links the VPC to the service, and serves many hosts</button>
+        <button class="opt">It serves one host only</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The connector is a server that links your VPC to the service. It serves many hosts. You still install the backup agent on every host that you protect.</p></details>
+    </div>
+    <div class="q">
+      <p>How big is the connector server, and when does it run?</p>
+      <div class="opts">
+        <button class="opt">A small server that runs only while a backup runs</button>
+        <button class="opt" data-ok>4 vCPU and 16 GB, and it runs all the time</button>
+        <button class="opt">Nothing to run: it is part of the service</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In tutorial B2a the connector is a 4-vCPU, 16 GB server that runs all the time. IBM&apos;s pricing notes say at least two connectors for production. The lab test used one.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Spot the fault</span>
+  <h2>The backup agent will not install</h2>
+  <p class="lead">Northgate downloads the Linux backup agent as an RPM, copies it to its Linux server and installs it. This is what came back in our lab on 7 October 2026.</p>
+  <pre class="def" aria-label="The failed install">$ sudo rpm -Uvh /tmp/brs-agent.rpm
+Failed dependencies: lsof is needed by cohesity-agent-7.3.12-1.x86_64, wget is needed by ...</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What went wrong?</p>
+      <div class="opts">
+        <button class="opt">The installer is for the wrong operating system</button>
+        <button class="opt" data-ok>Packages that the agent needs are missing: <code>lsof</code> and <code>wget</code></button>
+        <button class="opt">The service is not running</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The message names <code>lsof</code> and <code>wget</code>. Tutorial B2a records this as a pass with two missing packages.</p></details>
+    </div>
+    <div class="q">
+      <p>What fixes it?</p>
+      <div class="opts">
+        <button class="opt">Reboot the server and run the same command again</button>
+        <button class="opt" data-ok>Install the missing packages, then run <code>rpm</code> again</button>
+        <button class="opt">Download the agent as a different file type</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The tutorial installed <code>nfs-utils</code>, <code>lvm2</code>, <code>lsof</code> and <code>wget</code> with <code>dnf</code> and ran <code>rpm</code> again:</p><pre class="def" aria-label="The fix">sudo dnf -y install nfs-utils lvm2 lsof wget &amp;&amp; sudo rpm -Uvh /tmp/brs-agent.rpm
+sudo systemctl is-active cohesity-agent; sudo ss -ltn | grep -E "50051|59999"
+active; listening on 50051 and 59999</pre></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> On 8 November 2026 the lab server already had <code>lsof</code>, <code>wget</code>, <code>nfs-utils</code> and <code>lvm2</code>, and the install worked first time. Check a new server for them before you install.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Click through the console</span>
+  <h2>Make the connection and the connector server</h2>
+  <p class="lead">These screens come from the BRS console and the IBM Cloud console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="5.3,50.5,25.8,9.1" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B2a-1-deployment-platform.png" alt="The New Connection dialog with the Deployment Platform list open: VMware, VPC, ROKS Classic, ROKS VPC." width="800" height="440"></div>
+      <figcaption>
+        <h3>Northgate&apos;s servers are in a VPC. Which Deployment Platform do you choose?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The list starts at VMware; choose VPC. It also has ROKS and IKS (Classic and VPC). The dialog has no name field: the connection gets a generated name. The second step shows links to create the connector server and a VPE gateway, and the registration token, valid for 24 hours.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="1.9,41.5,33.6,6" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B2a-4-connector-server-form.png" alt="The Virtual server for VPC form: zone eu-de-1, name cohesity-lab-dsc, resource group cohesity-lab-rg; the summary shows 4 vCPUs, 16 GiB, image content-ibm-backup-recovery-ds-connector-7 version 7.3.13 and a 171 GB boot volume." width="1480" height="762"></div>
+      <figcaption>
+        <h3>The catalog link opens this form with the image filled in. In our lab one field started at us-south-2. Click it.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Check every field; the defaults do not match the lab. On 8 November 2026 the form started at zone us-south-2, resource group Default, profile bxf-2x8, another VPC in the account, that VPC&apos;s default security group, and no SSH key. Create virtual server stays disabled until you pick an SSH key, even though the connector refuses SSH logins. The server was running at once, and its web page answered about 1.5 minutes later.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="11.5,69,59.6,15" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B2a-6-connector-unhealthy-first.png" alt="The connector's status page: cohesity-lab-dsc, Unhealthy, 'Connection dropped to dataplane due to internal error'." width="520" height="500"></div>
+      <figcaption>
+        <h3>You pasted the token and clicked Save. The page shows this. Where does it say what is wrong?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: Unhealthy, with &quot;Connection dropped to dataplane due to internal error&quot;. Tutorial B2a says to wait. Reload the page later to see Healthy.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Predict</span>
+  <h2>How long until the connector stays connected?</h2>
+  <p class="lead">Northgate opens the connector&apos;s web page, logs in, sets a password, replaces the default name and pastes the claim token. Then it clicks Save.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>A new connector has the login <code>admin</code> / <code>admin</code>. What happens at the first login?</p>
+      <div class="opts">
+        <button class="opt">It works, and you can set a password later</button>
+        <button class="opt" data-ok>The page asks for a new password at once. Keep it</button>
+        <button class="opt">IBM sends you a password</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The default password has expired, so you must set a new one before anything else. Keep it: it is not recoverable from IBM&apos;s side. The page also has a Domain Names field; in our lab on 8 November 2026 it was already filled in with <code>cloud.ibm.com</code>.</p></details>
+    </div>
+    <div class="q">
+      <p>The connector was saved at about 11:29 UTC on 8 November 2026. How long did it keep dropping before it stayed connected, in our lab?</p>
+      <div class="opts">
+        <button class="opt">It never dropped</button>
+        <button class="opt" data-ok>About 3 minutes</button>
+        <button class="opt">About an hour</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">About 3 minutes, then stable.</span><p>The API checks showed this:</p><pre class="def" aria-label="Connection checks">Time (UTC)   Check showed
+11:30:08     connected
+11:31:20     disconnected
+11:31:27     connected
+11:32:48     disconnected
+11:32:54     connected, and connected in every check to 11:36:26</pre><p>The connections page then listed the connection with a green tick and one connector.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><code>rpm -Uvh</code> of the backup agent stops with &quot;Failed dependencies: lsof is needed&quot;. What do you do?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Install the missing packages, then run <code>rpm</code> again</button>
+        <button class="opt">Delete the file and download it again</button>
+        <button class="opt">Nothing: the agent installs itself later</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Tutorial B2a installed <code>nfs-utils</code>, <code>lvm2</code>, <code>lsof</code> and <code>wget</code> with <code>dnf</code>, then ran <code>rpm</code> again.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>The Virtual server for VPC form opens with the connector image chosen. What should you do before you click Create virtual server?</p>
+      <div class="opts">
+        <button class="opt">Nothing: IBM&apos;s defaults match your VPC</button>
+        <button class="opt" data-ok>Check every field: the defaults did not match the lab</button>
+        <button class="opt">Only set the name</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the form started at another zone, resource group, profile and VPC, with that VPC&apos;s default security group and no SSH key.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Right after you save the connector&apos;s setup page, its status says Unhealthy. What does tutorial B2a say to do?</p>
+      <div class="opts">
+        <button class="opt">Delete the connector and build it again</button>
+        <button class="opt" data-ok>Wait, then reload the page</button>
+        <button class="opt">Paste the token again</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the connector dropped for about 3 minutes before it stayed connected.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can build and claim a connector server</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>The connector server links your VPC to the service and serves many hosts, but every host still needs the backup agent, and its packages first. Check each field of the server form. A new connector may show Unhealthy for a few minutes: wait.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B2a installs the backup agent, makes the connection, builds the connector server and claims it, from the console and the command line.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

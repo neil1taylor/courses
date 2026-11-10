@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What ROVS is, and who runs what · ROVS course</title>
+<meta name="description" content="Course unit 1.1: say what ROVS is, which parts IBM runs and which are yours. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m1-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 1 · ROVS for a VMware admin</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 1</span>
+      <h1>What ROVS is, and who runs what</h1>
+      <p class="lead">By the end you can say what ROVS is, which parts IBM looks after and which are yours, and spot the three operators you can never install yourself.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a box for IBM with the control plane and the add-on inside, and a box for you with your VMs inside."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"text":"IBM runs","at":[22,32],"hand":true,"tone":"muted"},
+          {"box":[10,40,180,140],"heavy":true},
+          {"box":[24,56,152,40],"title":"control plane"},
+          {"box":[24,110,152,40],"title":"the add-on"},
+          {"text":"you run","at":[246,32],"hand":true,"tone":"mark"},
+          {"box":[234,40,176,140],"heavy":true,"tone":"mark"},
+          {"grid":[250,60,3,3,34,24,46,34],"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output and screens in this unit are real. Before anything else, its admins ask: what are we buying, and who looks after what?</p>
+    </div>
+  </div>
+  <p class="small">Every screenshot and line of output in this unit comes from tutorial chapters 00, 02, 04 and 05.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · The stack</span>
+  <h2>Six layers, bottom to top</h2>
+  <p class="lead">ROVS is Red Hat OpenShift Virtualization Service on IBM Cloud. It is built on ROKS, IBM Cloud's managed OpenShift, and it comes pre-configured for VMs.</p>
+  <div class="cols">
+    <div>
+      <svg class="sketch" role="img" aria-label="Hand-drawn diagram of six stacked layers. From the bottom: 1 IBM Cloud VPC, 2 bare metal worker nodes, 3 OVN-Kubernetes networking, 4 storage, 5 OpenShift Virtualization, 6 your VMs. A bracket beside layers 2 to 5 says IBM provisions or installs these when you order."
+        data-drawing='{"w":600,"h":360,"shapes":[
+          {"box":[10,8,400,52],"title":"6 · Your VMs","detail":"VirtualMachine and VirtualMachineInstance","tone":"mark","heavy":true},
+          {"box":[10,66,400,52],"title":"5 · OpenShift Virtualization","detail":"virt-controller, virt-handler, virt-launcher"},
+          {"box":[10,124,400,52],"title":"4 · Storage","detail":"ODF on local NVMe, or File Storage for VPC (Beta)"},
+          {"box":[10,182,400,52],"title":"3 · OVN-Kubernetes networking","detail":"Geneve overlay, CUDNs, localnet, NMState"},
+          {"box":[10,240,400,52],"title":"2 · Bare metal worker nodes","detail":"RHCOS, managed by IBM, attached to your VPC"},
+          {"box":[10,298,400,52],"title":"1 · IBM Cloud VPC","detail":"Subnets, security groups, gateways, VNIs"},
+          {"line":[428,70,428,288],"tone":"mark"},
+          {"text":"IBM provisions or","at":[442,150],"hand":true,"tone":"mark"},
+          {"text":"installs these when","at":[442,174],"hand":true,"tone":"mark"},
+          {"text":"you order the cluster","at":[442,198],"hand":true,"tone":"mark"},
+          {"text":"your VPC","at":[442,332],"hand":true,"tone":"muted"},
+          {"text":"your VMs","at":[442,38],"hand":true,"tone":"muted"}]}'></svg>
+    </div>
+    <div style="display:grid;gap:14px">
+      <p>The key word is <b>pre-configured</b>. IBM installs and wires up the virtualization stack, the host network configuration and the storage backend when it creates the cluster. You do not install the virtualization operators.</p>
+      <p class="hand tilt"><b>From vSphere:</b> with ODF, Ceph on the workers' local NVMe replaces VMFS datastores and vSAN. The Geneve overlay between nodes is roughly what NSX does between transport nodes. These are rough mappings, not IBM statements.</p>
+      <p class="watch"><b>Watch for this.</b> This is not the same as installing OpenShift Virtualization yourself on a standard ROKS cluster. That is a different product experience, with different licensing and more manual setup.</p>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Explore the parts</span>
+  <h2>Whose operator is this?</h2>
+  <p class="lead">This is real output from a ROVS cluster. Every operator lists an owner. Select a part of the drawing to see what it means. You can also click a line.</p>
+  <div class="explorer" data-start="addon"
+    data-map='{"label":[[1,1]],"addon":[[2,4]],"mine":[[5,5]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram: a large box for IBM's add-on holding three operators, OpenShift Virtualization, NMState and Node Maintenance, beside a box for you holding the Migration Toolkit for Virtualization, and a box for the owner label."
+          data-drawing='{"w":580,"h":210,"shapes":[
+            {"text":"the add-on · IBM","at":[22,24],"hand":true,"tone":"mark"},
+            {"box":[10,32,340,170],"heavy":true},
+            {"box":[28,50,240,40],"part":"addon","title":"OpenShift Virtualization"},
+            {"box":[28,100,240,40],"part":"addon","title":"NMState"},
+            {"box":[28,150,240,40],"part":"addon","title":"Node Maintenance"},
+            {"text":"yours","at":[392,24],"hand":true,"tone":"mark"},
+            {"box":[380,50,190,40],"part":"mine","title":"MTV, if you add it"},
+            {"box":[380,130,190,40],"part":"label","title":"Owner label"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="addon">
+          <h3>IBM's add-on</h3>
+          <p>The add-on installs and manages exactly three operators: OpenShift Virtualization, NMState and Node Maintenance. They come from IBM's own mirrored catalog. You cannot disable the add-on and it has no options.</p>
+          <p class="hand tilt"><b>From vSphere:</b> roughly a VIB set that VMware installs on every host and reserves the right to patch.</p>
+          <p class="watch"><b>Watch for this.</b> Installing these three from OperatorHub is blocked. Only these three are blocked.</p>
+        </div>
+        <div class="part-info" data-part="mine">
+          <h3>Yours</h3>
+          <p>The Migration Toolkit for Virtualization (MTV) came from the stock <code>redhat-operators</code> catalog and carries no label, because a person installed it. You own its lifecycle.</p>
+          <p class="watch"><b>Watch for this.</b> MTV is not part of ROVS. If you move VMs off vSphere, installing it is your job. OADP and Veeam Kasten also install normally.</p>
+        </div>
+        <div class="part-info" data-part="label">
+          <h3>The owner label</h3>
+          <p>Every Subscription the add-on created carries the label <code>app.kubernetes.io/created-by: addon-openshift-virtualization</code>. The cluster tells you who owns an operator.</p>
+          <p class="watch"><b>Watch for this.</b> No label means the operator is yours.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="Output of oc get subscription -A with the owner column">NS                     NAME                                  SOURCE                                  OWNER
+openshift-cnv          ibm-openshift-virt-hyperconverged     custom-redhat-operators-openshiftvirt   addon-openshift-virtualization
+openshift-nmstate      ibm-openshift-virt-nmstate            custom-redhat-operators-openshiftvirt   addon-openshift-virtualization
+openshift-operators    ibm-openshift-virt-node-maintenance   custom-redhat-operators-openshiftvirt   addon-openshift-virtualization
+openshift-mtv          mtv-operator                          redhat-operators                        &lt;none&gt;
+</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Run it</span>
+  <h2>Where is the control plane?</h2>
+  <p class="lead">Run each command in turn. The output is what a ROVS cluster returned. Chapter 02 shortens the node names, and so does this page.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">oc get nodes</pre>
+          <pre class="out">NAME                       STATUS   ROLES    AGE   VERSION
+kube-...-00000167          Ready    worker   39d   v1.34.9
+kube-...-000002a1          Ready    worker   39d   v1.34.9
+kube-...-0000039f          Ready    worker   39d   v1.34.9</pre>
+          <p class="hand note">Three workers, all bare metal. No control plane node.</p>
+          <p class="hand note">IBM runs the masters in its own account.</p>
+        </div>
+        <div class="q">
+          <p>You need to check the control plane's health. Where do you look?</p>
+          <div class="opts">
+            <button class="opt">At the ROLES column of <code>oc get nodes</code></button>
+            <button class="opt" data-ok>At Master status, from the IBM Cloud side</button>
+            <button class="opt">At the <code>etcd</code> cluster operator</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>Master health is not reported by <code>oc get nodes</code>. It shows as Master status in the IBM Cloud console and in <code>ibmcloud ks cluster get</code>. <code>etcd</code> is not a cluster operator you can see on ROVS either.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud ks cluster get --cluster CLUSTER_NAME</pre>
+          <pre class="out">State:      normal
+Status:     All Workers Normal
+...
+Master
+Status:     Ready (1 month ago)
+State:      deployed
+Health:     normal
+Version:    4.21.27_1527_openshift
+Location:   Frankfurt</pre>
+          <p class="hand note">Two Status lines, two State lines. The four under Master are the control plane.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud ks cluster addon options --addon openshift-virtualization</pre>
+          <pre class="out err">FAILED
+No addon installation options are available for openshift-virtualization.</pre>
+          <p class="hand note">FAILED is the expected answer, not a fault.</p>
+          <p class="hand note">The add-on has no settings for you to change.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Click through the console</span>
+  <h2>Two things the console tells you</h2>
+  <p class="lead">These are real screens. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="78.6,88.5,16.1,6.9">
+      <div class="shot"><img src="../images/04/cluster-overview-offering.jpg" alt="The cluster overview page. Four status cards read Worker node status 3 of 3 Healthy, Add-on status 4 of 4 Healthy, Master status Normal and Ingress status Healthy. Cluster details give the version, VPC Gen2 infrastructure, the master location Frankfurt, the worker zone, the network plugin OVN and the Offering Red Hat OpenShift Virtualization Service." width="1563" height="582"></div>
+      <figcaption>
+        <h3>Which line proves this is a ROVS cluster and not an ordinary OpenShift cluster?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Offering: Red Hat OpenShift Virtualization Service. A standard OpenShift cluster does not carry it.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="88,56.9,8.3,4.8">
+      <div class="shot"><img src="../images/05/addons-installed.jpg" alt="The cluster's Add-ons panel. Four add-ons are Installed and all Normal: OpenShift Data Foundation, File Storage for VPC marked Beta, IBM Storage Operator and OpenShift Virtualization operator. The first three each show a three-dot options menu beside their Docs link. The OpenShift Virtualization row shows only Docs." width="1568" height="580"></div>
+      <figcaption>
+        <h3>Three add-ons have an options menu. Click the place where the fourth would have one.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The OpenShift Virtualization row has only a Docs link. The add-on cannot be disabled and has no options, so there is no menu. The three storage add-ons can be configured or removed from theirs.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which of these can you install from OperatorHub on a ROVS cluster?</p>
+      <div class="opts">
+        <button class="opt">NMState</button>
+        <button class="opt">Node Maintenance</button>
+        <button class="opt" data-ok>The Migration Toolkit for Virtualization</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Only OpenShift Virtualization, NMState and Node Maintenance are blocked. Every other operator installs normally, and you own its lifecycle.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A colleague wants to switch the virtualization add-on off to save resources. What happens?</p>
+      <div class="opts">
+        <button class="opt">It works from the CLI but not from the console</button>
+        <button class="opt" data-ok>It is not supported: the console has no option and the CLI returns an error</button>
+        <button class="opt">It switches off after the next restart</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Disabling the add-on is not supported on ROVS clusters. It is a core component and cannot be removed. If you need a cluster without the virtualization stack, order a standard OpenShift cluster.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You list the nodes and see three workers and no masters. What does that mean?</p>
+      <div class="opts">
+        <button class="opt">The cluster is broken</button>
+        <button class="opt" data-ok>IBM runs the control plane outside your cluster; check it with Master status</button>
+        <button class="opt">The add-on hides the masters from you</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>This is the ordinary ROKS split: IBM runs the masters, you get workers. The control plane runs in IBM's account and is not a node object you can list.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know who runs what</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>IBM runs the control plane and the add-on. Three operators are IBM's; everything else is yours. Check the masters from the IBM Cloud side.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 00, Understand ROKS and OpenShift Virtualization Service, covers the stack, and chapter 05, Understand what the virtualization add-on does on ROVS, covers the add-on.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

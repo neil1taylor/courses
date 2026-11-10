@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Learn IBM Cloud VPC without an account · VPC course</title>
+<meta name="description" content="A short, interactive course on IBM Cloud VPC for VMware admins. No IBM Cloud account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body>
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb">VPC course <span>·</span> <a href="../../">All courses</a></span>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+  <section class="home-hero">
+    <div class="start">
+      <div>
+        <span class="kicker">For VMware admins</span>
+        <h1>Learn IBM Cloud VPC without an account</h1>
+        <p class="lead">IBM Cloud VPC in short interactive units. Explore real subnets, security groups and route tables, run commands and see the real output, and check what you learned. Every fact comes from a tested tutorial chapter.</p>
+        <div class="facts"><span>6 modules</span><span>About 10 minutes a unit</span><span>No account needed</span></div>
+        <div><a class="btn" href="m1-u1-what-a-vpc-is-and-who-runs-what.html">Try the first unit</a></div>
+      </div>
+      <div style="display:grid;gap:12px">
+        <svg class="sketch" role="img" aria-label="Sketch: a vSphere host full of VMs, an arrow, and a VPC with two zones holding servers."
+          data-drawing='{"w":420,"h":220,"shapes":[
+            {"text":"vSphere","at":[22,32],"hand":true,"tone":"muted"},
+            {"box":[10,40,150,140],"heavy":true},
+            {"grid":[22,54,4,4,26,20,34,30],"tone":"muted"},
+            {"line":[178,110,240,110],"arrow":true,"tone":"mark"},
+            {"text":"VPC","at":[270,32],"hand":true,"tone":"muted"},
+            {"box":[258,40,150,140],"heavy":true},
+            {"box":[266,52,64,120],"dashed":true},
+            {"box":[336,52,64,120],"dashed":true},
+            {"grid":[276,64,2,3,20,16,26,34],"tone":"mark"},
+            {"grid":[346,64,2,3,20,16,26,34],"tone":"mark"},
+            {"text":"you, after the course","at":[250,206],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+        <p class="hand tilt">The story: Northgate Freight, a made-up haulier, moves its vSphere estate to IBM Cloud VPC one problem at a time.</p>
+      </div>
+    </div>
+  </section>
+
+  <ol class="modules">
+    <li class="module">
+      <span class="num">1</span>
+      <div><h2>VPC for a VMware admin</h2><p class="about">What a VPC is, who runs what, and the words that change.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m1-u1-what-a-vpc-is-and-who-runs-what.html" data-unit-link="m1-u1">What a VPC is, and who runs what</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m1-u2-vsphere-words-vpc-words.html" data-unit-link="m1-u2">vSphere words, VPC words</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m1-u3-accounts-resource-groups-and-access.html" data-unit-link="m1-u3">Accounts, resource groups and access</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m1-u4-console-cli-terraform-and-schematics.html" data-unit-link="m1-u4">Console, CLI, Terraform and Schematics</a><span class="min">10 min</span></li>
+      </ul>
+    </li>
+    <li class="module">
+      <span class="num">2</span>
+      <div><h2>Your first VPC network</h2><p class="about">Subnets, ACLs, security groups, and the ways in and out.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m2-u1-address-prefixes-and-subnets.html" data-unit-link="m2-u1">Address prefixes and subnets</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m2-u2-network-acls-and-security-groups.html" data-unit-link="m2-u2">Network ACLs and security groups</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m2-u3-in-and-out-gateways-floating-ips-bastion.html" data-unit-link="m2-u3">In and out: public gateways, floating IPs and a bastion</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m2-u4-reserved-ips-and-virtual-network-interfaces.html" data-unit-link="m2-u4">Reserved IPs and virtual network interfaces</a><span class="min">10 min</span></li>
+      </ul>
+    </li>
+    <li class="module">
+      <span class="num">3</span>
+      <div><h2>Servers</h2><p class="about">Profiles, images, first boot, placement and autoscale.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m3-u1-profiles-and-images.html" data-unit-link="m3-u1">Profiles and images</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m3-u2-first-boot-user-data-and-the-metadata-service.html" data-unit-link="m3-u2">First boot: user data and the metadata service</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m3-u3-placement-groups-dedicated-hosts-and-bare-metal.html" data-unit-link="m3-u3">Placement groups, dedicated hosts and bare metal</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m3-u4-instance-templates-instance-groups-and-autoscale.html" data-unit-link="m3-u4">Instance templates, instance groups and autoscale</a><span class="min">10 min</span></li>
+      </ul>
+    </li>
+    <li class="module">
+      <span class="num">4</span>
+      <div><h2>Storage and backup</h2><p class="about">Block and file storage, encryption, snapshots and backup.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m4-u1-block-or-file.html" data-unit-link="m4-u1">Block or file?</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m4-u2-encryption-with-key-protect.html" data-unit-link="m4-u2">Encryption with Key Protect</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m4-u3-snapshots-and-vpc-backup.html" data-unit-link="m4-u3">Snapshots and VPC Backup</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m4-u4-which-backup-when.html" data-unit-link="m4-u4">Which backup when</a><span class="min">10 min</span></li>
+      </ul>
+    </li>
+    <li class="module">
+      <span class="num">5</span>
+      <div><h2>Services and security</h2><p class="about">Load balancers, DNS, private access, and watching the estate.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m5-u1-load-balancers.html" data-unit-link="m5-u1">Load balancers</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m5-u2-dns-in-a-vpc.html" data-unit-link="m5-u2">DNS in a VPC</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m5-u3-private-access.html" data-unit-link="m5-u3">Private access: endpoints and context-based restrictions</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m5-u4-watch-the-estate.html" data-unit-link="m5-u4">Watch the estate</a><span class="min">10 min</span></li>
+      </ul>
+    </li>
+    <li class="module">
+      <span class="num">6</span>
+      <div><h2>Connecting and protecting the estate</h2><p class="about">Sites, Transit Gateways, routing, firewalls, and Northgate&apos;s whole estate.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m6-u1-ways-to-connect-vpcs-and-sites.html" data-unit-link="m6-u1">Ways to connect VPCs and sites</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m6-u2-route-tables-and-ingress-routing.html" data-unit-link="m6-u2">Route tables and ingress routing</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m6-u3-firewalls-in-a-hub-vpc.html" data-unit-link="m6-u3">Firewalls in a hub VPC</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m6-u4-final-scenario-design-northgates-estate.html" data-unit-link="m6-u4">Final scenario: design Northgate&apos;s estate</a><span class="min">20 min</span></li>
+      </ul>
+    </li>
+  </ol>
+  <p class="small" style="padding-top:24px">Your progress is kept in this browser only. When you have an account, the tutorials build everything the course shows.</p>
+</div></main>
+</body>
+</html>

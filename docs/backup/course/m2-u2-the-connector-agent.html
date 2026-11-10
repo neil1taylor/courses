@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Connector Agent on Linux and Windows · BRS course</title>
+<meta name="description" content="Course unit 2.2: say what the Connector Agent replaces, follow its install and claim on Linux and Windows, and read the 400 error for a wrong platform name. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m2-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 2 · Connect your servers</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 2</span>
+      <h1>The Connector Agent on Linux and Windows</h1>
+      <p class="lead">By the end you can say what the Connector Agent replaces, follow its install and claim on Linux and Windows, and read the error that a wrong platform name gives.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a server runs the backup agent and a small Connector Agent. The Connector Agent connects straight to the service, with no connector server."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"box":[10,30,170,110],"heavy":true},
+          {"text":"the server","at":[20,52],"hand":true,"size":17,"tone":"muted"},
+          {"box":[22,64,146,28],"title":"backup agent"},
+          {"box":[22,100,146,28],"tone":"mark","title":"Connector Agent"},
+          {"line":[184,114,300,114],"arrow":true,"tone":"mark"},
+          {"box":[304,84,106,60],"heavy":true,"title":"service"},
+          {"text":"no connector server","at":[190,185],"hand":true,"size":17,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its Linux server <code>ng-app-01</code> and its Windows server <code>ng-win-01</code> each get their own Connector Agent, so Northgate builds no connector server for them.</p>
+    </div>
+  </div>
+  <p class="small">Every number and message in this unit comes from runs in our lab on 7 October and 8 November 2026, recorded in tutorials B2b and B2c. Server names, addresses and the connection name were changed to made-up Northgate values, and the registration token is blurred in the screenshots.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>What the Connector Agent replaces</h2>
+  <p class="lead">The Connector Agent is a small program on the source host. It opens a direct connection to the service and replaces the connector server for that host. You still install the normal backup agent. IBM&apos;s page (19 August 2026), quoted in tutorial B2b, says it needs outbound TCP 443, 29991 (broker) and 11117 (bridge).</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. On the server, the backup agent and the Connector Agent. The Connector Agent connects directly to the BRS service on outbound ports 443, 29991 and 11117."
+    data-drawing='{"w":560,"h":210,"shapes":[
+      {"box":[10,15,175,60],"title":"backup agent","detail":"still installed"},
+      {"box":[10,95,175,60],"tone":"mark","title":"Connector Agent","detail":"127.0.0.1:8080"},
+      {"line":[189,125,386,112],"arrow":true,"tone":"mark"},
+      {"box":[390,80,160,60],"heavy":true,"title":"BRS service"},
+      {"text":"no connector server","at":[215,55],"hand":true,"size":16,"tone":"muted"},
+      {"text":"outbound: 443, 29991, 11117","at":[190,175],"hand":true,"size":16,"tone":"mark"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What does the Connector Agent replace?</p>
+      <div class="opts">
+        <button class="opt">The backup agent</button>
+        <button class="opt" data-ok>The connector server, for that host</button>
+        <button class="opt">The BRS instance</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>It replaces the connector server for that host. You still install the backup agent on the host. The agent is one program per host, so each protected host needs one, while a connector server serves many hosts.</p></details>
+    </div>
+    <div class="q">
+      <p>Which outbound ports does IBM say the Connector Agent needs?</p>
+      <div class="opts">
+        <button class="opt">22 and 3389</button>
+        <button class="opt" data-ok>443, 29991 and 11117</button>
+        <button class="opt">50051 and 59999</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>443, 29991 (broker) and 11117 (bridge), with 1 vCPU and 512 MB per about 100 MB/s. 50051 and 59999 are the ports the Linux backup agent listened on in our lab.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>Install and claim the agent on Linux</h2>
+  <p class="lead">Run each command in turn. The output is what our lab returned on 7 October 2026. The installer file was copied to the server and installed with <code>chmod +x</code> and <code>sudo /tmp/connector_agent_installer -- --install -y</code>; the <code>-y</code> skips the &quot;install? [y/N]&quot; question.</p>
+  <div class="term-block">
+    <div class="term">
+      <div class="bar"><span>bash</span><span data-term-count></span></div>
+      <div class="cmd">
+        <pre class="in">curl -s -o connector_agent_installer "https://$GUID.eu-de.backup-recovery.cloud.ibm.com/v2/connector-agents/download/kLinux" -H "Authorization: Bearer $TOK" -H "X-IBM-Tenant-ID: $T"</pre>
+        <pre class="out">HTTP 200, 28.6 MB, a self-extracting script ("Makeself 2.2.0").</pre>
+        <p class="hand note">Valid platforms: kLinux, kWindows.</p>
+      </div>
+      <div class="cmd">
+        <pre class="in">ssh vpcuser@10.0.0.10 'sudo /opt/connector_agent/bin/connector_agent.sh status; sudo ss -ltn | grep 8080'</pre>
+        <pre class="out">connector_agent_exec is running ... and healthy.</pre>
+        <p class="hand note">It listens on 127.0.0.1:8080 only.</p>
+      </div>
+      <div class="cmd">
+        <pre class="in">jq -nc --rawfile t claim.tok '{registrationToken:($t|rtrimstr("\n")),connectionName:"ng-agent",joinExistingConnection:false}' | ssh vpcuser@10.0.0.10 'curl -s -i -X POST -H "Content-Type: application/json" -d @- http://localhost:8080/v1/connector-agents/registration'</pre>
+        <pre class="out">HTTP/1.1 204 No Content
+X-Registration-Status: registered</pre>
+        <p class="hand note">The token came from the CLI. It is a secret: do not print it.</p>
+      </div>
+      <div class="cmd">
+        <pre class="in">ibmcloud backup-recovery connector-agent list --tenant-id $T --xibm-tenant-id $T --output json</pre>
+        <pre class="out">{"connectorAgents":[{"connectionId":"&lt;CONNECTION_ID&gt;","connectionName":"ng-agent","connectivityStatus":{"isConnected":true,...},"softwareVersion":"7.3.12_release-20260713_2e7241a2"}]}</pre>
+        <p class="hand note">Both flags are needed.</p>
+      </div>
+    </div>
+  </div>
+  <p class="lead" style="margin-top:20px">Windows works the same way, with different installers and commands. In our lab on 7 October 2026:</p>
+  <pre class="def" aria-label="Linux and Windows side by side">                 Linux                       Windows
+Platform name    kLinux                      kWindows
+Installer        28.6 MB                     75.1 MB
+Installed to     /opt/connector_agent        C:\Program Files\ConnectorAgent
+Listens on       127.0.0.1:8080 only         127.0.0.1:8080 only
+Claim            POST to the local port      POST to the local port
+Result           204, registered             204 registered</pre>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>HTTP 400 on the download</h2>
+  <p class="lead">Northgate calls the download API for the Connector Agent installer with the platform written as <code>Linux</code>. This is what came back in our lab.</p>
+  <pre class="def" aria-label="The failed download">GET /v2/connector-agents/download/Linux
+HTTP 400, "platform in path should be one of [kLinux kWindows]"</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What went wrong?</p>
+      <div class="opts">
+        <button class="opt">The token has expired</button>
+        <button class="opt" data-ok>The platform name is wrong: the path needs <code>kLinux</code></button>
+        <button class="opt">The installer does not exist for Linux</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The message lists the valid names: <code>kLinux</code> and <code>kWindows</code>. With <code>kLinux</code> the same call returned HTTP 200 and a 28.6 MB self-extracting script.</p></details>
+    </div>
+    <div class="q">
+      <p>Would the lower-case <code>linux</code> have worked?</p>
+      <div class="opts">
+        <button class="opt">Yes, the name is not case sensitive</button>
+        <button class="opt" data-ok>No: it gave the same HTTP 400</button>
+        <button class="opt">Only on Windows</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The tutorial tested both <code>linux</code> and <code>Linux</code>. Both gave HTTP 400 with the same message.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Click through the console</span>
+  <h2>Find the downloads and the agents</h2>
+  <p class="lead">These screens come from the BRS console in our lab. The console downloads the installers, but it has no step for the claim: the agent&apos;s only interface is the local port, so the claim is the <code>curl</code> POST you ran in step 2. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="2.9,23.9,23.9,9.5" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B2b-1-connector-agent-download.png" alt="Download Connector Agent: Operating System Linux, the Configuration Token (blurred here) with copy, download and refresh buttons, and the Download Connector Agent link." width="830" height="485"></div>
+      <figcaption>
+        <h3>Northgate chose Direct and clicked Download Connector Agent. Where do you switch between Linux and Windows?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: the Operating System list, Linux or Windows. The dialog also has the Configuration Token, with copy, download and refresh buttons. It is the same kind of token that the CLI command gives.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="40,70.5,18.5,15.5" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B2c-1-backup-agent-windows.png" alt="Download Agents with Agent set to Windows: no Type list, only the Download button." width="540" height="277"></div>
+      <figcaption>
+        <h3>This is the backup agent download, with Agent set to Windows. Linux has a Type list here. What is left for Windows?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: only the Download button. On Linux the Type list offers Script Installer, RPM, Debian, Suse RPM and PowerPC RPM. The Windows installer was 21.9 MB.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="3.9,82,46.1,7.6" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B2c-3-both-agents-listed.png" alt="Register Physical Server, Direct: the Connector Agent list shows cohesity-lab-agent and cohesity-lab-win-agent." width="770" height="605"></div>
+      <figcaption>
+        <h3>Both agents are claimed and you start a Direct registration. Click the agent for the Windows server.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: the second name, the Windows agent. Reload the page first if the list looks empty: a dialog left open from before the claim showed an empty list in our lab. System &gt; Data Source Connections does not list a Connector Agent&apos;s connection; it shows only the connector server&apos;s.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><b>Review from unit 2.1.</b> <code>rpm -Uvh</code> of the backup agent stops with &quot;Failed dependencies: lsof is needed&quot;. What do you do?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Install the missing packages, then run <code>rpm</code> again</button>
+        <button class="opt">Delete the file and download it again</button>
+        <button class="opt">Nothing: the agent installs itself later</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Tutorial B2a installed <code>nfs-utils</code>, <code>lvm2</code>, <code>lsof</code> and <code>wget</code> with <code>dnf</code>, then ran <code>rpm</code> again.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>How do you claim a Connector Agent that is installed on a server?</p>
+      <div class="opts">
+        <button class="opt">Click Claim in the console</button>
+        <button class="opt" data-ok>POST the token to the agent&apos;s local port, 8080, on the server</button>
+        <button class="opt">Log in to a web page on the agent</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The console has no claim step. The agent listens on 127.0.0.1:8080 only. A good claim returns 204 and <code>X-Registration-Status: registered</code>.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You call the Connector Agent download API with the platform <code>Linux</code>. What do you get?</p>
+      <div class="opts">
+        <button class="opt">The Linux installer</button>
+        <button class="opt" data-ok>HTTP 400: the platform must be kLinux or kWindows</button>
+        <button class="opt">HTTP 401: you need a new token</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The message was &quot;platform in path should be one of [kLinux kWindows]&quot;.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can install and claim a Connector Agent</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>The Connector Agent replaces the connector server for its own host, and you still install the backup agent. The platform names are kLinux and kWindows. The claim is a POST to 127.0.0.1:8080 on the server: the console has no step for it.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B2b does it on Linux. Tutorial B2c does it on Windows.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

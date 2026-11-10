@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Snapshots and VPC Backup · VPC course</title>
+<meta name="description" content="Course unit 4.3: take a consistent snapshot of two volumes, copy it to another region, restore from it, and see how a backup policy makes the same snapshots on a schedule. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m4-u3">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPC course</a> <span>·</span> Module 4 · Storage and backup</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 3 of Module 4</span>
+      <h1>Snapshots and VPC Backup</h1>
+      <p class="lead">By the end you can take a consistent snapshot of two volumes, copy it to another region, restore from it, and say how a backup policy differs from a snapshot you take by hand.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a server with two disks, an arrow to two snapshots in the same region, and a dashed arrow to a copy in a second region."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[10,50,100,100],"heavy":true,"title":"server","detail":"two volumes"},
+          {"line":[118,100,170,100],"arrow":true,"tone":"mark"},
+          {"box":[176,50,110,100],"heavy":true,"title":"snapshots","detail":"same moment"},
+          {"line":[294,100,330,100],"arrow":true,"dashed":true,"tone":"mark"},
+          {"box":[336,50,76,100],"dashed":true,"title":"copy","detail":"other region"},
+          {"text":"now, and on a schedule","at":[110,196],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Before a change it wants a copy of an app server&apos;s two disks that agree with each other, and later a copy every night. The company is made up; the names and output are real.</p>
+    </div>
+  </div>
+  <p class="small">Every command and line of output here comes from real runs, recorded in tutorial chapters 43 and 44. IDs are shortened.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>From flush to restore</h2>
+  <p class="lead">Four stages: flush, snapshot the two volumes together, copy to another region, restore. Select a part of the drawing to see what it does and which lines make it. You can also click a line. Tag options are left out.</p>
+  <div class="explorer" data-start="group"
+    data-map='{"flush":[[1,1]],"group":[[2,8]],"copy":[[9,11]],"restore":[[12,12]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of four boxes in a row of arrows: Flush, Consistency group, Copy and Restore."
+          data-drawing='{"w":560,"h":260,"shapes":[
+            {"box":[10,20,260,70],"part":"flush","title":"Flush","detail":"sync in the guest"},
+            {"line":[272,55,288,55],"arrow":true},
+            {"box":[290,20,260,70],"part":"group","heavy":true,"title":"Consistency group","detail":"boot + data, same moment"},
+            {"line":[420,92,420,128],"arrow":true,"tone":"muted"},
+            {"box":[290,130,260,70],"part":"copy","dashed":true,"title":"Copy to us-south","detail":"made from the target region"},
+            {"line":[288,165,272,165],"arrow":true},
+            {"box":[10,130,260,70],"part":"restore","title":"Restore","detail":"a new volume"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="flush">
+          <h3>Flush</h3>
+          <p>IBM says to make sure cached data is on disk before a snapshot. <code>sync</code> in the guest does that.</p>
+          <p class="watch"><b>Watch for this.</b> A snapshot is crash-consistent. It holds what was on disk, not what the guest held in memory.</p>
+        </div>
+        <div class="part-info" data-part="group">
+          <h3>Consistency group</h3>
+          <p>Snapshots of several volumes of one server, taken together so that they agree. A snapshot is a point-in-time copy of one volume, kept in a regional storage repository. The first copies the whole volume; later ones copy only changes. A group pauses I/O for a short time, from a few milliseconds up to 4 seconds.</p>
+          <p class="hand tilt"><b>From vSphere:</b> the nearest word is Snapshot, but a VPC snapshot is of a volume, not of a whole VM. A rough mapping.</p>
+          <p class="watch"><b>Watch for this.</b> A group cannot include snapshots of mixed storage generations.</p>
+        </div>
+        <div class="part-info" data-part="copy">
+          <h3>Copy to another region</h3>
+          <p>You make the copy from the target region, with the source snapshot&apos;s CRN. Only one copy can exist in each region. The time grows with the volume&apos;s size: IBM&apos;s example is up to 12.5 hours for 3 TB.</p>
+          <p class="watch"><b>Watch for this.</b> A consistency group cannot be copied to another zone or region. Copy its member snapshots one by one.</p>
+        </div>
+        <div class="part-info" data-part="restore">
+          <h3>Restore</h3>
+          <p>Restoring creates a new, fully provisioned volume and does not overwrite the parent. Data starts to copy at once, and performance is reduced until all of it has arrived.</p>
+          <p class="watch"><b>Watch for this.</b> IBM does not support restoring a server directly from a consistency group. Restore its volumes separately.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The commands for a consistency group, a copy to us-south and a restore">sync
+BOOT=$(ibmcloud is instance vpct-prod-app-z1-01 --output json | jq -r '.boot_volume_attachment.volume.id')
+DATA=$(ibmcloud is volume vpct-prod-app-z1-01-data1 --output json | jq -r .id)
+cat &gt; cg.json &lt;&lt;JSON
+[{"name": "vpct-prod-app-z1-01-boot-snap", "source_volume": {"id": "$BOOT"}},
+ {"name": "vpct-prod-app-z1-01-data1-snap", "source_volume": {"id": "$DATA"}}]
+JSON
+ibmcloud is snapshot-consistency-group-create --snapshots @cg.json --name vpct-prod-app-z1-01-cg --resource-group-name vpct-lab
+SRC=$(ibmcloud is snapshot vpct-prod-app-z1-01-data1-snap --output json | jq -r .crn)
+ibmcloud target -r us-south -g vpct-lab
+ibmcloud is snapshot-create --source-snapshot-crn $SRC --name vpct-dr-app-z1-01-data1-snap --resource-group-name vpct-lab
+ibmcloud is volume-create vpct-dr-app-z1-01-data1 general-purpose us-south-1 --snapshot vpct-dr-app-z1-01-data1-snap --resource-group-name vpct-lab</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>Watch the snapshots settle, then copy and restore</h2>
+  <p class="lead">Run each command in turn. The output is what the lab returned. Repeated listings and long output are cut, with <code>...</code> for cuts inside a listing.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="q">
+          <p>The group is created. The next command lists its two snapshots again and again. When does each one reach <code>stable</code>?</p>
+          <div class="opts">
+            <button class="opt">Both together, at the first listing</button>
+            <button class="opt" data-ok>At different times, within a minute</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>Read the listings in the next command. The data snapshot was stable at 27 seconds; the boot snapshot at 51.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is snapshots --snapshot-consistency-group vpct-prod-app-z1-01-cg</pre>
+          <pre class="out">2s
+Listing snapshots in resource group vpct-lab and region us-east under account &lt;redacted&gt; as user &lt;redacted&gt;...
+ID                Name                             Status    Source volume     Bootable
+r014-ff73b0bd-…   vpct-prod-app-z1-01-boot-snap    pending   r014-50620a87-…   true
+r014-83b9d015-…   vpct-prod-app-z1-01-data1-snap   pending   r014-3d33e5e7-…   false
+27s
+ID                Name                             Status    Source volume     Bootable
+r014-ff73b0bd-…   vpct-prod-app-z1-01-boot-snap    pending   r014-50620a87-…   true
+r014-83b9d015-…   vpct-prod-app-z1-01-data1-snap   stable    r014-3d33e5e7-…   false
+51s
+ID                Name                             Status   Source volume     Bootable
+r014-ff73b0bd-…   vpct-prod-app-z1-01-boot-snap    stable   r014-50620a87-…   true
+r014-83b9d015-…   vpct-prod-app-z1-01-data1-snap   stable   r014-3d33e5e7-…   false</pre>
+          <p class="hand note">pending until the data reaches the regional repository.</p>
+          <p class="hand note">Do not detach a volume until its snapshot is stable.</p>
+        </div>
+        <div class="cmd">
+          <p class="pre"># from the us-south target; the output is cut</p>
+          <pre class="in">ibmcloud is snapshot-create --source-snapshot-crn $SRC --name vpct-dr-app-z1-01-data1-snap --resource-group-name vpct-lab</pre>
+          <pre class="out">Name                   vpct-dr-app-z1-01-data1-snap
+Status                 pending
+...
+Source volume          ID                  Name                   Remote Region
+                       r014-3d33e5e7-…   -remote-94d920a30198   us-east
+...
+Encryption             provider_managed
+...
+Minimum capacity(GB)   20
+Size(GB)               1
+...
+76s copy pending
+89s copy stable</pre>
+          <p class="hand note">The copy shows its source in us-east as a remote region.</p>
+          <p class="hand note">The source used IBM-managed encryption, so the copy does too.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is volume-create vpct-dr-app-z1-01-data1 general-purpose us-south-1 --snapshot vpct-dr-app-z1-01-data1-snap --resource-group-name vpct-lab</pre>
+          <pre class="out">Name                                   vpct-dr-app-z1-01-data1
+Status                                 pending
+Attachment state                       unattached
+Capacity                               20
+IOPS                                   3000
+Profile                                general-purpose
+...
+Zone                                   us-south-1
+...
+Source snapshot                        ID                                          Name
+                                       r006-06090eef-…   vpct-dr-app-z1-01-data1-snap</pre>
+          <p class="hand note">A new volume, in the other region. The chapter stopped here: mounting it needs a server in us-south.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Run it, on a schedule</span>
+  <h2>A backup policy makes the same snapshots</h2>
+  <p class="lead">Backup for VPC is IBM Cloud&apos;s service that makes snapshots on a schedule and deletes them after a retention period. A policy holds target tags and up to four plans. Output is cut with <code>...</code>.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <p class="pre"># MM HH is a time a few minutes ahead</p>
+          <pre class="in">ibmcloud is backup-policy-create --name vpct-prod-daily-bp \
+  --match-tags backup:vpct-daily --match-resource-type instance \
+  --included-content boot_volume,data_volumes \
+  --plan-name vpct-prod-daily-plan --plan-cron-spec "MM HH * * *" --plan-active \
+  --plan-delete-after 1 \
+  --resource-group-name vpct-lab</pre>
+          <pre class="out">Name                  vpct-prod-daily-bp
+Status                pending
+Plans                 ID                  Name                   Resource type
+                      r014-7d9b5e24-…   vpct-prod-daily-plan   backup_policy_plan
+
+Backup tags           backup:vpct-daily
+Match resource type   instance
+Included Content      boot_volume,data_volumes
+...
+Health State          ok</pre>
+          <p class="hand note">The policy matches servers that carry the tag backup:vpct-daily.</p>
+          <p class="hand note">For a server&apos;s volumes as a group, IBM says the tag goes on the server, not the volumes.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud resource tag-attach --tag-names "backup:vpct-daily" --resource-id "$CRN"</pre>
+          <pre class="out">The tag was attached</pre>
+        </div>
+        <div class="q">
+          <p>The scheduled time passes. You run <code>backup-policy-jobs</code> straight away. What do you see?</p>
+          <div class="opts">
+            <button class="opt">A succeeded job</button>
+            <button class="opt" data-ok>No jobs yet. A job can start up to 90 minutes after the scheduled time</button>
+            <button class="opt">An error, because the policy is pending</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>IBM says a backup job can start up to 90 minutes after the scheduled time. Until then the command lists no jobs. The chapter says to allow at least that long.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is backup-policy-jobs vpct-prod-daily-bp</pre>
+          <pre class="out">Listing jobs of backup policy vpct-prod-daily-bp under account &lt;redacted&gt; as user &lt;redacted&gt;...
+ID                  Auto delete   Auto delete after   Completed at                Created at                  Job type   Status      Match resource type
+r014-4e23f737-…   true          30                  2026-10-30T08:24:14+00:00   2026-10-30T08:23:15+00:00   creation   succeeded   -</pre>
+          <p class="hand note">Auto delete after 30, although the plan said 1 day.</p>
+          <p class="hand note">The chapter says that figure is not the snapshot&apos;s retention.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is snapshot-consistency-groups --backup-policy vpct-prod-daily-bp --backup-policy-plan vpct-prod-daily-plan</pre>
+          <pre class="out">Listing snapshot consistency groups in resource group vpct-lab and region us-east under account &lt;redacted&gt; as user &lt;redacted&gt;...
+    ID                  Name                                     Backup policy job   Backup policy plan   Snapshots count   Lifecycle State
+1   r014-320dfd5b-…   vpct-prod-daily-plan-101d26922314-4387   -                   r014-7d9b5e24-…    2                 stable</pre>
+          <p class="hand note">One group, two snapshots: boot and data, together.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>An error and a tag</h2>
+  <div class="pair">
+    <div style="display:grid;gap:10px;align-content:start">
+      <p>Northgate tries to make one consistency group from a data volume on the <code>sdp</code> profile and a first-generation boot volume. The answer:</p>
+      <pre class="def" aria-label="The error code">snapshot_consistency_groups_different_profile_not_supported</pre>
+      <div class="q">
+        <p>What is the cause?</p>
+        <div class="opts">
+          <button class="opt">The group has too many members</button>
+          <button class="opt" data-ok>The members are of different storage generations</button>
+          <button class="opt">The volumes are in different zones</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>Chapter 40 tried exactly this and got this error. A group of one <code>sdp</code> volume alone was created. Chapter 43 lists the rule: a group cannot include snapshots of mixed storage generations.</p></details>
+      </div>
+    </div>
+    <div style="display:grid;gap:10px;align-content:start">
+      <p>Northgate makes a policy with <code>--match-resource-type instance</code>. It then puts the tag <code>backup:vpct-daily</code> on the two volumes, not on the server.</p>
+      <div class="q">
+        <p>What does the chapter say?</p>
+        <div class="opts">
+          <button class="opt">Either place works</button>
+          <button class="opt" data-ok>IBM says the tag goes on the server, so the volumes are backed up as a group</button>
+          <button class="opt">The tag goes on the policy</button>
+        </div>
+        <details class="reveal"><summary>Show the answer</summary><p>Matching by <code>instance</code> backs up a server&apos;s volumes as a consistency group, and for that IBM says the tag goes on the server. The chapter tagged the server.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>A snapshot is crash-consistent. What does that mean?</p>
+      <div class="opts">
+        <button class="opt">It survives a crash of the region</button>
+        <button class="opt" data-ok>It holds what was on disk at that moment, not what the guest held in memory</button>
+        <button class="opt">It is checked by the application first</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>That is why IBM says to flush cached data to disk first. Chapter 49 puts application-consistent backups in Backup and Recovery, through an agent. Unit 4.4 covers that.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You want a copy of a consistency group in us-south. What do you do?</p>
+      <div class="opts">
+        <button class="opt">Copy the group</button>
+        <button class="opt" data-ok>Copy its member snapshots one by one</button>
+        <button class="opt">Restore the group in us-south</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A consistency group cannot be copied to another zone or region. Only one copy of a snapshot can exist in each region.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Does a restore overwrite the volume the snapshot came from?</p>
+      <div class="opts">
+        <button class="opt">Yes</button>
+        <button class="opt" data-ok>No. It creates a new volume</button>
+        <button class="opt">Only with a backup policy</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Both chapters restored to a new volume and left the source untouched. IBM also says backups and snapshots are not a disaster recovery solution, because restoring from either is a manual operation that takes time.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 4.2.</b> A volume&apos;s <code>Encryption</code> line reads <code>provider_managed</code>. What does that tell you?</p>
+      <div class="opts">
+        <button class="opt">It uses a key you own</button>
+        <button class="opt" data-ok>It has no key of yours; IBM holds the keys</button>
+        <button class="opt">It is not encrypted</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A volume without a key of yours shows <code>provider_managed</code>. A volume with one shows <code>user_managed</code>. IBM-managed encryption is the default.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can copy a server&apos;s disks</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Flush, then a group. Wait for stable. Copy members, not the group. A restore is a new volume. A backup can start up to 90 minutes late. Neither is disaster recovery.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 43, Taking consistent snapshots of a VPC server and copying them, and chapter 44, Backing up VPC volumes by tag with IBM Backup for VPC, run everything you just saw.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

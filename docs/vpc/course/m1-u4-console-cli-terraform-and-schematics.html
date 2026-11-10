@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en" data-course="vpc">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Console, CLI, Terraform and Schematics · VPC course</title>
+<meta name="description" content="Course unit 1.4: see the same VPC through the console, the CLI, Terraform and Schematics, read a Terraform file, and choose a way for Northgate. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m1-u4">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPC course</a> <span>·</span> Module 1 · VPC for a VMware admin</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 4 of Module 1</span>
+      <h1>Console, CLI, Terraform and Schematics</h1>
+      <p class="lead">By the end you can read a VPC in the console, run the CLI and Terraform, say what Schematics adds, and choose a way for a job.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: four boxes in a row, console, CLI, Terraform and Schematics, with an arrow from each to one VPC."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[10,20,92,34],"title":"console"},
+          {"box":[112,20,92,34],"title":"CLI"},
+          {"box":[214,20,92,34],"title":"Terraform"},
+          {"box":[316,20,94,34],"title":"Schematics","tone":"mark"},
+          {"line":[56,60,190,140],"arrow":true,"tone":"muted"},
+          {"line":[158,60,200,140],"arrow":true,"tone":"muted"},
+          {"line":[260,60,220,140],"arrow":true,"tone":"muted"},
+          {"line":[362,60,240,140],"arrow":true,"tone":"mark"},
+          {"box":[150,146,120,54],"heavy":true,"title":"one VPC"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is moving its vSphere estate to IBM Cloud VPC. The company is made up; the output and screens in this unit are real. Its admins used vRealize Automation. They ask how to build and change a VPC here.</p>
+    </div>
+  </div>
+  <p class="small">Every screenshot and line of output in this unit comes from tutorial chapters 10, 14, 15 and 20.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Click through the console</span>
+  <h2>Read the VPC in the console</h2>
+  <p class="lead">The console is one way in. This is the overview page of <code>vpct-prod</code>, the VPC chapter 20 creates with the CLI. In the console, go to Infrastructure, then Network, then VPCs. The page shows the same facts the CLI printed. Click where you would click.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="73.5,31.5,17,8">
+      <div class="shot"><img src="../images/20/course-vpc-overview.png" alt="The console overview page of vpct-prod: status Available, resource group vpct-lab, location Washington DC (us-east), the default ACL, security group and routing table named vpct-prod-default-acl, vpct-prod-default-sg and vpct-prod-default-rt. The Address prefixes panel has column headers and a Manage address prefixes link, with no rows." width="1166" height="611"></div>
+      <figcaption>
+        <h3>Which resource group is this VPC in?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. vpct-lab, at the top right of the details panel.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="73.5,47.5,12,8">
+      <div class="shot"><img src="../images/20/course-vpc-overview.png" alt="The console overview page of vpct-prod: status Available, resource group vpct-lab, location Washington DC (us-east), the default ACL, security group and routing table named vpct-prod-default-acl, vpct-prod-default-sg and vpct-prod-default-rt. The Address prefixes panel has column headers and a Manage address prefixes link, with no rows." width="1166" height="611"></div>
+      <figcaption>
+        <h3>Open the default security group that IBM created with the VPC.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. vpct-prod-default-sg. The name is the one chapter 20 gave it. The default ACL and the default routing table are linked beside it.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="0.7,69,49,31">
+      <div class="shot"><img src="../images/20/course-vpc-overview.png" alt="The console overview page of vpct-prod: status Available, resource group vpct-lab, location Washington DC (us-east), the default ACL, security group and routing table named vpct-prod-default-acl, vpct-prod-default-sg and vpct-prod-default-rt. The Address prefixes panel has column headers and a Manage address prefixes link, with no rows." width="1166" height="611"></div>
+      <figcaption>
+        <h3>One panel has no rows. Which one, and why?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Address prefixes. The VPC was created with manual address prefix management, so IBM created none. Chapter 21 adds them.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+  <p class="small">The console also shows the VPC CRN, which holds your account ID. Chapter 20 says to hide it before you share a screenshot. It is hidden here.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>The CLI</h2>
+  <p class="lead">The CLI is how the chapters create and read everything. Run each command in turn. The output is from chapter 10.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">ibmcloud version</pre>
+          <pre class="out">ibmcloud 2.48.1 (38ea1e00d-2026-10-21T16:03:06+00:00)
+Copyright IBM Corp. 2014, 2026</pre>
+          <p class="hand note">The version in the chapter&apos;s run.</p>
+        </div>
+        <div class="q">
+          <p>The CLI has several plug-ins. Which one gives you the <code>ibmcloud is</code> commands?</p>
+          <div class="opts">
+            <button class="opt">schematics</button>
+            <button class="opt" data-ok>vpc-infrastructure</button>
+            <button class="opt">tg-cli</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>The <code>vpc-infrastructure</code> plug-in gives the CLI its VPC commands. Run the next command to see all nine plug-ins the chapters use.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud plugin list</pre>
+          <pre class="out">Listing installed plug-ins...
+
+Plugin Name                                     Version   Status   Private endpoints supported
+backup-recovery[br]                             1.5.0              true
+cloud-dns-services[dns/dns-svcs]                0.8.7              true
+cloud-object-storage                            1.11.2             true
+dl-cli                                          0.5.11             true
+key-protect[kp]                                 0.12.3             true
+schematics[sch]                                 1.12.32            true
+secrets-manager[sm]                             2.0.20             true
+tg-cli[tg]                                      0.8.29             true
+vpc-infrastructure[infrastructure-service/is]   17.3.1             true</pre>
+          <p class="hand note">One plug-in for each service: VPC, Transit Gateway, DNS Services, Schematics and more.</p>
+        </div>
+        <div class="q">
+          <p>The chapters log in without typing a password. Where does the CLI get the key?</p>
+          <div class="opts">
+            <button class="opt">From a file in the project folder</button>
+            <button class="opt" data-ok>From the <code>IBMCLOUD_API_KEY</code> variable, loaded from a private file</button>
+            <button class="opt">From the one-time passcode</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>The key goes in a private <code>.env</code> file that only you read, and never into git. The file is loaded into the session, then <code>ibmcloud login</code> reads the variable. The one-time passcode is for the first login, before the key exists.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud login -r us-east</pre>
+          <pre class="out">API endpoint: https://cloud.ibm.com
+Logging in with API key from environment variable...
+Authenticating...
+Retrieving API key token...
+OK
+
+Targeted account &lt;redacted&gt; (&lt;redacted&gt;) &lt;-&gt; &lt;redacted&gt;
+
+Targeted region us-east
+
+
+API endpoint:     https://cloud.ibm.com
+Region:           us-east
+User:             &lt;redacted&gt;
+Account:          &lt;redacted&gt; (&lt;redacted&gt;) &lt;-&gt; &lt;redacted&gt;
+Resource group:   No resource group targeted, use 'ibmcloud target -g RESOURCE_GROUP'</pre>
+          <p class="hand note">The first line says where the key came from.</p>
+          <p class="hand note">No resource group is targeted yet. Chapter 11 creates one.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Explore the parts</span>
+  <h2>A VPC written as Terraform</h2>
+  <p class="lead">This is <code>main.tf</code> from chapter 14. It creates a small test VPC with every resource named and tagged. Select a part of the drawing to see what it does. You can also click a line.</p>
+  <div class="explorer" data-start="vpc"
+    data-map='{"tags":[[1,3]],"group":[[5,7],[11,11]],"vpc":[[9,10],[12,12],[16,17],[29,31]],"defaults":[[13,15]],"tagdefaults":[[19,27]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of main.tf in five parts: the tags, the resource group lookup, the VPC, the names of the three defaults, and the tags on the defaults."
+          data-drawing='{"w":420,"h":300,"shapes":[
+            {"box":[10,8,400,284],"heavy":true,"title":"main.tf"},
+            {"box":[28,40,176,50],"part":"tags","title":"Tags","detail":"four user tags"},
+            {"box":[216,40,176,50],"part":"group","title":"Resource group","detail":"looked up"},
+            {"box":[28,102,364,50],"part":"vpc","title":"The VPC","detail":"manual prefixes"},
+            {"box":[28,164,364,50],"part":"defaults","title":"Default names","detail":"sg · acl · route table"},
+            {"box":[28,226,364,50],"part":"tagdefaults","title":"Tags on the defaults","detail":"by CRN"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="tags">
+          <h3>Tags</h3>
+          <p>Four user tags: <code>project</code>, <code>owner</code>, <code>series</code> and <code>chapter</code>. The owner value is your own user name, passed in as a variable.</p>
+          <p class="watch"><b>Watch for this.</b> Tags are visible to everyone in the account, and IBM converts uppercase characters in tags to lowercase.</p>
+        </div>
+        <div class="part-info" data-part="group">
+          <h3>Resource group</h3>
+          <p>The file looks the resource group up by name and gives its ID to the VPC.</p>
+          <p class="watch"><b>Watch for this.</b> Without <code>resource_group</code>, the provider creates the VPC in the <code>default</code> resource group.</p>
+        </div>
+        <div class="part-info" data-part="vpc">
+          <h3>The VPC</h3>
+          <p><code>address_prefix_management</code> is <code>manual</code>, the same setting the CLI chapter used, so IBM creates no address prefixes. The last lines print the VPC ID.</p>
+          <p class="hand tilt"><b>From vSphere:</b> Terraform and Schematics are the closest words to vRealize and Aria Automation. A rough mapping.</p>
+        </div>
+        <div class="part-info" data-part="defaults">
+          <h3>Default names</h3>
+          <p>The provider names the three defaults in the same run as the VPC. With the CLI, <code>vpc-create</code> has no option for this, so chapter 20 renames each one afterwards.</p>
+        </div>
+        <div class="part-info" data-part="tagdefaults">
+          <h3>Tags on the defaults</h3>
+          <p>The VPC resource names the defaults but does not tag them, so a second resource tags each one by its CRN.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="main.tf from chapter 14">locals {
+  tags = ["project:vpc-tutorials", "owner:${var.owner}", "series:1", "chapter:14"]
+}
+
+data "ibm_resource_group" "lab" {
+  name = var.resource_group
+}
+
+resource "ibm_is_vpc" "test" {
+  name                        = "vpct-tf-test"
+  resource_group              = data.ibm_resource_group.lab.id
+  address_prefix_management   = "manual"
+  default_security_group_name = "vpct-tf-test-default-sg"
+  default_network_acl_name    = "vpct-tf-test-default-acl"
+  default_routing_table_name  = "vpct-tf-test-default-rt"
+  tags                        = local.tags
+}
+
+resource "ibm_resource_tag" "defaults" {
+  for_each = {
+    security_group = ibm_is_vpc.test.default_security_group_crn
+    network_acl    = ibm_is_vpc.test.default_network_acl_crn
+    routing_table  = ibm_is_vpc.test.default_routing_table_crn
+  }
+  resource_id = each.value
+  tags        = local.tags
+}
+
+output "vpc_id" {
+  value = ibm_is_vpc.test.id
+}</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>Run it with Terraform, then with Schematics</h2>
+  <p class="lead">First Terraform on your own computer, from chapter 14. Then the same files in a Schematics workspace, which runs Terraform for you and keeps the state, from chapter 15.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash · Terraform</span><span data-term-count></span></div>
+        <div class="q">
+          <p>The plan will create the VPC and tag its three defaults. How many resources does it add?</p>
+          <div class="opts">
+            <button class="opt">1</button>
+            <button class="opt">3</button>
+            <button class="opt" data-ok>4</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>Four: the VPC and three tag attachments.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">terraform plan -out=tf.plan</pre>
+          <pre class="out">  # ibm_is_vpc.test will be created
+  + resource "ibm_is_vpc" "test" {
+      + address_prefix_management   = "manual"
+      + default_network_acl_name    = "vpct-tf-test-default-acl"
+      + default_routing_table_name  = "vpct-tf-test-default-rt"
+      + default_security_group_name = "vpct-tf-test-default-sg"
+      + name                        = "vpct-tf-test"
+      + resource_group              = "&lt;resource-group-id&gt;"
+      + tags                        = [
+          + "chapter:14",
+          + "owner:&lt;your-user-name&gt;",
+          + "project:vpc-tutorials",
+          + "series:1",
+        ]
+      ...
+    }
+
+Plan: 4 to add, 0 to change, 0 to destroy.</pre>
+        </div>
+        <div class="cmd">
+          <pre class="in">terraform apply tf.plan</pre>
+          <pre class="out">ibm_is_vpc.test: Creating...
+ibm_is_vpc.test: Creation complete after 32s [id=&lt;vpc-id&gt;]
+ibm_resource_tag.defaults["routing_table"]: Creating...
+ibm_resource_tag.defaults["security_group"]: Creating...
+ibm_resource_tag.defaults["network_acl"]: Creating...
+ibm_resource_tag.defaults["security_group"]: Creation complete after 5s [id=&lt;crn&gt;]
+ibm_resource_tag.defaults["network_acl"]: Creation complete after 5s [id=&lt;crn&gt;]
+ibm_resource_tag.defaults["routing_table"]: Creation complete after 9s [id=&lt;crn&gt;]
+
+Apply complete! Resources: 4 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+vpc_id = "&lt;vpc-id&gt;"</pre>
+          <p class="hand note">The VPC took 32 seconds in this run. The tags came after it.</p>
+        </div>
+        <div class="q">
+          <p>You run <code>terraform plan</code> again straight after. What does it say?</p>
+          <div class="opts">
+            <button class="opt">Plan: 4 to add</button>
+            <button class="opt" data-ok>No changes</button>
+            <button class="opt">An error, because the state is locked</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>Chapter 14 records <code>No changes. Your infrastructure matches the configuration.</code> The plan finds nothing to change.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">terraform plan</pre>
+          <pre class="out">No changes. Your infrastructure matches the configuration.</pre>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash · Schematics</span><span data-term-count></span></div>
+        <div class="cmd">
+          <p class="pre"># the files go in as a tar file</p>
+          <pre class="in">ibmcloud schematics workspace upload --id "$WS" --template "$TID" --file tf-test.tar</pre>
+          <pre class="out">Uploading tar file to workspace...
+
+ID              &lt;template-id&gt;
+File Name       tf-test.tar
+Upload Status   true
+
+OK</pre>
+          <p class="hand note">Upload Status true. Schematics now scans the files.</p>
+        </div>
+        <div class="q">
+          <p>You run <code>ibmcloud schematics plan --id "$WS"</code> at once. What happens?</p>
+          <div class="opts">
+            <button class="opt">The plan runs and shows 4 to add</button>
+            <button class="opt" data-ok>It fails: the workspace was temporarily locked</button>
+            <button class="opt">It plans 0 resources</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>The upload scan is still running. The chapter records <code>statuscode: 409</code> and <code>The workspace was temporarily locked</code>. Wait until the status is <code>INACTIVE</code>, then run the plan again.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud schematics plan --id "$WS"</pre>
+          <pre class="out err">statuscode: 409
+The workspace was temporarily locked</pre>
+          <p class="hand note">Chapter 15 records these two fragments in text, not the whole output.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud schematics workspace get --id "$WS" --output json | jq -r .status</pre>
+          <pre class="out">INACTIVE</pre>
+          <p class="hand note">INACTIVE means the scan is done.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud schematics plan --id "$WS"</pre>
+          <pre class="out">Initiating plan...
+
+Activity ID   &lt;activity-id&gt;
+
+OK</pre>
+          <p class="hand note">The plan runs as a job with its own ID. Read its log for the plan line.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud schematics logs --id "$WS" --act-id "$ACT" | grep -E 'Installed|Plan:'</pre>
+          <pre class="out"> &lt;date&gt; &lt;time&gt; Terraform init | - Installed ibm-cloud/ibm v2.8.1 (self-signed, key ID AAD3B791C49CC253)
+ &lt;date&gt; &lt;time&gt; Terraform plan | Plan: 4 to add, 0 to change, 0 to destroy.</pre>
+          <p class="hand note">The same four resources, planned by Schematics.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 1.3.</span> You create a VPC and name no resource group. Where does it go, and can you move it later?</p>
+      <div class="opts">
+        <button class="opt">Into a group named after the VPC, and yes</button>
+        <button class="opt" data-ok>Into the Default resource group, and the choice cannot be changed afterwards</button>
+        <button class="opt">The command fails until you name one</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>If you do not specify a resource group, the resource is created in the Default resource group. The choice is made when the resource is created and cannot be changed afterwards.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Northgate wants its estate to run without installing Terraform on each admin&apos;s computer, with IBM Cloud keeping the state. Which way fits?</p>
+      <div class="opts">
+        <button class="opt">The provider on each computer</button>
+        <button class="opt" data-ok>A Schematics workspace</button>
+        <button class="opt">A project</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A Schematics workspace is Terraform run for you by IBM Cloud, which keeps the state and runs the jobs. A project manages deployable architecture instances across environments, which is a different job. The chapters use the provider through Schematics so that a reader can skip a series without installing Terraform.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A Schematics workspace has built a VPC. You delete the workspace first. What happens to the VPC?</p>
+      <div class="opts">
+        <button class="opt">It is deleted with the workspace</button>
+        <button class="opt" data-ok>It stays. Destroy the resources first, then delete the workspace</button>
+        <button class="opt">It becomes a Default resource group resource</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM states that deleting a workspace does not remove the resources it manages. Run a destroy first, then delete the workspace.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You know four ways in</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>The console, the CLI, Terraform and Schematics reach the same VPC. A second plan finds no changes. Destroy before you delete a workspace.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 14, Creating a VPC with Terraform and the IBM Cloud provider, and chapter 15, Running Terraform in an IBM Cloud Schematics workspace, run everything you just saw. Chapter 17, Choosing how to automate IBM Cloud with Terraform, compares all five ways.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

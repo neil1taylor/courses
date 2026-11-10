@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Back up a VM · BRS course</title>
+<meta name="description" content="Course unit 5.3: see what BRS does on the cluster during a VM backup, find and protect a VM in the console, and predict what the second run reads. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m5-u3">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 5 · OpenShift Virtualization VMs</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 3 of Module 5</span>
+      <h1>Back up a VM</h1>
+      <p class="lead">By the end you can find a VM in the console and back it up, say what BRS does on the cluster, and predict what a second backup reads.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a namespace holding two VMs is backed up to the BRS vault while the VMs keep running."
+        data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,40,180,90],"heavy":true},{"box":[24,52,70,30],"tone":"mark","title":"VM 1"},{"box":[104,52,70,30],"tone":"mark","title":"VM 2"},{"text":"one namespace","at":[24,112],"hand":true,"size":16,"tone":"muted"},{"line":[194,85,236,85],"arrow":true,"tone":"mark"},{"box":[240,55,170,60],"title":"BRS vault","detail":"the backup"},{"text":"the VMs keep running","at":[200,170],"hand":true,"size":17,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its ROVS cluster, ng-cluster-01, is registered. Now it backs up VMs in a namespace, first by hand.</p>
+    </div>
+  </div>
+  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names were changed. Every number and screen comes from real runs in our lab on 5 October and 9 November 2026, recorded in tutorial B4e. Some screens show lab object names, such as the group b-rovs-vms; cluster names are blurred.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>What BRS does on the cluster during a backup</h2>
+  <p class="lead">BRS protects a namespace and picks the VMs inside it. This is what our lab saw on the cluster during the first run on 5 October 2026.</p>
+<svg class="sketch" role="img" aria-label="Hand-drawn diagram of four stacked boxes: one snapshot for each VM; clone volume claims in the BRS agent namespace; job pods hold the clones; the data goes to the BRS vault."
+        data-drawing='{"w":560,"h":290,"shapes":[{"box":[10,10,540,60],"title":"1. One KubeVirt snapshot for each VM","detail":"indications GuestAgent, Online; the VMs kept running"},{"box":[10,80,540,60],"title":"2. Clone PVCs in the BRS agent namespace","detail":"made from the snapshots, named for the VM and the disk"},{"box":[10,150,540,60],"title":"3. Job pods hold the clones","detail":"the cohesity-dm pod on that worker does the copy"},{"box":[10,220,540,60],"tone":"mark","title":"4. The data goes to the BRS vault","detail":"target type Cloud; no separate archive step"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Does BRS use the cluster&apos;s own OADP operator for this?</p>
+      <div class="opts">
+        <button class="opt">Yes: it creates its backups in openshift-adp</button>
+        <button class="opt" data-ok>No: it runs its own Velero and data mover in its own namespace</button>
+        <button class="opt">It uses Regional DR</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab nothing was created in <code>openshift-adp</code>, and BRS made no change to any operator, CRD or snapshot class over the whole test. The job pods only run <code>sleep</code> and hold the clones as raw block devices.</p></details>
+    </div>
+    <div class="q">
+      <p>Are the VMs stopped while they are backed up?</p>
+      <div class="opts">
+        <button class="opt">Yes, until the snapshot is done</button>
+        <button class="opt" data-ok>No: the guest agent froze the file systems and the VMs kept running</button>
+        <button class="opt">Only Windows VMs are stopped</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The snapshots were taken in the first 3 minutes of the 5 October run. The tutorial records the indications <code>GuestAgent, Online</code>.</p></details>
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Step 2 · Click through the console</span>
+  <h2>Find the VM and run the group</h2>
+  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026: one cluster, one VM. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="9.5,42.7,86.5,45.6" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4e-1-ns-missing.png" alt="Protect Kubernetes: 0 namespaces selected and no brs-c1 in the list (cluster name blurred)." width="1002" height="693"></div>
+      <figcaption>
+        <h3>Northgate made the namespace brs-c1 after it registered the cluster. Click where it should be listed.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">It is not there. A namespace made after the registration is not listed until you refresh the source. Close the form and do that first.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="87.6,76.9,6,6.6" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4e-2-refresh.png" alt="Sources: the Kubernetes source&apos;s menu with Protect, Edit, Unregister, Refresh and Maintenance." width="1164" height="640"></div>
+      <figcaption>
+        <h3>You are in Sources, on the Kubernetes source&apos;s menu. Which item makes BRS list the new namespace?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: <b>Refresh</b>. In our lab on 9 November 2026 <code>brs-c1</code> was listed after it. With the command line in October, the refresh call took 62 s.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="5.6,33,61.9,8.2" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4e-4-include-vm.png" alt="Options for brs-c1: VM Inclusion/Exclusion on, Include, c1-rhel9." width="790" height="684"></div>
+      <figcaption>
+        <h3>A namespace may hold many VMs. Where do you choose the one VM to protect?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Switch on <b>VM Inclusion/Exclusion</b>, choose Include and pick the VM under <b>Include VMs</b>. Without this the group protects the whole namespace.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="1.4,81.5,15.9,6.8" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4e-5-policy.png" alt="The policy b-daily-7d, Start Time, and Leverage CSI snapshot Yes." width="1002" height="634"></div>
+      <figcaption>
+        <h3>Leverage CSI snapshot is Yes. Where do you open the setting that pauses future runs?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: <b>Additional Settings</b>. The lab switched on Pause Future Runs there, so that only runs started by hand happen.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="15.3,59.8,13.6,9.8" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4e-7-run-now.png" alt="Run Now: All objects in protection group, Incremental, Retain 3m." width="838" height="400"></div>
+      <figcaption>
+        <h3>Run Now says how long the backup will be kept. Click that line.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: <b>Retain 3m</b>, not the policy's one week. The run's real expiry date was not checked. Backup Type starts at Incremental.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Step 3 · Predict</span>
+  <h2>How much does the second run read?</h2>
+  <p class="lead">Northgate backs up two VMs with four disks, 120 GiB in all. Then it rewrites 2 of the 20 data files on each VM in place: 2 GiB of 20 GiB, 10% of the data. It runs the group again. The first run of 5 October 2026 recorded:</p>
+  <pre class="def" aria-label="What the first run recorded">Run      Read        Sent       Time
+First    128.86 GB   45.13 GB   2,443 s
+Second   ?           ?          ?</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>How much does the second run read?</p>
+      <div class="opts">
+        <button class="opt">About 13 GB: the 10% that changed</button>
+        <button class="opt">About 64 GB: half</button>
+        <button class="opt" data-ok>All 128.86 GB: every disk in full again</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">128.86 GB, the same.</span><p>The incremental does not read only the changes. It read every disk in full again.</p><pre class="def">Run      Read        Sent       Time
+First    128.86 GB   45.13 GB   2,443 s
+Second   128.86 GB   5.50 GB    1,357 s</pre><p>In the console on 9 November 2026, with one VM in the same region, the same thing happened: the first run read 64.43 GB and so did the second, in 439 s and 407 s. The VMs differ, so the two tests are not like for like.</p></details>
+    </div>
+    <div class="q">
+      <p>What did the second run save?</p>
+      <div class="opts">
+        <button class="opt">The data read: only changed blocks were read</button>
+        <button class="opt" data-ok>The data sent, and so some of the time</button>
+        <button class="opt">Nothing</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The data sent fell from 45.13 GB to 5.50 GB, and the time from 2,443 s to 1,357 s. The tutorial puts the fall in the data sent down to deduplication. In the console run the data sent fell from 22.88 GB to 2.82 GB.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Do not plan on it.</b> In unit 3.2 a file-based incremental read 3.2 MB against 97.1 MB. A VM incremental in our lab did not behave like that: it read every disk in full, on both days we tested.</p>
+</section>
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>A backup that succeeded, and a VM that broke</h2>
+  <p class="lead">After run 1 in the console, Northgate&apos;s test VM would not run basic commands. head, diff and sudo failed with &quot;Exec format error&quot;. The data disk was fine: 20 of 20 files matched the saved manifest.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What cured it?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Restarting the VM</button>
+        <button class="opt">Restoring the VM from the backup</button>
+        <button class="opt">Deleting the backup</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A restart (virtctl stop, then virtctl start) at 08:55 UTC cured it. The disk image itself was intact. During the backup&apos;s snapshot, ceph-csi flattened the shared RHEL 9 boot-source image that the VM&apos;s root disk was cloned from, and the node still pointed at the old parent. A test without BRS made the same flatten happen but not the zeros, so <b>the cause is not proven</b>. After run 2 the VM read no zeros.</p></details>
+    </div>
+    <div class="q">
+      <p>How can you check a VM after a backup?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Count the files in /usr/bin, /usr/sbin and /usr/lib64 whose first byte reads as zero: on a healthy RHEL 9 VM the count is 0</button>
+        <button class="opt">Read the run status: Succeeded means the VM is fine</button>
+        <button class="opt">There is no way to check</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The tutorial gives a short script. Its recorded results:</p><pre class="def">after run 1:         zero=1086 nonzero=648
+after the restart:   zero=0 nonzero=1734
+after run 2:         zero=0 nonzero=1734</pre></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> In our lab on 9 November 2026 this happened once, to one VM, after run 1, on about 1,086 of 1,734 program and library files. The cause is not proven.</p>
+</section>
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>A namespace is made after the cluster is registered. It is not in the Protect list. What do you do?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Refresh the source in Sources, then protect it</button>
+        <button class="opt">Register the cluster again</button>
+        <button class="opt">Wait for the next scheduled run</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the namespace was listed after Refresh in the source&apos;s menu.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 3.2.</b> In unit 3.2 a file-based incremental read 3.2 MB against 97.1 MB for the first run. What did the incremental of a VM read, against its first run?</p>
+      <div class="opts">
+        <button class="opt">About a tenth of it</button>
+        <button class="opt" data-ok>The same: every disk in full again</button>
+        <button class="opt">Nothing</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab it read 128.86 GB both times on 5 October 2026, and 64.43 GB both times on 9 November 2026.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You protect a namespace and leave VM Inclusion/Exclusion off. What does the group protect?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The whole namespace</button>
+        <button class="opt">Nothing</button>
+        <button class="opt">Only the first VM</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Without the inclusion setting, the group protects the whole namespace.</p></details>
+    </div>
+  </div>
+</section>
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can back up a VM</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Refresh the source so a new namespace is listed, then pick the VM with VM Inclusion/Exclusion. The VMs keep running during the backup. The second run read every disk in full again: 128.86 GB twice in October, 64.43 GB twice in November. What fell was the data sent. After a backup, check the VM; ours read zeros once, and a restart cured it. VM backup was not generally available when tested, and IBM lists it for au-syd only.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B4e backs up the VMs from the console and the command line, and has the full results.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

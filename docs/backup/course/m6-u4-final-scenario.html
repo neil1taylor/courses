@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Final scenario: Northgate&apos;s backups · BRS course</title>
+<meta name="description" content="Course unit 6.4: design Northgate Freight's backups for Linux files, Windows files, SQL Server and OpenShift Virtualization VMs, say how to restore and check each one, handle what goes wrong, and clean up in the right order. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m6-u4">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 6 · When things go wrong, and moving on</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 4 of Module 6</span>
+      <h1>Final scenario: design Northgate&apos;s backups, then clean up</h1>
+      <p class="lead">By the end you have chosen policies for four workloads, said how to restore and check each one, handled four things that go wrong, and put the clean-up in the right order.</p>
+      <div class="facts"><span>About 20 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: four workloads, Linux files, Windows files, SQL Server and VMs, go into one BRS instance."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"box":[10,15,130,40],"title":"Linux files"},
+          {"box":[10,62,130,40],"title":"Windows files"},
+          {"box":[10,109,130,40],"title":"SQL Server"},
+          {"box":[10,156,130,40],"title":"VMs"},
+          {"line":[144,35,226,100],"arrow":true,"tone":"mark"},
+          {"line":[144,82,226,106],"arrow":true,"tone":"mark"},
+          {"line":[144,129,226,114],"arrow":true,"tone":"mark"},
+          {"line":[144,176,226,122],"arrow":true,"tone":"mark"},
+          {"box":[230,75,170,70],"tone":"mark","heavy":true,"title":"BRS instance","detail":"policies, groups"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. It runs a Linux server <code>ng-app-01</code> with files in <code>/data</code>, a Windows server <code>ng-win-01</code> with files in <code>C:\data</code> and a SQL Server database <code>labdb</code>, and two VMs on OpenShift Virtualization. It wants all of it backed up, restorable, and tidy at the end of the pilot.</p>
+    </div>
+  </div>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab, recorded in the tutorials named at the end. Server names and addresses were changed to made-up ones, and server names are blurred in the screenshots. The unit reviews what Modules 3 to 6 covered. Allow about 20 minutes.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Design it</span>
+  <h2>Choose the policy and the type for each workload</h2>
+  <p class="lead">Northgate is running a pilot. It will delete every test backup at the end. Make four design choices.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>A new instance comes with four policies. Which should Northgate use for pilot backups it will delete?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Basic, or one of its own: no data lock</button>
+        <button class="opt">Gold: the most frequent</button>
+        <button class="opt">Bronze: the cheapest</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><pre class="def" aria-label="The four policies of a new instance">Policy   Runs           Kept     Data lock
+Gold     every 4 hours  1 week   1 week
+Silver   every 12 hours 2 weeks  2 weeks
+Bronze   daily          30 days  30 days
+Basic    daily          30 days  none</pre><p>Gold, Silver and Bronze carry a Compliance data lock equal to their retention. A backup made with them cannot be deleted until the lock ends. The tutorial says to use Basic, or your own policy, for a test.</p></details>
+    </div>
+    <div class="q">
+      <p>What type of protection group backs up the folder <code>/data</code> on <code>ng-app-01</code>?</p>
+      <div class="opts">
+        <button class="opt" data-ok>File-based: an incremental reads only what changed</button>
+        <button class="opt">Volume-based: it reads the whole volume every time</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In the BRS console, Protect &gt; Physical Server &gt; File-based is the only choice: it offers no volume-based type. A volume-based incremental reads the whole volume every time.</p></details>
+    </div>
+    <div class="q">
+      <p>Northgate protects <code>labdb</code> with a policy that has no periodic full backup. What shows on the run page after an incremental?</p>
+      <div class="opts">
+        <button class="opt">Nothing: it is Succeeded</button>
+        <button class="opt" data-ok>A warning: the policy &quot;does not specify a periodic full backup&quot;</button>
+        <button class="opt">The run fails</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 8 November 2026 the second run showed Warning, code <code>[1-1-36]</code>, and said VDI backups need a periodic full backup. After the policy was changed, the next run was Succeeded with no warning.</p></details>
+    </div>
+    <div class="q">
+      <p>The VMs are backed up. After the first full backup, the second run (an incremental) reads how much of the disks?</p>
+      <div class="opts">
+        <button class="opt">Only the blocks that changed</button>
+        <button class="opt" data-ok>All of them again</button>
+        <button class="opt">Nothing: VMs have no incrementals</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><pre class="def" aria-label="The two VM backups of 5 October 2026">Run     Read        Sent       Time
+First   128.86 GB   45.13 GB   2,443 s
+Second  128.86 GB   5.50 GB    1,357 s</pre><p>In our lab on 5 October 2026 the incremental read every disk in full again. What fell was the data sent, and so the time. IBM&apos;s pages describe VM protection as intended for testing and proof of concept in the AU-SYD region; when we tested it, it was not generally available.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Spot the fault</span>
+  <h2>Restore each one, and check it</h2>
+  <p class="lead">A restore that says Succeeded is not proof. For each workload, say what Northgate checks.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Northgate restores <code>/data</code> on <code>ng-app-01</code>. How does it prove every file came back?</p>
+      <div class="opts">
+        <button class="opt">The recovery says Succeeded</button>
+        <button class="opt" data-ok>It checks every file against a checksum list made before the backup</button>
+        <button class="opt">It counts the folders</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the check <code>sha256sum -c</code> gave 503 of 503 files matching, after a restore of about 12 seconds in October and 23 seconds in the console run. BRS and Defender restores have returned hard-linked files empty and still reported success, which is why the tutorials check by SHA-256.</p></details>
+    </div>
+    <div class="q">
+      <p>From the command line, Northgate restores <code>C:\data\docs</code> and writes the path that way. What happens?</p>
+      <div class="opts">
+        <button class="opt">It works</button>
+        <button class="opt" data-ok>It fails: the restore wants <code>/C/data/docs</code></button>
+        <button class="opt">It restores the whole drive</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The restore looks the path up in the snapshot&apos;s file view, where the drive is a folder named <code>C</code>. In the console the folder browser shows the drive as a folder named C, so the problem does not arise.</p></details>
+    </div>
+    <div class="q">
+      <p>Northgate drops <code>labdb</code> and restores it to its original place. What does it compare?</p>
+      <div class="opts">
+        <button class="opt">The file size of the backup</button>
+        <button class="opt" data-ok>The row count and a checksum, against the figures taken before</button>
+        <button class="opt">Nothing: the restore verifies itself</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab: 100,000 rows, and the checksum matched, after 23 seconds.</p></details>
+    </div>
+    <div class="q">
+      <p>The next backup of the SQL Server group reads 0 bytes and lists 0/0 objects, with no message that says why. What happened?</p>
+      <div class="opts">
+        <button class="opt">The schedule was lost</button>
+        <button class="opt" data-ok>The restored database got a new ID, and the group still holds the old one</button>
+        <button class="opt">The database is too small to back up</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 8 November 2026 the source tree gave <code>labdb</code> the new ID 656; the group still held 652. The run&apos;s Canceled message about a periodic full is not the cause.</p></details>
+    </div>
+    <div class="q">
+      <p>Northgate restores the two VMs, 120 GiB of disks in all. How long does the restore take in our lab?</p>
+      <div class="opts">
+        <button class="opt">About 6 minutes</button>
+        <button class="opt">About 20 minutes</button>
+        <button class="opt" data-ok>About an hour</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On 5 October 2026 the recovery ended Succeeded after 3,803 s (63.4 min). The restored VMs were Running 35 seconds after BRS created them. The tutorial checked the VMs and their files, not only the job status.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>Four things that go wrong</h2>
+  <p class="lead">Each of these happened in our lab. What does Northgate see?</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p><span class="kicker">Review from unit 6.1.</span> Northgate patches <code>ng-app-01</code> and reboots it. The nightly backup starts before anyone starts the Connector Agent. What does the run do?</p>
+      <div class="opts">
+        <button class="opt">It fails at once</button>
+        <button class="opt" data-ok>It waits, Running with 0 bytes, and starts its work when the agent is back</button>
+        <button class="opt">It backs up through the backup agent</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The console can show 1 Failed during the wait, and it cleared when the run succeeded.</p></details>
+    </div>
+    <div class="q">
+      <p><span class="kicker">Review from unit 6.1.</span> Northgate reboots <code>ng-win-01</code>. Both agents are back after half a minute. What is still stopped?</p>
+      <div class="opts">
+        <button class="opt">The protection group</button>
+        <button class="opt" data-ok>SQL Server, started with a delay</button>
+        <button class="opt">Nothing</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Its start type is Automatic (Delayed Start). Check your database services as well as the agents.</p></details>
+    </div>
+    <div class="q">
+      <p><span class="kicker">Review from unit 6.2.</span> The Upgradable count is 0 and Upgrade Agent is greyed out. Is anything wrong?</p>
+      <div class="opts">
+        <button class="opt" data-ok>No: no agent is older than the current one</button>
+        <button class="opt">Yes: the agents are in error</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The Agents summary read 0 errors, 0 upgradable and 4 deployed.</p></details>
+    </div>
+    <div class="q">
+      <p><span class="kicker">Review from unit 6.3.</span> Northgate runs the migration tool twice, a week apart, after files changed in between. What reaches the VPC server the second time?</p>
+      <div class="opts">
+        <button class="opt">The changed files</button>
+        <button class="opt" data-ok>Nothing new: the tool treats its first copy as final</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Run the tool once, at the moment of the switch. Deletions on the source do not reach the target either.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Click through the console</span>
+  <h2>Clean up, in the right order</h2>
+  <p class="lead">The pilot is over. In our lab on 9 November 2026 the console route was: groups first, then sources, then the instance. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="2.1,53.6,16.9,5.6" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B6-1-delete-group.png" alt="Delete Protection Group dialog for b-linux2-files: Delete Snapshots switched on, YES typed in the confirmation box, and the Cancel and Delete Group buttons." width="948" height="463"></div>
+      <figcaption>
+        <h3>Northgate deletes a protection group. Which control decides whether the group&apos;s backups are deleted too?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Delete Snapshots switch. It is off by default: leave it off and the snapshots stay, and are still billed, until they expire. Snapshots under a data lock cannot be deleted.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="3.5,27.1,4.1,4.7" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B6-2-no-groups.png" alt="Protection: No Protection Groups found. The Data Protection menu lists Protection, Recoveries, Sources and Policies." width="1480" height="510"></div>
+      <figcaption>
+        <h3>The last group is gone. Which menu item do you open next?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Sources: each source is unregistered next.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="4.5,45.9,49.8,9.6" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B6-3-unregister.png" alt="Unregister dialog: Unregister connector agent switched on, with the note that it does not uninstall the connector agent on the host. The server name is blurred." width="442" height="292"></div>
+      <figcaption>
+        <h3>Northgate unregisters a server that was registered through the Connector Agent. Which switch is on by default, and what does it not do?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Unregister connector agent is on by default. The note says it does not uninstall the connector agent on the host: it does not remove the agent software from the server.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="47.3,71.3,21.4,5.1" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B6-4-no-sources.png" alt="Sources: No Source has been registered yet. The source you register will show up here." width="1480" height="550"></div>
+      <figcaption>
+        <h3>The Sources page is empty. Where does it say so?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. &quot;No Source has been registered yet&quot;. Next comes the instance. Its policies and data-source connections go with it, so you need not delete them one by one.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Northgate deletes the instance. Where does it go?</p>
+      <div class="opts">
+        <button class="opt">It is gone at once</button>
+        <button class="opt" data-ok>To the reclamation list, with state SCHEDULED</button>
+        <button class="opt">It is paused for 30 days, then deleted</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On 9 November 2026 both deleted instances went to the reclamation list; in October they did not. While an instance that used your own key sat there, Key Protect refused to delete the key: <code>PROTECTED_RESOURCE_ERR, Key is protecting one or more cloud resources</code>. Purge the reclamation first, then delete the key and the authorization.</p></details>
+    </div>
+    <div class="q">
+      <p>What else does a lab with a ROVS cluster leave behind?</p>
+      <div class="opts">
+        <button class="opt">Nothing: unregistering the cluster removes it all</button>
+        <button class="opt" data-ok>The connector&apos;s Helm release and namespace, the backup service account and its binding, and the test VM namespaces</button>
+        <button class="opt">Only the VMs</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Unregistering the Kubernetes source had already removed the agent&apos;s own namespace. The servers, the private endpoint and its security group, and the lab network also had to be deleted by hand.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review from unit 3.2.</span> Two runs in the console both say Incremental. How do you tell which was the full backup?</p>
+      <div class="opts">
+        <button class="opt">By the Backup Type column</button>
+        <button class="opt" data-ok>By Data Read: the full one read the whole folder</button>
+        <button class="opt">You cannot tell</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The console labels the first run Incremental too. 92.6 MiB against 3 MiB tells them apart.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Northgate wants to delete its pilot backups at the end. Which policy lets it?</p>
+      <div class="opts">
+        <button class="opt">Gold, Silver or Bronze</button>
+        <button class="opt" data-ok>Basic, which has no data lock</button>
+        <button class="opt">None: backups cannot be deleted</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Gold, Silver and Bronze have a data lock equal to their retention, and a locked backup cannot be deleted until the lock ends.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Northgate deletes a protection group in the console and leaves Delete Snapshots off. What happens to the backups?</p>
+      <div class="opts">
+        <button class="opt">They go with the group</button>
+        <button class="opt" data-ok>They stay, and are still billed, until they expire</button>
+        <button class="opt">They are moved to the instance</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The switch is off by default. Turn it on, type YES and click Delete Group.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You designed, proved and cleaned up a backup service</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Use a policy with no lock for a pilot. Check every restore against figures taken before: a Succeeded status is not proof. Expect a Linux Connector Agent to stay down after a reboot, and delete groups with Delete Snapshots on, then sources, then the instance. VM backup was not generally available when we tested it.</p></div>
+    <div><span class="label">When you have an account</span><p>Start with tutorial B1 and finish with B6, which deletes everything in the right order. The restores are in B5a, B5b, B5c and B5e. The failure tests are in B7b, B7c and B7e.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agent upgrades · BRS course</title>
+<meta name="description" content="Course unit 6.2: say what an agent upgrade task does when every agent is already current, find the Upgradable count and the Upgrade Agent menu item in the BRS console, and read the alert for a connector that cannot upgrade. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m6-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 6 · When things go wrong, and moving on</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 6</span>
+      <h1>Agent upgrades</h1>
+      <p class="lead">By the end you can say what an upgrade task did in our lab when every agent was already current, find the Upgradable count and the Upgrade Agent menu item in the BRS console, and read the alert BRS raised for connectors that could not upgrade.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: an upgrade task checks an agent. The agent is already on the newest version, so the task skips it."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"box":[10,50,120,60],"title":"upgrade task","detail":"scheduled"},
+          {"line":[134,80,176,80],"arrow":true,"tone":"mark"},
+          {"box":[180,50,130,60],"tone":"mark","title":"the agent","detail":"already newest"},
+          {"line":[314,80,346,80],"arrow":true,"tone":"mark"},
+          {"text":"skipped","at":[350,86],"hand":true,"size":17,"tone":"mark"},
+          {"text":"nothing changes on the server","at":[10,160],"hand":true,"size":17,"tone":"muted"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. It keeps the agents on <code>ng-app-01</code> and its other servers current, and wants to know how an upgrade is made and what it looks like when one cannot happen.</p>
+    </div>
+  </div>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab, on 7 October and 9 November 2026, recorded in tutorials B7e and M1. Addresses were changed to made-up ones, and server names are blurred in the screenshots.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Predict</span>
+  <h2>An upgrade for an agent that is already current</h2>
+  <p class="lead">In our lab on 7 October 2026, all three agents were on version <code>7.3.12_release-20260713_2e7241a2</code>, and BRS marked each <code>kCurrent</code>. Northgate made an upgrade task for one of them anyway, to start in 90 seconds with a window of 30 minutes.</p>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What does the task do?</p>
+      <div class="opts">
+        <button class="opt">It reinstalls the same version</button>
+        <button class="opt" data-ok>It is made, then fails by design: the agent is marked as not upgradable</button>
+        <button class="opt">It is refused when Northgate makes it</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><pre class="def" aria-label="The task's states">18:33:41 to 18:35:35  Scheduled
+18:35:51  task Failed; agent Skipped</pre><p>The task was made without error and ended in <code>kIneligible</code>: &quot;The agent entity was marked nonupgradable.&quot; The agent process and its package did not change.</p></details>
+    </div>
+    <div class="q">
+      <p>Why could the lab not test a real upgrade?</p>
+      <div class="opts">
+        <button class="opt">Upgrades are switched off in eu-de</button>
+        <button class="opt" data-ok>Every agent was already on the newest version, and BRS gives no way to download an older one</button>
+        <button class="opt">The agent needs a licence</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A new instance always gives the current agent. The tutorial marks a real upgrade as untested, and says to try it when IBM ships a new agent version: install the old one first, keep its installer, then make the task.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>Make the task and watch it</h2>
+  <p class="lead">Run each command in turn. The output is what our lab returned. The times are in microseconds, and the placeholders in angle brackets stand for values you would fill in.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">ibmcloud backup-recovery agent-upgrade-task create --xibm-tenant-id $T --name b7e-test --description "BRS B7e test" --agent-ids &lt;AGENT_ID&gt; --schedule-time-usecs &lt;NOW_PLUS_90S_USECS&gt; --schedule-end-time-usecs &lt;NOW_PLUS_30MIN_USECS&gt;</pre>
+          <pre class="out">Result: task 161892, status "Scheduled". The reply shows the name "create_upgrade_task" and the description
+"Selective agent upgrade via CreateUpgradeTask API", not the ones we gave (ISS-169).</pre>
+          <p class="hand note">The task is made and scheduled.</p>
+          <p class="hand note">The reply shows other name and description than the ones given.</p>
+        </div>
+        <div class="q">
+          <p>The task is scheduled to start in 90 seconds. What will the next command show about it?</p>
+          <div class="opts">
+            <button class="opt">Succeeded: the agent was upgraded</button>
+            <button class="opt" data-ok>Scheduled for a while, then Failed, with the agent Skipped</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>Run the next command and read the lines.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud backup-recovery agent-upgrade-task list --xibm-tenant-id $T --output json</pre>
+          <pre class="out">18:33:41 to 18:35:35  Scheduled
+18:35:51              task Failed; agent Skipped:  kIneligible, "The agent entity was marked nonupgradable."</pre>
+          <p class="hand note">The start time was 18:34:50.</p>
+          <p class="hand note">The check ran about a minute later.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+  <p class="small">The CLI has no list of agent versions. In our lab the version came from a REST call, not from the CLI.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Click through the console</span>
+  <h2>Where the console offers an upgrade</h2>
+  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026. Both Linux servers ran <code>cohesity-agent-7.3.13-1</code>, the agent of the day. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="67.2,20.4,5.6,8.9" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7e-1-upgrade-greyed.png" alt="Sources page: Agents 0 Errors, 0 Upgradable, 4 Deployed. A Linux source's menu is open, with Upgrade Agent greyed out. Addresses are blurred." width="1154" height="450"></div>
+      <figcaption>
+        <h3>On Data Protection &gt; Sources, the Agents summary has three counts. Which one says how many agents could be upgraded?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Upgradable is 0. The other two counts are 0 Errors and 4 Deployed.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="83.6,68.4,9.1,6.2" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7e-1-upgrade-greyed.png" alt="The same Sources page with a Linux source's menu open: Upgrade Agent is greyed out, between Refresh and Maintenance." width="1154" height="450"></div>
+      <figcaption>
+        <h3>Northgate opened a source&apos;s menu to start an upgrade. Which item is the upgrade, and is it usable?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Upgrade Agent sits between Refresh and Maintenance, and it is greyed out, because no agent was older than the current one. The console can start an upgrade only when Upgradable is above 0. What Upgrade Agent does when it is active is untested.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>Connectors that cannot upgrade</h2>
+  <p class="lead">On 9 November 2026 Northgate moved files with IBM&apos;s Classic-to-VPC migration tool (unit 6.3). The backup and the restore worked. Then the console&apos;s Health page showed this.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="19.7,59.6,20.3,15.5" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/M1-5-upgrade-alerts.png" alt="System > Health, Alerts: 2 Critical, 1 Warning, 1 Healthy. Two critical alerts named DataSourceConnectorUpgradeFailed, 2 occurrences each, last seen 6 minutes ago, category Data Source Connector." width="1180" height="490"></div>
+      <figcaption>
+        <h3>Which alerts are about a connector that could not upgrade?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Two critical alerts named DataSourceConnectorUpgradeFailed, one for each of the tool&apos;s two connectors. They repeated every 15 minutes from 18:50 UTC.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What does the alert give as the reason?</p>
+      <div class="opts">
+        <button class="opt">The connector is switched off</button>
+        <button class="opt" data-ok>Not enough free disk space for the upgrade</button>
+        <button class="opt">The new release is not available in the region</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>&quot;Not enough free disk space ... Required: 4518 MB, Available: 3990 MB.&quot; The tool&apos;s connector servers run release 7.2.18, from the tool&apos;s fixed connector version. BRS tries to upgrade them and fails.</p></details>
+    </div>
+    <div class="q">
+      <p>Did the failed upgrade stop the migration&apos;s backup and restore?</p>
+      <div class="opts">
+        <button class="opt">Yes: nothing could run</button>
+        <button class="opt" data-ok>No: the backup and the restore worked on 7.2.18 all the same</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The tutorial records the alerts as a result of the run and says the backup and the restore worked on 7.2.18. This is issue ISS-213 in our lab&apos;s list.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>The console shows 0 in Upgradable, and Upgrade Agent is greyed out. What does that tell you?</p>
+      <div class="opts">
+        <button class="opt" data-ok>No agent is older than the current one</button>
+        <button class="opt">The agents are in error</button>
+        <button class="opt">Upgrades are switched off for the instance</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 9 November 2026 the Agents summary showed 0 errors, 0 upgradable and 4 deployed, and Upgrade Agent was greyed because no agent was older than the current one.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A CLI upgrade task for an agent already on the newest version ends how?</p>
+      <div class="opts">
+        <button class="opt">Succeeded, after a reinstall</button>
+        <button class="opt" data-ok>Failed by design, with the agent Skipped as nonupgradable</button>
+        <button class="opt">It is never made</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The task was made and scheduled, then ended <code>kIneligible</code>. Nothing changed on the server.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review from unit 6.1.</span> After a Linux server reboots, which agent does not come back by itself?</p>
+      <div class="opts">
+        <button class="opt">The backup agent</button>
+        <button class="opt" data-ok>The Connector Agent</button>
+        <button class="opt">Both</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The backup agent came back. The Connector Agent needed <code>connector_agent.sh start</code>.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can read an upgrade screen</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>In our lab an upgrade task for a current agent was made, then failed by design with the agent skipped. The console starts an upgrade only when Upgradable is above 0. A real upgrade, a Windows agent upgrade and the Connector Agent are not covered by the tutorial.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B7e makes and watches an upgrade task, from the command line and the console. The connector alerts are in tutorial M1.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

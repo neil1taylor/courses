@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en" data-course="brs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SQL Server · BRS course</title>
+<meta name="description" content="Course unit 3.3: protect a SQL Server database, read the warnings on its runs, and spot why a run after a restore reads 0 bytes. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m3-u3">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 3 · Back up</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 3 of Module 3</span>
+      <h1>SQL Server</h1>
+      <p class="lead">By the end you can say what a SQL Server group points at, read the warning on a SQL run, remove it with a periodic full backup, and recognise a run that protects nothing.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a protection group points at the database labdb by its ID, 49. After the database is dropped and restored it has a new ID, and the group no longer finds it."
+        data-drawing='{"w":420,"h":200,"shapes":[
+          {"box":[10,30,150,60],"title":"labdb","detail":"ID 49"},
+          {"box":[230,30,170,60],"tone":"mark","title":"group","detail":"points at 49"},
+          {"line":[226,60,164,60],"arrow":true,"tone":"mark"},
+          {"text":"dropped and restored: a new ID","at":[10,140],"hand":true,"size":17,"tone":"mark"},
+          {"text":"the group looks for 49 and finds nothing","at":[10,175],"hand":true,"size":16,"tone":"muted"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its orders database, <code>labdb</code>, runs on a Windows server. It wants it backed up natively, and it wants to know what a backup problem looks like.</p>
+    </div>
+  </div>
+  <p class="small">The console screens and numbers come from real runs in our lab on 8 November 2026, recorded in tutorials B3c and B4c. The restore case comes from a run on 7 October 2026. The server address in the recorded output is replaced with a made-up name, <code>ng-sql-01</code>, and the server name is blurred in the screenshots.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>How a SQL Server group differs</h2>
+  <p class="lead">The Windows server is already registered as a physical source. SQL Server is registered on top of it, and the group protects one database.</p>
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A native protection group points at the database labdb by its ID. SQL backs itself up through the agent."
+    data-drawing='{"w":560,"h":200,"shapes":[
+      {"box":[10,20,190,60],"tone":"mark","title":"protection group","detail":"points at an ID"},
+      {"line":[204,50,246,50],"arrow":true,"tone":"mark"},
+      {"box":[250,20,150,60],"title":"labdb","detail":"ID 49"},
+      {"text":"backup type: VDI-based, the only choice","at":[10,125],"hand":true,"size":16},
+      {"text":"SQL backs itself up, through the agent","at":[10,165],"hand":true,"size":16,"tone":"muted"}]}'></svg>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>In the console you open <b>Protect &gt; Databases &gt; Microsoft SQL Server</b>. How many Backup Type choices does it offer?</p>
+      <div class="opts">
+        <button class="opt">Two: file-based and volume-based</button>
+        <button class="opt" data-ok>One: VDI-based</button>
+        <button class="opt">Three: full, incremental and log</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>One, <b>VDI-based</b>. It is stored as <code>kNative</code>, the type a command-line group uses.</p></details>
+    </div>
+    <div class="q">
+      <p>What does the group point at to know which database to protect?</p>
+      <div class="opts">
+        <button class="opt">The database&apos;s name</button>
+        <button class="opt" data-ok>The database&apos;s ID</button>
+        <button class="opt">The server&apos;s address</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A group points at the database&apos;s ID. Step 4 shows why that matters.</p></details>
+    </div>
+  </div>
+  <div class="tour" style="margin-top:20px">
+    <figure class="tstep" data-hot="7,56.5,25,8" data-width="760px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B3c-4-backup-type.png" alt="New Protection for SQL: Backup Type VDI-based, with IBM's note on retention for VDI backups." width="790" height="686"></div>
+      <figcaption>
+        <h3>This is the New Protection form for a SQL database. Where would you choose the backup type?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Backup Type list has one entry, VDI-based, and IBM&apos;s note below it says to plan retention for the full and incremental backups together.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict</span>
+  <h2>The second run, and its warning</h2>
+  <p class="lead">Northgate pauses the group, then runs it by hand with Run Now. After the first run it adds 5,000 rows to the database and runs again. The policy is the daily 7-day policy from tutorial B3a, with no periodic full backup.</p>
+  <pre class="def" aria-label="What the first run recorded">Run                       Rows      Read      Status
+First (13:59:52 UTC)      100,000   50.5 MB   Warning
+Second, 5,000 rows added  105,000   ?         ?</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The second database is about 5% bigger. How much does the second run read?</p>
+      <div class="opts">
+        <button class="opt">About 2.5 MB: 5% of the first</button>
+        <button class="opt" data-ok>About 25 MB: half of the first</button>
+        <button class="opt">About 50 MB: it reads everything again</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">25.3 MB against 50.5 MB.</span><p>SQL reads changed pages, not changed rows, and the new rows were spread over fresh pages. The tutorial did not investigate the exact reason.</p><pre class="def" aria-label="What both runs recorded">Run                       Rows      Read      Status
+First (13:59:52 UTC)      100,000   50.5 MB   Warning
+Second, 5,000 rows added  105,000   25.3 MB   Warning</pre></details>
+    </div>
+    <div class="q">
+      <p>What does the second run say about the policy?</p>
+      <div class="opts">
+        <button class="opt">Nothing: it shows Succeeded</button>
+        <button class="opt" data-ok>A warning: the policy does not specify a periodic full backup</button>
+        <button class="opt">An error: the retention is too short</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The run page shows a warning, <code>[1-1-36]</code>: the policy &quot;does not specify a periodic full backup&quot;, and VDI backups need one. The first run&apos;s warning was &quot;Missing differential base, triggering full backup.&quot;</p></details>
+    </div>
+  </div>
+  <div class="tour" style="margin-top:20px">
+    <figure class="tstep" data-hot="72.5,62,6,9" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4c-1-sql-warning.png" alt="Protection: b-sql-labdb with a warning symbol, b-win-files and b-linux-files with green ticks. The counts show 2 Succeeded and 1 Warning." width="1227" height="430"></div>
+      <figcaption>
+        <h3>Here is the Protection list after the first run. Which symbol marks the SQL group&apos;s warning?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The warning symbol in the Status column of b-sql-labdb; the counts above show 1 Warning.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="2,52,96,14" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4c-2-first-run-warning.png" alt="Run Details of the first run: Warning, 1 object succeeded, 0 failed, 19 s. A banner reads Missing differential base, triggering full backup. The server row has a warning symbol; the database row, MSSQLSERVER/labdb, Succeeded, 48.1 MiB read. The server name is blurred." width="1227" height="610"></div>
+      <figcaption>
+        <h3>You opened the run. The database row is green but the server row is not. Where does the console say why?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The yellow banner. The server&apos;s SucceededWithWarning is the warning on the run page; the database itself Succeeded, and 48.1 MiB is the 50.5 MB of the full backup in binary units.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Click through the console</span>
+  <h2>Remove the warning</h2>
+  <p class="lead">The warnings come from the policy, not from the database. These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="0,42,81.5,20.5" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4c-3-periodic-full.png" alt="Edit Protection Policy for b-daily-7d: Backup every 1 Day; Periodic Full Backup every Week on Sunday, for 14 Days; Retain for 1 Week. Backup Options on the right lists Periodic Full Backup, Quiet Times, Customize Retries and Log Backup." width="1234" height="704"></div>
+      <figcaption>
+        <h3>Northgate opened the policy and clicked Edit. Which part of the form is the fix?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Click Periodic Full Backup under Backup Options on the right. It opens at Every Day, which would make every run a full one. Choose Week and a day (Sunday was set), keep For 14 Days and click Save. Then click Save Changes to Existing Policy in the list of groups that use it.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="2,45,10,7" data-width="900px">
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4c-4-run-no-warning.png" alt="Run Details of the run at 2:16 pm: Succeeded, 1 object succeeded, 0 failed, 16 s. The server row and the database row are both green; 24.1 MiB read. The server name is blurred." width="1227" height="530"></div>
+      <figcaption>
+        <h3>The next run, after the change. Where do you see that the warning is gone?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Status reads Succeeded and no banner appears. In our lab on 8 November 2026 the run at 14:16 UTC read 25.3 MB (24.1 MiB).</p></details>
+      </figcaption>
+    </figure>
+  </div>
+  <p class="small">The tutorial says the same change applies to file groups, but it did not check what a weekly full does to their incremental runs.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>A run that protects nothing</h2>
+  <p class="lead">In a run on 7 October 2026, the database was dropped and restored between two backups. Northgate then ran the group again. This is what the run showed.</p>
+  <pre class="def" aria-label="What the run showed">status      SucceededWithWarning
+bytesRead   0
+objects     the host, ng-sql-01 (the database is not listed)
+message     none</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>What went wrong?</p>
+      <div class="opts">
+        <button class="opt">The policy has no periodic full backup</button>
+        <button class="opt" data-ok>The restored database has a new ID, and the group still points at the old one</button>
+        <button class="opt">The agent is down</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The group pointed at ID 49. The restore gave the database a new ID, 53, so the run protected nothing. No message says why.</p></details>
+    </div>
+    <div class="q">
+      <p>How did Northgate fix it?</p>
+      <div class="opts">
+        <button class="opt">It ran the group again until it worked</button>
+        <button class="opt">It deleted the policy</button>
+        <button class="opt" data-ok>It found the new ID and updated the group to point at it</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the group was updated to point at ID 53. The first run on the new ID read 50.5 MB: a full backup of the new object, 105,000 rows.</p></details>
+    </div>
+  </div>
+  <p class="watch"><b>Watch for this.</b> A SQL run can show SucceededWithWarning, 0 bytes read and no database listed, with no message. After a database is dropped and restored, check what the group points at.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><b>Review from unit 3.1.</b> Which of the four built-in policies has no data lock?</p>
+      <div class="opts">
+        <button class="opt">Silver</button>
+        <button class="opt" data-ok>Basic</button>
+        <button class="opt">Bronze</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Basic: daily, kept 30 days. Gold, Silver and Bronze carry a lock equal to their retention.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A SQL run shows SucceededWithWarning and 0 bytes read, and lists only the host. The database was restored a few minutes before. What is the likely cause?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The group points at the database&apos;s old ID</button>
+        <button class="opt">The database is too big for one run</button>
+        <button class="opt">The lock on the policy has not ended</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The restore gave the database a new ID. Find it and update the group to point at it.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>Every SQL run ends with a warning. What do you change?</p>
+      <div class="opts">
+        <button class="opt">Add a periodic full backup to the policy, every week</button>
+        <button class="opt">Add a periodic full backup to the policy, every day</button>
+        <button class="opt">Turn off Pause Future Runs</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A weekly full backup removed the warning in our lab. Every Day would make every run a full one.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can read a SQL Server run</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>A SQL group points at the database&apos;s ID. The run page explains the warnings, and a weekly periodic full backup in the policy removes them. A run with 0 bytes read and no database listed means the group lost the database.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial B3c registers SQL Server and makes the group. Tutorial B4c runs the backups, shows what the warnings mean and the new-ID fix, from the console and the command line.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

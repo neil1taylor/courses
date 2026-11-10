@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Watch and troubleshoot a VM · ROVS course</title>
+<meta name="description" content="Course unit 5.4: know where to look when a VM misbehaves, what healthy output looks like, and how to read broken output from real troubleshooting runs. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m5-u4">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 5 · Day two</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 4 of Module 5</span>
+      <h1>Watch and troubleshoot a VM</h1>
+      <p class="lead">By the end you can say which layer to look at when a VM misbehaves, recognise healthy output, and read broken output without being fooled by it.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: three boxes in a row, VM, VMI and launcher pod, with arrows between them. Text says the events sit on the pod."
+        data-drawing='{"w":420,"h":170,"shapes":[
+          {"box":[10,20,110,56],"title":"VM"},
+          {"line":[124,48,146,48],"arrow":true,"tone":"muted"},
+          {"box":[150,20,110,56],"title":"VMI"},
+          {"line":[264,48,286,48],"arrow":true,"tone":"muted"},
+          {"box":[290,20,120,56],"heavy":true,"tone":"mark","title":"pod"},
+          {"text":"the events sit on the pod","at":[190,118],"hand":true,"size":19,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up company. Its admins read vCenter alarms. A ROVS VM has layers, and a fault shows in one of them while its cause may sit in another.</p>
+    </div>
+  </div>
+  <p class="small">Every command, output and fact in this unit comes from real runs on lab clusters, recorded in tutorial chapters 42, 45 and 50. The review question repeats one from unit 4.2.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>Where to look, layer by layer</h2>
+  <p class="lead">Chapter 45 groups its read-only diagnostic commands by layer. Select a layer in the drawing to see what to look for and which commands belong to it. You can also click a line.</p>
+  <div class="explorer" data-start="vm"
+    data-map='{"vm":[[1,4]],"pod":[[6,9]],"network":[[11,15]],"storage":[[17,20]],"operator":[[22,25]],"vpc":[[27,29]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of six layers: VM, Pod, Network, Storage, Operator and VPC."
+          data-drawing='{"w":560,"h":240,"shapes":[
+            {"box":[10,10,260,60],"part":"vm","title":"VM layer","detail":"oc get vm, vmi"},
+            {"box":[290,10,260,60],"part":"pod","title":"Pod layer","detail":"launcher pod and its logs"},
+            {"box":[10,90,260,60],"part":"network","title":"Network layer","detail":"CUDN, NNCP, NNCE"},
+            {"box":[290,90,260,60],"part":"storage","title":"Storage layer","detail":"PVC, DataVolume, Ceph"},
+            {"box":[10,170,260,60],"part":"operator","title":"Operator layer","detail":"virt-handler, virt-controller"},
+            {"box":[290,170,260,60],"part":"vpc","title":"VPC layer","detail":"ibmcloud ks, not is"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="vm">
+          <h3>VM layer</h3>
+          <p>Start at the top. A VM set to run that has no VMI is being prevented from starting. The events are not here: on the cluster used, <code>oc describe vm</code> showed only <code>SuccessfulCreate</code>. They sit on the pod.</p>
+          <p class="hand tilt"><b>From vSphere:</b> a VM that will not reach Running is like a power-on that fails. A rough mapping, not an IBM statement.</p>
+        </div>
+        <div class="part-info" data-part="pod">
+          <h3>Pod layer</h3>
+          <p>Pending: read the pod events for scheduling failures. CrashLoopBackOff: QEMU is crashing, so read the compute container&apos;s log.</p>
+          <p class="watch"><b>Watch for this.</b> These logs are the hypervisor&apos;s view. Your guest&apos;s own logs appear in none of them. Getting guest logs off a VM needs an agent inside the VM.</p>
+        </div>
+        <div class="part-info" data-part="network">
+          <h3>Network layer</h3>
+          <p>For a localnet network, the policy must be applied and its enactment must succeed on each node. The two pre-configured policies are IBM&apos;s: the add-on reconciles them and will revert your edit. Three values must agree across the chain: the VLAN ID on the attachment and on the CUDN, and the bridge-mapping name and the CUDN&apos;s <code>physicalNetworkName</code>.</p>
+        </div>
+        <div class="part-info" data-part="storage">
+          <h3>Storage layer</h3>
+          <p>A PVC should be <code>Bound</code> and a DataVolume <code>Succeeded</code>. On ODF the Ceph health command needs nothing installed. A degraded Ceph cluster affects VM disk I/O directly, and a badly degraded one blocks it and hangs the VMs.</p>
+          <p class="hand tilt"><b>From vSphere:</b> this is datastore health.</p>
+        </div>
+        <div class="part-info" data-part="operator">
+          <h3>Operator layer</h3>
+          <p><code>virt-handler</code> runs on every node. When a VM fails to start or migrate, its log often holds the root cause. <code>virt-controller</code> makes the cluster-level decisions, so read its log when VMs are stuck in <code>Scheduling</code>. The add-on owns these operators: collect their output, do not patch them.</p>
+        </div>
+        <div class="part-info" data-part="vpc">
+          <h3>VPC layer</h3>
+          <p><code>ibmcloud is bare-metal-server-network-attachments</code> does not work here. It addresses a bare metal server in your account, and ROVS workers are provisioned in IBM&apos;s account. Use <code>ibmcloud ks vni ls</code>.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="Diagnostic commands grouped by layer"># VM layer
+oc get vm                              # All VMs
+oc get vmi                             # Running VM instances
+oc describe vm my-vm                   # VM details and events
+
+# Pod layer
+oc get pods -l vm.kubevirt.io/name=my-vm  # virt-launcher pod
+oc describe pod virt-launcher-...      # Pod details and events
+oc logs virt-launcher-... -c compute   # QEMU/hypervisor logs
+
+# Network layer
+oc get clusteruserdefinednetwork        # Cluster-scoped network definitions
+oc get net-attach-def -n my-namespace             # Namespace network attachments
+oc get nncp                            # Node network policies
+oc get nnce                            # Per-node network enactments
+
+# Storage layer
+oc get pvc                             # Persistent volume claims
+oc get dv                              # DataVolumes
+oc get cephcluster -n openshift-storage  # ODF health
+
+# Operator layer
+oc get pods -n openshift-cnv           # OpenShift Virtualization pods
+oc logs -n openshift-cnv virt-handler-...   # Node-level VM manager
+oc logs -n openshift-cnv virt-controller-... # Cluster-level VM scheduler
+
+# VPC layer (ROVS: ks, not is)
+ibmcloud ks vni ls --cluster-id &lt;cluster-id&gt;   # VNI attachments and their VLANs
+ibmcloud ks workers --cluster &lt;cluster&gt;        # Worker IDs, zones and state</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Predict, then run it</span>
+  <h2>What healthy looks like</h2>
+  <p class="lead">A command that only speaks when something is broken is easy to misread. Learn the healthy output first. The console also has dashboards under Virtualization, Overview and a Metrics tab on each VM, and PromQL runs under Observe, Metrics. <span class="hand">The QEMU guest agent is the counterpart of VMware Tools, and these dashboards are the vCenter Monitor tab. Rough mappings, not IBM statements.</span></p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <p class="pre"># the network policies the add-on pre-configures</p>
+          <pre class="in">oc get nncp</pre>
+          <pre class="out">NAME        STATUS      REASON
+br-eth1     Available   SuccessfullyConfigured
+vpc-vlans   Available   SuccessfullyConfigured</pre>
+          <p class="hand note">Available and SuccessfullyConfigured is the all-clear.</p>
+        </div>
+        <div class="q">
+          <p>There is one enactment per policy per node. This cluster has three workers and two policies. How many rows do you expect when all is well?</p>
+          <div class="opts">
+            <button class="opt">3</button>
+            <button class="opt">5</button>
+            <button class="opt" data-ok>6</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>Six. A missing row is as much a fault as a failing one.</p></details>
+        </div>
+        <div class="cmd">
+          <p class="pre"># the per-node result of each policy</p>
+          <pre class="in">oc get nnce</pre>
+          <pre class="out">NAME                                STATUS      REASON
+kube-...-rovspoo-00000167.br-eth1   Available   SuccessfullyConfigured
+kube-...-rovspoo-00000167.vpc-vlans Available   SuccessfullyConfigured
+kube-...-rovspoo-000002a1.br-eth1   Available   SuccessfullyConfigured
+kube-...-rovspoo-000002a1.vpc-vlans Available   SuccessfullyConfigured
+kube-...-rovspoo-0000039f.br-eth1   Available   SuccessfullyConfigured
+kube-...-rovspoo-0000039f.vpc-vlans Available   SuccessfullyConfigured</pre>
+          <p class="hand note">Six rows, all Available. The chapter shows only the healthy case: making a FailedToConfigure would have meant breaking an IBM-managed policy on a shared cluster.</p>
+        </div>
+        <div class="cmd">
+          <p class="pre"># ODF health, with nothing installed</p>
+          <pre class="in">oc get cephcluster -n openshift-storage</pre>
+          <pre class="out">NAME                             DATADIRHOSTPATH   MONCOUNT   AGE   PHASE   MESSAGE                        HEALTH
+ocs-storagecluster-cephcluster   /var/lib/rook     3          37d   Ready   Cluster created successfully   HEALTH_OK</pre>
+          <p class="hand note">PHASE Ready and HEALTH_OK together are the all-clear.</p>
+          <p class="hand note">HEALTH_WARN with Ready is usually capacity or a single OSD. HEALTH_ERR, or a phase that is not Ready, is not something these checks can fix.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Spot the fault</span>
+  <h2>Two VMs that will not run</h2>
+  <p class="lead">Two failures were made on purpose on a lab cluster, in a scratch namespace. Both VMs show READY False.</p>
+  <pre class="def" aria-label="The VM list showing two failed VMs">$ oc get vm
+NAME       STATUS               READY
+badimage   ImagePullBackOff     False
+toobig     ErrorUnschedulable   False</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>Where do you read the events that name the cause?</p>
+      <div class="opts">
+        <button class="opt">In <code>oc describe vm</code></button>
+        <button class="opt" data-ok>On the virt-launcher pod, with <code>oc describe pod</code></button>
+        <button class="opt">In the VM&apos;s own console</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>On the cluster used, <code>oc describe vm</code> showed only <code>SuccessfulCreate</code>. The VM&apos;s Status column and the <code>PodScheduled</code> condition named the same two causes in shorter form.</p></details>
+    </div>
+    <div class="q">
+      <p>What do the two statuses tell you?</p>
+      <div class="opts">
+        <button class="opt" data-ok>toobig is a capacity problem and badimage cannot pull its container image</button>
+        <button class="opt">toobig cannot pull its image and badimage is a capacity problem</button>
+        <button class="opt">Both are storage problems</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p><code>oc describe pod</code> on the <code>toobig</code> launcher pod gave <code>FailedScheduling</code> with <code>0/3 nodes are available: 3 Insufficient memory</code>: free up resources or add nodes. On <code>badimage</code> it gave <code>ErrImagePull</code>, then <code>ImagePullBackOff</code>: check the image URL and the pull secrets.</p></details>
+    </div>
+    <div class="q">
+      <p>A PVC event reads <code>ProvisioningFailed</code> with <code>storageclass.storage.k8s.io "..." not found</code>. What do you check?</p>
+      <div class="opts">
+        <button class="opt">The guest agent</button>
+        <button class="opt" data-ok>The storage class name, with <code>oc get sc</code></button>
+        <button class="opt">The Ceph toolbox</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The named storage class does not exist. Chapter 45 lists this beside <code>FailedScheduling</code>, <code>ErrImagePull</code> and <code>ErrImportFailed</code> as the common start events.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>Outputs that look wrong</h2>
+  <p class="lead">Two outputs that read like faults, and one fault that shows no error at all.</p>
+  <pre class="def" aria-label="Two outputs that read like faults">$ oc get pods -l kubevirt.io/vm=scratch-w2c-vm-virt
+No resources found in scratch-w2c-mig namespace.
+
+$ oc get secret ibm-kp-secret ceph-csi-kms-token -n openshift-storage
+Error from server (NotFound): secrets "ibm-kp-secret" not found
+Error from server (NotFound): secrets "ceph-csi-kms-token" not found</pre>
+  <div class="pair" style="margin-top:20px">
+    <div class="q">
+      <p>The first command found no pod, and the VM is running. What is wrong?</p>
+      <div class="opts">
+        <button class="opt">The VM has no launcher pod</button>
+        <button class="opt" data-ok>The label: KubeVirt does not apply <code>kubevirt.io/vm</code></button>
+        <button class="opt">The namespace is wrong</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>With <code>vm.kubevirt.io/name</code> the same VM&apos;s pod appeared: <code>virt-launcher-scratch-w2c-vm-virt-mgmhn</code>, 2/2 <code>Running</code>. You would otherwise troubleshoot a pod that is not missing. A disk from a <code>dataVolumeTemplate</code> carries no VM-name label at all, so read the claim names out of the VM object.</p></details>
+    </div>
+    <div class="q">
+      <p>Both KMS secrets are <code>NotFound</code>. Is that a fault?</p>
+      <div class="opts">
+        <button class="opt">Yes, always</button>
+        <button class="opt" data-ok>Only if you use encrypted volumes</button>
+        <button class="opt">Yes, it means ODF is down</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>This is the output from a healthy ROVS cluster that does not use KMS. Check it only when a PVC is stuck in <code>ExternalProvisioning</code> and an encrypted class is in play.</p></details>
+    </div>
+    <div class="q">
+      <p>Every node is <code>Ready</code>. Every VM object reports <code>Running</code>. The VMs have gone quiet. What do you check first?</p>
+      <div class="opts">
+        <button class="opt">The guest agent in each VM</button>
+        <button class="opt" data-ok>Ceph placement group health</button>
+        <button class="opt">The control plane</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">VMs hang. They do not fail over.</span><p>With 2 of 3 copies, I/O continues. With 1 of 3, Ceph blocks all I/O to the affected placement groups, and nothing on the VM side reports an error. So &quot;the VMs stopped&quot; cannot be your signal: alert on placement group health, and give <code>CephOSDNearFull</code> a named owner. That table describes expected Ceph behaviour; no pool was made to lose copies.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Four questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><code>oc get vmi my-vm -o jsonpath='{.status.guestOSInfo}'</code> returns nothing. What does that mean?</p>
+      <div class="opts">
+        <button class="opt">The VM is stopped</button>
+        <button class="opt" data-ok>The guest agent is not running or not installed</button>
+        <button class="opt">The VM has no network</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>With the agent, OpenShift reports the hostname and OS, interface addresses, filesystem usage and the guest&apos;s own memory use. Without it, the VM is seen only from outside.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>What does <code>oc logs virt-launcher-my-vm-xxxxx -c compute</code> show?</p>
+      <div class="opts">
+        <button class="opt">The guest&apos;s system log</button>
+        <button class="opt" data-ok>The hypervisor&apos;s view: QEMU output, boot messages and errors</button>
+        <button class="opt">Your application&apos;s log file</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>None of the KubeVirt logs are your guest&apos;s logs. Guest and application logs need an agent inside the VM.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>You apply a <code>PrometheusRule</code> in a user namespace. It is accepted without error, and the alert never fires. Why?</p>
+      <div class="opts">
+        <button class="opt">The rule has a syntax error</button>
+        <button class="opt" data-ok>User Workload Monitoring is off, so nothing evaluates it</button>
+        <button class="opt">Alerts only fire on stopped VMs</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The API server accepts the rule and nothing evaluates it, with no error. Red Hat&apos;s prerequisite is that monitoring for user-defined projects is enabled. The OVE licence entitles User Workload Monitoring for VMs only.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p><b>Review from unit 4.2.</b> After you grow a PVC, <code>df -h /</code> in the guest still shows the old size. Is the resize broken?</p>
+      <div class="opts">
+        <button class="opt">Yes, wait for FileSystemResizePending</button>
+        <button class="opt" data-ok>No, the partition and filesystem still need growing in the guest</button>
+        <button class="opt">Yes, restart the VM</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The block device grew live; the partition and filesystem did not. Use growpart, then xfs_growfs or resize2fs.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can read a fault</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Work down the layers. The events sit on the pod, not the VM. Know the healthy output, a wrong label looks like a missing pod, and hung VMs on blocked storage still report Running.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 45, Troubleshoot ROVS VMs, networks and storage with IBM topics, maps each symptom to IBM&apos;s topic. Chapter 42, Monitor ROVS virtual machines with OpenShift monitoring, covers metrics and alerts.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

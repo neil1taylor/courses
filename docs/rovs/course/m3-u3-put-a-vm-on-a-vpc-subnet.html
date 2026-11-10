@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Put a VM on a VPC subnet · ROVS course</title>
+<meta name="description" content="Course unit 3.3: read a localnet network definition, follow the checks that a VM is on a VPC subnet, and avoid the faults that most often break it. No cluster needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m3-u3">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">ROVS course</a> <span>·</span> Module 3 · Networking</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 3 of Module 3</span>
+      <h1>Put a VM on a VPC subnet</h1>
+      <p class="lead">By the end you can read a localnet network definition, say what must match on the VPC side, and check that a VM really is on its subnet.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a VPC subnet on the left, an arrow to a worker, and a VM on the worker with the same address range."
+        data-drawing='{"w":420,"h":220,"shapes":[
+          {"text":"VPC subnet","at":[22,32],"hand":true,"tone":"muted"},
+          {"box":[10,40,130,140],"heavy":true},
+          {"line":[150,110,230,110],"arrow":true,"tone":"mark"},
+          {"text":"worker","at":[250,32],"hand":true,"tone":"muted"},
+          {"box":[240,40,170,140],"heavy":true},
+          {"box":[270,86,110,48],"fill":"hatch","tone":"mark","title":"VM"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output and screens in this unit are real. Its migrated VMs must sit on VPC subnets with their own addresses.</p>
+    </div>
+  </div>
+  <p class="small">Every statement, definition, screenshot and output in this unit comes from tutorial chapters 14, 22, 23 and 31, apart from the review question, which comes from chapter 36. Chapter 31 shortens some names, and so does this page. The VMware comparison is a rough mapping, not an IBM statement.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>One localnet network, six parts</h2>
+  <p class="lead">On a ROVS cluster IBM builds the bridge for you. You write the network. Select a part of the drawing to see what it does and which lines define it. You can also click a line.</p>
+  <div class="explorer" data-start="bridge"
+    data-map='{"name":[[3,4]],"who":[[6,10]],"topology":[[11,14]],"bridge":[[15,15]],"ipam":[[16,17]],"vlan":[[18,21]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram of the localnet network's six parts: name, who can use it, type, physical network name, address management and VLAN. Outside it: the VM interface that uses the name, the projects, the IBM bridge mapping, the address source, and the VNI attachment that carries the VLAN ID."
+          data-drawing='{"w":560,"h":450,"shapes":[
+            {"box":[24,40,312,402],"heavy":true},
+            {"text":"outside the network","at":[376,36],"hand":true,"tone":"mark"},
+            {"line":[320,81,376,81],"part":"name"},
+            {"line":[320,145,376,145],"part":"who"},
+            {"line":[320,273,376,273],"part":"bridge"},
+            {"line":[320,337,376,337],"part":"ipam"},
+            {"line":[320,401,376,401],"part":"vlan"},
+            {"box":[40,52,280,58],"part":"name","title":"Name","detail":"vlan250"},
+            {"box":[40,116,280,58],"part":"who","title":"Who can use it","detail":"project-1"},
+            {"box":[40,180,280,58],"part":"topology","title":"Type","detail":"Localnet · Secondary"},
+            {"box":[40,244,280,58],"part":"bridge","title":"Physical network name","detail":"vpc-vlans"},
+            {"box":[40,308,280,58],"part":"ipam","title":"Address management","detail":"Disabled"},
+            {"box":[40,372,280,58],"part":"vlan","title":"VLAN","detail":"Access mode, ID 250"},
+            {"box":[376,52,176,58],"part":"name","dashed":true,"title":"VM interface","detail":"uses vlan250"},
+            {"box":[376,116,176,58],"part":"who","dashed":true,"title":"Projects","detail":"project-1"},
+            {"box":[376,244,176,58],"part":"bridge","dashed":true,"title":"Bridge mapping","detail":"vpc-vlans (IBM)"},
+            {"box":[376,308,176,58],"part":"ipam","dashed":true,"title":"Address from","detail":"VPC DHCP / guest"},
+            {"box":[376,372,176,58],"part":"vlan","dashed":true,"title":"VNI attachment","detail":"--vlan 250"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="name">
+          <h3>Name</h3>
+          <p>The network makes a network attachment definition with the same name in each matching project. A VM&apos;s interface refers to it as <code>project/name</code>.</p>
+        </div>
+        <div class="part-info" data-part="who">
+          <h3>Who can use it</h3>
+          <p>A selector picks the projects. The network creates its attachment definition in each one, and only VMs in those projects can attach.</p>
+        </div>
+        <div class="part-info" data-part="topology">
+          <h3>Type</h3>
+          <p>Localnet is always secondary. VMs on it behave as if they are plugged straight into a VPC subnet.</p>
+          <p class="hand tilt"><b>From vSphere:</b> like a VLAN-backed port group.</p>
+          <p class="watch"><b>Watch for this.</b> An ordinary pod can attach too, but it gets an interface with no address. Localnet is for VMs.</p>
+        </div>
+        <div class="part-info" data-part="bridge">
+          <h3>Physical network name</h3>
+          <p>It must match the <code>localnet</code> value in the bridge mapping, character for character. A mismatch means the network cannot find the bridge, and VM traffic never reaches the VPC.</p>
+          <p class="watch"><b>Watch for this.</b> Read the name off your cluster with <code>oc get nncp</code>. IBM builds the bridge and the mapping, and has not promised the names.</p>
+        </div>
+        <div class="part-info" data-part="ipam">
+          <h3>Address management</h3>
+          <p>Disabled, because the VPC manages the addresses. The network hands out nothing. The VM gets its address by DHCP with the VNI&apos;s MAC address, or from a static address set inside the guest.</p>
+        </div>
+        <div class="part-info" data-part="vlan">
+          <h3>VLAN</h3>
+          <p>Access mode tags all traffic on this network with the ID. It must be the same number as <code>--vlan</code> on the VNI attachment.</p>
+          <p class="watch"><b>Watch for this.</b> A wrong VLAN can still look like it works, because VPC DHCP may answer. Test with traffic.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The network definition">apiVersion: k8s.ovn.org/v1
+kind: ClusterUserDefinedNetwork
+metadata:
+  name: vlan250
+spec:
+  namespaceSelector:
+    matchExpressions:
+    - key: kubernetes.io/metadata.name
+      operator: In
+      values: ["project-1"]
+  network:
+    topology: Localnet
+    localnet:
+      role: Secondary
+      physicalNetworkName: vpc-vlans
+      ipam:
+        mode: Disabled
+      vlan:
+        mode: Access
+        access:
+          id: 250
+</pre>
+  </div>
+  <p class="small">Chapter 14 leaves the physical network name as a value to read off your cluster. <code>vpc-vlans</code> is what the cluster in chapters 22 and 23 returned.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Run it</span>
+  <h2>Check the network, then the VM</h2>
+  <p class="lead">Run each command in turn. The output is what ROVS clusters returned in chapters 22, 23 and 31.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">oc get nncp</pre>
+          <pre class="out">NAME        STATUS      REASON
+br-eth1     Available   SuccessfullyConfigured
+vpc-vlans   Available   SuccessfullyConfigured</pre>
+          <p class="hand note">Two policies: the bridge, and the mapping.</p>
+          <p class="hand note">The add-on made them. Read them. Do not re-apply them.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">oc get nncp -o jsonpath='{range .items[*]}{range .spec.desiredState.ovn.bridge-mappings[*]}{.localnet}{" -> "}{.bridge}{"\n"}{end}{end}'</pre>
+          <pre class="out">vpc-vlans -> br-eth1</pre>
+          <p class="hand note">The left side is your physicalNetworkName.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">oc get clusteruserdefinednetwork vlan250 -o jsonpath='{range .status.conditions[*]}{.type}{" | "}{.status}{" | "}{.reason}{" | "}{.message}{"\n"}{end}'</pre>
+          <pre class="out">NetworkCreated | True | NetworkAttachmentDefinitionCreated | NetworkAttachmentDefinition has been created in following namespaces: [project-1]</pre>
+          <p class="hand note">There is no STATUS column. This condition is the ready signal.</p>
+          <p class="hand note">The message lists the projects your selector matched.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">oc get net-attach-def vlan250 -n project-1 -o jsonpath='{.spec.config}'</pre>
+          <pre class="out">{"cniVersion":"1.1.0","mtu":9000,"name":"cluster_udn_vlan250",
+ "netAttachDefName":"project-1/vlan250","physicalNetworkName":"vpc-vlans",
+ "role":"secondary","topology":"localnet","type":"ovn-k8s-cni-overlay","vlanID":250}</pre>
+          <p class="hand note">The fastest check that the name and VLAN came out as you meant.</p>
+          <p class="hand note">Do not edit it. The network manages it.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud ks vni ls --cluster-id $cluster_id</pre>
+          <pre class="out">VNI ID         Worker Node                    IP Address   VLAN   Floating   Auto-delete
+02d7-f6216add  kube-...-default-0000021e      10.250.1.5   250    yes        yes</pre>
+          <p class="hand note">Chapter 31 shows only this row.</p>
+          <p class="hand note">Floating yes: the attachment follows the VM to whichever worker runs it.</p>
+        </div>
+        <div class="cmd">
+          <p class="pre"># inside the VM</p>
+          <pre class="in">ip -br addr</pre>
+          <pre class="out">lo               UNKNOWN        127.0.0.1/8 ::1/128
+eth0             UP             10.250.1.5/24 fe80::f318:9f7c:3206:f658/64</pre>
+          <p class="hand note">The address in the guest is the address that was reserved.</p>
+        </div>
+        <div class="q">
+          <p>The VM shows the right address. Is that proof the path to the VPC works?</p>
+          <div class="opts">
+            <button class="opt">Yes, the address came from the VPC</button>
+            <button class="opt" data-ok>No. Test with traffic</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>VPC DHCP may still answer when the VLAN IDs do not match, so an address alone proves nothing. Ping the subnet gateway.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">ip route</pre>
+          <pre class="out">default via 10.250.1.1 dev eth0 proto static metric 100
+10.250.1.0/24 dev eth0 proto kernel scope link src 10.250.1.5 metric 100</pre>
+          <p class="hand note">The default route points at the VPC subnet gateway.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ping -c 3 10.250.1.1</pre>
+          <pre class="out">64 bytes from 10.250.1.1: icmp_seq=1 ttl=63 time=1.19 ms
+64 bytes from 10.250.1.1: icmp_seq=2 ttl=63 time=0.212 ms
+--- 10.250.1.1 ping statistics ---
+0% packet loss</pre>
+          <p class="hand note">The whole chain works: reserved IP, VNI on the VLAN, localnet network, bridge interface, and a route off the segment.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Click through the consoles</span>
+  <h2>Attach the VNI, then see the VM&apos;s interface</h2>
+  <p class="lead">These are real screens. Click where you would click. After two misses the right place is marked.</p>
+  <div class="tour">
+    <figure class="tstep" data-hot="1.5,39.2,12,5">
+      <div class="shot"><img src="../images/14/vni-attachments-tab.jpg" alt="The VNI attachments tab of a cluster in the IBM Cloud console. Two attachments are listed, with the columns VNI name, Worker node, Can float, Subnet, VLAN ID and Primary IP. An Attach VNIs button sits at the top right of the table." width="1560" height="694"></div>
+      <figcaption>
+        <h3>In the IBM Cloud console, open the cluster. Which entry in its left menu lists the VNI attachments?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. VNI attachments. Click Attach VNIs at the top right to add one.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="28.7,24.1,34.3,5.5">
+      <div class="shot"><img src="../images/14/attach-vni-form.jpg" alt="The Attach virtual network interfaces panel before a subnet is chosen. The text says to select a subnet to see the available VNIs, then select one or more VNIs and give a VLAN ID from 1 to 500, and that VLAN IDs cannot be repeated on different subnets. The Subnet and VLAN ID fields are empty and the Attach button is disabled." width="1560" height="694"></div>
+      <figcaption>
+        <h3>The list of VNIs is empty. What must you choose first?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Subnet. The panel then lists the VNIs available in it.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="64,24.1,34.3,5.5">
+      <div class="shot"><img src="../images/14/attach-vni-form.jpg" alt="The Attach virtual network interfaces panel before a subnet is chosen. The text says to select a subnet to see the available VNIs, then select one or more VNIs and give a VLAN ID from 1 to 500, and that VLAN IDs cannot be repeated on different subnets. The Subnet and VLAN ID fields are empty and the Attach button is disabled." width="1560" height="694"></div>
+      <figcaption>
+        <h3>Which field must hold the same number as the network&apos;s VLAN?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. VLAN ID, from 1 to 500. The panel notes that VLAN IDs cannot be repeated on different subnets. IBM&apos;s localnet page narrows the range to 2 to 500.</p></details>
+      </figcaption>
+    </figure>
+    <figure class="tstep" data-hot="45.5,80.5,10,16" data-width="760px">
+      <div class="shot"><img src="../images/31/vm-network-interface.jpg" alt="The virtual machine's Network interfaces tab. One row: name localnet-net, model virtio, Network my-project/vlan250, a green connected icon, Type Bridge, and a MAC address." width="1568" height="379"></div>
+      <figcaption>
+        <h3>On the VM&apos;s own Network tab, which column shows the localnet network it is on?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Network: <code>my-project/vlan250</code>, the project and the name of the network. The Type is Bridge.</p></details>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Predict</span>
+  <h2>Two choices that decide whether it works</h2>
+  <div class="pair">
+    <div class="q">
+      <p>A Northgate VM may live-migrate to another worker in the same zone. How should its VNI be attached?</p>
+      <div class="opts">
+        <button class="opt">Pinned to one worker, with <code>--worker</code></button>
+        <button class="opt" data-ok>Floating, with <code>--cluster-id</code></button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A floating attachment is scoped to the cluster, and the VNI follows the VM between workers in the same zone. With a pinned attachment the VM loses the VNI if it moves. Neither moves between zones.</p></details>
+    </div>
+    <div class="q">
+      <p><span class="kicker">Spot the fault.</span> The VM boots and has its reserved address, but the ping to the subnet gateway shows 100% loss. Its security group was just created. What is likely wrong?</p>
+      <div class="opts">
+        <button class="opt">The VLAN ID is wrong</button>
+        <button class="opt" data-ok>The group has no rules, so it drops everything</button>
+        <button class="opt">The VM needs a public gateway first</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><pre class="out">Listing rules of security group my-vm-sg ...
+No rules were found.</pre><p>A new security group starts empty, and an empty group denies all traffic in both directions. With inbound ICMP and outbound any added, the VM went from 100% loss to a working ping. The SSH rule is for reaching the guest, not for ping.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p><span class="kicker">Review question from Unit 2.4.</span> You restart a Linux VM. Which cloud-init section runs again?</p>
+      <div class="opts">
+        <button class="opt">runcmd</button>
+        <button class="opt" data-ok>bootcmd</button>
+        <button class="opt">packages</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p><code>bootcmd</code> runs on every boot. Cloud-init otherwise runs on first boot only, and <code>runcmd</code> runs once. For the static address on a localnet VM, chapter 31 uses <code>runcmd</code>, because <code>nmcli connection add</code> is not safe to repeat: each reboot would add another profile with the same name.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>On localnet, which interface mode does the VM&apos;s network card use?</p>
+      <div class="opts">
+        <button class="opt">Masquerade, as on the pod network</button>
+        <button class="opt" data-ok>Bridge</button>
+        <button class="opt">Either one works</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Bridge mode connects the virtual NIC directly to the external network, so its traffic appears on the VLAN without NAT. Localnet needs it, because the VM must appear on the VPC subnet as itself.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A reserved IP was created on its own, then the VNI that used it was detached with <code>--auto-delete</code>. What happened to the reserved IP?</p>
+      <div class="opts">
+        <button class="opt">It was released with the VNI</button>
+        <button class="opt" data-ok>It stays allocated until you delete it</button>
+        <button class="opt">It was released after a day</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p><code>--auto-delete</code> on the attachment covers only the VNI. A reserved IP made on its own has its own setting, which is false. Create it inline with <code>--rip-auto-delete true</code> to release it with the VNI, or delete it as the last cleanup step.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can put a VM on a VPC subnet</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>The name must match the bridge mapping. The VLAN must match the attachment. Attach floating if the VM will move. An empty security group drops everything.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 31, Connect a ROVS VM to a VPC subnet with a localnet network, builds this end to end.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>
