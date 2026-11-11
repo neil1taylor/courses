@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect. Before it adds a vault, its team learns the four words the console uses.</p>
     </div>
   </div>
-  <p class="small">Everything here comes from the Data Protect builds and runs in our lab on 5 October and 10 November 2026. Product: IBM Storage Defender 2.2.1 Data Protect, version 7.4.1.</p>
+  <p class="small">Everything here comes from the Data Protect builds and runs in our lab. Product: IBM Storage Defender 2.2.1 Data Protect, version 7.4.1.</p>
   <p class="small"><b>Terms used.</b> <b>Agent</b>: a small program on a server that lets the cluster back it up. <b>KVM</b>: a Linux feature for running virtual machines. <b>Bare metal server</b>: a physical server that one customer rents whole. <b>Image</b>: a ready-made disk file used to start a machine. <b>Node</b>: one machine in a cluster. <b>OpenShift</b>: Red Hat&apos;s platform for running software, and virtual machines, in clusters.</p>
 </section>
 
@@ -120,7 +120,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
   <h2>How long does the build take?</h2>
-  <p class="lead">On 10 November 2026 the lab built the whole cluster again. These are the steps.</p>
+  <p class="lead">The lab built the whole cluster again. These are the steps.</p>
   <pre class="def" aria-label="Build steps">Step                      Time
 Bare metal server         ordered to running: ?
 Image pull                45 GB: ?
@@ -147,7 +147,7 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
         <button class="opt" data-ok>In our lab, none was needed to run backups and archives</button>
         <button class="opt">Only for the first backup</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Defender is licensed in Resource Units. The lab applied no licence on 5 October 2026 and the cluster ran backups and archives. It did not check what the console says about an unlicensed cluster.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Defender is licensed in Resource Units. The lab applied no licence and the cluster ran backups and archives. It did not check what the console says about an unlicensed cluster.</p></details>
     </div>
   </div>
 </section>
@@ -155,7 +155,7 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>Two traps in the build</h2>
-  <p class="lead">Northgate&apos;s team follows the October steps on 10 November 2026. Two things have changed.</p>
+  <p class="lead">Northgate&apos;s team follows the earlier steps. Two things have changed.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>The first run of the install script stops at once with &quot;Permission denied&quot;, exit code 126. Why?</p>
@@ -164,16 +164,16 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
         <button class="opt" data-ok>The script downloaded without its execute bit; run chmod +x on the copy first</button>
         <button class="opt">The bare metal server has no KVM</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 10 November 2026 the download had no execute bit. After <code>chmod +x</code> on the copy it ran.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the download had no execute bit. After <code>chmod +x</code> on the copy it ran.</p></details>
     </div>
     <div class="q">
-      <p>In October the boot disk was nvme3n1. What do you do on 10 November?</p>
+      <p>In the first build the boot disk was nvme3n1. What do you do this time?</p>
       <div class="opts">
         <button class="opt">Use nvme3n1 again</button>
         <button class="opt" data-ok>Check with findmnt every time: this time it was nvme0n1</button>
         <button class="opt">Format every disk</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The boot disk changed between builds. On 10 November 2026 the lab checked first, then formatted the other two disks.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The boot disk changed between builds. The lab checked first, then formatted the other two disks.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> Set the cluster&apos;s host name when you create it. A cluster built without one cannot back up OpenShift VMs, and the name cannot be changed later.</p>
@@ -208,7 +208,7 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
         <button class="opt" data-ok>Check it with findmnt every time</button>
         <button class="opt">Delete the host and start again</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It was nvme3n1 on 5 October and nvme0n1 on 10 November 2026.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It was nvme3n1 and nvme0n1.</p></details>
     </div>
   </div>
 </section>

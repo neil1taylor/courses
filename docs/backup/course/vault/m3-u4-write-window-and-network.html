@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its board asks what happens if an attacker gets the backup admin&apos;s keys. Can the attacker use them from the attacker&apos;s own network? And can the vault be shut outside office hours?</p>
     </div>
   </div>
-  <p class="small">Every result comes from real tests in our lab on 5, 6 and 7 October 2026. The vault is a Beta in us-south, with no SLA. Hosts, IP addresses, vault names and keys are made-up or placeholders: the values were changed.</p>
+  <p class="small">Every result comes from real tests in our lab. The vault is a Beta in us-south, with no SLA. Hosts, IP addresses, vault names and keys are made-up or placeholders: the values were changed.</p>
   <p class="small"><b>Terms used.</b> <b>Private IP range (RFC 1918)</b>: addresses reserved for use inside private networks, not on the internet. <b>Vhost style and path style</b>: two ways to write a bucket address. Vhost style puts the bucket name in the host name, and path style puts it in the path. <b>ROVS</b>: Red Hat OpenShift Virtualization Service on IBM Cloud.</p>
 </section>
 
@@ -72,7 +72,7 @@
       <details class="reveal"><summary>Show the answer</summary><p>At least one of the allowed VPCs and the allowed IP ranges is required. IP ranges must be private (RFC 1918) (the lab&apos;s own list was its VPC and one private range).</p></details>
     </div>
     <div class="q">
-      <p>The console form for a new vault has &quot;Time-based write restrictions&quot;. In our console run on 10 November, what was its state by default?</p>
+      <p>The console form for a new vault has &quot;Time-based write restrictions&quot;. In our console run, what was its state by default?</p>
       <div class="opts">
         <button class="opt" data-ok>Disabled: the window is optional</button>
         <button class="opt">Enabled, 24 hours</button>
@@ -86,7 +86,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>A valid key from the wrong place</h2>
-  <p class="lead">The lab vault allows only the lab VPC and its private range. On 5 and 6 October the lab sent calls with a valid key from outside. Here are the places. The answers are hidden.</p>
+  <p class="lead">The lab vault allows only the lab VPC and its private range. The lab sent calls with a valid key from outside. Here are the places. The answers are hidden.</p>
   <pre class="def" aria-label="Calls from outside">place                                    call                  answer
 Mac on the VPN, direct and private name  list                  ?
 Mac, public name, valid write key        list, get, put        ?
@@ -107,7 +107,7 @@ Mac, public name, valid write key        list, get, put        403 Access Denied
 Pod in a second VPC, direct name         list                  403 Access Denied
 Pod in a second VPC, private name        list                  no answer within 30 s
 Pod in a second VPC, public name         list                  403 Access Denied
-Lab VSI (the allowed network), control   list                  200</pre><p>The Mac tests were on 5 October and the pod tests on 6 October, in our lab. The pod ran on a ROVS cluster in another VPC.</p></details>
+Lab VSI (the allowed network), control   list                  200</pre><p>The Mac tests and the pod tests were run in our lab. The pod ran on a ROVS cluster in another VPC.</p></details>
     </div>
     <div class="q">
       <p>Did the Mac get in with the vhost style or the path style of the public name?</p>
@@ -119,14 +119,14 @@ Lab VSI (the allowed network), control   list                  200</pre><p>The M
       <details class="reveal"><summary>Show the answer</summary><p>Both styles got 403 &quot;Access Denied&quot; for list, get and put.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> One check was not run in the first round: a machine in a second VPC. The pod test on 6 October closed that gap. A valid write key from a VPC that is not on the list got nothing from the vault.</p>
+  <p class="watch"><b>Watch for this.</b> One check was not run in the first round: a machine in a second VPC. The pod test closed that gap. A valid write key from a VPC that is not on the list got nothing from the vault.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>Inside and outside the window</h2>
-  <p class="lead">A second lab vault had a write window of 02:00 to 03:00 UTC. The lab ran the same calls at 17:56 UTC on 5 October (outside) and at 02:05 UTC on 7 October (inside), from the lab VSI, inside the allowed network.</p>
-  <pre class="def" aria-label="Calls outside the window">outside the window, 5 Oct 17:56 UTC
+  <p class="lead">A second lab vault had a write window of 02:00 to 03:00 UTC. The lab ran the same calls at 17:56 UTC (outside) and at 02:05 UTC (inside), from the lab VSI, inside the allowed network.</p>
+  <pre class="def" aria-label="Calls outside the window">outside the window, 17:56 UTC
 list, write key                         ?
 list, read key                          ?
 put with a 1-day lock, write key        ?
@@ -144,7 +144,7 @@ list, write key                      403          200
 list, read key                       403          200
 put with a 1-day lock, write key     403          200
 get and head, both keys              403          200
-put, read key                        -            403 (the read key never writes)</pre><p>The window gates reads and writes together. Inside it, the vault works as normal. One object written inside the window is locked until 8 October 2026 at 02:05:16Z.</p></details>
+put, read key                        -            403 (the read key never writes)</pre><p>The window gates reads and writes together. Inside it, the vault works as normal. One object written inside the window is locked.</p></details>
     </div>
     <div class="q">
       <p>IBM&apos;s own page was unclear whether the window blocks reads. What does the lab result say?</p>
@@ -204,7 +204,7 @@ put, read key                        -            403 (the read key never writes
         <button class="opt">403</button>
         <button class="opt">No answer</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>200 (control call, 6 October).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>200 (control call).</p></details>
     </div>
     <div class="q" data-check>
       <p>What does a write window block outside its hours?</p>

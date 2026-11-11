@@ -40,7 +40,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. A colleague sends it a link that says &quot;cyber vault&quot;. Northgate must find out which of two IBM products the link is about.</p>
     </div>
   </div>
-  <p class="small">What this unit says about the Deployable Architecture was read from IBM&apos;s catalog code and docs on 25 September 2026. It was never deployed in our lab, so none of it is tested. Everything tested in this course is the Beta, in us-south, with no SLA and no support.</p>
+  <p class="small">What this unit says about the Deployable Architecture was read from IBM&apos;s catalog code and docs. It was never deployed in our lab, so none of it is tested. Everything tested in this course is the Beta, in us-south, with no SLA and no support.</p>
   <p class="small"><b>Terms used.</b> <b>Terraform</b>: a tool that builds cloud resources from written instructions. <b>HMAC key</b>: a pair of an access key ID and a secret key that object storage accepts for requests.</p>
 </section>
 
@@ -66,7 +66,7 @@
         <button class="opt">The Deployable Architecture</button>
         <button class="opt">Both</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The Beta. IBM&apos;s docs, dated 27 August 2026, describe a managed COS feature: one call creates a hardened bucket with credentials and network rules. The Deployable Architecture is a Terraform architecture in the IBM Cloud catalog that builds ordinary resources in the customer&apos;s account, with one HMAC key.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The Beta. IBM&apos;s docs, describe a managed COS feature: one call creates a hardened bucket with credentials and network rules. The Deployable Architecture is a Terraform architecture in the IBM Cloud catalog that builds ordinary resources in the customer&apos;s account, with one HMAC key.</p></details>
     </div>
     <div class="q">
       <p>Which of the two did we deploy and test in our lab?</p>
@@ -75,7 +75,7 @@
         <button class="opt">The Deployable Architecture only</button>
         <button class="opt" data-ok>The Beta only</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The Beta only. The Deployable Architecture was never deployed here. Our decision of 25 September 2026 was to document both and test the Beta.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The Beta only. The Deployable Architecture was never deployed here. Our decision was to document both and test the Beta.</p></details>
     </div>
   </div>
 </section>
@@ -83,7 +83,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>Match the facts to the product</h2>
-  <p class="lead">Each fact below is from IBM&apos;s own docs or catalog code, read on 25 September 2026. Match it to the product it describes.</p>
+  <p class="lead">Each fact below is from IBM&apos;s own docs or catalog code. Match it to the product it describes.</p>
   <pre class="def" aria-label="Facts to match">Fact                                         Which product?
 Regions: us-south only                       ?
 Lock default of 1 to 1000 years              ?
@@ -100,7 +100,7 @@ First release 22 October 2025                ?</pre>
 Regions: us-south only                       Beta
 Lock default of 1 to 1000 years              Deployable Architecture (when lock is on)
 Lock default of 0 to 3,650 days              Beta
-First release 22 October 2025                Deployable Architecture</pre><p>The Beta&apos;s docs are dated 27 August 2026. The architecture lists 11 regions including eu-de, and its latest release was v0.1.26 on 20 September 2026.</p></details>
+First release 22 October 2025                Deployable Architecture</pre><p>The architecture lists 11 regions including eu-de, and its latest release was v0.1.26 on 20 September 2026.</p></details>
     </div>
     <div class="q">
       <p>A customer in eu-de asks which product to use for a Defender vault in the same region. What do the sources say?</p>
@@ -109,7 +109,7 @@ First release 22 October 2025                Deployable Architecture</pre><p>The
         <button class="opt" data-ok>The Beta is us-south only; the architecture lists eu-de, but we did not deploy it</button>
         <button class="opt">Neither is available in eu-de</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Anything but us-south returns 400 on the Beta. Our own lab is in eu-de, and its network reached the us-south endpoint (a quick 403 or 405 from the lab VPC on 25 September 2026). The architecture&apos;s region list comes from its catalog code; we did not run it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Anything but us-south returns 400 on the Beta. Our own lab is in eu-de, and its network reached the us-south endpoint (a quick 403 or 405 from the lab VPC). The architecture&apos;s region list comes from its catalog code; we did not run it.</p></details>
     </div>
   </div>
 </section>

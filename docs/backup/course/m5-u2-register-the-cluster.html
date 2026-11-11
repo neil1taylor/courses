@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its ROVS cluster, ng-cluster-01, now has a connector. The next job is to register the cluster as a source.</p>
     </div>
   </div>
-  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names, endpoints and IDs in messages were changed. Every screen and result comes from our lab on 1 and 2 October and 9 November 2026.</p>
+  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it. IBM lists it for the AU-SYD region only: its pages, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them. Names, endpoints and IDs in messages were changed. Every screen and result comes from our lab.</p>
 </section>
 
 <section class="screen">
@@ -54,7 +54,7 @@
         <button class="opt" data-ok>The token of the service account secret brs-sa-token</button>
         <button class="opt">A token from your own login to the BRS console</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The field takes the service account token. Do not use the Helm registration token: on 1 October 2026 it was tried and BRS answered <code>Unauthorized access. Please check the credentials.[kUnauthorized]</code>. In our lab on 9 November 2026 the service account <code>brs-sa</code>, a cluster-admin role binding and the secret <code>brs-sa-token</code> were made on the cluster, and the token was copied from the secret without showing it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The field takes the service account token. Do not use the Helm registration token: it was tried and BRS answered <code>Unauthorized access. Please check the credentials.[kUnauthorized]</code>. In our lab the service account <code>brs-sa</code>, a cluster-admin role binding and the secret <code>brs-sa-token</code> were made on the cluster, and the token was copied from the secret without showing it.</p></details>
     </div>
     <div class="q">
       <p>Which Kubernetes Distribution do you pick for a ROVS cluster?</p>
@@ -70,7 +70,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>Register the source</h2>
-  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026, with the connection from unit 5.1. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab, with the connection from unit 5.1. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="2.1,63.1,48.8,9.3" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3e-2-connection.png" alt="Register Kubernetes Source, step 1: the RoksVpc connection picked." width="758" height="428"></div>
@@ -97,7 +97,7 @@
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3e-5-registered.png" alt="Sources: the Kubernetes source (blurred), not protected, 340 GiB." width="1164" height="640"></div>
       <figcaption>
         <h3>You clicked Complete and the source appeared. Where is its size?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Total Size</b>, 340 GiB. On 9 November 2026 at 07:30 UTC the console said &quot;Registered Kubernetes Source successfully&quot; at the first try, and none of the errors in the next step came back.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Total Size</b>, 340 GiB. At 07:30 UTC the console said &quot;Registered Kubernetes Source successfully&quot; at the first try, and none of the errors in the next step came back.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -105,7 +105,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
   <h2>Read the message</h2>
-  <p class="lead">On 1 October 2026, and in later tests, our lab met these messages while registering. Each question gives a message. Pick the cause. Values in the messages were changed.</p>
+  <p class="lead">Across several tests our lab met these messages while registering. Each question gives a message. Pick the cause. Values in the messages were changed.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>The command line answers: KInternalError, &quot;Encountered HTTP connection error&quot;. What does it tell you?</p>
@@ -114,7 +114,7 @@
         <button class="opt" data-ok>BRS could not reach the cluster: check that the connection has connectors and the connector pods run</button>
         <button class="opt">The cluster is already registered</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That is the rule. On 1 October 2026 the connection used had no connectors, and the same error came back every time. After that, check the network.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>That is the rule. The connection used had no connectors, and the same error came back every time. After that, check the network.</p></details>
     </div>
     <div class="q">
       <p>The answer is: Unauthorized access. Please check the credentials.[kUnauthorized]. What went wrong?</p>
@@ -150,8 +150,8 @@
 <section class="screen">
   <span class="kicker">Step 4 · Predict</span>
   <h2>Eight attempts, then a success</h2>
-  <p class="lead">Here are the eight attempts of 1 October 2026 that did not register the cluster. On 2 October the registration worked.</p>
-  <pre class="def" aria-label="The eight attempts">What was run (1 Oct 2026, instance in au-syd)            Result
+  <p class="lead">Here are the eight attempts that did not register the cluster. A later registration worked.</p>
+  <pre class="def" aria-label="The eight attempts">What was run (instance in au-syd)            Result
 CLI register, no connection ID                            KInternalError: Encountered HTTP connection error
 CLI register, connection with no connectors               same error
 CLI register, VPE endpoint as the cluster endpoint        failed (command not recorded)
@@ -162,13 +162,13 @@ eu-de instance, brs-sa-token, another API port            no answer in 120 s: Cl
 au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encountered HTTP timeout error</pre>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>What did our lab establish as the reason it worked on 2 October?</p>
+      <p>What did our lab establish as the reason it worked?</p>
       <div class="opts">
         <button class="opt">The BRS instance must be in the same region as the cluster</button>
-        <button class="opt" data-ok>Nothing for sure: one fact fits, the connection used on 1 October had no connectors and the one used on 2 October had two</button>
+        <button class="opt" data-ok>Nothing for sure: one fact fits, the connection used in the failed attempts had no connectors and the one used in the working registration had two</button>
         <button class="opt">An upgrade of the cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>What changed between the two days is not established. An earlier version said the instance must be in the same region; that was wrong, because the au-syd instance registered the eu-de cluster on 2 October 2026. On 9 November 2026 an eu-de instance and an eu-de cluster worked too. IBM&apos;s pages still say the VM feature is for testing in au-syd.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>What changed between the two days is not established. An earlier version said the instance must be in the same region; that was wrong, because the au-syd instance registered the eu-de cluster. An eu-de instance and an eu-de cluster worked too. IBM&apos;s pages still say the VM feature is for testing in au-syd.</p></details>
     </div>
     <div class="q">
       <p>Which attempt failed because the cluster endpoint was not the cluster API server?</p>
@@ -219,7 +219,7 @@ au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encoun
   <h2>You can register a cluster</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Use the service account token, not the Helm registration token. A cluster can have only one Cohesity registration. Three of our lab&apos;s eight failed attempts on 1 October 2026 gave one error, Encountered HTTP connection error, and the first thing to check is that the connection has connectors. The cause of the change to success on 2 October is not established.</p></div>
+    <div><span class="label">Remember</span><p>Use the service account token, not the Helm registration token. A cluster can have only one Cohesity registration. Three of our lab&apos;s eight failed attempts gave one error, Encountered HTTP connection error, and the first thing to check is that the connection has connectors. The cause of the change to success is not established.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It has files on a Classic server, <code>ng-classic-01</code>, and wants them on a VPC server, <code>ng-vpc-01</code>. IBM publishes a tool for exactly that.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab in October and on 9 November 2026. Server names, addresses and IDs were changed to made-up ones, and server names are blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab. Server names, addresses and IDs were changed to made-up ones, and server names are blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -85,7 +85,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Spot the fault</span>
   <h2>Why the first applies failed</h2>
-  <p class="lead">In October 2026 our lab needed six applies and five fixes that IBM&apos;s documents do not mention. IBM&apos;s documents say only port 50051 needs to be opened. We needed more. Read what each failed apply said, and pick the cause.</p>
+  <p class="lead">Our lab needed six applies and five fixes that IBM&apos;s documents do not mention. IBM&apos;s documents say only port 50051 needs to be opened. We needed more. Read what each failed apply said, and pick the cause.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p><b>Apply 1.</b> The policy, connections, connector servers and agents were made. Then: <code>Create Endpoint Gateway failed An endpoint gateway already exists for this service</code>, HTTP 409. What does it mean?</p>
@@ -120,7 +120,7 @@
         <button class="opt" data-ok>TCP 50051, from the connector group</button>
         <button class="opt">TCP 5986</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Rules for TCP 50051 from the connector group fixed it. The sixth apply passed: <code>Apply complete! Resources: 10 added, 0 changed, 0 destroyed.</code> In October the backup took 11 min 50 s.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Rules for TCP 50051 from the connector group fixed it. The sixth apply passed: <code>Apply complete! Resources: 10 added, 0 changed, 0 destroyed.</code> In the first run the backup took 11 min 50 s.</p></details>
     </div>
   </div>
 </section>
@@ -128,20 +128,20 @@
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
   <h2>The clean run, a second run, and what is left</h2>
-  <p class="lead">After October, we wrote &quot;the clean path&quot;: a list of rules to add before the first apply. On 9 November 2026 we ran the tool again on a rebuilt lab, with those rules in place.</p>
+  <p class="lead">After the first run, we wrote &quot;the clean path&quot;: a list of rules to add before the first apply. We ran the tool again on a rebuilt lab, with those rules in place.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>How many applies did the 9 November run need?</p>
+      <p>How many applies did the second run need?</p>
       <div class="opts">
         <button class="opt" data-ok>One</button>
         <button class="opt">Three</button>
         <button class="opt">Six again</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">One apply, no failure.</span><pre class="def" aria-label="The 9 November 2026 run">Plan                        29 to add, 0 to change, 0 to destroy
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">One apply, no failure.</span><pre class="def" aria-label="The run">Plan                        29 to add, 0 to change, 0 to destroy
 Apply started               18:42:58
 Backup                      18:54:20 to 18:55:59 (1 min 39 s)
 Restore                     32 s
-Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The backup read 97,484,800 bytes in 1 min 39 s, against 11 min 50 s in October. Check of the data, 9 November: 507 files, 0 SHA-256 differences.</p></details>
+Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The backup read 97,484,800 bytes in 1 min 39 s, against 11 min 50 s in the first run. Check of the data: 507 files, 0 SHA-256 differences.</p></details>
     </div>
     <div class="q">
       <p>A file changes on the Classic server after the copy. Northgate runs the tool again with the same variables. What does Terraform plan?</p>
@@ -150,7 +150,7 @@ Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The bac
         <button class="opt" data-ok>No backup and no restore</button>
         <button class="opt">A delete of the target&apos;s files</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 10 October 2026 the plan was &quot;1 to add&quot;, a local file that holds the API key. The tool treats the first copy as final. When we forced the steps to run again, the restore used the first snapshot: six files differed, three new files were missing, and two deleted files were still on the target. The advice for a real move: run the tool once, at the moment of the switch.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The plan was &quot;1 to add&quot;, a local file that holds the API key. The tool treats the first copy as final. When we forced the steps to run again, the restore used the first snapshot: six files differed, three new files were missing, and two deleted files were still on the target. The advice for a real move: run the tool once, at the moment of the switch.</p></details>
     </div>
   </div>
   <div class="q" style="margin-top:20px">
@@ -160,14 +160,14 @@ Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The bac
       <button class="opt" data-ok>The protection group&apos;s snapshot until it expires, and the agents on the two servers</button>
       <button class="opt">The two connector servers</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>On 9 November 2026 it destroyed 28 resources with no error. It did not delete the group&apos;s snapshot. The group stayed in BRS, renamed <code>_DELETED_classic-to-vpc-protection-group-&lt;time&gt;</code>, with its snapshot until it expired a week after the backup. It left the agents on both servers. The Tool server and source server, the target and its volume, the Classic security group and key, and the added rules were deleted by hand.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>It destroyed 28 resources with no error. It did not delete the group&apos;s snapshot. The group stayed in BRS, renamed <code>_DELETED_classic-to-vpc-protection-group-&lt;time&gt;</code>, with its snapshot until it expired a week after the backup. It left the agents on both servers. The Tool server and source server, the target and its volume, the Classic security group and key, and the added rules were deleted by hand.</p></details>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>What the tool left in the BRS console</h2>
-  <p class="lead">The tool has no console of its own. These screens come from the BRS console in our lab on 9 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">The tool has no console of its own. These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="1,82.5,60,15.5" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/M1-1-connections.png" alt="System > Data Source Connections: 4 Healthy, 0 Unhealthy, 1 Unused. Two rows begin migration-data_source_connection-classic and migration-data_source_connection-vpc, each with 1 source and 1 connector." width="1180" height="570"></div>
@@ -184,10 +184,10 @@ Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The bac
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="33.6,84.9,6.3,12.4" data-width="900px">
-      <div class="shot"><img src="../ibm-brs/tutorials/images/M1-3-run.png" alt="Run Details of the tool's group: Succeeded, 1 Succeeded, 0 Failed, 1m 41s. The object read 93 MiB, 512 of 512 entities, with its snapshot expiry on Nov 16. The server name is blurred." width="1190" height="450"></div>
+      <div class="shot"><img src="../ibm-brs/tutorials/images/M1-3-run.png" alt="Run Details of the tool's group: Succeeded, 1 Succeeded, 0 Failed, 1m 41s. The object read 93 MiB, 512 of 512 entities, with its snapshot expiry one week after the backup. The server name is blurred." width="1190" height="450"></div>
       <figcaption>
         <h3>You opened the tool&apos;s backup run. Where does it show when the snapshot will expire?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Snapshot Expiry Time is Nov 16, one week after the backup. The run read 93 MiB, with 512 of 512 entities (files and folders) in Changed Entities / Total.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Snapshot Expiry Time is one week after the backup. The run read 93 MiB, with 512 of 512 entities (files and folders) in Changed Entities / Total.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="0.8,70.6,34.7,11.2" data-width="900px">
@@ -245,7 +245,7 @@ Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The bac
   <h2>You know what the tool does and what it leaves</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>The tool makes one backup and one restore of files and folders. It never checks the copy, a second run copies nothing, and <code>terraform destroy</code> leaves the snapshot and the agents. With the network rules added first, one apply took about 15 minutes in our lab on 9 November 2026.</p></div>
+    <div><span class="label">Remember</span><p>The tool makes one backup and one restore of files and folders. It never checks the copy, a second run copies nothing, and <code>terraform destroy</code> leaves the snapshot and the agents. With the network rules added first, one apply took about 15 minutes in our lab.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

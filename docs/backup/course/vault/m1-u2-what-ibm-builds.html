@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It backs up with Defender Data Protect and wants to know exactly what IBM puts in a Cyber Vault before it trusts one.</p>
     </div>
   </div>
-  <p class="small">The screens come from the IBM Cloud console in our lab on 10 November 2026. The test results come from 5 and 7 October 2026. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">The screens come from the IBM Cloud console in our lab. The vault is a Beta in us-south, with no SLA.</p>
   <p class="small"><b>Terms used.</b> <b>CBR</b>: context-based restrictions, which are IBM Cloud rules that decide which networks may reach a resource. They enforce the vault&apos;s allow-list. <b>Default retention</b>: the number of days the vault locks every new object for; 0 means the backup software sets each lock. <b>API</b>: a way for programs, not people, to send requests to a service. <b>IP range</b>: a block of network addresses, such as those of an office network, that you can put on the allow-list. <b>UTC</b>: the world time standard used for every time in this course. A Z after a time also means UTC.</p>
 </section>
 
@@ -66,7 +66,7 @@
         <button class="opt" data-ok>S3 object lock on, with versioning on and no default rule</button>
         <button class="opt">No lock: the lock is set later by the owner</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Versioning was Enabled and object lock was Enabled with no default rule. It is not the Immutable Object Storage retention policy (5 October 2026).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Versioning was Enabled and object lock was Enabled with no default rule. It is not the Immutable Object Storage retention policy.</p></details>
     </div>
     <div class="q">
       <p>Which of the four parts is optional?</p>
@@ -75,7 +75,7 @@
         <button class="opt" data-ok>The write window</button>
         <button class="opt">The keys</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Network isolation is mandatory, and at least one VPC or IP range is required. The daily write window is optional. Nothing can be changed after the vault is created (IBM&apos;s Beta overview, read 25 September 2026).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Network isolation is mandatory, and at least one VPC or IP range is required. The daily write window is optional. Nothing can be changed after the vault is created (IBM&apos;s Beta overview).</p></details>
     </div>
   </div>
 </section>
@@ -92,7 +92,7 @@
         <button class="opt" data-ok>0</button>
         <button class="opt">3650, the largest allowed</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The form fills in 30 days by itself, so every object would be locked for a month. The form says: "Enter 0 to apply locks manually per-object". With 0, Data Protect sets each object&apos;s lock from its archive retention (in the console, 10 November 2026).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The form fills in 30 days by itself, so every object would be locked for a month. The form says: "Enter 0 to apply locks manually per-object". With 0, Data Protect sets each object&apos;s lock from its archive retention (in the console).</p></details>
     </div>
     <div class="q">
       <p>Northgate gets the retention wrong. Can the owner edit the vault later?</p>
@@ -147,7 +147,7 @@
         <button class="opt" data-ok>The list and the write were both refused with HTTP 403, with both keys</button>
         <button class="opt">Everything worked</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 5 October 2026 both the read key and the write key got 403 for the list and the write. On 7 October at 02:05, inside the window, list, write, read and check all returned 200. IBM&apos;s provisioning page agrees with what we saw: the window decides when the auto-created read and write policies are active.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Both the read key and the write key got 403 for the list and the write. At 02:05, inside the window, list, write, read and check all returned 200. IBM&apos;s provisioning page agrees with what we saw: the window decides when the auto-created read and write policies are active.</p></details>
     </div>
     <div class="q">
       <p>What follows for Northgate&apos;s recovery plan?</p>
@@ -191,7 +191,7 @@
         <button class="opt" data-ok>It was refused with HTTP 403</button>
         <button class="opt">It was queued until 02:00</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Refused with 403 on 5 October 2026, with both keys.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Refused with 403, with both keys.</p></details>
     </div>
   </div>
 </section>

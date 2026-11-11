@@ -45,7 +45,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Tonight it patches two servers: <code>ng-app-01</code> (Linux) and <code>ng-win-01</code> (Windows). Both are already protected, and both must reboot.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab, on 7 October and 9 November 2026. Server names and addresses were changed to made-up ones, and the server name is blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab. Server names and addresses were changed to made-up ones, and the server name is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -60,7 +60,7 @@
       {"text":"Windows Server 2022","at":[290,22],"hand":true,"size":17,"tone":"muted"},
       {"box":[290,32,260,60],"title":"both agents","detail":"come back by themselves"},
       {"box":[290,110,260,60],"tone":"mark","title":"SQL Server","detail":"still stopped (our lab)"},
-      {"text":"the same on 7 October and 9 November 2026","at":[10,200],"hand":true,"size":16,"tone":"muted"}]}'></svg>
+      {"text":"the same","at":[10,200],"hand":true,"size":16,"tone":"muted"}]}'></svg>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>Northgate reboots <code>ng-app-01</code>. Half a minute later the backup agent is <code>active</code>. Is the server connected to BRS?</p>
@@ -69,7 +69,7 @@
         <button class="opt" data-ok>No: the Connector Agent is not running until someone starts it</button>
         <button class="opt">Only after thirty minutes</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the backup agent came back and the Connector Agent did not: &quot;connector_agent_exec is not running.&quot; This happened on 7 October 2026 with agent 7.3.12, and again on 9 November with agent 7.3.13. IBM&apos;s page says: &quot;The Linux Agent must be restarted manually each time the source is rebooted.&quot;</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the backup agent came back and the Connector Agent did not: &quot;connector_agent_exec is not running.&quot; This happened with agent 7.3.12, and again with agent 7.3.13. IBM&apos;s page says: &quot;The Linux Agent must be restarted manually each time the source is rebooted.&quot;</p></details>
     </div>
     <div class="q">
       <p>Northgate reboots <code>ng-win-01</code>, which also runs SQL Server. What is not running a few minutes later?</p>
@@ -78,7 +78,7 @@
         <button class="opt">The backup agent</button>
         <button class="opt" data-ok>SQL Server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both agents came back. SQL Server showed <code>Stopped</code> at 14:09:23 and again at 14:10:35 on 9 November. Its start type is Automatic (Delayed Start), which Windows starts about two minutes after boot. Check your database services too.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Both agents came back. SQL Server showed <code>Stopped</code> at 14:09:23 and again at 14:10:35. Its start type is Automatic (Delayed Start), which Windows starts about two minutes after boot. Check your database services too.</p></details>
     </div>
   </div>
 </section>
@@ -95,18 +95,18 @@
         <button class="opt">About ten minutes</button>
         <button class="opt">Not until a person signs in</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">28 s, then 22 s.</span><p>It reconnected 28 seconds after the reboot began on 7 October 2026, and 22 seconds after the command on 9 November.</p><pre class="def" aria-label="Windows Connector Agent after a reboot">Run               Connected after the reboot command
-7 October 2026    28 s
-9 November 2026   22 s</pre></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">28 s, then 22 s.</span><p>It reconnected 28 seconds after the reboot began, and 22 seconds after the command in the second run.</p><pre class="def" aria-label="Windows Connector Agent after a reboot">Run               Connected after the reboot command
+First run         28 s
+Second run        22 s</pre></details>
     </div>
     <div class="q">
-      <p>On Linux in October, how long after Northgate started the Connector Agent by hand did it show as connected?</p>
+      <p>On Linux in the first run, how long after Northgate started the Connector Agent by hand did it show as connected?</p>
       <div class="opts">
         <button class="opt">Under 5 seconds</button>
         <button class="opt" data-ok>89 seconds</button>
         <button class="opt">About twenty minutes</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>89 seconds on 7 October 2026. In the run of 9 November the agent showed as connected from the second it was started.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>89 seconds. In the second run the agent showed as connected from the second it was started.</p></details>
     </div>
   </div>
 </section>
@@ -144,7 +144,7 @@ connector_agent_exec is not running.</pre>
           <pre class="in">ssh vpcuser@10.0.0.10 'sudo /opt/connector_agent/bin/connector_agent.sh start'</pre>
           <pre class="out">connector_agent_exec started (PID: ...)</pre>
           <p class="hand note">Started by hand.</p>
-          <p class="hand note">In October it showed as connected 89 s later.</p>
+          <p class="hand note">In the first run it showed as connected 89 s later.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -160,7 +160,7 @@ connector_agent_exec is not running.</pre>
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>A backup while the agent is down</h2>
-  <p class="lead">Before the reboot, Northgate protected a folder on a second Linux server and set the group to paused. After the reboot the Connector Agent stayed down, and Northgate clicked Run Now. These screens come from the BRS console in our lab on 9 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">Before the reboot, Northgate protected a folder on a second Linux server and set the group to paused. After the reboot the Connector Agent stayed down, and Northgate clicked Run Now. These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="46.1,75.1,5.8,7.7" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7c-1-run-waiting.png" alt="Group Details for b-linux2-files, Paused. The 2:00pm incremental has run 4m 6s with 0 Bytes read and 0/1 objects. The earlier full run read 2.7 MiB." width="1205" height="390"></div>

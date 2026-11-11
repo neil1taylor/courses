@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It wants to back up the folder <code>/data</code> on a Linux server. Today it learns what it must set up, and in what order.</p>
     </div>
   </div>
-  <p class="small">The facts here come from IBM&apos;s pages as read on 24 September 2026, and from runs in our lab on 7 October and 8 November 2026. Addresses, the server&apos;s name and IDs were replaced with made-up values or blurred.</p>
+  <p class="small">The facts here come from IBM&apos;s pages, and from runs in our lab. Addresses, the server&apos;s name and IDs were replaced with made-up values or blurred.</p>
 </section>
 
 <section class="screen">
@@ -124,7 +124,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
 <section class="screen">
   <span class="kicker">Step 3 · Click through the console</span>
   <h2>Source, then group</h2>
-  <p class="lead">These screens come from the BRS console in our lab on 8 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="26.4,28.6,44.9,8.2" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-1-register-external.png" alt="Register Physical Server, step 1: Connection Type with Direct and External Data Source; External Data Source chosen and a Data Source Connection list." width="758" height="510"></div>
@@ -137,7 +137,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2b-2-agent-in-register-list.png" alt="Register Physical Server with Direct chosen; the Connector Agent field lists cohesity-lab-agent." width="770" height="605"></div>
       <figcaption>
         <h3>You chose Direct. Where does the Connector Agent you claimed on the server show up?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The <b>Connector Agent</b> field lists the connection name you sent when you claimed the agent. In our lab on 8 November 2026 a dialog left open from before the claim showed an empty list; reloading the page fixed it.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The <b>Connector Agent</b> field lists the connection name you sent when you claimed the agent. In our lab a dialog left open from before the claim showed an empty list; reloading the page fixed it.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="33,78.3,5.7,7.2" data-width="900px">
@@ -169,7 +169,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
         <button class="opt" data-ok>Nothing is wrong: that page lists only the connector server&apos;s connections</button>
         <button class="opt">The instance has lost the agent</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 8 November 2026 the page showed only the connector server&apos;s connection, and the command-line list for connections showed the same. The agent&apos;s connection appears in the Connector Agent field when you register a source.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the page showed only the connector server&apos;s connection, and the command-line list for connections showed the same. The agent&apos;s connection appears in the Connector Agent field when you register a source.</p></details>
     </div>
     <div class="q">
       <p>A new connector server&apos;s page shows <b>Unhealthy</b> with &quot;Connection dropped to dataplane due to internal error&quot;. What does Northgate do?</p>
@@ -178,7 +178,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
         <button class="opt" data-ok>Wait, then reload the page</button>
         <button class="opt">Add vCPUs to the server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The fix is to wait. In our lab on 8 November 2026 the connector went from connected to disconnected twice, then stayed connected from 11:32:54 to the last check at 11:36:26. Reload the page to see Healthy.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The fix is to wait. In our lab the connector went from connected to disconnected twice, then stayed connected from 11:32:54 to the last check at 11:36:26. Reload the page to see Healthy.</p></details>
     </div>
   </div>
 </section>

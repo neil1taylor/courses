@@ -37,13 +37,13 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It has decided to try BRS and orders its first instance in Frankfurt. Then it looks at what it was given.</p>
     </div>
   </div>
-  <p class="small">Every screen and number in this unit comes from real runs in our lab on 8 November 2026. Names of people, servers and addresses are blurred or left out; the lab&apos;s instance name and resource group appear as they were.</p>
+  <p class="small">Every screen and number in this unit comes from real runs in our lab. Names of people, servers and addresses are blurred or left out; the lab&apos;s instance name and resource group appear as they were.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Click through the console</span>
   <h2>Order the instance and wait for it</h2>
-  <p class="lead">These screens come from the IBM Cloud console in our lab on 8 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the IBM Cloud console in our lab. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="76,10.3,9.8,3.7" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B1-1-order-form.png" alt="The create page: name cohesity-lab-brs, resource group cohesity-lab-rg, and under Configure integration the Encryption switch turned off; the summary shows Frankfurt (eu-de) and plan Premium." width="1434" height="700"></div>
@@ -63,14 +63,14 @@
       <div class="shot"><img src="../ibm-brs/tutorials/images/B1-2-instance-active.png" alt="The instance page: cohesity-lab-brs, Active, plan Premium, location eu-de, encryption Provider managed, and a notice that OpenShift Virtualization for IBM Backup and Recovery is not generally available." width="1189" height="654"></div>
       <figcaption>
         <h3>You clicked Create and the page opened with the state Pending. Where do you see that the instance is ready?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Active</b>, next to the name. Refresh the page to see it. Times varied in our lab: the instance was Active at the first check after 14 minutes in one test (7 October 2026), after 5 minutes 26 seconds in another, and in under 3 minutes 22 seconds in the console run of 8 November 2026. The page also shows a notice that OpenShift Virtualization for IBM Backup and Recovery is not generally available.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Active</b>, next to the name. Refresh the page to see it. Times varied in our lab: the instance was Active at the first check after 14 minutes in one test, after 5 minutes 26 seconds in another, and in under 3 minutes 22 seconds in the console run. The page also shows a notice that OpenShift Virtualization for IBM Backup and Recovery is not generally available.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="51.8,90.5,19.7,7.3" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B1-2-instance-active.png" alt="The instance page: cohesity-lab-brs, Active, plan Premium, location eu-de, encryption Provider managed, and a notice that OpenShift Virtualization for IBM Backup and Recovery is not generally available." width="1189" height="654"></div>
       <figcaption>
         <h3>Where do you click to open the instance&apos;s own dashboard?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Launch dashboard</b> opens it in a new tab. In our lab on 8 November 2026 the tab stayed blank for about two minutes after signing in again, then showed the Summary page. Wait; do not close it.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Launch dashboard</b> opens it in a new tab. In our lab the tab stayed blank for about two minutes after signing in again, then showed the Summary page. Wait; do not close it.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -89,7 +89,7 @@
         <button class="opt">Bronze</button>
         <button class="opt" data-ok>Basic</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Basic.</span><p>Gold, Silver and Bronze each carry a data lock equal to their retention. Basic is daily, kept 30 days, with no lock. We checked this on a new instance on 8 November 2026, in the console and with the command line.</p><pre class="def" aria-label="The four starting policies">Policy   Backup every   Kept      Data lock
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Basic.</span><p>Gold, Silver and Bronze each carry a data lock equal to their retention. Basic is daily, kept 30 days, with no lock. We checked this on a new instance, in the console and with the command line.</p><pre class="def" aria-label="The four starting policies">Policy   Backup every   Kept      Data lock
 Gold     4 hours        1 week    1 week
 Silver   12 hours       2 weeks   2 weeks
 Bronze   1 day          30 days   30 days
@@ -137,7 +137,7 @@ Basic    1 day          30 days   none</pre></details>
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-5-policy-no-lock.png" alt="The same dialog with the lock removed: Retain for 7 Days and the + Add DataLock link." width="632" height="418"></div>
       <figcaption>
         <h3>Northgate does not want a lock on this policy. The lock has been removed. What does the dialog show in its place?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>+ Add DataLock</b>. To remove the lock, point at the Lock field and click the minus sign that appears. In our lab on 8 November 2026 the policy was saved as &quot;Retain 1w&quot; with no lock.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>+ Add DataLock</b>. To remove the lock, point at the Lock field and click the minus sign that appears. In our lab the policy was saved as &quot;Retain 1w&quot; with no lock.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -156,7 +156,7 @@ Basic    1 day          30 days   none</pre></details>
         <button class="opt">Click Authorize, to use the key on the page</button>
         <button class="opt" data-ok>Turn the Encryption switch off</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 8 November 2026 the switch was <b>on by default</b>, already filled in with a Key Protect instance and root key from another project in the account, with a warning &quot;Service authorization required&quot;. Switching it off gives an instance with provider-managed keys. Unit 4.4 covers using your own key.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The switch was <b>on by default</b>, already filled in with a Key Protect instance and root key from another project in the account, with a warning &quot;Service authorization required&quot;. Switching it off gives an instance with provider-managed keys. Unit 4.4 covers using your own key.</p></details>
     </div>
     <div class="q">
       <p>After the order, the instance page shows Encryption: <b>Provider managed</b>. Does that prove the switch was off?</p>

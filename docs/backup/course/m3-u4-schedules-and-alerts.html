@@ -45,7 +45,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. While it tests, it gives one group a backup every five minutes. It also wants to know whether BRS will warn it when a backup or a restore fails.</p>
     </div>
   </div>
-  <p class="small">The schedule numbers and screens come from a run in our lab on 9 November 2026. The alerts come from a run on 7 October 2026 and from the console on 9 November 2026. Server addresses and job names in recorded output are replaced with made-up names, and server names are blurred in the screenshots.</p>
+  <p class="small">The schedule numbers and screens come from a run in our lab. The alerts come from a run and from the console. Server addresses and job names in recorded output are replaced with made-up names, and server names are blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -64,7 +64,7 @@
         <button class="opt" data-ok>A little under 5 minutes after run 1</button>
         <button class="opt">At the group&apos;s next start window</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Run 2 started at 14:21:01, 4 min 46 s after run 1. Run 3 started at 14:25:54, 4 min 53 s after run 2. In October the gaps were 4 min 4 s and 4 min 7 s. In both runs the gap was under 5 minutes.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Run 2 started at 14:21:01, 4 min 46 s after run 1. Run 3 started at 14:25:54, 4 min 53 s after run 2. In the first run the gaps were 4 min 4 s and 4 min 7 s. In both runs the gap was under 5 minutes.</p></details>
     </div>
     <div class="q">
       <p>The file was added before run 1. How much do runs 2 and 3 read?</p>
@@ -101,7 +101,7 @@
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="45.5,52,8,17" data-width="900px">
-      <div class="shot"><img src="../ibm-brs/tutorials/images/B7d-3-scheduled-runs.png" alt="Group Details: b-linux2-files on policy b7d-every-5min. Runs on 9 November: incrementals at 2:25 pm and 2:21 pm with 0 Bytes read, and at 2:16 pm with 2 MiB read; earlier runs below." width="1180" height="540"></div>
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B7d-3-scheduled-runs.png" alt="Group Details: b-linux2-files on policy b7d-every-5min. Runs: incrementals at 2:25 pm and 2:21 pm with 0 Bytes read, and at 2:16 pm with 2 MiB read; earlier runs below." width="1180" height="540"></div>
       <figcaption>
         <h3>The group has been running by itself. Click the figure that shows the later runs read nothing.</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Data Read is 0 Bytes for the runs at 2:21 pm and 2:25 pm. The run at 2:16 pm read 2 MiB, the new file.</p></details>
@@ -123,7 +123,7 @@
         <button class="opt">No alert</button>
         <button class="opt">A warning after an hour</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 7 October, a failed Windows restore raised two critical alerts, both still Open.</p><pre class="def" aria-label="The alert">RestoreTaskFailed (CE00610034), Critical
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab, a failed Windows restore raised two critical alerts, both still Open.</p><pre class="def" aria-label="The alert">RestoreTaskFailed (CE00610034), Critical
 "Restore for object ng-win-01 in job ng-win-restore failed"</pre></details>
     </div>
     <div class="q">
@@ -133,7 +133,7 @@
         <button class="opt" data-ok>No alert</button>
         <button class="opt">An alert when the agent comes back</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The agent was down from 14:48 to 14:54 on 7 October and raised no alert in those 6 minutes. On 9 November, with the agent down from 13:59 to 14:06 UTC, the console showed none either.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The agent was down from 14:48 to 14:54 and raised no alert in those 6 minutes. With the agent down from 13:59 to 14:06 UTC, the console showed none either.</p></details>
     </div>
   </div>
   <div class="q" style="margin-top:20px">
@@ -143,15 +143,15 @@
       <button class="opt" data-ok>Yes: a warning, ProtectionPolicyDeleted</button>
       <button class="opt">Yes: a critical alert</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>On 7 October the deletion raised <code>ProtectionPolicyDeleted</code> (<code>CE00610017</code>), severity Warning, still Open. It is an audit event.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>The deletion raised <code>ProtectionPolicyDeleted</code> (<code>CE00610017</code>), severity Warning, still Open. It is an audit event.</p></details>
   </div>
-  <p class="watch"><b>Watch for this.</b> In our lab, a Linux backup that waited with 0 bytes read raised no alert, and neither did an agent outage. A connector alert on 7 October did not match any outage of ours.</p>
+  <p class="watch"><b>Watch for this.</b> In our lab, a Linux backup that waited with 0 bytes read raised no alert, and neither did an agent outage. A connector alert did not match any outage of ours.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>Read the alerts and see how to send them</h2>
-  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="0.5,1,32,64" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7h-1-dashboard-health.png" alt="Dashboard summary: the Health card, Active Alerts - Last 24 Hours, 1 Warning, 1 Data Service. On the right, the Notifications panel lists finished recovery tasks." width="1194" height="510"></div>
@@ -189,7 +189,7 @@
         <button class="opt" data-ok>A little under 5 minutes</button>
         <button class="opt">They waited for the group&apos;s start window</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>4 min 46 s and 4 min 53 s on 9 November; 4 min 4 s and 4 min 7 s in October.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>4 min 46 s and 4 min 53 s; 4 min 4 s and 4 min 7 s in the first run.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which of these raised no alert in our lab?</p>

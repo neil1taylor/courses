@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its SQL Server on a Windows server holds a database called <code>labdb</code>. Today it drops the database on purpose, restores it from the backup and compares the numbers.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 8 November 2026 for the console. The location of the backup is blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab, some at the command line and some in the console. The location of the backup is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -77,13 +77,13 @@
 <section class="screen">
   <span class="kicker">Step 2 · Run it</span>
   <h2>Check the restored database</h2>
-  <p class="lead">Run each command in turn. The output is what the lab recorded on 7 October 2026. The numbers are the lab&apos;s own.</p>
+  <p class="lead">Run each command in turn. The output is what the lab recorded. The numbers are the lab&apos;s own.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
         <div class="bar"><span>powershell</span><span data-term-count></span></div>
         <div class="cmd">
-          <p class="pre">after the drop, 7 October 2026</p>
+          <p class="pre">after the drop</p>
           <pre class="in">Q "SELECT COUNT(*) FROM sys.databases WHERE name='labdb'"</pre>
           <pre class="out">0</pre>
           <p class="hand note">No database named labdb is left.</p>
@@ -118,10 +118,10 @@ after:  100000,1393371002</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Click through the console</span>
   <h2>Restore over the original</h2>
-  <p class="lead">These screens come from the BRS console in our lab on 8 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="93.9,36.3,3.6,3.9" data-width="760px">
-      <div class="shot"><img src="../ibm-brs/tutorials/images/B5c-1-select-db.png" alt="Recover Microsoft SQL: labdb ticked. The selected recovery point, 8 November 2:03 pm, has a pencil beside it. The location is blurred." width="1136" height="693"></div>
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B5c-1-select-db.png" alt="Recover Microsoft SQL: labdb ticked. The selected recovery point, 2:03 pm, has a pencil beside it. The location is blurred." width="1136" height="693"></div>
       <figcaption>
         <h3><code>labdb</code> is ticked and the latest backup is chosen. Where do you click to choose another backup?</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The pencil beside the recovery point. Choose <b>List</b>, pick the time and click <b>Select Recovery Point</b>. Then click <b>Next: Recover Options</b>.</p></details>
@@ -131,7 +131,7 @@ after:  100000,1393371002</pre>
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5c-3-overwrite.png" alt="Targets: Overwrite Original Database chosen, with a yellow warning that this is a destructive action and cannot be undone. WITH RECOVERY is On." width="1135" height="741"></div>
       <figcaption>
         <h3>You chose <b>Overwrite Original Database</b>. Where does the console warn you about it?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The yellow box reads &quot;You are overwriting the original database. This is a destructive action and cannot be undone.&quot; <b>Targets</b> starts at <b>Recover as a new Database</b>. Click <b>Recover</b>. In our lab on 8 November it succeeded in 23 s.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The yellow box reads &quot;You are overwriting the original database. This is a destructive action and cannot be undone.&quot; <b>Targets</b> starts at <b>Recover as a new Database</b>. Click <b>Recover</b>. In our lab it succeeded in 23 s.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -176,7 +176,7 @@ after:  100000,1393371002</pre>
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5c-6-edit-missing.png" alt="Edit Protection: a warning that objects protected by this group are missing from the source and will be removed on save. 0 Microsoft SQL Objects." width="1002" height="549"></div>
       <figcaption>
         <h3>You open the group&apos;s menu and click <b>Edit</b>. Where does the page say what is wrong?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The warning says objects of the group are missing from the source and will be removed when you save. To fix it, click the pencil under <b>Objects</b>, tick <code>labdb</code> again and click <b>Save</b>. In our lab on 8 November the next run read 50.5 MB, a full backup of the new database, and listed <code>MSSQLSERVER/labdb</code> again.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The warning says objects of the group are missing from the source and will be removed when you save. To fix it, click the pencil under <b>Objects</b>, tick <code>labdb</code> again and click <b>Save</b>. In our lab the next run read 50.5 MB, a full backup of the new database, and listed <code>MSSQLSERVER/labdb</code> again.</p></details>
       </figcaption>
     </figure>
   </div>

@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It has access to the Beta and now makes its first vault. The console warns that the vault cannot be modified once it is created.</p>
     </div>
   </div>
-  <p class="small">The console screens come from our lab on 10 November 2026. The six failed creates are from 25 September 2026. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">The console screens come from our lab. The six failed creates are from earlier attempts. The vault is a Beta in us-south, with no SLA.</p>
 </section>
 
 <section class="screen">
@@ -67,7 +67,7 @@
         <button class="opt" data-ok>&quot;Once created, the vault configuration cannot be modified.&quot;</button>
         <button class="opt">Only the name can be changed</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That warning is at the top of the form (10 November 2026). Check every setting before you click Create.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>That warning is at the top of the form. Check every setting before you click Create.</p></details>
     </div>
     <div class="q">
       <p>Which encryption choices does the form offer?</p>
@@ -138,7 +138,7 @@
         <button class="opt" data-ok>Locks are applied per object: Data Protect sets each one from its archive retention</button>
         <button class="opt">Every object is locked for ever</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>&quot;Enter 0 to apply locks manually per-object.&quot; The October vaults in our lab used 0.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>&quot;Enter 0 to apply locks manually per-object.&quot; The first vaults in our lab used 0.</p></details>
     </div>
   </div>
 </section>
@@ -146,7 +146,7 @@
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>Six creates that failed with no error</h2>
-  <p class="lead">On 25 September 2026 Northgate&apos;s first account tried six creates in our lab. Each was accepted, then went to failed. Here are the six.</p>
+  <p class="lead">Northgate&apos;s first account tried six creates in our lab. Each was accepted, then went to failed. Here are the six.</p>
   <pre class="def" aria-label="The six creates">#  Retention (min/default/max)  Network
 1  1/0/3                        VPC and IP range
 2  0/0/3                        VPC and IP range
@@ -165,7 +165,7 @@ The status record has no error text.</pre>
         <button class="opt" data-ok>The account was not on the allow list (most likely; IBM did not confirm)</button>
         <button class="opt">The network range</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The six attempts ruled out the retention values, the VPC and the IP range, the COS instance and the Editor role. Only IBM can see the cause. On 5 October 2026 one create from the same account became active in about 30 seconds.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The six attempts ruled out the retention values, the VPC and the IP range, the COS instance and the Editor role. Only IBM can see the cause. One create from the same account became active in about 30 seconds.</p></details>
     </div>
     <div class="q">
       <p>What did each failed vault leave behind?</p>
@@ -209,7 +209,7 @@ The status record has no error text.</pre>
         <button class="opt" data-ok>The account was not on the allow list</button>
         <button class="opt">The lock length</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Most likely, not confirmed by IBM. Six creates on 25 September 2026 failed; one on 5 October 2026 worked.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Most likely, not confirmed by IBM. Six creates failed; one worked.</p></details>
     </div>
   </div>
 </section>

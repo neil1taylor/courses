@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its board asks what happens if an attacker gets the backup admin&apos;s keys. Here is what we tried, in our lab, with each key.</p>
     </div>
   </div>
-  <p class="small">Every result comes from real tests in our lab on 5 and 6 October 2026. The vault is a Beta in us-south, with no SLA. Vault names, hosts and keys are made-up or placeholders: the values were changed.</p>
+  <p class="small">Every result comes from real tests in our lab. The vault is a Beta in us-south, with no SLA. Vault names, hosts and keys are made-up or placeholders: the values were changed.</p>
   <p class="small"><b>Terms used.</b> <b>GET, PUT, DELETE and HEAD</b>: requests to storage. GET reads an object, PUT writes one, DELETE removes one, and HEAD asks about an object without reading it. <b>Object key</b>: the name an object is stored under. It is not a secret key.</p>
 </section>
 
@@ -88,7 +88,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>Try to delete a locked version</h2>
-  <p class="lead">On 5 October the lab tried to delete one real data chunk and the real archive_metadata object, both locked. Each holder sent a delete for one version.</p>
+  <p class="lead">The lab tried to delete one real data chunk and the real archive_metadata object, both locked. Each holder sent a delete for one version.</p>
   <pre class="def" aria-label="The attempts">DELETE /&lt;OBJECT_KEY&gt;?versionId=&lt;VERSION_ID&gt;
 
 holder                    result
@@ -108,7 +108,7 @@ owner token, in the VPC   ?</pre>
 write key                 403 Access Denied because object protected by object lock
 read key                  403 Access Denied
 instance HMAC key         403 Access Denied (it could not even list)
-owner token, in the VPC   403 on GET, HEAD and DELETE</pre><p>Both objects still answered HEAD 200 afterwards. The instance HMAC key was the strongest key we had: an account-owner HMAC key does not exist in our account (5 October).</p></details>
+owner token, in the VPC   403 on GET, HEAD and DELETE</pre><p>Both objects still answered HEAD 200 afterwards. The instance HMAC key was the strongest key we had: an account-owner HMAC key does not exist in our account.</p></details>
     </div>
     <div class="q">
       <p>Same delete with the write key, now with the header <code>x-amz-bypass-governance-retention: true</code>. What happened?</p>
@@ -125,7 +125,7 @@ owner token, in the VPC   403 on GET, HEAD and DELETE</pre><p>Both objects still
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>Shorten the lock, then overwrite</h2>
-  <p class="lead">Two more tries with the write key, run in our lab on 5 October. The first changes the lock. The second writes new content over an old key. The overwrite used a probe object, not a real archive key.</p>
+  <p class="lead">Two more tries with the write key, run in our lab. The first changes the lock. The second writes new content over an old key. The overwrite used a probe object, not a real archive key.</p>
   <pre class="def" aria-label="Shorten and overwrite attempts">PUT /&lt;OBJECT_KEY&gt;?retention&amp;versionId=&lt;VERSION_ID&gt;
     COMPLIANCE until 18:00 today                    write key
     GOVERNANCE plus the bypass header               write key
@@ -162,7 +162,7 @@ latest version                   -> the new content</pre><p><b>Caveat.</b> The l
   <p class="lead">Northgate&apos;s draft board note makes three statements. Each has a fault. Choose the true version.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>&quot;The account owner can switch on audit events and see every attempt.&quot; What did we find on 6 October?</p>
+      <p>&quot;The account owner can switch on audit events and see every attempt.&quot; What did we find?</p>
       <div class="opts">
         <button class="opt">It worked from the VPC but not from outside</button>
         <button class="opt" data-ok>The owner got 403 on the bucket&apos;s event settings, and no event for the vault reached either log route</button>
@@ -171,7 +171,7 @@ latest version                   -> the new content</pre><p><b>Caveat.</b> The l
       <details class="reveal"><summary>Show the answer</summary><p>The owner got 403 for the change and for a read, from the Mac and from the lab VPC. We searched two log instances: no vault events, not even for the refused delete. In our lab the account owner could not audit this vault.</p></details>
     </div>
     <div class="q">
-      <p>&quot;A Defender admin who deletes the archive and the target removes the data from the vault.&quot; What happened on 6 October?</p>
+      <p>&quot;A Defender admin who deletes the archive and the target removes the data from the vault.&quot; What happened?</p>
       <div class="opts">
         <button class="opt" data-ok>The archive records and the target went; the vault kept the data, still locked</button>
         <button class="opt">The vault data was deleted after 45 seconds</button>
@@ -187,7 +187,7 @@ latest version                   -> the new content</pre><p><b>Caveat.</b> The l
       <button class="opt" data-ok>The call was accepted and the vault stuck in &quot;deleting&quot;; the end state is not known</button>
       <button class="opt">The vault was deleted in one minute</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s page says it cannot be done. In our lab on 6 October the call returned 202 and the vault stayed in &quot;deleting&quot;. At 16:25 UTC the write key still listed and read all three locked objects. This was a test vault with no data of value.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s page says it cannot be done. In our lab the call returned 202 and the vault stayed in &quot;deleting&quot;. At 16:25 UTC the write key still listed and read all three locked objects. This was a test vault with no data of value.</p></details>
   </div>
 </section>
 

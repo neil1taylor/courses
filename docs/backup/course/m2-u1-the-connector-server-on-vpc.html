@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It has Linux servers in a VPC in Frankfurt and wants BRS to back them up. Its first job is to build the server that links the VPC to the service.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from runs in our lab, on 7 October and 8 November 2026. Server names and addresses were changed to made-up Northgate values, for example <code>ng-app-01</code> and <code>10.0.0.10</code>. The screenshots show the lab&apos;s own resource names; the registration token is blurred.</p>
+  <p class="small">Every number and screen in this unit comes from runs in our lab. Server names and addresses were changed to made-up Northgate values, for example <code>ng-app-01</code> and <code>10.0.0.10</code>. The screenshots show the lab&apos;s own resource names; the registration token is blurred.</p>
 </section>
 
 <section class="screen">
@@ -85,7 +85,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Spot the fault</span>
   <h2>The backup agent will not install</h2>
-  <p class="lead">Northgate downloads the Linux backup agent as an RPM, copies it to its Linux server and installs it. This is what came back in our lab on 7 October 2026.</p>
+  <p class="lead">Northgate downloads the Linux backup agent as an RPM, copies it to its Linux server and installs it. This is what came back in our lab.</p>
   <pre class="def" aria-label="The failed install">$ sudo rpm -Uvh /tmp/brs-agent.rpm
 Failed dependencies: lsof is needed by cohesity-agent-7.3.12-1.x86_64, wget is needed by ...</pre>
   <div class="pair" style="margin-top:20px">
@@ -110,7 +110,7 @@ sudo systemctl is-active cohesity-agent; sudo ss -ltn | grep -E "50051|59999"
 active; listening on 50051 and 59999</pre></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> On 8 November 2026 the lab server already had <code>lsof</code>, <code>wget</code>, <code>nfs-utils</code> and <code>lvm2</code>, and the install worked first time. Check a new server for them before you install.</p>
+  <p class="watch"><b>Watch for this.</b> The lab server already had <code>lsof</code>, <code>wget</code>, <code>nfs-utils</code> and <code>lvm2</code>, and the install worked first time. Check a new server for them before you install.</p>
 </section>
 
 <section class="screen">
@@ -129,7 +129,7 @@ active; listening on 50051 and 59999</pre></details>
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2a-4-connector-server-form.png" alt="The Virtual server for VPC form: zone eu-de-1, name cohesity-lab-dsc, resource group cohesity-lab-rg; the summary shows 4 vCPUs, 16 GiB, image content-ibm-backup-recovery-ds-connector-7 version 7.3.13 and a 171 GB boot volume." width="1480" height="762"></div>
       <figcaption>
         <h3>The catalog link opens this form with the image filled in. In our lab one field started at us-south-2. Click it.</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Check every field; the defaults do not match the lab. On 8 November 2026 the form started at zone us-south-2, resource group Default, profile bxf-2x8, another VPC in the account, that VPC&apos;s default security group, and no SSH key. Create virtual server stays disabled until you pick an SSH key, even though the connector refuses SSH logins. The server was running at once, and its web page answered about 1.5 minutes later.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Check every field; the defaults do not match the lab. The form started at zone us-south-2, resource group Default, profile bxf-2x8, another VPC in the account, that VPC&apos;s default security group, and no SSH key. Create virtual server stays disabled until you pick an SSH key, even though the connector refuses SSH logins. The server was running at once, and its web page answered about 1.5 minutes later.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="11.5,69,59.6,15" data-width="760px">
@@ -154,10 +154,10 @@ active; listening on 50051 and 59999</pre></details>
         <button class="opt" data-ok>The page asks for a new password at once. Keep it</button>
         <button class="opt">IBM sends you a password</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The default password has expired, so you must set a new one before anything else. Keep it: it is not recoverable from IBM&apos;s side. The page also has a Domain Names field; in our lab on 8 November 2026 it was already filled in with <code>cloud.ibm.com</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The default password has expired, so you must set a new one before anything else. Keep it: it is not recoverable from IBM&apos;s side. The page also has a Domain Names field; in our lab it was already filled in with <code>cloud.ibm.com</code>.</p></details>
     </div>
     <div class="q">
-      <p>The connector was saved at about 11:29 UTC on 8 November 2026. How long did it keep dropping before it stayed connected, in our lab?</p>
+      <p>The connector was saved at about 11:29 UTC. How long did it keep dropping before it stayed connected, in our lab?</p>
       <div class="opts">
         <button class="opt">It never dropped</button>
         <button class="opt" data-ok>About 3 minutes</button>

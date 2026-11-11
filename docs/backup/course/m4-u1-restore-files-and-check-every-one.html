@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It backs up the folder <code>/data</code> on a Linux server. Today it deletes <code>/data/docs</code> on purpose, restores it and checks every file.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 8 November 2026 for the console. The server name is blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab, some at the command line and some in the console. The server name is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -89,7 +89,7 @@
       <details class="reveal"><summary>Show the answer</summary><span class="hand">12 seconds on the command line, 23 in the console.</span><pre class="def" aria-label="Restore times">Run                                  Time
 Command line, connector server       12 s
 Command line, Connector Agent        12 s
-Console, 8 November                  23 s</pre><p>The two command-line runs were on 7 October 2026. Both showed 503 of 503 files matching.</p></details>
+Console                             23 s</pre><p>Both command-line runs showed 503 of 503 files matching.</p></details>
     </div>
     <div class="q">
       <p>In the console run, <code>/data/docs</code> held 505 files after the restore, but the checksum list holds 500 of them. Why?</p>
@@ -106,7 +106,7 @@ Console, 8 November                  23 s</pre><p>The two command-line runs were
 <section class="screen">
   <span class="kicker">Step 3 · Click through the console</span>
   <h2>Restore the folder</h2>
-  <p class="lead">These screens come from the BRS console in our lab on 8 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="1.2,37.6,3.4,5.6" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5a-1-select-folder.png" alt="The snapshot browser: data opened, docs ticked, 1 Selected docs /data." width="1184" height="676"></div>
@@ -126,7 +126,7 @@ Console, 8 November                  23 s</pre><p>The two command-line runs were
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5a-3-recovery-done.png" alt="Recovery details: Succeeded in 23 s, from Cloud Archive, docs Finished." width="1227" height="600"></div>
       <figcaption>
         <h3>The recovery has finished. Where does it say how long it took?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Duration</b> says 23s. The status is Succeeded, the data came from Cloud Archive and <code>docs</code> is Finished. In our lab on 8 November, the check then gave 503 of 503 OK.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Duration</b> says 23s. The status is Succeeded, the data came from Cloud Archive and <code>docs</code> is Finished. In our lab, the check then gave 503 of 503 OK.</p></details>
       </figcaption>
     </figure>
   </div>

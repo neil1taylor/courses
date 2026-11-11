@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It runs VMs on a ROVS (OpenShift Virtualization) cluster, here called ng-cluster-01, and wants BRS to back them up. First BRS needs a connector on that cluster.</p>
     </div>
   </div>
-  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names were changed. Every screen and result comes from our lab on 1 and 2 October and 9 November 2026.</p>
+  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it. IBM lists it for the AU-SYD region only: its pages, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them. Names were changed. Every screen and result comes from our lab.</p>
 </section>
 
 <section class="screen">
@@ -54,7 +54,7 @@
         <button class="opt" data-ok>Nothing else: they are added when you register the cluster as a source</button>
         <button class="opt">Only Velero</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s guide says the Datamover (a DaemonSet) and Velero are deployed automatically during source registration. They are not part of the connector install. Unit 5.2 does the registration. In our lab, on 9 November 2026, after registration there was a Deployment <code>velero</code> and a DaemonSet <code>cohesity-dm</code> with 3 pods, one for each worker.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s guide says the Datamover (a DaemonSet) and Velero are deployed automatically during source registration. They are not part of the connector install. Unit 5.2 does the registration. In our lab, after registration there was a Deployment <code>velero</code> and a DaemonSet <code>cohesity-dm</code> with 3 pods, one for each worker.</p></details>
     </div>
     <div class="q">
       <p>How much room does the connector need on the cluster?</p>
@@ -70,7 +70,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>Make the connection</h2>
-  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="3.3,83.8,26.5,11.6" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2d-1-platform.png" alt="Create Data Source Connection: the Deployment Platform list with VMware, VPC, ROKS Classic and ROKS VPC." width="780" height="413"></div>
@@ -90,7 +90,7 @@
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2d-4-wrong-path.png" alt="The Sources wizard&apos;s own connection step: Copy OVA URL and a token (blurred)." width="736" height="544"></div>
       <figcaption>
         <h3>A learner makes the connection from the Register Source wizard instead, and sees this. What shows it is the wrong path?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Copy OVA URL</b>: this is the VMware flow, an OVA and a token, with no Helm command. In our lab on 9 November 2026 this path made a connection that stayed Unused. Make the connection from Data Source Connections.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Copy OVA URL</b>: this is the VMware flow, an OVA and a token, with no Helm command. In our lab this path made a connection that stayed Unused. Make the connection from Data Source Connections.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -109,7 +109,7 @@
         <button class="opt" data-ok>The chart asks for a storage class that is not on this cluster</button>
         <button class="opt">The cluster has too little CPU</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The pod&apos;s claim for storage was Pending too: <code>storageclass.storage.k8s.io &quot;ibmc-vpc-block-metro-5iops-tier&quot; not found</code>. The chart uses that storage class by default, and the command as copied does not set one. That class is not on this ROVS cluster. The cluster&apos;s default class is <code>ocs-storagecluster-ceph-rbd</code>. In our lab on 2 October 2026 the pod said: &quot;pod has unbound immediate PersistentVolumeClaims&quot;.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The pod&apos;s claim for storage was Pending too: <code>storageclass.storage.k8s.io &quot;ibmc-vpc-block-metro-5iops-tier&quot; not found</code>. The chart uses that storage class by default, and the command as copied does not set one. That class is not on this ROVS cluster. The cluster&apos;s default class is <code>ocs-storagecluster-ceph-rbd</code>. In our lab the pod said: &quot;pod has unbound immediate PersistentVolumeClaims&quot;.</p></details>
     </div>
     <div class="q">
       <p>What fixed it?</p>
@@ -118,10 +118,10 @@
         <button class="opt" data-ok>Uninstalling, deleting the Pending claim, and installing again with the cluster&apos;s storage class set</button>
         <button class="opt">Deleting the pod</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 9 November 2026 the lab ran <code>helm uninstall</code>, deleted the Pending claim, and installed again with <code>--set volumeClaimTemplate.storageClass=ocs-storagecluster-ceph-rbd</code> and <code>--set replicaCount=2</code>. Pod 0 was 1/1 Running after 2 min 34 s, and pod 1 a few minutes later. Helm leaves the claim behind, so remove a Pending one by hand.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The lab ran <code>helm uninstall</code>, deleted the Pending claim, and installed again with <code>--set volumeClaimTemplate.storageClass=ocs-storagecluster-ceph-rbd</code> and <code>--set replicaCount=2</code>. Pod 0 was 1/1 Running after 2 min 34 s, and pod 1 a few minutes later. Helm leaves the claim behind, so remove a Pending one by hand.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> In our lab Helm printed STATUS: deployed on 2 October and again on 9 November 2026, and the pod stayed Pending both times. Look at the pod and its claim, not at the Helm status.</p>
+  <p class="watch"><b>Watch for this.</b> In our lab Helm printed STATUS: deployed, and the pod stayed Pending both times. Look at the pod and its claim, not at the Helm status.</p>
 </section>
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
@@ -132,7 +132,7 @@
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2d-3-connection-healthy.png" alt="Data Source Connections: the RoksVpc connection healthy with 2 connectors." width="1164" height="465"></div>
       <figcaption>
         <h3>The new connection&apos;s name ends in RoksVpc. Click the figure that shows the connector pods have checked in.</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. A green tick and <b>2</b> connectors. On 9 November 2026 the lab saw this at 07:07 UTC.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. A green tick and <b>2</b> connectors. The lab saw this at 07:07 UTC.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -144,7 +144,7 @@
         <button class="opt" data-ok>No: stop, and go back to installing the connector</button>
         <button class="opt">Yes, with a longer timeout</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The rule is: if the connection has no connectors, stop. In our lab on 1 October 2026, registrations through a connection with no connectors failed with <code>Encountered HTTP connection error</code>. Unit 5.2 comes back to this.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The rule is: if the connection has no connectors, stop. In our lab, registrations through a connection with no connectors failed with <code>Encountered HTTP connection error</code>. Unit 5.2 comes back to this.</p></details>
     </div>
   </div>
 </section>
@@ -177,7 +177,7 @@
         <button class="opt" data-ok>The connection is healthy and lists 2 connectors</button>
         <button class="opt">The connection&apos;s name ends in a number</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 9 November 2026 the RoksVpc connection showed a green tick and 2 connectors.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The RoksVpc connection showed a green tick and 2 connectors.</p></details>
     </div>
   </div>
 </section>

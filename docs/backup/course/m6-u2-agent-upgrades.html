@@ -43,13 +43,13 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It keeps the agents on <code>ng-app-01</code> and its other servers current, and wants to know how an upgrade is made and what it looks like when one cannot happen.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab, on 7 October and 9 November 2026. Addresses were changed to made-up ones, and server names are blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab. Addresses were changed to made-up ones, and server names are blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Predict</span>
   <h2>An upgrade for an agent that is already current</h2>
-  <p class="lead">In our lab on 7 October 2026, all three agents were on version <code>7.3.12_release-20260713_2e7241a2</code>, and BRS marked each <code>kCurrent</code>. Northgate made an upgrade task for one of them anyway, to start in 90 seconds with a window of 30 minutes.</p>
+  <p class="lead">In our lab, all three agents were on version <code>7.3.12_release-20260713_2e7241a2</code>, and BRS marked each <code>kCurrent</code>. Northgate made an upgrade task for one of them anyway, to start in 90 seconds with a window of 30 minutes.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>What does the task do?</p>
@@ -117,7 +117,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Click through the console</span>
   <h2>Where the console offers an upgrade</h2>
-  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026. Both Linux servers ran <code>cohesity-agent-7.3.13-1</code>, the agent of the day. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Both Linux servers ran <code>cohesity-agent-7.3.13-1</code>, the agent of the day. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="67.2,20.4,5.6,8.9" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7e-1-upgrade-greyed.png" alt="Sources page: Agents 0 Errors, 0 Upgradable, 4 Deployed. A Linux source's menu is open, with Upgrade Agent greyed out. Addresses are blurred." width="1154" height="450"></div>
@@ -139,7 +139,7 @@
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>Connectors that cannot upgrade</h2>
-  <p class="lead">On 9 November 2026 Northgate moved files with IBM&apos;s Classic-to-VPC migration tool (unit 6.3). The backup and the restore worked. Then the console&apos;s Health page showed this.</p>
+  <p class="lead">Northgate moved files with IBM&apos;s Classic-to-VPC migration tool (unit 6.3). The backup and the restore worked. Then the console&apos;s Health page showed this.</p>
   <div class="tour">
     <figure class="tstep" data-hot="19.7,59.6,20.3,15.5" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/M1-5-upgrade-alerts.png" alt="System > Health, Alerts: 2 Critical, 1 Warning, 1 Healthy. Two critical alerts named DataSourceConnectorUpgradeFailed, 2 occurrences each, last seen 6 minutes ago, category Data Source Connector." width="1180" height="490"></div>
@@ -181,7 +181,7 @@
         <button class="opt">The agents are in error</button>
         <button class="opt">Upgrades are switched off for the instance</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 9 November 2026 the Agents summary showed 0 errors, 0 upgradable and 4 deployed, and Upgrade Agent was greyed because no agent was older than the current one.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the Agents summary showed 0 errors, 0 upgradable and 4 deployed, and Upgrade Agent was greyed because no agent was older than the current one.</p></details>
     </div>
     <div class="q" data-check>
       <p>A CLI upgrade task for an agent already on the newest version ends how?</p>
