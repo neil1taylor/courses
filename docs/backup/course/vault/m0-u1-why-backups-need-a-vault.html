@@ -45,7 +45,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It backs up its servers with Defender Data Protect. Its board asks: if an attacker gets in, will the backups still be there?</p>
     </div>
   </div>
-  <p class="small">No experience of vaults or Data Protect is needed. Results quoted here come from tests in our lab in October and November 2026; later units show each one in detail.</p>
+  <p class="small">No experience of vaults or Data Protect is needed. Results quoted here come from tests in our lab; later units show each one in detail.</p>
 </section>
 
 <section class="screen">
@@ -143,7 +143,7 @@ write window an optional daily slot for requests</pre>
         <button class="opt" data-ok>A copy in a vault, locked until a date, that the admin login cannot delete</button>
         <button class="opt">A copy with a hidden name</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 6 October 2026 the archive records and the vault target were removed in Data Protect. The vault kept the same objects, and the lock we checked was unchanged. Unit 1.1 shows the test.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the archive records and the vault target were removed in Data Protect. The vault kept the same objects, and the lock we checked was unchanged. Unit 1.1 shows the test.</p></details>
     </div>
   </div>
 </section>
@@ -160,7 +160,7 @@ write window an optional daily slot for requests</pre>
         <button class="opt" data-ok>Refuses: the object is locked</button>
         <button class="opt">Asks the owner first</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 5 October 2026 every try was refused with &quot;Access Denied because object protected by object lock&quot;. Tries to change the lock date were refused too.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab every try was refused with &quot;Access Denied because object protected by object lock&quot;. Tries to change the lock date were refused too.</p></details>
     </div>
     <div class="q">
       <p>The same attacker tries from a server outside the allow-list. What happens?</p>
@@ -169,7 +169,7 @@ write window an optional daily slot for requests</pre>
         <button class="opt" data-ok>The vault refuses the request</button>
         <button class="opt">The vault answers reads only</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 6 October 2026 a valid write key used from a network not on the list was refused.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab a valid write key used from a network not on the list was refused.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> A lock stops deletion, not every change. A holder of the write key could still write a new version on top of a test object; the old version stayed. Unit 1.1 shows it.</p>
@@ -196,7 +196,7 @@ write window an optional daily slot for requests</pre>
         <button class="opt" data-ok>A new Data Protect cluster and the read key</button>
         <button class="opt">IBM to unlock the vault</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 10 November 2026, after the attack and the loss of the cluster, a new cluster with only the read key brought back all three workloads as they were before the attack. Module 4 walks through it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab, after the attack and the loss of the cluster, a new cluster with only the read key brought back all three workloads as they were before the attack. Module 4 walks through it.</p></details>
     </div>
   </div>
   <p class="small">The Cyber Vault is a Beta: it runs only in the us-south region (Dallas), and IBM gives no service level agreement (SLA) or support for it. Unit 1.3 covers its terms.</p>

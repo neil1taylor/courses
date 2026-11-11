@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its orders database, <code>labdb</code>, runs on a Windows server. It wants it backed up natively, and it wants to know what a backup problem looks like.</p>
     </div>
   </div>
-  <p class="small">The console screens and numbers come from real runs in our lab on 8 November 2026. The restore case comes from a run on 7 October 2026. The server address in the recorded output is replaced with a made-up name, <code>ng-sql-01</code>, and the server name is blurred in the screenshots.</p>
+  <p class="small">The console screens and numbers come from real runs in our lab. The restore case comes from a run. The server address in the recorded output is replaced with a made-up name, <code>ng-sql-01</code>, and the server name is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -150,7 +150,7 @@ Second, 5,000 rows added  105,000   25.3 MB   Warning</pre></details>
       <div class="shot"><img src="../ibm-brs/tutorials/images/B4c-4-run-no-warning.png" alt="Run Details of the run at 2:16 pm: Succeeded, 1 object succeeded, 0 failed, 16 s. The server row and the database row are both green; 24.1 MiB read. The server name is blurred." width="1227" height="530"></div>
       <figcaption>
         <h3>The next run, after the change. Where do you see that the warning is gone?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Status reads Succeeded and no banner appears. In our lab on 8 November 2026 the run at 14:16 UTC read 25.3 MB (24.1 MiB).</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Status reads Succeeded and no banner appears. In our lab the run at 14:16 UTC read 25.3 MB (24.1 MiB).</p></details>
       </figcaption>
     </figure>
   </div>
@@ -160,7 +160,7 @@ Second, 5,000 rows added  105,000   25.3 MB   Warning</pre></details>
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>A run that protects nothing</h2>
-  <p class="lead">In a run on 7 October 2026, the database was dropped and restored between two backups. Northgate then ran the group again. This is what the run showed.</p>
+  <p class="lead">In a run, the database was dropped and restored between two backups. Northgate then ran the group again. This is what the run showed.</p>
   <pre class="def" aria-label="What the run showed">status      SucceededWithWarning
 bytesRead   0
 objects     the host, ng-sql-01 (the database is not listed)

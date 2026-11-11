@@ -40,7 +40,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its board has heard the words &quot;air gap&quot;. Before Northgate repeats them, it needs to know exactly what it would be promising.</p>
     </div>
   </div>
-  <p class="small">The screen comes from the IBM Cloud console in our lab on 10 November 2026. The results come from tests on 5 and 6 October 2026. The vault is IBM Cloud Cyber Vault (Beta), in us-south, with no SLA.</p>
+  <p class="small">The screen comes from the IBM Cloud console in our lab. The results come from tests. The vault is IBM Cloud Cyber Vault (Beta), in us-south, with no SLA.</p>
   <p class="small"><b>Terms used.</b> <b>COS</b>: short for IBM Cloud Object Storage. A COS instance is one copy of that service in an account. <b>VSI</b>: a virtual server instance, which is a virtual server in IBM Cloud. <b>eu-de</b>: the IBM Cloud region in Frankfurt. <b>Deployable Architecture</b>: a ready-made package in the IBM Cloud catalog that builds a set of cloud resources in your account. <b>Audit events</b>: records of who made which request to a service.</p>
 </section>
 
@@ -65,7 +65,7 @@
         <button class="opt" data-ok>Normal answers: HTTP 200 for lists and reads</button>
         <button class="opt">Only reads</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A control from the lab VSI inside the allowed VPC got HTTP 200 (6 October 2026). That is why this is logical isolation: the vault is reachable, by the networks on its list, and refuses the rest.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A control from the lab VSI inside the allowed VPC got HTTP 200. That is why this is logical isolation: the vault is reachable, by the networks on its list, and refuses the rest.</p></details>
     </div>
     <div class="q">
       <p>Whose account holds the vault&apos;s bucket?</p>
@@ -74,7 +74,7 @@
         <button class="opt" data-ok>An account that IBM manages</button>
         <button class="opt">It is not known</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Our notes record the answer of 12 October 2026: the vault is in an IBM-managed account. Consistent with that, the bucket was not in our COS instance&apos;s bucket list and the configuration API gave the owner 403.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Our notes record the answer: the vault is in an IBM-managed account. Consistent with that, the bucket was not in our COS instance&apos;s bucket list and the configuration API gave the owner 403.</p></details>
     </div>
   </div>
 </section>
@@ -125,13 +125,13 @@ SLA and support            none
 Use in production          not for production</pre></details>
     </div>
     <div class="q">
-      <p>Our account listed vaults fine on 25 September 2026 but every create failed. What did that show?</p>
+      <p>Our account listed vaults fine but every create failed. What did that show?</p>
       <div class="opts">
         <button class="opt">The account was on the allow-list</button>
         <button class="opt" data-ok>A list works with a role alone; only a create shows whether the account is allowed in</button>
         <button class="opt">The vault service was down for a week</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Six creates went to <code>failed</code> in 17 to 40 seconds with no error text. A create on 5 October 2026 went to <code>active</code> in about 30 seconds. IBM did not confirm the cause; the most likely one is that the account was not yet on the list. An account on Basic support cannot open the onboarding case; the product team allow-lists it when asked.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Six creates went to <code>failed</code> in 17 to 40 seconds with no error text. A create went to <code>active</code> in about 30 seconds. IBM did not confirm the cause; the most likely one is that the account was not yet on the list. An account on Basic support cannot open the onboarding case; the product team allow-lists it when asked.</p></details>
     </div>
   </div>
 </section>
@@ -157,7 +157,7 @@ Use in production          not for production</pre></details>
         <button class="opt" data-ok>The owner got 403 when trying to switch them on, and found no vault events in the logs</button>
         <button class="opt">Events appeared but only for reads</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 6 October 2026 the configuration calls returned HTTP 403 for the account owner. Of 4,346 events in the us-south logs instance, none came from Cloud Object Storage, and a scan of the eu-de instance found no vault event. IBM&apos;s overview calls audit logging &quot;fully managed&quot;. In our lab an owner could not show an auditor who touched the vault.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The configuration calls returned HTTP 403 for the account owner. Of 4,346 events in the us-south logs instance, none came from Cloud Object Storage, and a scan of the eu-de instance found no vault event. IBM&apos;s overview calls audit logging &quot;fully managed&quot;. In our lab an owner could not show an auditor who touched the vault.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> Two other Beta findings from our lab: a vault delete was accepted and then stayed in <code>deleting</code> for at least six days, and a failed create left two keys behind on the COS instance. Both are in our feedback record.</p>

@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Today it restores a folder from one server&apos;s backup onto a second server, then looks at what it takes to order a backup instance that uses its own encryption key.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 9 November 2026 for the console. The servers are blurred in the screenshots. Some lab resource names show in the key screens.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab, some at the command line and some in the console. The servers are blurred in the screenshots. Some lab resource names show in the key screens.</p>
 </section>
 
 <section class="screen">
@@ -76,7 +76,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>Restore to a new server</h2>
-  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="3,83.5,48,8.2" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7a-2-new-server.png" alt="Recover To, New Server chosen. Source Physical Servers, Target blurred, Path /restore." width="1136" height="510"></div>
@@ -89,7 +89,7 @@
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7a-3-succeeded.png" alt="Recoveries list. The top row is Recover_Files_Nov_9_2026_1_49_PM, Succeeded, 23s. Below it are Kubernetes namespace and SQL recoveries and two earlier file recoveries." width="1180" height="570"></div>
       <figcaption>
         <h3>Which row is the restore of the files to the other server?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The top row, started 9 November at 1:49 pm: Succeeded, 23s. The other rows are earlier recoveries.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The top row, started at 1:49 pm: Succeeded, 23s. The other rows are earlier recoveries.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -111,7 +111,7 @@ Field alternate_restore_base_directory is not specified</pre>
         <button class="opt" data-ok>The field is named <code>alternateRestoreDirectory</code>, and the message does not say so</button>
         <button class="opt"><code>/restore</code> does not exist</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The message names the field in a different spelling and does not say that the name is wrong. The plug-in&apos;s own help text shows <code>alternateRestoreDirectory</code>. With that name the restore succeeded, in 27 s on 7 October 2026.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The message names the field in a different spelling and does not say that the name is wrong. The plug-in&apos;s own help text shows <code>alternateRestoreDirectory</code>. With that name the restore succeeded, in 27 s.</p></details>
     </div>
     <div class="q">
       <p>After the console restore, Northgate counts the files under <code>/restore</code> on the target and checks them against a list made on the source. What does it find?</p>
@@ -120,7 +120,7 @@ Field alternate_restore_base_directory is not specified</pre>
         <button class="opt" data-ok>505 of 505 match</button>
         <button class="opt">503 of 503 match</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>505 files, and 505 matched, on 9 November 2026. The command-line run on 7 October 2026 had checked 500 of 500.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>505 files, and 505 matched. The command-line run had checked 500 of 500.</p></details>
     </div>
   </div>
 </section>
@@ -144,7 +144,7 @@ Field alternate_restore_base_directory is not specified</pre>
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7g-4-encryption-set.png" alt="Configure integration. Encryption is on and reads Configured, authorized, with an Edit button. Key settings show a key management instance and the key. Terms box and Create button at the right." width="1440" height="290"></div>
       <figcaption>
         <h3>Northgate orders a new instance with its own key. Where does the order form say the key is set up?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Configured, authorized</b>. Before this, the Review step showed <b>Service authorization required</b>: BRS to Key Protect, role Reader. Click <b>Authorize</b>, then <b>Confirm</b>. The policy that was made covers the whole key store, not only the key the dialog showed. Then tick the terms and click <b>Create</b>. In our lab the instance was created at 15:59:15 UTC on 9 November and active by 15:59:58.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Configured, authorized</b>. Before this, the Review step showed <b>Service authorization required</b>: BRS to Key Protect, role Reader. Click <b>Authorize</b>, then <b>Confirm</b>. The policy that was made covers the whole key store, not only the key the dialog showed. Then tick the terms and click <b>Create</b>. In our lab the instance was created at 15:59:15 UTC and active by 15:59:58.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="52.3,59.5,21.5,5.9" data-width="760px">
@@ -170,7 +170,7 @@ Field alternate_restore_base_directory is not specified</pre>
         <button class="opt">Every call failed</button>
         <button class="opt">The instance was deleted</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>HTTP 200 every 20 seconds from 16:04:46 to 16:06:41 on 9 November 2026. The same happened in October.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>HTTP 200 every 20 seconds from 16:04:46 to 16:06:41. The same happened in the first run.</p></details>
     </div>
     <div class="q">
       <p>What does that show about backups while the key is disabled?</p>

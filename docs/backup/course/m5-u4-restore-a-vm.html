@@ -37,13 +37,13 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its VMs on ng-cluster-01 are backed up. Now it must restore them, and plan around how long that takes.</p>
     </div>
   </div>
-  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names were changed. Every number and screen comes from real runs in our lab on 5 October and 9 November 2026. Some screens show lab object names, such as the namespace brs-c1; cluster and location names are blurred.</p>
+  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it. IBM lists it for the AU-SYD region only: its pages, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them. Names were changed. Every number and screen comes from real runs in our lab. Some screens show lab object names, such as the namespace brs-c1; cluster and location names are blurred.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Predict</span>
   <h2>How long does a restore take?</h2>
-  <p class="lead">IBM&apos;s pages quote two figures for restoring an OpenShift Virtualization VM. Our lab restored two VMs, four disks and 128.85 GB in all, into a new namespace on 5 October 2026.</p>
+  <p class="lead">IBM&apos;s pages quote two figures for restoring an OpenShift Virtualization VM. Our lab restored two VMs, four disks and 128.85 GB in all, into a new namespace.</p>
   <pre class="def" aria-label="What IBM says and what we restored">IBM:      "about six minutes" for one VM with one PVC
           "about seven minutes" for a restore
 Our lab:  two VMs, four disks, 128.85 GB (120 GiB)  ->  ?</pre>
@@ -58,13 +58,13 @@ Our lab:  two VMs, four disks, 128.85 GB (120 GiB)  ->  ?</pre>
       <details class="reveal"><summary>Show the answer</summary><span class="hand">63 minutes: 3,803 s.</span><p>It ended Succeeded: 14:25:03 to 15:28:26 UTC, 3,803 s (63.4 min). 128.85 GB in 3,803 s is 33.9 MB/s. A second restore, one VM with two disks of 30 GiB (64.4 GB) from the older backup, took 2,242 s, which is 28.7 MB/s. IBM&apos;s figures are for small VMs.</p></details>
     </div>
     <div class="q">
-      <p>What limited the restore speed in October?</p>
+      <p>What limited the restore speed in the first run?</p>
       <div class="opts">
         <button class="opt">The VMs were too big for Velero</button>
         <button class="opt" data-ok>The distance: the cluster was in eu-de and the BRS service in au-syd</button>
         <button class="opt">The disks on the cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Our network check, from a worker on 5 October 2026, timed a 2 GiB transfer:</p><pre class="def">From a ROVS worker, 2 GiB      au-syd      eu-de
+      <details class="reveal"><summary>Show the answer</summary><p>Our network check, from a worker, timed a 2 GiB transfer:</p><pre class="def">From a ROVS worker, 2 GiB      au-syd      eu-de
 Round trip (TCP connect)      0.30 s      0.002-0.008 s
 Download, 1 stream            32.2 MB/s   83.0 MB/s
 Download, 10 streams          30.8 MB/s   368.0 MB/s</pre><p>The restore sat at the au-syd download ceiling, about 31 MB/s. The distance limits it.</p></details>
@@ -75,7 +75,7 @@ Download, 10 streams          30.8 MB/s   368.0 MB/s</pre><p>The restore sat at 
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>Restore, and where it goes</h2>
-  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026, with the instance and the cluster both in eu-de. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab, with the instance and the cluster both in eu-de. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="1.8,39,3.9,7.6" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5e-1-select-ns.png" alt="Recover Kubernetes Namespaces: brs-c1 ticked; the recovery point 9:05am (cluster and location blurred)." width="1136" height="629"></div>
@@ -109,7 +109,7 @@ Download, 10 streams          30.8 MB/s   368.0 MB/s</pre><p>The restore sat at 
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5e-5-both-succeeded.png" alt="Recoveries: both namespace recoveries Succeeded, 5m 30s and 5m 43s." width="1164" height="495"></div>
       <figcaption>
         <h3>The newest recovery is at the top. Where do you read how long it took?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: <b>Duration</b>, 5m 30s. The other namespace recovery took 5m 43s. That is about six times faster than October: two disks of 30 GiB (64.4 GB) in 343 s and 330 s, about 190 MB/s, against 28.7 to 33.9 MB/s with the service in au-syd.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: <b>Duration</b>, 5m 30s. The other namespace recovery took 5m 43s. That is about six times faster than the first run: two disks of 30 GiB (64.4 GB) in 343 s and 330 s, about 190 MB/s, against 28.7 to 33.9 MB/s with the service in au-syd.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -126,7 +126,7 @@ Download, 10 streams          30.8 MB/s   368.0 MB/s</pre><p>The restore sat at 
         <button class="opt" data-ok>Delete the VM, choose the older recovery point, clear the prefix and accept the overwrite warning</button>
         <button class="opt">Restore with the default prefix and swap the VMs by hand</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s page says existing VMs are skipped, not overwritten. The lab deleted the VM first (its DataVolumes and PVCs go with it, the cloud-init Secret stays), then restored from run 1 with the prefix cleared. It Succeeded on 9 November 2026 in 5 min 30 s.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s page says existing VMs are skipped, not overwritten. The lab deleted the VM first (its DataVolumes and PVCs go with it, the cloud-init Secret stays), then restored from run 1 with the prefix cleared. It Succeeded in 5 min 30 s.</p></details>
     </div>
     <div class="q">
       <p>The recovery says Succeeded. How do you know the VM is right?</p>
@@ -153,7 +153,7 @@ zero=0 nonzero=1734</pre></details>
         <button class="opt" data-ok>The namespace&apos;s Secrets, and a new PVC for the vTPM state</button>
         <button class="opt">Only the VM&apos;s labels</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 5 October 2026 the restore also brought back the Secrets of the whole namespace, and a <b>new</b> vTPM state PVC for the Windows VM. Both VMs were Running 35 s after the recovery ended.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The restore also brought back the Secrets of the whole namespace, and a <b>new</b> vTPM state PVC for the Windows VM. Both VMs were Running 35 s after the recovery ended.</p></details>
     </div>
     <div class="q">
       <p>A script restores two VMs through the API and lists each only by its entity ID. BRS answers: Entity name missing in VM resource being restored. What is missing?</p>
@@ -162,7 +162,7 @@ zero=0 nonzero=1734</pre></details>
         <button class="opt">The recovery point</button>
         <button class="opt">The cluster endpoint</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 5 October 2026 the first call, with no name in the resource list, gave that error. The console route in step 2 does not need it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the first call, with no name in the resource list, gave that error. The console route in step 2 does not need it.</p></details>
     </div>
   </div>
 </section>
@@ -171,13 +171,13 @@ zero=0 nonzero=1734</pre></details>
   <h2>Three questions</h2>
   <div>
     <div class="q" data-check>
-      <p>IBM&apos;s page says about six to seven minutes. How long did our lab&apos;s restore of 120 GiB take in October?</p>
+      <p>IBM&apos;s page says about six to seven minutes. How long did our lab&apos;s restore of 120 GiB take in the first run?</p>
       <div class="opts">
         <button class="opt">About 7 minutes</button>
         <button class="opt" data-ok>About 63 minutes</button>
         <button class="opt">About 6 hours</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>3,803 s (63.4 min) on 5 October 2026, with the BRS service in au-syd and the cluster in eu-de.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>3,803 s (63.4 min), with the BRS service in au-syd and the cluster in eu-de.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 5.3.</b> What did the second backup of a VM read, against the first?</p>
@@ -186,7 +186,7 @@ zero=0 nonzero=1734</pre></details>
         <button class="opt" data-ok>The same: every disk in full again</button>
         <button class="opt">Nothing</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>128.86 GB both times on 5 October 2026. What fell was the data sent, from 45.13 GB to 5.50 GB.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>128.86 GB both times. What fell was the data sent, from 45.13 GB to 5.50 GB.</p></details>
     </div>
     <div class="q" data-check>
       <p>Two recovery points both say Incremental. How do you tell which is the older one?</p>
@@ -204,7 +204,7 @@ zero=0 nonzero=1734</pre></details>
   <h2>You can restore a VM and plan the time</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>IBM says about six to seven minutes for a restore. In our lab on 5 October 2026, 120 GiB took 63 minutes, with the BRS service in au-syd and the cluster in eu-de; the distance limited it. With both in eu-de on 9 November 2026, two disks of 30 GiB took about 5.5 minutes. Check the restored VM against its saved manifest; the status alone does not tell you. VM backup was not generally available when tested, and IBM lists it for au-syd only.</p></div>
+    <div><span class="label">Remember</span><p>IBM says about six to seven minutes for a restore. In our lab, 120 GiB took 63 minutes, with the BRS service in au-syd and the cluster in eu-de; the distance limited it. With both in eu-de, two disks of 30 GiB took about 5.5 minutes. Check the restored VM against its saved manifest; the status alone does not tell you. VM backup was not generally available when tested, and IBM lists it for au-syd only.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

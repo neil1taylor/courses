@@ -37,13 +37,13 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its ROVS cluster, ng-cluster-01, is registered. Now it backs up VMs in a namespace, first by hand.</p>
     </div>
   </div>
-  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it (5 October 2026). IBM lists it for the AU-SYD region only: its pages, updated 26 June 2026, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them on 9 November 2026. Names were changed. Every number and screen comes from real runs in our lab on 5 October and 9 November 2026. Some screens show lab object names, such as the group b-rovs-vms; cluster names are blurred.</p>
+  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it. IBM lists it for the AU-SYD region only: its pages, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them. Names were changed. Every number and screen comes from real runs in our lab. Some screens show lab object names, such as the group b-rovs-vms; cluster names are blurred.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>What BRS does on the cluster during a backup</h2>
-  <p class="lead">BRS protects a namespace and picks the VMs inside it. This is what our lab saw on the cluster during the first run on 5 October 2026.</p>
+  <p class="lead">BRS protects a namespace and picks the VMs inside it. This is what our lab saw on the cluster during the first run.</p>
 <svg class="sketch" role="img" aria-label="Hand-drawn diagram of four stacked boxes: one snapshot for each VM; clone volume claims in the BRS agent namespace; job pods hold the clones; the data goes to the BRS vault."
         data-drawing='{"w":560,"h":290,"shapes":[{"box":[10,10,540,60],"title":"1. One KubeVirt snapshot for each VM","detail":"indications GuestAgent, Online; the VMs kept running"},{"box":[10,80,540,60],"title":"2. Clone PVCs in the BRS agent namespace","detail":"made from the snapshots, named for the VM and the disk"},{"box":[10,150,540,60],"title":"3. Job pods hold the clones","detail":"the cohesity-dm pod on that worker does the copy"},{"box":[10,220,540,60],"tone":"mark","title":"4. The data goes to the BRS vault","detail":"target type Cloud; no separate archive step"}]}'></svg>
   <div class="pair" style="margin-top:20px">
@@ -63,14 +63,14 @@
         <button class="opt" data-ok>No: the guest agent froze the file systems and the VMs kept running</button>
         <button class="opt">Only Windows VMs are stopped</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The snapshots were taken in the first 3 minutes of the 5 October run. The run records the indications <code>GuestAgent, Online</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The snapshots were taken in the first 3 minutes of the first run. The run records the indications <code>GuestAgent, Online</code>.</p></details>
     </div>
   </div>
 </section>
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>Find the VM and run the group</h2>
-  <p class="lead">These screens come from the BRS console in our lab on 9 November 2026: one cluster, one VM. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab: one cluster, one VM. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="9.5,42.7,86.5,45.6" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B4e-1-ns-missing.png" alt="Protect Kubernetes: 0 namespaces selected and no brs-c1 in the list (cluster name blurred)." width="1002" height="693"></div>
@@ -83,7 +83,7 @@
       <div class="shot"><img src="../ibm-brs/tutorials/images/B4e-2-refresh.png" alt="Sources: the Kubernetes source&apos;s menu with Protect, Edit, Unregister, Refresh and Maintenance." width="1164" height="640"></div>
       <figcaption>
         <h3>You are in Sources, on the Kubernetes source&apos;s menu. Which item makes BRS list the new namespace?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: <b>Refresh</b>. In our lab on 9 November 2026 <code>brs-c1</code> was listed after it. With the command line in October, the refresh call took 62 s.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: <b>Refresh</b>. In our lab <code>brs-c1</code> was listed after it. With the command line in the first run, the refresh call took 62 s.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="5.6,33,61.9,8.2" data-width="760px">
@@ -112,7 +112,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
   <h2>How much does the second run read?</h2>
-  <p class="lead">Northgate backs up two VMs with four disks, 120 GiB in all. Then it rewrites 2 of the 20 data files on each VM in place: 2 GiB of 20 GiB, 10% of the data. It runs the group again. The first run of 5 October 2026 recorded:</p>
+  <p class="lead">Northgate backs up two VMs with four disks, 120 GiB in all. Then it rewrites 2 of the 20 data files on each VM in place: 2 GiB of 20 GiB, 10% of the data. It runs the group again. The first run recorded:</p>
   <pre class="def" aria-label="What the first run recorded">Run      Read        Sent       Time
 First    128.86 GB   45.13 GB   2,443 s
 Second   ?           ?          ?</pre>
@@ -126,7 +126,7 @@ Second   ?           ?          ?</pre>
       </div>
       <details class="reveal"><summary>Show the answer</summary><span class="hand">128.86 GB, the same.</span><p>The incremental does not read only the changes. It read every disk in full again.</p><pre class="def">Run      Read        Sent       Time
 First    128.86 GB   45.13 GB   2,443 s
-Second   128.86 GB   5.50 GB    1,357 s</pre><p>In the console on 9 November 2026, with one VM in the same region, the same thing happened: the first run read 64.43 GB and so did the second, in 439 s and 407 s. The VMs differ, so the two tests are not like for like.</p></details>
+Second   128.86 GB   5.50 GB    1,357 s</pre><p>In the console, with one VM in the same region, the same thing happened: the first run read 64.43 GB and so did the second, in 439 s and 407 s. The VMs differ, so the two tests are not like for like.</p></details>
     </div>
     <div class="q">
       <p>What did the second run save?</p>
@@ -166,7 +166,7 @@ after the restart:   zero=0 nonzero=1734
 after run 2:         zero=0 nonzero=1734</pre></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> In our lab on 9 November 2026 this happened once, to one VM, after run 1, on about 1,086 of 1,734 program and library files. The cause is not proven.</p>
+  <p class="watch"><b>Watch for this.</b> In our lab this happened once, to one VM, after run 1, on about 1,086 of 1,734 program and library files. The cause is not proven.</p>
 </section>
 <section class="screen">
   <span class="kicker">Step 5 · Check yourself</span>
@@ -188,7 +188,7 @@ after run 2:         zero=0 nonzero=1734</pre></details>
         <button class="opt" data-ok>The same: every disk in full again</button>
         <button class="opt">Nothing</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab it read 128.86 GB both times on 5 October 2026, and 64.43 GB both times on 9 November 2026.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab it read 128.86 GB both times, and 64.43 GB both times.</p></details>
     </div>
     <div class="q" data-check>
       <p>You protect a namespace and leave VM Inclusion/Exclusion off. What does the group protect?</p>
@@ -206,7 +206,7 @@ after run 2:         zero=0 nonzero=1734</pre></details>
   <h2>You can back up a VM</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Refresh the source so a new namespace is listed, then pick the VM with VM Inclusion/Exclusion. The VMs keep running during the backup. The second run read every disk in full again: 128.86 GB twice in October, 64.43 GB twice in November. What fell was the data sent. After a backup, check the VM; ours read zeros once, and a restart cured it. VM backup was not generally available when tested, and IBM lists it for au-syd only.</p></div>
+    <div><span class="label">Remember</span><p>Refresh the source so a new namespace is listed, then pick the VM with VM Inclusion/Exclusion. The VMs keep running during the backup. The second run read every disk in full again: 128.86 GB twice in the first run, 64.43 GB twice in the second. What fell was the data sent. After a backup, check the VM; ours read zeros once, and a restart cured it. VM backup was not generally available when tested, and IBM lists it for au-syd only.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

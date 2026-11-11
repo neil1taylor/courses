@@ -45,7 +45,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its connectors are up, and now it tells BRS which servers to back up: the Linux server <code>ng-app-01</code> and the Windows server <code>ng-win-01</code>.</p>
     </div>
   </div>
-  <p class="small">Every number, message and screen in this unit comes from runs in our lab on 7 October and 8 November 2026. Server names, addresses and connection names were changed to made-up Northgate values; server addresses are blurred in the screenshots.</p>
+  <p class="small">Every number, message and screen in this unit comes from runs in our lab. Server names, addresses and connection names were changed to made-up Northgate values; server addresses are blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -94,16 +94,16 @@
         <button class="opt" data-ok>A source ID and authenticationStatus Pending</button>
         <button class="opt">Nothing until a backup runs</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It returns the source ID and authenticationStatus &quot;Pending&quot;. In one run in our lab, on 7 October 2026, the status was &quot;Finished&quot; 6 seconds later.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It returns the source ID and authenticationStatus &quot;Pending&quot;. In one run in our lab, the status was &quot;Finished&quot; 6 seconds later.</p></details>
     </div>
     <div class="q">
-      <p>In the console on 8 November 2026, Northgate registers the Windows server and clicks Complete. What did the page show?</p>
+      <p>In the console, Northgate registers the Windows server and clicks Complete. What did the page show?</p>
       <div class="opts">
         <button class="opt">An error: the agent was not ready</button>
         <button class="opt" data-ok>&quot;Registering&quot;, then 99.3 GiB after a reload about 20 seconds later</button>
         <button class="opt">Nothing for ten minutes</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the Windows source showed &quot;Registering&quot; and then 99.3 GiB after a reload about 20 seconds later (13:48 UTC). The Linux server on 8 November showed &quot;Updated Physical server successfully&quot; at the first try, and 99.9 GiB.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the Windows source showed &quot;Registering&quot; and then 99.3 GiB after a reload about 20 seconds later (13:48 UTC). The Linux server showed &quot;Updated Physical server successfully&quot; at the first try, and 99.9 GiB.</p></details>
     </div>
   </div>
 </section>
@@ -111,7 +111,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
   <h2>Cannot find a valid connector</h2>
-  <p class="lead">On 7 October 2026 Northgate built a new connector server, claimed it, and registered a Linux server through it straight after. This is what came back.</p>
+  <p class="lead">Northgate built a new connector server, claimed it, and registered a Linux server through it straight after. This is what came back.</p>
   <pre class="def" aria-label="The failed registration">$ ibmcloud backup-recovery protection-source register --environment kPhysical ...
 FAILED: "Cannot find a valid connector for tenant ... network_realm ..."</pre>
   <div class="pair" style="margin-top:20px">
@@ -134,7 +134,7 @@ FAILED: "Cannot find a valid connector for tenant ... network_realm ..."</pre>
       <details class="reveal"><summary>Show the answer</summary><p>The same command worked at 08:43:51 UTC, about 2 minutes later. To see that a connector has joined, list it: <code>data-source-connector list</code> shows its <code>connectivityStatus</code>; <code>isConnected</code> true means it has.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> It happened once, with a new connector server. With the Connector Agent the first registration worked at the first try (10:44:03 UTC the same day). On 8 November 2026 the connector server had been joined for two hours, and registration worked at the first try.</p>
+  <p class="watch"><b>Watch for this.</b> It happened once, with a new connector server. With the Connector Agent the first registration worked at the first try (10:44:03 UTC the same day). The connector server had been joined for two hours, and registration worked at the first try.</p>
 </section>
 
 <section class="screen">

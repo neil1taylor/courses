@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It protects the folder <code>C:\data</code> on a Windows server. Today it deletes <code>C:\data\docs</code> on purpose and restores it.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab: 7 October 2026 for the command line and 8 November 2026 for the console. The server name is blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab, some at the command line and some in the console. The server name is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -121,7 +121,7 @@ Error while calling FileStat for C:\data\docs: [kNotFound]: Bridge error: Direct
       </div>
       <details class="reveal"><summary>Show the answer</summary><span class="hand">3.2 MB against 96.4 MB.</span><pre class="def" aria-label="What both runs recorded">Run     Files   Read      Time
 First   506     96.4 MB   31 s
-Second  512     3.2 MB    18 s</pre><p>These are the console runs of 8 November 2026. The run on 7 October read 3.2 MB too.</p></details>
+Second  512     3.2 MB    18 s</pre><p>These are the console runs. The command-line run read 3.2 MB too.</p></details>
     </div>
     <div class="q">
       <p>After the restore, the script <code>verify.ps1</code> checks the folder. What does it print?</p>
@@ -130,7 +130,7 @@ Second  512     3.2 MB    18 s</pre><p>These are the console runs of 8 November 
         <button class="opt">ok=500 bad=3 missing=0</button>
         <button class="opt">ok=0 bad=0 missing=503</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>ok=503 bad=0 missing=0, on 7 October with the command line and on 8 November with the console. The console restore took 9 s.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>ok=503 bad=0 missing=0 with the command line and with the console. The console restore took 9 s.</p></details>
     </div>
   </div>
 </section>
@@ -138,10 +138,10 @@ Second  512     3.2 MB    18 s</pre><p>These are the console runs of 8 November 
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>The same restore, without typing a path</h2>
-  <p class="lead">These screens come from the BRS console in our lab on 8 November 2026. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="45.4,89.5,4.6,5.2" data-width="900px">
-      <div class="shot"><img src="../ibm-brs/tutorials/images/B4b-1-runs.png" alt="Group Details for the Windows group, Paused. Two runs on 8 November: 1:52 pm, 18 s, Incremental, 3 MiB read; and 1:50 pm, 32 s, Incremental, 92 MiB read." width="1227" height="420"></div>
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4b-1-runs.png" alt="Group Details for the Windows group, Paused. Two runs: 1:52 pm, 18 s, Incremental, 3 MiB read; and 1:50 pm, 32 s, Incremental, 92 MiB read." width="1227" height="420"></div>
       <figcaption>
         <h3>Both runs are labelled Incremental. Click the figure that shows which one was the full backup.</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. 92 MiB, in 32 s. The second run read 3 MiB in 18 s. Both rows say Incremental, so read <b>Data Read</b>.</p></details>
@@ -158,7 +158,7 @@ Second  512     3.2 MB    18 s</pre><p>These are the console runs of 8 November 
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5b-2-select-folder.png" alt="C, then data, with docs ticked. The panel on the right reads 1 Selected, docs, /C/data." width="1184" height="676"></div>
       <figcaption>
         <h3>You ticked <code>docs</code>. Where does the console show the path it will restore?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The panel reads 1 Selected, docs, <code>/C/data</code>. You picked the folder; you did not type its path. Keep <b>Original Server</b> and <b>Recover to Original Path</b> and click <b>Recover</b>. In our lab on 8 November it succeeded at the first try, in 9 s.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The panel reads 1 Selected, docs, <code>/C/data</code>. You picked the folder; you did not type its path. Keep <b>Original Server</b> and <b>Recover to Original Path</b> and click <b>Recover</b>. In our lab it succeeded at the first try, in 9 s.</p></details>
       </figcaption>
     </figure>
   </div>

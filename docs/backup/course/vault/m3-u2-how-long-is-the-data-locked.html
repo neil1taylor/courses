@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It archives three groups from Defender Data Protect to a Cyber Vault, with a policy that keeps each archive for 1 day. Its auditor asks: how long can nobody delete this data?</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab on 10 November 2026, with the first finding from 5 October. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab, with the first finding from an earlier run. The vault is a Beta in us-south, with no SLA.</p>
   <p class="small"><b>Terms used.</b> <b>Metadata</b>: data that describes other data.</p>
 </section>
 
@@ -75,7 +75,7 @@
         <button class="opt" data-ok>Data Protect sets it on each write; the vault does not limit it</button>
         <button class="opt">The person who made the vault, once, for all objects</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 5 October Data Protect locked data for 18 days in a vault whose maximum was 3 days. A second test vault with a minimum of 2 days locked a 1-day request for 1 day and a 5-day request for 5 days: the minimum and maximum did not limit a lock the writer set.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Data Protect locked data for 18 days in a vault whose maximum was 3 days. A second test vault with a minimum of 2 days locked a 1-day request for 1 day and a 5-day request for 5 days: the minimum and maximum did not limit a lock the writer set.</p></details>
     </div>
   </div>
 </section>
@@ -83,8 +83,8 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>What does the vault hold?</h2>
-  <p class="lead">On 10 November Northgate ran its three groups at 11:43 and 11:44, each archived for 1 day. At 11:48 an admin read the lock of every object version in the vault with the read key.</p>
-  <pre class="def" aria-label="What was read">Object kind               Count   Lock until
+  <p class="lead">Northgate ran its three groups at 11:43 and 11:44, each archived for 1 day. At 11:48 an admin read the lock of every object version in the vault with the read key.</p>
+  <pre class="def" aria-label="What was read">Object kind               Count   Lock lasts
 archive_metadata          3       ?
 cloud_chunk_file          35      ?
 metadata/snap_tree_objects 8      ?
@@ -93,24 +93,24 @@ configs                   -       ?</pre>
     <div class="q">
       <p>Until when are the 35 data chunks locked?</p>
       <div class="opts">
-        <button class="opt">11 November, one day after the run</button>
-        <button class="opt" data-ok>19, 24 and 25 November: 9 to 15 days</button>
+        <button class="opt">One day after the run</button>
+        <button class="opt" data-ok>9 to 15 days</button>
         <button class="opt">For ever</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">9 to 15 days, not 1.</span><p>The chunks and the tree metadata were locked until 19, 24 and 25 November 2026 (the last at 20:50:48Z). Only the three <code>archive_metadata</code> objects were locked for one day. <code>configs</code> had no lock.</p><pre class="def" aria-label="What was read">Object kind               Count   Lock until
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">9 to 15 days, not 1.</span><p>The chunks and the tree metadata were locked for 9 to 15 days. Only the three <code>archive_metadata</code> objects were locked for one day. <code>configs</code> had no lock.</p><pre class="def" aria-label="What was read">Object kind               Count   Lock lasts
 archive_metadata          3       one day
-cloud_chunk_file          35      19, 24, 25 Nov
-metadata/snap_tree_objects 8      19, 24, 25 Nov
+cloud_chunk_file          35      9 to 15 days
+metadata/snap_tree_objects 8      9 to 15 days
 configs                   -       no lock</pre></details>
     </div>
     <div class="q">
-      <p>The same check in October found a different gap. What did it find?</p>
+      <p>The same check in the first round found a different gap. What did it find?</p>
       <div class="opts">
         <button class="opt">The vault locked data for less than the policy asked</button>
         <button class="opt" data-ok>The data was locked for 18 days in a vault with a 3-day maximum</button>
         <button class="opt">No data was locked at all</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 5 October, 3,803 data chunks and 16 metadata objects were locked until 23 October, with a 1-day archive retention. The build stopped there. The 10 November run shows the same pattern, in a new vault.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In the first round, 3,803 data chunks and 16 metadata objects were locked for 18 days, with a 1-day archive retention. The build stopped there. The second round shows the same pattern, in a new vault.</p></details>
     </div>
   </div>
 </section>
@@ -128,10 +128,10 @@ configs                   -       no lock</pre></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="42.5,62,31,8" data-width="900px">
-      <div class="shot"><img src="../../cyber-vault/tutorials/images/V4-3-cloud-archive-tab.png" alt="Run Details for cv-linux-data, the Cloud Archive tab: Archive Object Lock Enabled, Archive Object Lock Expiry Time Nov 11, 2026 11:43am. Succeeded on cv-console-vault, 39 seconds." width="1184" height="380"></div>
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V4-3-cloud-archive-tab.png" alt="Run Details for cv-linux-data, the Cloud Archive tab: Archive Object Lock Enabled, Archive Object Lock Expiry Time 11:43am, one day after the run. Succeeded on cv-console-vault, 39 seconds." width="1184" height="380"></div>
       <figcaption>
         <h3>You opened the Cloud Archive tab of a run. Where does the console show the lock?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Archive Object Lock Expiry Time says 11 November, 11:43: one day after the run. The vault itself held the data chunks for up to 15 days. The console does not show that.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Archive Object Lock Expiry Time says 11:43 the next day. The vault itself held the data chunks for up to 15 days. The console does not show that.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -140,16 +140,16 @@ configs                   -       no lock</pre></details>
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>A deletion that has to wait</h2>
-  <p class="lead">After the test, Northgate wants to delete the vault, on 12 November. The archive retention was 1 day, so it expects no lock to remain.</p>
+  <p class="lead">After the test, Northgate wants to delete the vault. The archive retention was 1 day, so it expects no lock to remain.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>What happens?</p>
       <div class="opts">
-        <button class="opt">The vault deletes: the console said the lock ended on 11 November</button>
-        <button class="opt" data-ok>The vault holds locked data until 25 November 2026 at 20:50:48Z; IBM says it cannot be deleted before then</button>
+        <button class="opt">The vault deletes: the console said the lock ended one day after the run</button>
+        <button class="opt" data-ok>The vault holds locked data until the last lock ends, 15 days after the run; IBM says it cannot be deleted before then</button>
         <button class="opt">Only the data chunks are removed</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The newest data lock in the vault runs to 25 November. IBM&apos;s page says a vault with locked objects cannot be deleted. In our October test the delete call was accepted anyway and the vault stayed in &quot;deleting&quot; for at least 50 minutes, with its locked objects still readable. So do not plan around a delete before the last lock ends.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The newest data lock in the vault runs for 15 days after the run. IBM&apos;s page says a vault with locked objects cannot be deleted. In our first-round test the delete call was accepted anyway and the vault stayed in &quot;deleting&quot; for at least 50 minutes, with its locked objects still readable. So do not plan around a delete before the last lock ends.</p></details>
     </div>
     <div class="q">
       <p>What should the auditor be told about how long the data cannot be deleted?</p>
@@ -161,7 +161,7 @@ configs                   -       no lock</pre></details>
       <details class="reveal"><summary>Show the answer</summary><p>The vault enforces the lock, so its own dates are the record. In our lab the console and the policy both said 1 day while the vault held data for up to 15.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> The console&apos;s one-day lock is not the lock on the data chunks. In our lab, on 5 October and again on 10 November, they differed. Read the dates from the vault if the number matters.</p>
+  <p class="watch"><b>Watch for this.</b> The console&apos;s one-day lock is not the lock on the data chunks. In both of our runs they differed. Read the lock times from the vault if the number matters.</p>
 </section>
 
 <section class="screen">
@@ -175,7 +175,7 @@ configs                   -       no lock</pre></details>
         <button class="opt" data-ok>9 to 15 days</button>
         <button class="opt">Not locked</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Until 19, 24 and 25 November for runs made on 10 November.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>For 9 to 15 days after the runs.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which object kind was locked for only one day?</p>
@@ -193,7 +193,7 @@ configs                   -       no lock</pre></details>
         <button class="opt" data-ok>No: in our tests the maximum did not limit a lock the writer set</button>
         <button class="opt">Only for the read key</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>18 days on 5 October in a vault with a 3-day maximum, and a 5-day lock on a vault with the same maximum on 6 October.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>18 days in a vault with a 3-day maximum, and a 5-day lock on a vault with the same maximum.</p></details>
     </div>
   </div>
 </section>
@@ -203,7 +203,7 @@ configs                   -       no lock</pre></details>
   <h2>You know what the lock really is</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>The console showed one day. The vault held the data chunks for 9 to 15 days. Read the lock from the vault with the read key; the vault enforces it, and plan on the vault staying until the last lock ends: IBM says a vault with locked data cannot be deleted, and our October delete test left the vault stuck in &quot;deleting&quot;.</p></div>
+    <div><span class="label">Remember</span><p>The console showed one day. The vault held the data chunks for 9 to 15 days. Read the lock from the vault with the read key; the vault enforces it, and plan on the vault staying until the last lock ends: IBM says a vault with locked data cannot be deleted, and our first-round delete test left the vault stuck in &quot;deleting&quot;.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

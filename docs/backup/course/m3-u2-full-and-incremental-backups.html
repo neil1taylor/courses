@@ -46,7 +46,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It protects the folder <code>/data</code> on a Linux server with a daily policy that keeps backups for 7 days. Today it runs its first two backups by hand.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab on 8 November 2026. The server name is blurred in the screenshots.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab. The server name is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -97,7 +97,7 @@ Second  512     ?         ?</pre>
         <button class="opt">About 50 MB</button>
         <button class="opt" data-ok>About 3 MB: little more than the new files</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">3.2 MB against 97.1 MB.</span><p>The second run read 3.2 MB (3 MiB). In an earlier run in our lab, on 7 October, the same change read 5.9 MB; the reason was not found. Either way it is a small fraction of the full backup.</p><pre class="def" aria-label="What both runs recorded">Run     Files   Read      Time
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">3.2 MB against 97.1 MB.</span><p>The second run read 3.2 MB (3 MiB). In an earlier run in our lab, the same change read 5.9 MB; the reason was not found. Either way it is a small fraction of the full backup.</p><pre class="def" aria-label="What both runs recorded">Run     Files   Read      Time
 First   506     97.1 MB   34 s
 Second  512     3.2 MB    15 s</pre></details>
     </div>
@@ -126,17 +126,17 @@ Second  512     3.2 MB    15 s</pre></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="44.8,86.5,9,12" data-width="900px">
-      <div class="shot"><img src="../ibm-brs/tutorials/images/B4a-2-runs.png" alt="Group Details for b-linux-files, Paused, policy b-daily-7d. Two runs on 8 November: 1:43 pm, 19 s, Incremental, 3 MiB read; and 1:41 pm, 35 s, Incremental, 92.6 MiB read." width="1227" height="420"></div>
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4a-2-runs.png" alt="Group Details for b-linux-files, Paused, policy b-daily-7d. Two runs: 1:43 pm, 19 s, Incremental, 3 MiB read; and 1:41 pm, 35 s, Incremental, 92.6 MiB read." width="1227" height="420"></div>
       <figcaption>
         <h3>Both runs are labelled Incremental. Click the figure that shows which one read every file.</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. 92.6 MiB is the 97.1 MB of the full backup, in binary units. The console labels the first run Incremental too, so read Data Read, not Backup Type, to know which run was the full one.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="47.5,87,7,12" data-width="900px">
-      <div class="shot"><img src="../ibm-brs/tutorials/images/B4a-3-run-details.png" alt="Run Details of the 1:43 pm run: Succeeded, 1 object succeeded, 0 failed, 19 s. The server row: 15 s, snapshot expires 15 November 2026, 3 MiB read, 5.5 KiB written, 95.7 MiB logical size, 8 of 512 entities changed. The server name is blurred." width="1227" height="470"></div>
+      <div class="shot"><img src="../ibm-brs/tutorials/images/B4a-3-run-details.png" alt="Run Details of the 1:43 pm run: Succeeded, 1 object succeeded, 0 failed, 19 s. The server row: 15 s, 3 MiB read, 5.5 KiB written, 95.7 MiB logical size, 8 of 512 entities changed. The server name is blurred." width="1227" height="470"></div>
       <figcaption>
         <h3>You opened the second run. Where is the amount it read from the server?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Data Read, 3 MiB. On the same row, Changed Entities says 8 of 512 changed, and Snapshot Expiry Time is 15 November: the policy keeps each backup for 7 days.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Data Read, 3 MiB. On the same row, Changed Entities says 8 of 512 changed, and Snapshot Expiry Time is 7 days after the backup: the policy keeps each backup for 7 days.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -196,13 +196,13 @@ Second  512     3.2 MB    15 s</pre></details>
       <details class="reveal"><summary>Show the answer</summary><p>The console labels the first run Incremental too. 92.6 MiB against 3 MiB tells them apart.</p></details>
     </div>
     <div class="q" data-check>
-      <p>A backup runs on 8 November under a policy that keeps backups for 7 days. When does its snapshot expire?</p>
+      <p>A backup runs under a policy that keeps backups for 7 days. When does its snapshot expire?</p>
       <div class="opts">
-        <button class="opt">8 December</button>
-        <button class="opt" data-ok>15 November</button>
+        <button class="opt">A month after the run</button>
+        <button class="opt" data-ok>7 days after the run</button>
         <button class="opt">Never, unless you delete it</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The Run Details page shows Snapshot Expiry Time 15 November for the 8 November run.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The Run Details page shows Snapshot Expiry Time 7 days after the run.</p></details>
     </div>
   </div>
 </section>

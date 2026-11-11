@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect, and it has made its vault. Now the cluster must be able to archive to it.</p>
     </div>
   </div>
-  <p class="small">The console screens come from our lab on 10 November 2026, in the Data Protect console of a 7.4.1 cluster, with a vault made as in unit 2.2.</p>
+  <p class="small">The console screens come from our lab, in the Data Protect console of a 7.4.1 cluster, with a vault made as in unit 2.2.</p>
   <p class="small"><b>Terms used.</b> <b>S3-compatible</b>: speaks the same request format as Amazon&apos;s S3 storage. <b>Snapshot</b>: a saved copy of data as it was at one point in time. <b>Archive Object Lock</b>: the Data Protect switch that makes it lock each archived object; it cannot be switched off again. <b>DataLock</b>: a Data Protect setting that locks a backup copy so that it cannot be deleted until its lock ends. <b>Governance mode</b>: a weaker lock than Compliance mode; a user with the right permission can remove it with the bypass header.</p>
 </section>
 
@@ -92,7 +92,7 @@
         <button class="opt" data-ok>Archive Object Lock is off, and Encryption is on</button>
         <button class="opt">HTTPS is on and Signature Version is 4</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Switch Archive Object Lock on, and switch Encryption off. Keep Compression on. The register form keeps HTTPS and AWS Signature Version 4 as they are (10 November 2026).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Switch Archive Object Lock on, and switch Encryption off. Keep Compression on. The register form keeps HTTPS and AWS Signature Version 4 as they are.</p></details>
     </div>
     <div class="q">
       <p>Why switch Encryption off?</p>
@@ -185,7 +185,7 @@
         <button class="opt" data-ok>Switch DataLock off at the top of the builder</button>
         <button class="opt">Click Add Vault instead</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>DataLock stays on after the Lock field is removed, and Create then fails. With it off, Create works: &quot;Protection Policy created.&quot; (10 November 2026).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>DataLock stays on after the Lock field is removed, and Create then fails. With it off, Create works: &quot;Protection Policy created.&quot;</p></details>
     </div>
     <div class="q">
       <p>The note in the archive section says snapshots on this target cannot be deleted. By whom?</p>
@@ -229,7 +229,7 @@
         <button class="opt" data-ok>Switch DataLock off at the top of the builder</button>
         <button class="opt">Delete the target and add it again</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>With DataLock off, the policy was created in our lab on 10 November 2026.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>With DataLock off, the policy was created in our lab.</p></details>
     </div>
   </div>
 </section>

@@ -44,13 +44,13 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its Linux server <code>ng-app-01</code> and its Windows server <code>ng-win-01</code> each get their own Connector Agent, so Northgate builds no connector server for them.</p>
     </div>
   </div>
-  <p class="small">Every number and message in this unit comes from runs in our lab on 7 October and 8 November 2026. Server names, addresses and the connection name were changed to made-up Northgate values, and the registration token is blurred in the screenshots.</p>
+  <p class="small">Every number and message in this unit comes from runs in our lab. Server names, addresses and the connection name were changed to made-up Northgate values, and the registration token is blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>What the Connector Agent replaces</h2>
-  <p class="lead">The Connector Agent is a small program on the source host. It opens a direct connection to the service and replaces the connector server for that host. You still install the normal backup agent. IBM&apos;s page (19 August 2026) says it needs outbound TCP 443, 29991 (broker) and 11117 (bridge).</p>
+  <p class="lead">The Connector Agent is a small program on the source host. It opens a direct connection to the service and replaces the connector server for that host. You still install the normal backup agent. IBM&apos;s page says it needs outbound TCP 443, 29991 (broker) and 11117 (bridge).</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. On the server, the backup agent and the Connector Agent. The Connector Agent connects directly to the BRS service on outbound ports 443, 29991 and 11117."
     data-drawing='{"w":560,"h":210,"shapes":[
       {"box":[10,15,175,60],"title":"backup agent","detail":"still installed"},
@@ -84,7 +84,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Run it</span>
   <h2>Install and claim the agent on Linux</h2>
-  <p class="lead">Run each command in turn. The output is what our lab returned on 7 October 2026. The installer file was copied to the server and installed with <code>chmod +x</code> and <code>sudo /tmp/connector_agent_installer -- --install -y</code>; the <code>-y</code> skips the &quot;install? [y/N]&quot; question.</p>
+  <p class="lead">Run each command in turn. The output is what our lab returned. The installer file was copied to the server and installed with <code>chmod +x</code> and <code>sudo /tmp/connector_agent_installer -- --install -y</code>; the <code>-y</code> skips the &quot;install? [y/N]&quot; question.</p>
   <div class="term-block">
     <div class="term">
       <div class="bar"><span>bash</span><span data-term-count></span></div>
@@ -111,7 +111,7 @@ X-Registration-Status: registered</pre>
       </div>
     </div>
   </div>
-  <p class="lead" style="margin-top:20px">Windows works the same way, with different installers and commands. In our lab on 7 October 2026:</p>
+  <p class="lead" style="margin-top:20px">Windows works the same way, with different installers and commands. In our lab:</p>
   <pre class="def" aria-label="Linux and Windows side by side">                 Linux                       Windows
 Platform name    kLinux                      kWindows
 Installer        28.6 MB                     75.1 MB

@@ -82,7 +82,7 @@ Basic    daily          30 days  none</pre><p>Gold, Silver and Bronze carry a Co
         <button class="opt" data-ok>A warning: the policy &quot;does not specify a periodic full backup&quot;</button>
         <button class="opt">The run fails</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 8 November 2026 the second run showed Warning, code <code>[1-1-36]</code>, and said VDI backups need a periodic full backup. After the policy was changed, the next run was Succeeded with no warning.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the second run showed Warning, code <code>[1-1-36]</code>, and said VDI backups need a periodic full backup. After the policy was changed, the next run was Succeeded with no warning.</p></details>
     </div>
     <div class="q">
       <p>The VMs are backed up. After the first full backup, the second run (an incremental) reads how much of the disks?</p>
@@ -91,9 +91,9 @@ Basic    daily          30 days  none</pre><p>Gold, Silver and Bronze carry a Co
         <button class="opt" data-ok>All of them again</button>
         <button class="opt">Nothing: VMs have no incrementals</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><pre class="def" aria-label="The two VM backups of 5 October 2026">Run     Read        Sent       Time
+      <details class="reveal"><summary>Show the answer</summary><pre class="def" aria-label="The two VM backups">Run     Read        Sent       Time
 First   128.86 GB   45.13 GB   2,443 s
-Second  128.86 GB   5.50 GB    1,357 s</pre><p>In our lab on 5 October 2026 the incremental read every disk in full again. What fell was the data sent, and so the time. IBM&apos;s pages describe VM protection as intended for testing and proof of concept in the AU-SYD region; when we tested it, it was not generally available.</p></details>
+Second  128.86 GB   5.50 GB    1,357 s</pre><p>In our lab the incremental read every disk in full again. What fell was the data sent, and so the time. IBM&apos;s pages describe VM protection as intended for testing and proof of concept in the AU-SYD region; when we tested it, it was not generally available.</p></details>
     </div>
   </div>
 </section>
@@ -110,7 +110,7 @@ Second  128.86 GB   5.50 GB    1,357 s</pre><p>In our lab on 5 October 2026 the 
         <button class="opt" data-ok>It checks every file against a checksum list made before the backup</button>
         <button class="opt">It counts the folders</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the check <code>sha256sum -c</code> gave 503 of 503 files matching, after a restore of about 12 seconds in October and 23 seconds in the console run. BRS and Defender restores have returned hard-linked files empty and still reported success, which is why the lab runs check by SHA-256.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the check <code>sha256sum -c</code> gave 503 of 503 files matching, after a restore of about 12 seconds in the first run and 23 seconds in the console run. BRS and Defender restores have returned hard-linked files empty and still reported success, which is why the lab runs check by SHA-256.</p></details>
     </div>
     <div class="q">
       <p>From the command line, Northgate restores <code>C:\data\docs</code> and writes the path that way. What happens?</p>
@@ -137,7 +137,7 @@ Second  128.86 GB   5.50 GB    1,357 s</pre><p>In our lab on 5 October 2026 the 
         <button class="opt" data-ok>The restored database got a new ID, and the group still holds the old one</button>
         <button class="opt">The database is too small to back up</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 8 November 2026 the source tree gave <code>labdb</code> the new ID 656; the group still held 652. The run&apos;s Canceled message about a periodic full is not the cause.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the source tree gave <code>labdb</code> the new ID 656; the group still held 652. The run&apos;s Canceled message about a periodic full is not the cause.</p></details>
     </div>
     <div class="q">
       <p>Northgate restores the two VMs, 120 GiB of disks in all. How long does the restore take in our lab?</p>
@@ -146,7 +146,7 @@ Second  128.86 GB   5.50 GB    1,357 s</pre><p>In our lab on 5 October 2026 the 
         <button class="opt">About 20 minutes</button>
         <button class="opt" data-ok>About an hour</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 5 October 2026 the recovery ended Succeeded after 3,803 s (63.4 min). The restored VMs were Running 35 seconds after BRS created them. We checked the VMs and their files, not only the job status.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The recovery ended Succeeded after 3,803 s (63.4 min). The restored VMs were Running 35 seconds after BRS created them. We checked the VMs and their files, not only the job status.</p></details>
     </div>
   </div>
 </section>
@@ -196,7 +196,7 @@ Second  128.86 GB   5.50 GB    1,357 s</pre><p>In our lab on 5 October 2026 the 
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>Clean up, in the right order</h2>
-  <p class="lead">The pilot is over. In our lab on 9 November 2026 the console route was: groups first, then sources, then the instance. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">The pilot is over. In our lab the console route was: groups first, then sources, then the instance. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="2.1,53.6,16.9,5.6" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B6-1-delete-group.png" alt="Delete Protection Group dialog for b-linux2-files: Delete Snapshots switched on, YES typed in the confirmation box, and the Cancel and Delete Group buttons." width="948" height="463"></div>
@@ -235,7 +235,7 @@ Second  128.86 GB   5.50 GB    1,357 s</pre><p>In our lab on 5 October 2026 the 
         <button class="opt" data-ok>To the reclamation list, with state SCHEDULED</button>
         <button class="opt">It is paused for 30 days, then deleted</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 9 November 2026 both deleted instances went to the reclamation list; in October they did not. While an instance that used your own key sat there, Key Protect refused to delete the key: <code>PROTECTED_RESOURCE_ERR, Key is protecting one or more cloud resources</code>. Purge the reclamation first, then delete the key and the authorization.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Both deleted instances went to the reclamation list; in the first run they did not. While an instance that used your own key sat there, Key Protect refused to delete the key: <code>PROTECTED_RESOURCE_ERR, Key is protecting one or more cloud resources</code>. Purge the reclamation first, then delete the key and the authorization.</p></details>
     </div>
     <div class="q">
       <p>What else does a lab with a ROVS cluster leave behind?</p>

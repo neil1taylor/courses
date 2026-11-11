@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It already backs up with Defender Data Protect. Its board asks: what happens if an attacker gets the backup admin&apos;s keys? In this module you rebuild from the vault alone. First, the attack.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from a real run in our lab on 10 November 2026. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">Every number and screen in this unit comes from a real run in our lab. The vault is a Beta in us-south, with no SLA.</p>
   <p class="small"><b>Terms used.</b> <b>SQL checksum</b>: a number worked out from every row of a table; it changes if any row changes.</p>
 </section>
 
@@ -86,7 +86,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>What did the attack change?</h2>
-  <p class="lead">On 10 November at 11:54, an attacker with access to the servers overwrote the data. Before it, Northgate had written down a clean record of every file and of the database.</p>
+  <p class="lead">At 11:54, an attacker with access to the servers overwrote the data. Before it, Northgate had written down a clean record of every file and of the database.</p>
   <pre class="def" aria-label="What the attack did">Source           What was overwritten                         What was checked
 Linux /data      every file, with random bytes                ?
 Windows C:\data  every file, with random bytes                ?
@@ -122,14 +122,14 @@ SQL labdb        UPDATE dbo.items SET payload = NEWID()       checksum -42685994
   <p class="lead">These screens come from the Data Protect console of a new cluster in our lab, with the vault added by its read key. You meet that cluster in the next unit. Click where you would click. After two misses the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="72,52,25,21" data-width="900px">
-      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-7-search-results-three-groups.png" alt="CloudRetrieve search results: cv-sql-labdb, cv-linux-data and cv-win-data, all from cluster cohesity-dp, each with a snapshot of Nov 10, 2026 11:55am." width="1036" height="568"></div>
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-7-search-results-three-groups.png" alt="CloudRetrieve search results: cv-sql-labdb, cv-linux-data and cv-win-data, all from cluster cohesity-dp, each with a snapshot of 11:55am." width="1036" height="568"></div>
       <figcaption>
         <h3>A search of the vault lists the three groups of the old cluster. Which column shows the newest snapshot of each group?</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Snapshot column says 11:55 for each group. That is the infected run, made after the attack at 11:54. The newest run is not the clean one.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="20.5,72.5,11.5,5" data-width="900px">
-      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-8-snapshot-picker-clean-run.png" alt="The snapshot picker: Download Snapshot is ticked, and 2 snapshots are listed for the selected date range, Nov 10, 2026 11:55am and Nov 10, 2026 11:43am." width="1036" height="568"></div>
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-8-snapshot-picker-clean-run.png" alt="The snapshot picker: Download Snapshot is ticked, and 2 snapshots are listed for the selected date range, 11:55am and 11:43am." width="1036" height="568"></div>
       <figcaption>
         <h3>Open the snapshot picker of a group. Which snapshot is the infected run?</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. 11:55 is the run made after the attack. The vault lists two snapshots for the day: 11:55 and 11:43. The picker shows only the time, so you need to know when the attack happened.</p></details>

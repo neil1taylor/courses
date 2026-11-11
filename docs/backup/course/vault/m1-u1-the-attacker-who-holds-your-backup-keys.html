@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with IBM Storage Defender Data Protect. Its board asks one question: what happens if an attacker gets the backup admin&apos;s keys?</p>
     </div>
   </div>
-  <p class="small">Every result in this unit comes from tests in our lab on 5 and 6 October 2026. The vault is IBM Cloud Cyber Vault (Beta), in us-south, with no SLA.</p>
+  <p class="small">Every result in this unit comes from tests in our lab. The vault is IBM Cloud Cyber Vault (Beta), in us-south, with no SLA.</p>
   <p class="small"><b>Terms used.</b> <b>Beta and us-south</b>: Beta is a trial release that IBM offers for testing only, with no SLA (a written promise about how well the service will work) and no support. us-south is the IBM Cloud region in Dallas. <b>HTTP 403 and HTTP 200</b>: HTTP 403 is the answer a web service gives when it refuses a request, and HTTP 200 is the answer when the request worked. <b>Bypass header</b>: a request option that asks storage to ignore a lock; the vault does not honour it. <b>VPC</b>: a virtual private cloud, which is a private network that an account builds inside IBM Cloud. <b>Endpoint</b>: the web address a service answers on. IBM Cloud gives object storage a public, a private and a direct one. <b>Pod</b>: one running piece of software on an OpenShift cluster. <b>Data chunk</b>: one piece of archived data, stored in the vault as its own object.</p>
 </section>
 
@@ -75,7 +75,7 @@
         <button class="opt" data-ok>List and read objects, but not read an object&apos;s lock</button>
         <button class="opt">Read the lock and delete versions</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The write key could write an object with a lock, read it, list and check it. It could not read the lock; the read key could (5 October 2026).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The write key could write an object with a lock, read it, list and check it. It could not read the lock; the read key could.</p></details>
     </div>
   </div>
 </section>
@@ -83,7 +83,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>The attacker tries the write key</h2>
-  <p class="lead">On 5 October 2026, from a server inside the allowed network, we tried these on real locked archive objects with the write key. Predict the answer to each.</p>
+  <p class="lead">From a server inside the allowed network, we tried these on real locked archive objects with the write key. Predict the answer to each.</p>
   <pre class="def" aria-label="What was tried">Try, with the write key                        Answer
 Delete a locked version                         ?
 Same, with the bypass header                    ?
@@ -108,7 +108,7 @@ Change the lock date or mode                    403</pre></details>
         <button class="opt" data-ok>The data, still locked</button>
         <button class="opt">The data, but unlocked</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our test on 6 October 2026 the archive records and the target were removed in Data Protect. The vault kept the same 7 object versions under the prefix we checked, and the lock on the data chunk we checked was unchanged. That cluster held only the read key, which cannot delete. The test did not show what the same delete would do with a write key.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our test the archive records and the target were removed in Data Protect. The vault kept the same 7 object versions under the prefix we checked, and the lock on the data chunk we checked was unchanged. That cluster held only the read key, which cannot delete. The test did not show what the same delete would do with a write key.</p></details>
     </div>
   </div>
 </section>
@@ -125,7 +125,7 @@ Change the lock date or mode                    403</pre></details>
         <button class="opt" data-ok>The write key could write new content under the same name; the old version stayed</button>
         <button class="opt">The write key could shorten a lock</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On a probe object, a write with other content returned 200 and made a new version. The list showed two versions, and the first still returned the original content. But the latest version was now the new content. A holder of the write key can hide the latest data; the old version stays (5 October 2026).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On a probe object, a write with other content returned 200 and made a new version. The list showed two versions, and the first still returned the original content. But the latest version was now the new content. A holder of the write key can hide the latest data; the old version stays.</p></details>
     </div>
     <div class="q">
       <p>The attacker sits on a server in a different network and has a valid write key. What did the vault do in our test?</p>
@@ -134,7 +134,7 @@ Change the lock date or mode                    403</pre></details>
         <button class="opt" data-ok>Refused with HTTP 403 &quot;Access Denied&quot;</button>
         <button class="opt">Accepted writes but refused reads</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 6 October 2026 a pod in a second VPC, with a valid write key, got 403 on the direct and the public name and no answer on the private name. A control from the allowed network got 200. From a laptop on the VPN, with a valid write key, the public endpoint also gave 403.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A pod in a second VPC, with a valid write key, got 403 on the direct and the public name and no answer on the private name. A control from the allowed network got 200. From a laptop on the VPN, with a valid write key, the public endpoint also gave 403.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> A locked object cannot be deleted or shortened. That does not stop a new version being written on top. The tested case is a probe object, not a Data Protect archive.</p>
@@ -166,7 +166,7 @@ Change the lock date or mode                    403</pre></details>
         <button class="opt" data-ok>HTTP 403, refused</button>
         <button class="opt">It asked for the read key</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>HTTP 403, "Access Denied because object protected by object lock", on 5 October 2026.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>HTTP 403, "Access Denied because object protected by object lock".</p></details>
     </div>
     <div class="q" data-check>
       <p>What could a write key still do to a test object?</p>
@@ -184,7 +184,7 @@ Change the lock date or mode                    403</pre></details>
         <button class="opt" data-ok>The vault refused it</button>
         <button class="opt">The vault gave read access only</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>HTTP 403 from a pod in a second VPC on 6 October 2026.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>HTTP 403 from a pod in a second VPC.</p></details>
     </div>
   </div>
 </section>

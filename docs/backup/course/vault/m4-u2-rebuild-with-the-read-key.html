@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. Its backup cluster is destroyed. The only thing left is the vault, and the one key Northgate holds for it: the read key.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from a real run in our lab on 10 November 2026. The screenshots show a second registration of the vault, named <code>cv-console-vault-shots</code>. When you do this yourself, type a name of your own. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">Every number and screen in this unit comes from a real run in our lab. The screenshots show a second registration of the vault, named <code>cv-console-vault-shots</code>. When you do this yourself, type a name of your own. The vault is a Beta in us-south, with no SLA.</p>
   <p class="small"><b>Terms used.</b> <b>CloudRetrieve</b>: the Data Protect feature that searches an archive target and downloads backups from it to a new cluster. <b>DefaultStorageDomain</b>: the cluster&apos;s default place to keep downloaded backups. <b>TLS error</b>: a failure to set up a secure connection.</p>
 </section>
 
@@ -150,7 +150,7 @@ Encryption           ?</pre>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="20.5,77.4,11.5,5" data-width="900px">
-      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-8-snapshot-picker-clean-run.png" alt="The snapshot picker: two snapshots, Nov 10, 2026 11:55am and 11:43am. The radio button of 11:43am is being chosen." width="1036" height="568"></div>
+      <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-8-snapshot-picker-clean-run.png" alt="The snapshot picker: two snapshots, 11:55am and 11:43am. The radio button of 11:43am is being chosen." width="1036" height="568"></div>
       <figcaption>
         <h3>Open the snapshot picker. Which snapshot do you choose, if the attack was at 11:54?</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The 11:43 snapshot is from before the attack. Choose DefaultStorageDomain and click Download.</p></details>
@@ -170,7 +170,7 @@ Encryption           ?</pre>
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>An agent that keeps its old trust</h2>
   <p class="lead">Northgate&apos;s Linux admin upgrades the agent in place with <code>rpm -Uvh --force</code>, then registers the server on the new cluster.</p>
-  <pre class="def" aria-label="Replacing the Linux agent">What the lab did on Linux, 10 November 2026:
+  <pre class="def" aria-label="Replacing the Linux agent">What the lab did on Linux:
   1. Remove the package cohesity-agent
   2. Delete /etc/cohesity-agent/agent.cfg and the .rpmsave copy
   3. Install the new cluster&apos;s rpm</pre>

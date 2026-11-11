@@ -40,7 +40,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect. Its board asks: what if an attacker gets the backup admin&apos;s keys? The answer is a Cyber Vault. First, the account needs access.</p>
     </div>
   </div>
-  <p class="small">Everything here comes from runs in our lab on 25 September and 5 October 2026. The vault is a Beta in us-south, with no SLA, no warranty and no support.</p>
+  <p class="small">Everything here comes from runs in our lab. The vault is a Beta in us-south, with no SLA, no warranty and no support.</p>
   <p class="small"><b>Terms used.</b> <b>IAM role</b>: IAM is IBM Cloud&apos;s system for deciding who may do what, and a role is a named set of permissions in it. <b>IAM token</b>: a short-lived string that proves who you are when you call a service. <b>Service ID</b>: an identity in IBM Cloud for a program, not a person. <b>HTTP 202</b>: the answer that means a request was accepted but is not finished. <b>HTTP 500</b>: the answer that means the service hit an error.</p>
 </section>
 
@@ -72,10 +72,10 @@
         <button class="opt" data-ok>No: the two roles are specific to COS, so grant them by name at account level</button>
         <button class="opt">Yes, but only for the Manager role</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the &quot;all IAM services&quot; policy did not include the two roles. We granted them with <code>ibmcloud iam user-policy-create</code> on 25 September 2026 and waited about 20 seconds before the next call. The user also needs Editor or Administrator on the COS instance.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the &quot;all IAM services&quot; policy did not include the two roles. We granted them with <code>ibmcloud iam user-policy-create</code> and waited about 20 seconds before the next call. The user also needs Editor or Administrator on the COS instance.</p></details>
     </div>
   </div>
-  <p class="small">An account on Basic support cannot open the onboarding case. The notes do not record which route put our account on the list: access was missing on 25 September 2026 and present on 5 October 2026.</p>
+  <p class="small">An account on Basic support cannot open the onboarding case. The notes do not record which route put our account on the list: access was missing and present.</p>
 </section>
 
 <section class="screen">
@@ -83,9 +83,9 @@
   <h2>What does a good answer prove?</h2>
   <p class="lead">Northgate&apos;s admin has the Reader role. She lists the vaults with an API call. Here is what the lab saw.</p>
   <pre class="def" aria-label="What the lab saw">When                        Result
-25 Sep, before Reader role  HTTP 403, not authorized to list
-25 Sep, after Reader role   HTTP 200, count 0, no vaults
-5 Oct, one create           HTTP 202, then active 30 s later</pre>
+Before Reader role        HTTP 403, not authorized to list
+After Reader role         HTTP 200, count 0, no vaults
+One create, later         HTTP 202, then active 30 s later</pre>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>The list call returns HTTP 200 with no vaults. What does that prove?</p>
@@ -94,7 +94,7 @@
         <button class="opt" data-ok>The role works. It does not prove the account is on the allow list</button>
         <button class="opt">The Manager role is in place too</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 25 September 2026 the list returned 200 after the Reader role was granted. The same day, six creates failed. The list only proves the role works.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The list returned 200 after the Reader role was granted. The same day, six creates failed. The list only proves the role works.</p></details>
     </div>
     <div class="q">
       <p>What is the only real check that an account has access?</p>
@@ -103,7 +103,7 @@
         <button class="opt">A Cyber Vault page in the console</button>
         <button class="opt" data-ok>A create call</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On 5 October 2026 the lab made one vault with the shortest lock and no data, and deleted it at once. It was active after about 30 seconds. The delete left two keys, which were deleted by hand. The console page and IBM&apos;s email are weaker signs and were not tested as checks.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The lab made one vault with the shortest lock and no data, and deleted it at once. It was active after about 30 seconds. The delete left two keys, which were deleted by hand. The console page and IBM&apos;s email are weaker signs and were not tested as checks.</p></details>
     </div>
   </div>
 </section>
@@ -125,7 +125,7 @@ HTTP 500
         <button class="opt" data-ok>The token still starts with &quot;Bearer &quot;, so the header reads &quot;Bearer Bearer &lt;IAM_TOKEN&gt;&quot;</button>
         <button class="opt">The Manager role has not arrived yet</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The CLI prints the token with the word <code>Bearer </code> in front. Remove it with <code>sed &apos;s/^Bearer //&apos;</code> before you build the header. Our lab hit this on 25 September 2026.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The CLI prints the token with the word <code>Bearer </code> in front. Remove it with <code>sed &apos;s/^Bearer //&apos;</code> before you build the header. Our lab hit this.</p></details>
     </div>
     <div class="q">
       <p>The call failed. What did it leave behind?</p>
@@ -160,7 +160,7 @@ HTTP 500
         <button class="opt" data-ok>The Reader role works; only a create proves the allow list</button>
         <button class="opt">The vault was created</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The create on 5 October 2026 was the check that showed access.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The create was the check that showed access.</p></details>
     </div>
     <div class="q" data-check>
       <p>A create returns HTTP 500 and &quot;token is malformed&quot;. What do you check first?</p>

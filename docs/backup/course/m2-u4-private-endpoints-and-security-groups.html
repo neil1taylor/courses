@@ -43,7 +43,7 @@
       <p class="hand tilt">Northgate Freight is a made-up company. It wants its servers to reach BRS at a private address inside its VPC, and it wants the gateway to let them in.</p>
     </div>
   </div>
-  <p class="small">Every number and message in this unit comes from runs in our lab, on 7 October and 9 November 2026. Names, addresses and the group names were changed to made-up Northgate values; the screenshots show the lab&apos;s own names, with the service endpoint blurred.</p>
+  <p class="small">Every number and message in this unit comes from runs in our lab. Names, addresses and the group names were changed to made-up Northgate values; the screenshots show the lab&apos;s own names, with the service endpoint blurred.</p>
 </section>
 
 <section class="screen">
@@ -70,7 +70,7 @@
       <details class="reveal"><summary>Show the answer</summary><p>The gateway lets servers reach the BRS API at a private address inside the VPC. In our lab the private name resolved to the gateway&apos;s address six seconds after the gateway was stable, and the gateway was ready in 22 seconds.</p></details>
     </div>
     <div class="q">
-      <p>What did the gateway cost, as the console showed it on 9 November 2026?</p>
+      <p>What did the gateway cost, as the console showed it?</p>
       <div class="opts">
         <button class="opt">Nothing</button>
         <button class="opt" data-ok>USD 7.30 a month before data</button>
@@ -93,7 +93,7 @@
         <button class="opt" data-ok>It tries the gateway on port 29991, cannot connect, and shows no message</button>
         <button class="opt">It connects through the gateway on port 443</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab on 9 November 2026 the restart made the agent connect to the gateway&apos;s address on port <b>29991</b>. The gateway&apos;s group allowed only 443, so the connection stayed at <code>SYN-SENT</code> and <code>connector-agent list</code> showed <code>isConnected: false</code>, with no message. Any reboot does the same, because the agent is started again.</p><pre class="def" aria-label="The timeline">Time (UTC)  What happened
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab the restart made the agent connect to the gateway&apos;s address on port <b>29991</b>. The gateway&apos;s group allowed only 443, so the connection stayed at <code>SYN-SENT</code> and <code>connector-agent list</code> showed <code>isConnected: false</code>, with no message. Any reboot does the same, because the agent is started again.</p><pre class="def" aria-label="The timeline">Time (UTC)  What happened
 14:41:24    agent stopped, then started
             gateway address, port 29991, SYN-SENT
 14:43:15    inbound TCP 29991 added to the gateway group
@@ -114,7 +114,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
   <h2>The call times out</h2>
-  <p class="lead">Northgate makes the gateway and leaves its security group as it is. From a server, it calls the BRS API at the private name. In our lab on 7 October 2026 this came back.</p>
+  <p class="lead">Northgate makes the gateway and leaves its security group as it is. From a server, it calls the BRS API at the private name. In our lab this came back.</p>
   <pre class="def" aria-label="The failed call">$ curl https://&lt;GUID&gt;.private.eu-de.backup-recovery.cloud.ibm.com/...
 (no answer: timed out after 15 s)</pre>
   <div class="pair" style="margin-top:20px">
@@ -163,7 +163,7 @@
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7f-3-dns-ip.png" alt="Share DNS: Primary; Reserved IP: Select for me." width="880" height="622"></div>
       <figcaption>
         <h3>Our lab keeps the DNS resolution binding mode at one setting. Click it.</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: Primary. Reserved IP stays at Select for me. Then click Create virtual private endpoint gateway. In our lab on 9 November 2026 it was created at 14:38:34 UTC and stable at 14:38:48 UTC.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: Primary. Reserved IP stays at Select for me. Then click Create virtual private endpoint gateway. In our lab it was created at 14:38:34 UTC and stable at 14:38:48 UTC.</p></details>
       </figcaption>
     </figure>
   </div>
