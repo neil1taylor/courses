@@ -14,7 +14,7 @@
 
 <header class="band gut">
   <div class="wrap">
-    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 4 · Restore and prove it</span>
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 4 · Restore and check it</span>
     <span class="segs js-only" aria-label="Progress"></span>
     <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
   </div>
@@ -27,14 +27,14 @@
     <div>
       <span class="kicker">Unit 2 of Module 4</span>
       <h1>Windows paths</h1>
-      <p class="lead">By the end you can find the path a Windows restore needs, explain why <code>C:\data\docs</code> fails, and read a Windows run in the console.</p>
+      <p class="lead">By the end of this unit you'll know which path a Windows restore needs, why <code>C:\data\docs</code> fails, and how to read a Windows run in the console.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: the folder C:\data\docs on the server becomes the path /C/data/docs in the backup."
         data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,45,180,70],"heavy":true,"title":"on the server","detail":"C:\\data\\docs"},{"line":[194,80,226,80],"arrow":true,"tone":"mark"},{"box":[230,45,180,70],"tone":"mark","title":"in the backup","detail":"/C/data/docs"},{"text":"the drive becomes a folder","at":[90,170],"hand":true,"size":17,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It protects the folder <code>C:\data</code> on a Windows server. Today it deletes <code>C:\data\docs</code> on purpose and restores it.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It protects the folder <code>C:\data</code> on a Windows server. In this unit it deletes <code>C:\data\docs</code> on purpose and restores it.</p>
     </div>
   </div>
   <p class="small">Every number and screen in this unit comes from real runs in our lab, some at the command line and some in the console. The server name is blurred in the screenshots.</p>
@@ -58,24 +58,24 @@
         <button class="opt" data-ok>A folder named C</button>
         <button class="opt">The path <code>C:\data</code></button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>One folder, <code>C</code>. Open <code>C</code>, then <code>data</code>, and tick <code>docs</code>: the selection reads <code>/C/data</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>One folder, <code>C</code>. Open <code>C</code>, then <code>data</code>, and tick <code>docs</code>. The selection reads <code>/C/data</code>.</p></details>
     </div>
     <div class="q">
-      <p>The group accepted <code>C:\data</code> when it was made. Why does a restore not accept <code>C:\data\docs</code>?</p>
+      <p>The group accepted <code>C:\data</code> when it was made. Why doesn&apos;t a restore accept <code>C:\data\docs</code>?</p>
       <div class="opts">
         <button class="opt">The server was offline</button>
         <button class="opt" data-ok>The restore looks the path up in the snapshot&apos;s file view, where the drive is a folder named C</button>
         <button class="opt">Restores cannot use folders</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That is the explanation. The error text shows the path it looked for in the view, ending <code>.../fs/C:\data\docs</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Because the restore looks the path up in the snapshot&apos;s file view. The error text shows the path it looked for in the view, ending <code>.../fs/C:\data\docs</code>.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 2 · Spot the fault</span>
-  <h2>The restore that fails twice</h2>
-  <p class="lead">Northgate deletes <code>C:\data\docs</code> and restores it from the command line, to its original place. The only thing that changes between tries is the path. These are the first two tries.</p>
+  <h2>Which path the restore needs</h2>
+  <p class="lead">Northgate&apos;s backup admin deletes <code>C:\data\docs</code> and restores it from the command line, to its original place. The only thing that changes between tries is the path. These are the first two tries.</p>
   <pre class="def" aria-label="The first two tries">Try  Time      Path           Result
 1    11:50:09  C:\data\docs   Failed in 5 s
 2    11:50:37  C:\data\docs   Failed, the same message
@@ -101,16 +101,16 @@ Error while calling FileStat for C:\data\docs: [kNotFound]: Bridge error: Direct
         <button class="opt" data-ok>Nothing: a sed error left the path unchanged</button>
         <button class="opt">The server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab, a sed error left the body unchanged, so <code>C:\data\docs</code> went in again.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Nothing. In our lab, a sed error left the body unchanged, so <code>C:\data\docs</code> went in again.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> In the console this does not happen. You pick the folder, you do not type its path.</p>
+  <p class="watch"><b>Watch for this.</b> In the console this doesn&apos;t happen, because you pick the folder rather than typing its path.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
   <h2>Back up, restore, verify</h2>
-  <p class="lead">Northgate&apos;s Windows group backs up <code>C:\data</code>, which holds 506 files. Then Northgate adds six files, five small and one of 3 MB, and runs the group again. Later it deletes <code>C:\data\docs</code> and restores it.</p>
+  <p class="lead">Northgate&apos;s Windows group backs up <code>C:\data</code>, which holds 506 files. Then the admin adds six files, five small and one of 3 MB, and runs the group again. Later they delete <code>C:\data\docs</code> and restore it.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>How much does the second backup run read?</p>
@@ -138,7 +138,7 @@ Second  512     3.2 MB    18 s</pre><p>These are the console runs. The command-l
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>The same restore, without typing a path</h2>
-  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="45.4,89.5,4.6,5.2" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B4b-1-runs.png" alt="Group Details for the Windows group, Paused. Two runs: 1:52 pm, 18 s, Incremental, 3 MiB read; and 1:50 pm, 32 s, Incremental, 92 MiB read." width="1227" height="420"></div>
@@ -158,7 +158,7 @@ Second  512     3.2 MB    18 s</pre><p>These are the console runs. The command-l
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5b-2-select-folder.png" alt="C, then data, with docs ticked. The panel on the right reads 1 Selected, docs, /C/data." width="1184" height="676"></div>
       <figcaption>
         <h3>You ticked <code>docs</code>. Where does the console show the path it will restore?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The panel reads 1 Selected, docs, <code>/C/data</code>. You picked the folder; you did not type its path. Keep <b>Original Server</b> and <b>Recover to Original Path</b> and click <b>Recover</b>. In our lab it succeeded at the first try, in 9 s.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The panel reads 1 Selected, docs, <code>/C/data</code>. You picked the folder, so you didn&apos;t type its path. Keep <b>Original Server</b> and <b>Recover to Original Path</b> and click <b>Recover</b>. In our lab it succeeded first time, in 9 s.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -175,7 +175,7 @@ Second  512     3.2 MB    18 s</pre><p>These are the console runs. The command-l
         <button class="opt"><code>C:/data/docs</code></button>
         <button class="opt"><code>\data\docs</code></button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The restore looks the path up in the snapshot&apos;s file view, where the drive is a folder named <code>C</code>. In our lab <code>/C/data/docs</code> succeeded.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p><code>/C/data/docs</code>. The restore looks the path up in the snapshot&apos;s file view, where the drive is a folder named <code>C</code>. In our lab <code>/C/data/docs</code> succeeded.</p></details>
     </div>
     <div class="q" data-check>
       <p>In the console, how do you avoid the path problem?</p>
@@ -184,16 +184,16 @@ Second  512     3.2 MB    18 s</pre><p>These are the console runs. The command-l
         <button class="opt">You type <code>C:\data\docs</code> twice</button>
         <button class="opt">You cannot restore Windows files there</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The browser shows the drive as a folder named <code>C</code>. You open it and tick <code>docs</code>; the selection reads <code>/C/data</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>You pick the folder. The browser shows the drive as a folder named <code>C</code>. You open it and tick <code>docs</code>, and the selection reads <code>/C/data</code>.</p></details>
     </div>
     <div class="q" data-check>
-      <p><b>Review from unit 4.1.</b> What is the proof that a restore worked?</p>
+      <p><b>Review from unit 4.1.</b> How do you know a restore worked?</p>
       <div class="opts">
         <button class="opt">The recovery says Succeeded</button>
         <button class="opt" data-ok>Every file is checked against the checksum list: 503 of 503 match</button>
         <button class="opt">The folder opens on the server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Delete a folder, restore it, and check every file against the checksum list. This is the proof that the backup works.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Checking every file. Delete a folder, restore it, and check every file against the checksum list. That&apos;s how you know the backup works.</p></details>
     </div>
   </div>
 </section>
@@ -203,7 +203,7 @@ Second  512     3.2 MB    18 s</pre><p>These are the console runs. The command-l
   <h2>You can restore Windows files</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>A command-line restore of a Windows folder needs <code>/C/data/docs</code>, not <code>C:\data\docs</code>: in the snapshot the drive is a folder named C. In the console you pick the folder, so the problem does not arise.</p></div>
+    <div><span class="label">Remember</span><p>A command-line restore of a Windows folder needs <code>/C/data/docs</code>, not <code>C:\data\docs</code>, because in the snapshot the drive is a folder named C. In the console you pick the folder, so the problem doesn&apos;t arise.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Keep VMs apart: policies and egress · ROVS course</title>
-<meta name="description" content="Course unit 3.4: say what each control does and does not stop, from VPC security groups to network policies and egress rules, and spot the gaps before Northgate relies on them. No cluster needed.">
+<meta name="description" content="Course unit 3.4: what each control stops and what it doesn't, from VPC security groups to network policies and egress rules, and where the gaps are. No cluster needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 4 of Module 3</span>
       <h1>Keep VMs apart: policies and egress</h1>
-      <p class="lead">By the end you can say which control stops which traffic, and name the gaps that a vSphere admin, used to NSX, would not expect.</p>
+      <p class="lead">By the end of this unit you'll be able to say which control stops which traffic, and name the gaps that a vSphere admin who's used to NSX wouldn't expect.</p>
       <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -41,16 +41,16 @@
           {"line":[114,92,160,60],"tone":"muted"},
           {"line":[160,60,250,60],"arrow":true,"tone":"muted"},
           {"line":[250,60,296,92],"arrow":true,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output in this unit is real. Its security team wants the same separation it had with NSX. It will not all come from one place.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that's moving off vSphere. The output in this unit is real. Northgate's security team wants the same separation it had with NSX, and it takes more than one control to get it.</p>
     </div>
   </div>
-  <p class="small">Every statement and output in this unit comes from real runs on lab clusters, apart from the review question. The VMware comparisons are rough mappings, not IBM statements.</p>
+  <p class="small">Every statement and output in this unit comes from a real run on a lab cluster, apart from the review question. The VMware comparisons are rough matches of our own, and IBM doesn't describe the products this way.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Predict</span>
   <h2>A security group with no inbound rule</h2>
-  <p class="lead">Three VMs on one localnet network. The server&apos;s VPC security group has no inbound rule. One client runs on the server&apos;s worker, one on another worker. Both clients&apos; groups allow all traffic.</p>
+  <p class="lead">Three VMs sit on one localnet network. The server's VPC security group has no inbound rule. One client runs on the server's worker, and one on another worker. Both clients' groups allow all traffic.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Worker A holds the server, whose security group has no inbound rule, and client1. An arrow from client1 to the server stays inside the worker and is marked as getting through. Worker B holds client2. Its traffic to the server crosses the VPC and is marked as blocked."
       data-drawing='{"w":640,"h":270,"shapes":[
@@ -74,7 +74,7 @@
           <button class="opt" data-ok>Only client1, on the same worker</button>
           <button class="opt">Both</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><span class="hand">A hole, not a footnote.</span><p>client1&apos;s ping and HTTP succeeded and client2&apos;s were blocked. Traffic between VMs on the same worker is switched inside OVS and never reaches the VPC fabric, where security group rules apply. The server&apos;s log showed client1&apos;s VPC address, so the traffic took no other path.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><span class="hand">Only client1 gets through.</span><p>client1's ping and HTTP succeeded, and client2's were blocked. Traffic between VMs on the same worker is switched inside OVS and never reaches the VPC fabric, which is where security group rules apply. The server's log showed client1's VPC address, so the traffic took no other path.</p></details>
       </div>
       <div class="q">
         <p>Later, a live migration or node drain puts client2 on the server&apos;s worker. What do you expect?</p>
@@ -82,7 +82,7 @@
           <button class="opt">No change. The group follows the VNI</button>
           <button class="opt" data-ok>client2 may now get through</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>The same pair of VMs is filtered on different workers and unfiltered on the same one. A rule set that works in testing can silently stop applying after a migration or a drain. A security group is not a tenant boundary on its own.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>client2 may now get through. The same pair of VMs is filtered on different workers and unfiltered on the same one. A rule set that works in testing can silently stop applying after a migration or a drain, so don't use a security group as a tenant boundary on its own.</p></details>
       </div>
     </div>
   </div>
@@ -90,8 +90,8 @@
 
 <section class="screen">
   <span class="kicker">Step 2 · Run it</span>
-  <h2>A policy that is in force, and a VM it does not touch</h2>
-  <p class="lead">Two VMs on a secondary Layer 2 network, in two projects on two workers. Run each command in turn. The output is what the lab cluster returned.</p>
+  <h2>A policy that's in force, and a VM it doesn't touch</h2>
+  <p class="lead">Two VMs sit on a secondary Layer 2 network, in two projects on two workers. Run each command in turn. The output is what the lab cluster returned.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -116,16 +116,16 @@
     &lt;none&gt; (Selected pods are isolated for ingress connectivity)
   Not affecting egress traffic
   Policy Types: Ingress</pre>
-          <p class="hand note">The chapter shows only this part of the output.</p>
-          <p class="hand note">It was in force: an ordinary pod on the primary network went from HTTP=403 to a dropped request, curl exit code 28.</p>
+          <p class="hand note">This page shows only this part of the output.</p>
+          <p class="hand note">It was in force. An ordinary pod on the primary network went from HTTP=403 to a dropped request, curl exit code 28.</p>
         </div>
         <div class="q">
-          <p>The policy is in force and selects every pod in the project, including the VM&apos;s launcher pod. Will the VM&apos;s Layer 2 address still answer?</p>
+          <p>The policy is in force and selects every pod in the project, including the VM's launcher pod. Will the VM's Layer 2 address still answer?</p>
           <div class="opts">
             <button class="opt">No, the policy drops it</button>
             <button class="opt" data-ok>Yes, it still answers</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>Run the same two commands again.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>Yes. Run the same two commands again and see.</p></details>
         </div>
         <div class="cmd">
           <p class="pre"># same VMs, same commands, nothing else changed</p>
@@ -135,8 +135,8 @@
         <div class="cmd">
           <pre class="in">curl -s -m 6 -o /dev/null -w "HTTP=%{http_code}\n" http://192.168.100.11:5432/</pre>
           <pre class="out">HTTP=200</pre>
-          <p class="hand note">Untouched. One interface was enforced and one was not.</p>
-          <p class="hand note">A NetworkPolicy covers a pod&apos;s primary network, not a secondary one.</p>
+          <p class="hand note">The VM still answers, because its Layer 2 address is on a secondary interface.</p>
+          <p class="hand note">A NetworkPolicy covers a pod's primary network. It doesn't cover a secondary one.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -151,7 +151,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Design it</span>
   <h2>Which policy covers which network?</h2>
-  <p class="lead">A test run measured this on a ROVS cluster as delivered. Security groups plus network policies are not a drop-in replacement for the NSX distributed firewall.</p>
+  <p class="lead">We measured this on a ROVS cluster as delivered. If you're used to the NSX distributed firewall, check which network each control covers, because security groups and network policies don't map onto it one for one.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn two-column diagram. The pod network is covered by NetworkPolicy, enforced. A primary Layer 2 or Layer 3 network is covered by NetworkPolicy, enforced. A localnet secondary network is covered only by MultiNetworkPolicy, off by default. A Layer 2 secondary network is covered only by MultiNetworkPolicy, off by default."
       data-drawing='{"w":640,"h":220,"shapes":[
@@ -161,48 +161,48 @@
         {"box":[10,162,270,40],"title":"Layer 2 (secondary)"},{"line":[288,182,332,182],"arrow":true,"tone":"muted"},{"box":[340,162,290,40],"title":"MultiNetworkPolicy: off"}]}'></svg>
     <div>
       <div class="q">
-        <p>Northgate&apos;s three-tier app needs its tier boundary enforced by the platform, inside the cluster. Where must the VMs&apos; traffic be?</p>
+        <p>Northgate's three-tier app needs its tier boundary enforced by the platform, inside the cluster. Where does the VMs' traffic have to be?</p>
         <div class="opts">
           <button class="opt">On a localnet network, with security groups</button>
           <button class="opt">On a secondary Layer 2 network, with a <code>NetworkPolicy</code></button>
           <button class="opt" data-ok>On a primary network, with a <code>NetworkPolicy</code></button>
         </div>
-        <details class="reveal"><summary>Show the worked answer</summary><p>Make the network primary. A primary Layer 2 or Layer 3 network is the pod&apos;s primary network, so ordinary <code>NetworkPolicy</code> governs it. It is the only mechanism that the platform enforces and that is available today. The other ways out cost something: a router pod is a single point of failure with a bandwidth ceiling, and a guest firewall is defence in depth that the application owner can switch off. <code>MultiNetworkPolicy</code> worked once turned on, but IBM says it is not officially supported on ROVS.</p></details>
+        <details class="reveal"><summary>Show the worked answer</summary><p>On a primary network. A primary Layer 2 or Layer 3 network is the pod's primary network, so an ordinary <code>NetworkPolicy</code> governs it. It's the only supported control that the platform enforces. The other ways cost you something. A router pod is a single point of failure with a bandwidth ceiling, and a guest firewall is defence in depth that the application owner can switch off. <code>MultiNetworkPolicy</code> worked once we turned it on, but IBM says it isn't officially supported on ROVS.</p></details>
       </div>
-      <p class="hand tilt">Do not report a Layer 2 secondary segment as segmented. It is not.</p>
+      <p class="hand tilt">A NetworkPolicy doesn't filter a Layer 2 secondary segment, so don't record that segment as isolated.</p>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>The namespace that lost the API</h2>
-  <p class="lead">An egress firewall is an ordered list: the first rule that matches wins. Northgate ends its list with a catch-all Deny of <code>0.0.0.0/0</code> and allows the worker subnet, <code>10.243.128.0/24</code>. Afterwards everything in the project loses access to the cluster API.</p>
+  <h2>An egress firewall that cuts the project off from the API</h2>
+  <p class="lead">An egress firewall is an ordered list, and the first rule that matches wins. Northgate ends its list with a catch-all Deny of <code>0.0.0.0/0</code> and allows the worker subnet, <code>10.243.128.0/24</code>. Afterwards, everything in the project loses access to the cluster API.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
         <div class="bar"><span>bash</span><span data-term-count></span></div>
         <div class="q">
-          <p>Is the API server&apos;s address inside the worker subnet <code>10.243.128.0/24</code>?</p>
+          <p>Is the API server's address inside the worker subnet <code>10.243.128.0/24</code>?</p>
           <div class="opts">
-            <button class="opt">Yes, it is on the workers</button>
+            <button class="opt">Yes, it's on the workers</button>
             <button class="opt" data-ok>No. IBM runs the control plane</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>Run the command to see the address.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>No, it isn't. Run the command to see where it is.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">oc get ep kubernetes -n default</pre>
           <pre class="out">Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
 NAME         ENDPOINTS         AGE
 kubernetes   172.20.0.1:2040   37d</pre>
-          <p class="hand note">Not in the worker subnet, the pod network or the service network.</p>
+          <p class="hand note">It isn't in the worker subnet, the pod network or the service network.</p>
           <p class="hand note">The warning is expected and harmless.</p>
         </div>
         <div class="cmd">
           <pre class="in">oc get node &lt;node&gt; -o jsonpath='{.metadata.annotations.k8s\.ovn\.org/host-cidrs}'</pre>
           <pre class="out">["10.243.128.53/24","172.20.0.1/32"]</pre>
-          <p class="hand note">The API address is in each node&apos;s host list.</p>
-          <p class="hand note">A rule that allows the nodes covers it, and keeps covering it if it changes.</p>
+          <p class="hand note">The API address is in each node's host list.</p>
+          <p class="hand note">A rule that allows the nodes covers it, and keeps on covering it if it changes.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -213,13 +213,13 @@ kubernetes   172.20.0.1:2040   37d</pre>
     <div class="notes js-only" aria-live="polite"></div>
   </div>
   <div class="q">
-    <p>What is the fix?</p>
+    <p>What's the fix?</p>
     <div class="opts">
       <button class="opt">Allow the worker subnet again, higher in the list</button>
       <button class="opt" data-ok>Put an Allow with <code>nodeSelector: {}</code> first, before the Deny</button>
       <button class="opt">Remove the Deny and rely on security groups</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>Delete the firewall, add the <code>nodeSelector: {}</code> Allow at the top, and apply it again. Or allow the exact address as a <code>/32</code>. An Allow written against the worker subnet does not cover the API address, so it cannot fix this.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>Put the Allow first. Delete the firewall, add the <code>nodeSelector: {}</code> Allow at the top, and apply it again. Or allow the exact address as a <code>/32</code>. An Allow written against the worker subnet doesn't cover the API address, so it can't fix this.</p></details>
   </div>
 </section>
 
@@ -233,24 +233,24 @@ kubernetes   172.20.0.1:2040   37d</pre>
         <button class="opt">Yes, the gateway forwards it</button>
         <button class="opt" data-ok>No. A public gateway is outbound only</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A public gateway rewrites the source address of outbound traffic. Unsolicited inbound traffic is blocked. Inbound access needs a floating IP or a load balancer.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. A public gateway rewrites the source address of outbound traffic, and unsolicited inbound traffic is blocked. For inbound access you need a floating IP or a load balancer.</p></details>
     </div>
     <div class="q" data-check>
       <p>A project has an egress firewall with a catch-all Deny. Its VM has only a secondary Layer 2 interface. Does a ping to a VM outside the allow list fail?</p>
       <div class="opts">
         <button class="opt">Yes, the Deny drops it</button>
-        <button class="opt" data-ok>No. The firewall does not cover that interface</button>
+        <button class="opt" data-ok>No. The firewall doesn't cover that interface</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In the run, the ping and an HTTP request both succeeded. An egress firewall is programmed on the project&apos;s primary network and nowhere else. No cluster resource available as delivered on ROVS filters a secondary interface.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. In our run, the ping and an HTTP request both succeeded. An egress firewall is programmed on the project's primary network and nowhere else. No cluster resource available on ROVS as delivered filters a secondary interface.</p></details>
     </div>
     <div class="q" data-check>
-      <p>An on-premises firewall rule needs one stable source address for Northgate&apos;s localnet VMs. What gives you that?</p>
+      <p>An on-premises firewall rule needs one stable source address for Northgate's localnet VMs. What gives you that?</p>
       <div class="opts">
         <button class="opt">An EgressIP</button>
-        <button class="opt" data-ok>The VM&apos;s own address on its VPC subnet, or the subnet&apos;s range</button>
+        <button class="opt" data-ok>The VM's own address on its VPC subnet, or the subnet's range</button>
         <button class="opt">A NetworkPolicy</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A localnet VM already has a stable, known address that does not change when it live-migrates. Reserve it and pin it, or write the external rule against the subnet range. No topology in these chapters gets a working EgressIP.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The VM's own address. A localnet VM already has a stable, known address that doesn't change when it live-migrates. Reserve it and pin it, or write the external rule against the subnet range. Don't plan on an EgressIP for these VMs, because none of the topologies we tested gave one that worked.</p></details>
     </div>
   </div>
 </section>
@@ -260,7 +260,7 @@ kubernetes   172.20.0.1:2040   37d</pre>
   <h2>You know where the gaps are</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Security groups can be bypassed on the same worker. <code>NetworkPolicy</code> covers only a primary network. Put the API allow first.</p></div>
+    <div><span class="label">Remember</span><p>Security groups don't apply between VMs on the same worker. <code>NetworkPolicy</code> covers only a primary network. Put the API Allow first in an egress firewall.</p></div>
     <div><span class="label">When you have a cluster</span><p>Tutorial chapter 26, Enforce network policies on ROVS pods and VMs, tests each control, and chapter 27, Control VM egress with EgressFirewall and EgressIP on ROVS, covers egress.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

@@ -27,14 +27,14 @@
     <div>
       <span class="kicker">Unit 4 of Module 3</span>
       <h1>Instance templates, instance groups and autoscale</h1>
-      <p class="lead">By the end you can read an instance template, say what a group does with it, and predict how an autoscale group grows.</p>
+      <p class="lead">By the end of this unit you'll be able to read an instance template, say what a group does with it, and predict how an autoscale group grows.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: a template feeds a group, which makes three servers."
         data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,60,110,70],"heavy":true,"title":"Template"},{"line":[130,95,190,95],"arrow":true,"tone":"mark"},{"box":[200,60,90,70],"heavy":true,"title":"Group"},{"line":[300,80,340,40],"arrow":true,"tone":"mark"},{"line":[300,95,340,95],"arrow":true,"tone":"mark"},{"line":[300,110,340,150],"arrow":true,"tone":"mark"},{"box":[345,20,65,36],"fill":"hatch","tone":"mark"},{"box":[345,77,65,36],"fill":"hatch","tone":"mark"},{"box":[345,134,65,36],"fill":"hatch","tone":"mark"},{"text":"servers","at":[352,190],"hand":true,"tone":"muted","size":17}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the commands and output are real. Its web tier must grow when it is busy and replace a server that fails, without anyone typing a create command each time.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that is moving off vSphere, though the commands and output are real. Its web tier needs to grow when it's busy and replace a server that fails, without anyone typing a create command each time.</p>
     </div>
   </div>
   <p class="small">Every command and line of output in this unit comes from real runs in a test account.</p>
@@ -56,24 +56,24 @@
         <div class="part-info" data-part="where">
           <h3>Where</h3>
           <p>A template is a saved set of server settings: zone, profile, image, subnet, keys, volumes, network interface and user data. This one names the VPC, resource group, zone and profile.</p>
-          <p class="hand tilt"><b>From vSphere:</b> a VM template maps to an image and an instance template. Rough mapping: in VPC the image holds the disk and the template holds the settings.</p>
-          <p class="watch"><b>Watch for this.</b> The template names one zone. The group in step 2 is given three subnets, and its members landed in us-east-1, us-east-2 and us-east-3.</p>
+          <p class="hand tilt"><b>From vSphere:</b> a VM template maps to an image and an instance template. It's a rough mapping, because in VPC the image holds the disk and the template holds the settings.</p>
+          <p class="watch"><b>Watch for this.</b> The template names one zone, but the group in step 2 is given three subnets, and its members landed in us-east-1, us-east-2 and us-east-3.</p>
         </div>
         <div class="part-info" data-part="image">
           <h3>What it runs</h3>
-          <p>The image and the SSH keys. The template here uses the custom image <code>vpct-prod-web-image-v2</code>. The user data is also stored in the template, but this command does not print it.</p>
-          <p class="watch"><b>Watch for this.</b> The template names no floating IP, because IBM's instance groups do not accept one.</p>
+          <p>The image and the SSH keys. The template here uses the custom image <code>vpct-prod-web-image-v2</code>. The user data is also stored in the template, but this command doesn't print it.</p>
+          <p class="watch"><b>Watch for this.</b> The template names no floating IP, because IBM's instance groups don't accept one.</p>
         </div>
         <div class="part-info" data-part="disk">
           <h3>Boot volume</h3>
           <p>The template names the boot volume and its tags.</p>
-          <p class="watch"><b>Watch for this.</b> A volume name must be unique. A second server made by hand from this template fails with <code>Volume with name "vpct-prod-web-tpl-boot-vol" already exists</code> unless you give it its own name.</p>
+          <p class="watch"><b>Watch for this.</b> A volume name must be unique, so a second server made by hand from this template fails with <code>Volume with name "vpct-prod-web-tpl-boot-vol" already exists</code> unless you give it its own name.</p>
         </div>
         <div class="part-info" data-part="net">
           <h3>Network</h3>
           <p>The primary network attachment, the subnet and the name of the reserved IP.</p>
-          <p class="watch"><b>Watch for this.</b> These names must also be unique in the VPC. A group adds two random strings to each when it builds a member. A template with no names gets four random words for them.</p>
-          <p class="watch"><b>And this.</b> An instance template takes no tags: <code>tag-attach</code> fails with <code>The specified resource type is not supported: project</code>.</p>
+          <p class="watch"><b>Watch for this.</b> These names must also be unique in the VPC. A group adds two random strings to each name when it builds a member, and a template with no names gets four random words for them.</p>
+          <p class="watch"><b>Watch for this.</b> An instance template takes no tags either, and <code>tag-attach</code> fails with <code>The specified resource type is not supported: project</code>.</p>
         </div>
       </div>
     </div>
@@ -135,7 +135,7 @@ Subnets                       ID                  Name
                               0757-…-b4ab         vpct-prod-web-z1
                               0767-…-90b4         vpct-prod-web-z2
                               0777-…-d455         vpct-prod-web-z3</pre>
-          <p class="hand note">A group with a membership count and no manager keeps that many servers and repairs them.</p>
+          <p class="hand note">A group with a membership count and no manager keeps that many servers and repairs them if they fail.</p>
         </div>
         <div class="cmd">
           <p class="pre"># a manager and a CPU policy</p>
@@ -155,16 +155,16 @@ Name           vpct-prod-web-ig-cpu50
 Metric type    cpu
 Metric value   50
 Policy type    target</pre>
-          <p class="hand note">Between 1 and 3 servers. Target: average CPU of 50%.</p>
-          <p class="hand note">IBM's limits: the window is 90 to 600 seconds, the cooldown 120 to 3600 seconds, one policy for each metric type.</p>
+          <p class="hand note">The group keeps between 1 and 3 servers, with a target of 50% average CPU.</p>
+          <p class="hand note">IBM's limits are 90 to 600 seconds for the window, 120 to 3600 seconds for the cooldown, and one policy for each metric type.</p>
         </div>
         <div class="q">
-          <p>Before you run the next command: the group's only member runs the first template. You switch the group to a second template whose servers burn CPU. Does the existing member change?</p>
+          <p>Before you run the next command, suppose the group's only member runs the first template and Northgate switches the group to a second template whose servers burn CPU. Does the existing member change?</p>
           <div class="opts">
             <button class="opt">Yes, the group rebuilds it from the new template</button>
             <button class="opt" data-ok>No: it keeps the old template and its CPU stays low</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>IBM does not say whether existing members change. In the recorded run they did not: the first member kept the old template, its CPU stayed low and the manager added nothing. Deleting that member made the group replace it from the load template.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>No. IBM doesn't say whether existing members change. In the recorded run they didn't: the first member kept the old template, its CPU stayed low and the manager added nothing. Deleting that member made the group replace it from the load template.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud is instance-group-update vpct-prod-web-ig --instance-template vpct-prod-web-tpl-load</pre>
@@ -174,7 +174,7 @@ Instances(Membership count)   1
 Instance template             0757-…-79fd
 Managers                      ID                  Name
                               r014-…-8847         vpct-prod-web-ig-mgr</pre>
-          <p class="hand note">New members use the new template. The member that exists keeps the old one.</p>
+          <p class="hand note">New members use the new template, and the member that already exists keeps the old one.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -189,7 +189,7 @@ Managers                      ID                  Name
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
   <h2>Pick an answer, then see what really happened</h2>
-  <p class="lead">Settings: minimum 1, maximum 3, aggregation window 90 seconds, cooldown 300 seconds, a CPU target of 50%. The group's one member runs a loop that keeps the CPU busy.</p>
+  <p class="lead">The settings are a minimum of 1, a maximum of 3, an aggregation window of 90 seconds, a cooldown of 300 seconds and a CPU target of 50%. The group's one member runs a loop that keeps the CPU busy.</p>
   <div class="pair">
     <div class="q">
       <p>When did the recorded group first show two members?</p>
@@ -198,7 +198,7 @@ Managers                      ID                  Name
         <button class="opt" data-ok>Between 234 and 267 seconds</button>
         <button class="opt">After more than 10 minutes</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">About four and a half minutes.</span><p>The readings showed one member up to 234 seconds and two at 267 seconds. Trimmed from the lab recording:</p><pre># group over time (members, status), one reading about every 33 seconds
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">It took about four and a half minutes.</span><p>Between 234 and 267 seconds. The readings showed one member up to 234 seconds and two at 267 seconds. Trimmed from the lab recording:</p><pre># group over time (members, status), one reading about every 33 seconds
 3s     members=1 status=healthy
 234s   members=1 status=healthy
 267s   members=2 status=healthy
@@ -212,7 +212,7 @@ Managers                      ID                  Name
         <button class="opt" data-ok>At about 10 and a half minutes (632 seconds)</button>
         <button class="opt">Never: the maximum is two</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Then it stopped at three.</span><p>Three members at 632 seconds. The group stops at the maximum of three, and the cooldown holds further changes for 300 seconds after each change.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">The group stopped at three members.</span><p>At about 10 and a half minutes. It showed three members at 632 seconds, then stopped at the maximum of three, and the cooldown holds further changes for 300 seconds after each change.</p></details>
     </div>
   </div>
 </section>
@@ -230,18 +230,18 @@ Error message: Member can not be created. Pool is managed by instance group 'r01
       <p>Northgate tries to remove a server from the pool by hand and gets this error. Why?</p>
       <div class="opts">
         <button class="opt">The pool is full</button>
-        <button class="opt" data-ok>The pool is managed by an instance group, so you cannot change its members</button>
+        <button class="opt" data-ok>The pool is managed by an instance group, so you can't change its members</button>
         <button class="opt">The server has no health check</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">The group owns the members.</span><p>A pool an instance group is attached to is managed: you can no longer add, delete or update its members. You can still update the pool. To replace a member, delete its group membership: the membership deletes its server and the group builds a replacement.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">The group manages the pool, so you can't.</span><p>The pool is managed by an instance group. Once a group is attached to a pool, you can no longer add, delete or update the pool's members, though you can still update the pool. To replace a member, delete its group membership, which deletes its server, and the group builds a replacement.</p></details>
     </div>
     <div class="q">
-      <p>The group built a replacement after a membership was deleted. What does Northgate need to do about it?</p>
+      <p>The group built a replacement after Northgate deleted a membership. What does Northgate need to do about it?</p>
       <div class="opts">
         <button class="opt">Nothing: the replacement matches the old one</button>
         <button class="opt" data-ok>Name and tag it: the replacement comes back with generated names and an untagged boot volume</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The replacement comes back with generated names for the server, boot volume, network attachment, virtual network interface, reserved IP and membership, and its boot volume has no tags. Run the naming and tagging loop again after a replacement.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Name and tag it. The replacement comes back with generated names for the server, boot volume, network attachment, virtual network interface, reserved IP and membership, and its boot volume has no tags. Run the naming and tagging loop again after a replacement.</p></details>
     </div>
   </div>
 </section>
@@ -256,7 +256,7 @@ Error message: Member can not be created. Pool is managed by instance group 'r01
         <button class="opt">The group is deleted and the servers lose their placement</button>
         <button class="opt" data-ok>It fails with <code>placement_group_in_use</code>: delete the servers first</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM says a group with servers cannot be deleted. The error is <code>placement_group_in_use</code>: placement group is referenced by one or more instances.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It fails. IBM says you can't delete a group that has servers. The error is <code>placement_group_in_use</code>: placement group is referenced by one or more instances.</p></details>
     </div>
     <div class="q" data-check>
       <p>IBM's example: four servers at 80%, 70%, 65% and 85% CPU, with a target of 70%. How many servers should the group have?</p>
@@ -265,16 +265,16 @@ Error message: Member can not be created. Pool is managed by instance group 'r01
         <button class="opt" data-ok>5</button>
         <button class="opt">3</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The manager adds up the average CPU of every server: 300%. Divided by the target 70% it is 4.29, rounded up to 5, so the group adds one server.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>5. The manager adds up the average CPU of every server, which comes to 300%. Divided by the target of 70% that is 4.29, which rounds up to 5, so the group adds one server.</p></details>
     </div>
     <div class="q" data-check>
-      <p>Design it. Northgate wants exactly three web servers, always, with failed ones replaced. Load does not change. Which group?</p>
+      <p>Northgate wants exactly three web servers, always, with failed ones replaced, and the load doesn't change. Which group?</p>
       <div class="opts">
         <button class="opt">An autoscale group with a CPU policy</button>
         <button class="opt" data-ok>A static group: set a membership count and no manager</button>
         <button class="opt">Servers made by hand</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A static group suits a fixed number of servers that the group repairs. An autoscale group suits load that changes. Servers made by hand have no automatic repair. Note: an instance group does not accept a template with a secondary network interface, or with a primary IP address or floating IP on the primary interface.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A static group. It suits a fixed number of servers that the group repairs, while an autoscale group suits load that changes. Servers made by hand have no automatic repair. Keep in mind that an instance group doesn't accept a template with a secondary network interface, or with a primary IP address or floating IP on the primary interface.</p></details>
     </div>
   </div>
 </section>
@@ -284,7 +284,7 @@ Error message: Member can not be created. Pool is managed by instance group 'r01
   <h2>You can read a scaling group now</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>A template holds the settings. A group makes members from it. A manager scales between a minimum and a maximum, and its cooldown slows it down. A managed pool belongs to the group.</p></div>
+    <div><span class="label">Remember</span><p>A template holds the settings, and a group makes members from it. A manager scales between a minimum and a maximum, and its cooldown slows it down. A pool that a group manages belongs to the group.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapters 36 and 37 run what you saw here. Chapter 53 attaches a group to a load balancer pool.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

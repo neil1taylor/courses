@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 1 of Module 3</span>
       <h1>Archive the workloads</h1>
-      <p class="lead">By the end you can say what an archive run adds to a backup, predict which kinds of workload archive fast and which slowly, and find the archive line in the Data Protect console.</p>
+      <p class="lead">By the end of this unit you&apos;ll be able to say what an archive run adds to a backup, predict which kinds of workload archive quickly and which take longer, and find the archive line in the Data Protect console.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -41,17 +41,17 @@
           {"box":[145,112,120,60],"tone":"muted","title":"OpenShift VMs","detail":"?"},
           {"line":[270,100,320,100],"arrow":true},
           {"box":[324,70,90,60],"heavy":true,"title":"Vault"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect. Its board asks: what happens if an attacker gets the backup admin&apos;s keys? First, Northgate sends a copy of each backup to a Cyber Vault.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect, and its directors want to know what happens if an attacker gets the backup admin&apos;s keys. The first step is to send a copy of each backup to a Cyber Vault.</p>
     </div>
   </div>
-  <p class="small">The timings come from real runs in our lab. The console screens come from a run. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">The timings and the console screens come from real runs in our lab. The vault is a Beta in us-south, and it has no SLA.</p>
   <p class="small"><b>Terms used.</b> <b>Logical size</b>: the size of the data on the source server. <b>Manifest</b>: a list of every file and its fingerprint, made before an attack so that restored files can be checked against it. <b>SHA-256</b>: a way to calculate a short fingerprint of a file; the same content always gives the same fingerprint. <b>Namespace</b>: a named area inside an OpenShift cluster.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>What an archive run adds</h2>
-  <p class="lead">Each Northgate group already has a local backup. An archive run adds a second copy of the same data in the vault. Data Protect writes it with the write key.</p>
+  <p class="lead">Each of Northgate&apos;s protection groups already has a local backup. An archive run adds a second copy of the same data in the vault, and Data Protect writes it with the write key.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A workload group with a local backup. Data Protect makes an archive copy with the write key. The copy lands in the Cyber Vault in us-south."
     data-drawing='{"w":560,"h":120,"shapes":[
       {"box":[10,25,150,64],"title":"Workload group","detail":"has a local backup"},
@@ -67,7 +67,7 @@
         <button class="opt">The read key</button>
         <button class="opt">The account owner&apos;s token</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the write key was enough to register the vault and to archive. It can list, read and write. The read key can list and read.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The write key. In our lab it was enough to register the vault and to archive. It can list, read and write, and the read key can list and read.</p></details>
     </div>
     <div class="q">
       <p>A run archives a group that already has a local backup. How many copies of the data exist afterwards?</p>
@@ -76,7 +76,7 @@
         <button class="opt" data-ok>Two: the local snapshot and the copy in the vault</button>
         <button class="opt">One: only the vault copy is kept</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The run made two snapshots of the same data: the local one, and the copy in the vault.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Two. The run made two snapshots of the same data, the local one and the copy in the vault.</p></details>
     </div>
   </div>
 </section>
@@ -84,7 +84,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>Which took 601 seconds, and which 4?</h2>
-  <p class="lead">Northgate archived four workloads to the vault in our lab. Windows ran first and alone. The others ran at the same time. Here are the sizes. The times are hidden.</p>
+  <p class="lead">Northgate archived four workloads to the vault in our lab. Windows ran first, on its own, and the other three ran at the same time. You can see the sizes. Can you guess the times?</p>
   <pre class="def" aria-label="Workloads and sizes">Workload         Logical size   Sent to the vault   Archive time
 Linux files      25.78 GB       19.43 GB            ?
 Windows files    96.4 MB        96.5 MB             ?
@@ -98,7 +98,7 @@ OpenShift VMs    37.6 GB        3.73 GB             ?</pre>
         <button class="opt">Windows files</button>
         <button class="opt">OpenShift VMs</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Linux files: 601 s.</span><p>It sent 19.43 GB, about 32 MB/s. SQL Server took 4 s for 25.3 MB. Windows took 34 s. The OpenShift VMs took about 1.5 minutes after their local backup.</p><pre class="def" aria-label="Workloads and times">Workload         Logical size   Sent to the vault   Archive time
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Linux files: 601 s.</span><p>Linux sent 19.43 GB, which is about 32 MB/s. SQL Server took 4 s for 25.3 MB, Windows took 34 s, and the OpenShift VMs took about 1.5 minutes after their local backup.</p><pre class="def" aria-label="Workloads and times">Workload         Logical size   Sent to the vault   Archive time
 Linux files      25.78 GB       19.43 GB            601 s
 Windows files    96.4 MB        96.5 MB             34 s
 SQL Server       25.3 MB        4.15 MB             4 s
@@ -114,13 +114,13 @@ OpenShift VMs    37.6 GB        3.73 GB             about 1.5 min</pre></details
       <details class="reveal"><summary>Show the answer</summary><p>Windows files: 96.4 MB logical, 96.5 MB sent. The other three sent less than their logical size.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> These are single runs in our lab. The OpenShift VMs ran on a second Defender cluster. The table does not say how long your own workload will take.</p>
+  <p class="watch"><b>Watch for this.</b> These are single runs in our lab, and the OpenShift VMs ran on a second Defender cluster. Time your own workloads, because the table doesn&apos;t tell you how long they&apos;ll take.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Click through the console</span>
   <h2>Where the archive shows</h2>
-  <p class="lead">These screens come from a run in the Data Protect console, in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from a run in the Data Protect console, in our lab. Click where you&apos;d click. After two misses, the page marks the right place.</p>
   <div class="tour">
     <figure class="tstep" data-hot="8,59,52,10" data-width="860px">
       <div class="shot"><img src="../../cyber-vault/tutorials/images/V4-1-run-now-archive.png" alt="The Run Now dialog for the group cv-win-data. Under Archive: Archive to cv-console-vault, Retain for 1 days." width="858" height="494"></div>
@@ -141,17 +141,17 @@ OpenShift VMs    37.6 GB        3.73 GB             about 1.5 min</pre></details
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>Two wrong conclusions</h2>
-  <p class="lead">A Northgate colleague reads the results and makes two statements. Find what is wrong with each.</p>
+  <h2>Two conclusions to check</h2>
+  <p class="lead">A colleague at Northgate reads the results and draws two conclusions. What&apos;s wrong with each one?</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>&quot;Linux archives take 10 minutes. The console run took 39 seconds, so the console must be wrong.&quot; What is the fault?</p>
+      <p>&quot;Linux archives take 10 minutes. The console run took 39 seconds, so the console must be wrong.&quot; What&apos;s the fault?</p>
       <div class="opts">
         <button class="opt">The 39 seconds was a mistake in the console</button>
         <button class="opt" data-ok>The runs were different sizes: 19.43 GB sent in the first run, 92.6 MiB in the second</button>
         <button class="opt">The vault was slower in the second run</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The 601 s run sent 19.43 GB. The second run sent 92.6 MiB (503 files). The time follows the amount of data.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The runs were different sizes. The 601 s run sent 19.43 GB, and the second run sent 92.6 MiB (503 files). The time follows the amount of data.</p></details>
     </div>
     <div class="q">
       <p>&quot;The archive says Succeeded, so the OpenShift VMs are safe in the vault.&quot; What did Northgate do to test that?</p>
@@ -160,10 +160,10 @@ OpenShift VMs    37.6 GB        3.73 GB             about 1.5 min</pre></details
         <button class="opt" data-ok>Restored the vault copy to a new namespace and compared the files</button>
         <button class="opt">Read the lock dates of the vault</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the vault copy restored in 6 min 6 s. 20 of 20 files matched the manifest and the SHA-256 values were the same.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It restored the copy. In our lab the vault copy restored in 6 min 6 s, 20 of 20 files matched the manifest, and the SHA-256 values were the same.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> A time from one run, or a Succeeded mark, is not a promise. The restore check is what showed the data came back.</p>
+  <p class="watch"><b>Watch for this.</b> A time from one run, or a Succeeded mark, tells you the run finished. The restore check is what showed the data was recovered, so do one yourself.</p>
 </section>
 
 <section class="screen">
@@ -186,7 +186,7 @@ OpenShift VMs    37.6 GB        3.73 GB             about 1.5 min</pre></details
         <button class="opt" data-ok>From the policy: &quot;Archive to cv-console-vault, Retain for 1 days&quot;</button>
         <button class="opt">From the vault</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The dialog carries the policy&apos;s archive line, so no archive target needs to be chosen.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>From the policy. The dialog carries the policy&apos;s archive line, so you don&apos;t have to choose an archive target.</p></details>
     </div>
     <div class="q" data-check>
       <p>How did Northgate show the OpenShift VM copy in the vault was usable?</p>
@@ -195,7 +195,7 @@ OpenShift VMs    37.6 GB        3.73 GB             about 1.5 min</pre></details
         <button class="opt" data-ok>It restored the copy and 20 of 20 files matched</button>
         <button class="opt">It counted the objects in the vault</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Restored from the vault in our lab, with identical data.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It restored the copy. In our lab the restore from the vault gave identical data.</p></details>
     </div>
   </div>
 </section>

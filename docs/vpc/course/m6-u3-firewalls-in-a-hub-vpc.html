@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Firewalls in a hub VPC · VPC course</title>
-<meta name="description" content="Course unit 6.3: choose a FortiGate offering, read the hub VPC's subnets, send traffic through the firewall, and spot why a failover did not recover. No account needed.">
+<meta name="description" content="Course unit 6.3: choose a FortiGate offering, read the hub VPC's subnets, send traffic through the firewall, and spot why a failover didn&apos;t recover. No account needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 3 of Module 6</span>
       <h1>Firewalls in a hub VPC</h1>
-      <p class="lead">By the end you can choose a FortiGate offering, say what the hub VPC needs around it, and find the cause when traffic through the firewall stops.</p>
+      <p class="lead">By the end of this unit you&apos;ll be able to choose a FortiGate offering, say what the hub VPC needs around it, and find the cause when traffic through the firewall stops.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -49,7 +49,7 @@
 <section class="screen">
   <span class="kicker">Step 1 · Design it</span>
   <h2>Choose the firewall</h2>
-  <p class="lead">Three decisions. Pick an answer, then read the worked answer.</p>
+  <p class="lead">Northgate has three decisions to make. Pick an answer for each, then read the worked answer.</p>
   <p class="hand tilt"><b>From NSX:</b> the NSX gateway firewall maps roughly to a network ACL and a virtual firewall, and the distributed firewall to a security group. A FortiGate does the inspection.</p>
   <div class="pair">
     <div class="q">
@@ -59,16 +59,16 @@
         <button class="opt">A/P HA (IBM reseller), in one zone</button>
         <button class="opt" data-ok>Cross Zone A/P HA (IBM reseller)</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>The cross-zone tile is the only one with a public address range, which lets the public entry address move between zones. A floating IP cannot cross zones. At IBM&apos;s list price a pair is $0.68 an hour for the licences (2 vCPU, ATP), plus four floating IPs and a public address range per pair.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Cross Zone A/P HA. The cross-zone tile is the only one with a public address range, which lets the public entry address move between zones. A floating IP can&apos;t cross zones. At IBM&apos;s list price a pair is $0.68 an hour for the licences (2 vCPU, ATP), plus four floating IPs and a public address range per pair.</p></details>
     </div>
     <div class="q">
-      <p>The security team also wants web filtering. The cheapest plan is ATP. What do you do?</p>
+      <p>Northgate&apos;s security team also wants web filtering, and the cheapest plan is ATP. What should Northgate do?</p>
       <div class="opts">
         <button class="opt">Start with ATP and switch to UTP later</button>
         <button class="opt" data-ok>Choose UTP before the build</button>
         <button class="opt">Web filtering is part of ATP</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>ATP has no web or content filtering and no secure DNS filtering. UTP is listed at $0.44 per vCPU per hour at 2 vCPU, more than twice the ATP price. <b>IBM says the licence plan cannot be changed after deployment.</b> The server&apos;s size can change.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Choose UTP before the build. ATP has no web or content filtering and no secure DNS filtering. UTP is listed at $0.44 per vCPU per hour at 2 vCPU, more than twice the ATP price. <b>IBM says the licence plan can&apos;t be changed after deployment.</b> The server&apos;s size can change.</p></details>
     </div>
     <div class="q">
       <p>The tile is deployed and healthy. What must you still build before spoke traffic reaches it?</p>
@@ -77,7 +77,7 @@
         <button class="opt" data-ok>The hub ingress table, the spoke routes, IP spoofing on the private ports, and a security group rule for the spokes</button>
         <button class="opt">Only the licence</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>The cross-zone tile creates one route table, for the public address range, and no hub ingress table or spoke routes. It creates every network interface with IP spoofing off, and IBM says spoofing must be on when a server is the next hop of a custom route. Its security groups let in only their own members.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>The hub ingress table, the spoke routes, IP spoofing on the private ports, and a security group rule for the spokes. The cross-zone tile creates one route table, for the public address range, and no hub ingress table or spoke routes. It creates every network interface with IP spoofing off, and IBM says spoofing must be on when a server is the next hop of a custom route. Its security groups let in only their own members.</p></details>
     </div>
   </div>
 </section>
@@ -111,25 +111,25 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="port1">
           <h3>port1 · public</h3>
-          <p>The untrusted port. It gets a floating IP.</p>
+          <p>This is the untrusted port, and it gets a floating IP.</p>
         </div>
         <div class="part-info" data-part="port2">
           <h3>port2 · private</h3>
-          <p>The port that is the next hop for routes. Spoke traffic arrives and leaves here.</p>
-          <p class="watch"><b>Watch for this.</b> The tile creates this port with IP spoofing off. Switch it on, or the firewall cannot forward traffic for other addresses.</p>
+          <p>This port is the next hop for routes, and spoke traffic arrives and leaves here.</p>
+          <p class="watch"><b>Watch for this.</b> The tile creates this port with IP spoofing off. Switch it on, or the firewall can&apos;t forward traffic for other addresses.</p>
         </div>
         <div class="part-info" data-part="port3">
           <h3>port3 · heartbeat</h3>
-          <p>The subnet the two firewalls use to see each other.</p>
+          <p>The two firewalls use this subnet to see each other.</p>
           <p class="watch"><b>Watch for this.</b> IBM&apos;s docs and the tile disagree on the heartbeat rules, so check this port&apos;s security group if the cluster shows one member.</p>
         </div>
         <div class="part-info" data-part="port4">
           <h3>port4 · management</h3>
-          <p>The subnet for administering a firewall. It gets a floating IP.</p>
+          <p>You use this subnet to administer a firewall, and it gets a floating IP.</p>
         </div>
         <div class="part-info" data-part="vpn">
           <h3>VPN subnet</h3>
-          <p>Holds the hub&apos;s VPN gateways. It is not a firewall port.</p>
+          <p>This subnet holds the hub&apos;s VPN gateways. It isn&apos;t a firewall port.</p>
         </div>
       </div>
     </div>
@@ -146,7 +146,7 @@ vpct-hub-vpn-z1, -z2         10.10.4.0/24   10.10.68.0/24  VPN gateways
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>Send prod to dev through the firewall</h2>
-  <p class="lead">The lab adds a route in each spoke and in the hub ingress table, so prod to dev goes to the firewall&apos;s port2, <code>10.10.1.4</code>. Then a policy allows and logs it, and the same policy is changed to deny.</p>
+  <p class="lead">In the lab we add a route in each spoke and in the hub ingress table, so that traffic from prod to dev goes to the firewall&apos;s port2, <code>10.10.1.4</code>. Then a policy allows and logs the traffic, and we change the same policy to deny.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -158,7 +158,7 @@ Status        stable
 Destination   10.30.0.0/16
 Next hop      10.10.1.4
 Zone          us-east-1</pre>
-          <p class="hand note">The next hop is in another VPC, the hub. The API accepted it. The lab makes the same kind of route in dev and in the hub ingress table.</p>
+          <p class="hand note">The next hop is in another VPC, the hub, and the API accepted it. The lab makes the same kind of route in dev and in the hub ingress table.</p>
         </div>
         <div class="cmd">
           <p class="pre"># on the FortiGate: policy 1 accepts port2 to port2 and logs it</p>
@@ -178,7 +178,7 @@ execute log display</pre>
             <button class="opt">It still connects. The route is enough</button>
             <button class="opt" data-ok>It times out, and the log records the denied attempts</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The firewall, not the route, decides. The log shows one line for each attempt of the client.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>It times out, and the log records the denied attempts. The route only delivers the traffic to the firewall, and it&apos;s the firewall that decides. The log shows one line for each attempt of the client.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">config firewall policy
@@ -212,7 +212,7 @@ execute log display</pre>
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>Why did traffic stop?</h2>
-  <p class="lead">Three real faults from the lab&apos;s runs.</p>
+  <p class="lead">These three faults happened in the lab&apos;s runs. For each one, find the cause.</p>
   <div class="q">
     <p><b>One.</b> The routes and the allow policy are in place, and prod to dev times out. A packet capture on the firewall shows the SYN arriving on port2 and leaving on port2, with no reply. A capture on the dev server shows nothing arriving. What dropped it?</p>
     <div class="opts">
@@ -220,10 +220,10 @@ execute log display</pre>
       <button class="opt" data-ok>The tile&apos;s private security group, which allows outbound only to its own members</button>
       <button class="opt">The deny policy</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>One rule fixed it: allow all outbound to <code>10.0.0.0/8</code> on the private group. The ACL was an earlier fault: until rules for <code>10.10.0.0/16</code> existed, even a connection to the firewall&apos;s own port2 timed out. In the lab the connection timed out three times, for three separate reasons: the ACL, this security group, and the missing firewall routes and policy.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>The tile&apos;s private security group. One rule fixed it: allow all outbound to <code>10.0.0.0/8</code> on the private group. The ACL was an earlier fault: until rules for <code>10.10.0.0/16</code> existed, even a connection to the firewall&apos;s own port2 timed out. In the lab the connection timed out three times, for three separate reasons: the ACL, this security group, and the missing firewall routes and policy.</p></details>
   </div>
   <div class="q" style="margin-top:20px">
-    <p><b>Two.</b> The active firewall is failed over with <code>execute ha failover set 1</code>. Traffic stops and does not come back. On the new primary the routing table shows this:</p>
+    <p><b>Two.</b> The active firewall is failed over with <code>execute ha failover set 1</code>. Traffic stops and doesn&apos;t come back. On the new primary the routing table shows this:</p>
     <div class="term"><div class="cmd"><pre class="out">S*      0.0.0.0/0 [10/0] via 10.10.64.1, port1, 00:02:31, [1/0]
 C       10.10.64.0/24 is directly connected, port1, 00:08:07
 C       10.10.65.0/24 is directly connected, port2, 00:08:07</pre></div></div>
@@ -233,16 +233,16 @@ C       10.10.65.0/24 is directly connected, port2, 00:08:07</pre></div></div>
       <button class="opt">The default route</button>
       <button class="opt">The heartbeat</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>Node 2 had no route to <code>10.20.0.0/16</code> or <code>10.30.0.0/16</code>. Add a second pair of routes with node 2&apos;s gateway, <code>10.10.65.1</code>. The spoke routes also named node 1&apos;s port2, and packets sent there were not forwarded once node 1 was passive.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>Routes to the spokes. Node 2 had no route to <code>10.20.0.0/16</code> or <code>10.30.0.0/16</code>. Add a second pair of routes with node 2&apos;s gateway, <code>10.10.65.1</code>. The spoke routes also named node 1&apos;s port2, and packets sent there weren&apos;t forwarded once node 1 was passive.</p></details>
   </div>
   <div class="q" style="margin-top:20px">
-    <p><b>Three.</b> An admin runs the tile&apos;s Schematics workspace a second time after the pair is up. What happens?</p>
+    <p><b>Three.</b> Suppose an admin runs the tile&apos;s Schematics workspace a second time after the pair is up. What happens?</p>
     <div class="opts">
       <button class="opt">Nothing. It is idempotent</button>
       <button class="opt">It adds a third firewall</button>
       <button class="opt" data-ok>It plans to replace both firewall servers and reset IP spoofing, and the apply fails with the servers gone</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>The plan removed the <code>version_crn</code> of the catalogue offering from each server and set IP spoofing on both port2 interfaces back to <code>false</code>. The apply failed with <code>Field validation for 'CatalogOffering' failed on the 'required' tag</code>, and the two firewall servers were gone afterwards. Do not run the workspace again after the first apply.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>It plans to replace both firewall servers and reset IP spoofing. The plan removed the <code>version_crn</code> of the catalogue offering from each server and set IP spoofing on both port2 interfaces back to <code>false</code>. The apply failed with <code>Field validation for 'CatalogOffering' failed on the 'required' tag</code>, and the two firewall servers were gone afterwards. Don&apos;t run the workspace again after the first apply.</p></details>
   </div>
 </section>
 
@@ -251,13 +251,13 @@ C       10.10.65.0/24 is directly connected, port2, 00:08:07</pre></div></div>
   <h2>Three questions</h2>
   <div>
     <div class="q" data-check>
-      <p>After a failover, what moves the hub&apos;s ingress routes to the new active firewall, and what does not move?</p>
+      <p>After a failover, what moves the hub&apos;s ingress routes to the new active firewall, and what doesn&apos;t move?</p>
       <div class="opts">
         <button class="opt">Everything moves by itself</button>
-        <button class="opt" data-ok>The SDN connector moves the hub routes. The spoke routes do not move</button>
+        <button class="opt" data-ok>The SDN connector moves the hub routes. The spoke routes don&apos;t move</button>
         <button class="opt">Nothing moves. You change both by hand</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In the lab, the connector created the two hub ingress routes and the range&apos;s route again 10, 12 and 13 seconds after the command, in zone <code>us-east-2</code>, with FortiOS 8.0.2. The spoke routes needed a loop outside the firewall. With it running, the stream came back about 20 seconds after the failover command and about 28 seconds after the active server was stopped. Fortinet&apos;s 7.6.0 guide says a custom table does not work, and that did not hold here.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The SDN connector moves the hub routes, and the spoke routes don&apos;t move. In the lab, the connector created the two hub ingress routes and the range&apos;s route again 10, 12 and 13 seconds after the command, in zone <code>us-east-2</code>, with FortiOS 8.0.2. The spoke routes needed a loop outside the firewall. With it running, the stream came back about 20 seconds after the failover command and about 28 seconds after the active server was stopped. Fortinet&apos;s 7.6.0 guide says a custom table doesn&apos;t work, but that wasn&apos;t the case here.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which firewall port is the next hop for the spoke and hub routes?</p>
@@ -266,7 +266,7 @@ C       10.10.65.0/24 is directly connected, port2, 00:08:07</pre></div></div>
         <button class="opt" data-ok>port2</button>
         <button class="opt">port4</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Port2 is the private port. Port1 is untrusted and port4 is for management. Spoke routes name the firewall&apos;s port2.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Port2. It&apos;s the private port. Port1 is untrusted and port4 is for management. Spoke routes name the firewall&apos;s port2.</p></details>
     </div>
     <div class="q" data-check>
       <p><span class="kicker">Review question from Unit 6.2.</span> An ingress route table drops traffic to <code>10.30.0.0/16</code>, the dev range. Does that stop dev reaching the prod VPC?</p>
@@ -274,7 +274,7 @@ C       10.10.65.0/24 is directly connected, port2, 00:08:07</pre></div></div>
         <button class="opt">Yes. It matches dev</button>
         <button class="opt" data-ok>No. The match is on where traffic is going, and traffic from dev arrives addressed to prod</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Everything still worked in the lab. To stop traffic from dev, the route had to match the prod address, and that also stopped shared services and the replies to connections that prod starts.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. Everything still worked in the lab. To stop traffic from dev, the route had to match the prod address, and that also stopped shared services and the replies to connections that prod starts.</p></details>
     </div>
   </div>
 </section>
@@ -284,7 +284,7 @@ C       10.10.65.0/24 is directly connected, port2, 00:08:07</pre></div></div>
   <h2>You can put a firewall in the hub</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Choose the licence plan before the build. The tile leaves routes, spoofing and security group rules to you. The connector moves only the hub&apos;s routes. Never run the workspace twice.</p></div>
+    <div><span class="label">Remember</span><p>Choose the licence plan before the build. The tile leaves the routes, IP spoofing and security group rules to you, and the connector moves only the hub&apos;s routes. Don&apos;t run the workspace twice.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapter 86, Sending traffic between spokes through the hub firewall, runs the routes and policies. Chapter 83 compares the offerings and chapter 89 measures the failover.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

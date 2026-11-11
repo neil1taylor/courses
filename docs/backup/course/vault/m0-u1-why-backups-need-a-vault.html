@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Start here</span>
       <h1>Why backups need a vault</h1>
-      <p class="lead">By the end you can say why an attacker goes after the backups, what Defender Data Protect does, what a Cyber Vault adds, and the words the rest of the course uses.</p>
+      <p class="lead">By the end of this unit you'll know why an attacker goes after the backups, what Defender Data Protect does, what a Cyber Vault adds, and the words the rest of the course uses.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -42,16 +42,16 @@
           {"text":"locked","at":[330,124],"hand":true,"tone":"mark"},
           {"box":[160,150,110,50],"dashed":true,"title":"attacker"},
           {"line":[215,146,215,104],"arrow":true,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier. It backs up its servers with Defender Data Protect. Its board asks: if an attacker gets in, will the backups still be there?</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It backs up its servers with Defender Data Protect. Its directors want to know whether the backups will still be there if an attacker gets in.</p>
     </div>
   </div>
-  <p class="small">No experience of vaults or Data Protect is needed. Results quoted here come from tests in our lab; later units show each one in detail.</p>
+  <p class="small">You don't need any experience of vaults or Data Protect. The results quoted here come from tests in our lab, and later units show each one in detail.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>From server to vault</h2>
-  <p class="lead">Data Protect backs up servers and keeps the copies on its own cluster. It can also send a second copy, an archive, somewhere else. A Cyber Vault is a place for that second copy that nobody can delete early. Tap each part.</p>
+  <p class="lead">Data Protect backs up servers and keeps the copies on its own cluster. It can also send a second copy, called an archive, somewhere else. A Cyber Vault is a place to keep that second copy where nobody can delete it early. Tap each part to see what it does.</p>
   <div class="explorer" data-start="source"
     data-map='{}'>
     <div class="cols">
@@ -81,31 +81,31 @@
         </div>
         <div class="part-info" data-part="cluster">
           <h3>The Data Protect cluster</h3>
-          <p>IBM Storage Defender Data Protect is backup software: Cohesity DataProtect with an IBM name. The cluster runs it. It copies each source on a schedule and keeps those backups on its own disks. A <b>policy</b> says when to back up, how long to keep each backup, and whether to archive it.</p>
+          <p>IBM Storage Defender Data Protect is backup software. It&apos;s Cohesity DataProtect under an IBM name. The cluster runs it, copies each source on a schedule and keeps those backups on its own disks. A <b>policy</b> says when to back up, how long to keep each backup, and whether to archive it.</p>
         </div>
         <div class="part-info" data-part="archive">
           <h3>The archive</h3>
-          <p>A second copy of a backup that the cluster sends to an <b>external target</b>: storage outside the cluster. Here the external target is the vault. If the cluster is lost, the archive can still be read.</p>
+          <p>A second copy of a backup, which the cluster sends to an <b>external target</b>, meaning storage outside the cluster. Here the external target is the vault. If the cluster is lost, you can still read the archive.</p>
         </div>
         <div class="part-info" data-part="bucket">
           <h3>The bucket</h3>
-          <p>The vault is built on IBM Cloud Object Storage. Object storage keeps data as <b>objects</b>, whole stored items each with a name, inside a container called a <b>bucket</b>. The vault&apos;s bucket keeps <b>versions</b>: writing to a name again adds a new version and keeps the old one.</p>
+          <p>The vault is built on IBM Cloud Object Storage. Object storage keeps data as <b>objects</b>, which are whole stored items that each have a name, inside a container called a <b>bucket</b>. The vault&apos;s bucket keeps <b>versions</b>, so writing to a name again adds a new version and keeps the old one.</p>
         </div>
         <div class="part-info" data-part="lock">
           <h3>The object lock</h3>
-          <p>Each archived object gets a lock date, set by Data Protect from the policy&apos;s archive <b>retention</b>, which is how long a copy is kept. Until that date the object cannot be deleted and its lock cannot be shortened. The lock is in <b>compliance mode</b>, the strict kind.</p>
+          <p>Each archived object gets a lock date. Data Protect sets it from the policy&apos;s archive <b>retention</b>, which is how long a copy is kept. Until that date the object can&apos;t be deleted and its lock can&apos;t be shortened. The lock is in <b>compliance mode</b>, which is the strict kind.</p>
         </div>
         <div class="part-info" data-part="wkey">
           <h3>The write key</h3>
-          <p>A key is a pair of values that a program sends with each request to prove what it may do. The write key goes to the Data Protect cluster, so it can archive into the vault.</p>
+          <p>A key is a pair of values that a program sends with each request to prove what it may do. The write key goes to the Data Protect cluster, so that it can archive into the vault.</p>
         </div>
         <div class="part-info" data-part="rkey">
           <h3>The read key</h3>
-          <p>Kept apart from the backup system and used only to recover. A new cluster that has only the read key can find the archives in the vault and restore them.</p>
+          <p>You keep this one apart from the backup system and use it only to recover. A new cluster with only the read key can find the archives in the vault and restore them.</p>
         </div>
         <div class="part-info" data-part="allow">
           <h3>The allow-list and the write window</h3>
-          <p>The <b>allow-list</b> names the only networks the vault answers. A request from anywhere else is refused, even with a valid key. A <b>write window</b> is an optional daily time slot; outside it the vault refuses requests.</p>
+          <p>The <b>allow-list</b> names the only networks the vault answers. The vault refuses a request from anywhere else, even one with a valid key. A <b>write window</b> is an optional daily time slot. Outside it, the vault refuses requests.</p>
         </div>
       </div>
     </div>
@@ -125,7 +125,7 @@ write window an optional daily slot for requests</pre>
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>The attack without a vault</h2>
-  <p class="lead">Suppose Northgate keeps its backups only on its Data Protect cluster. An attacker gets the backup admin&apos;s login. They delete the backups, then overwrite the data on every server.</p>
+  <p class="lead">Suppose Northgate keeps its backups only on its Data Protect cluster, and an attacker gets the backup admin&apos;s login. They delete the backups, then overwrite the data on every server.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>What can Northgate restore?</p>
@@ -134,7 +134,7 @@ write window an optional daily slot for requests</pre>
         <button class="opt" data-ok>Nothing: every copy could be deleted with the login the attacker held</button>
         <button class="opt">Only the database</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A backup helps only if it outlives the attack. If one login can delete every copy, an attacker with that login can leave nothing to restore.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Nothing. A backup only helps if it outlives the attack. If one login can delete every copy, an attacker with that login can leave you nothing to restore.</p></details>
     </div>
     <div class="q">
       <p>Which copy would still be there?</p>
@@ -143,7 +143,7 @@ write window an optional daily slot for requests</pre>
         <button class="opt" data-ok>A copy in a vault, locked until a date, that the admin login cannot delete</button>
         <button class="opt">A copy with a hidden name</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the archive records and the vault target were removed in Data Protect. The vault kept the same objects, and the lock we checked was unchanged. Unit 1.1 shows the test.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The copy in the vault. In our lab we deleted the archive records and the vault target in Data Protect. The vault still had the same objects, and the lock we checked hadn&apos;t changed. Unit 1.1 shows the test.</p></details>
     </div>
   </div>
 </section>
@@ -151,7 +151,7 @@ write window an optional daily slot for requests</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
   <h2>What a lock means</h2>
-  <p class="lead">Now the attacker has the vault&apos;s write key too, and works from a server inside the allowed network. They try to delete a locked archive object before its lock date.</p>
+  <p class="lead">Now suppose the attacker has the vault&apos;s write key as well, and is working from a server inside the allowed network. They try to delete a locked archive object before its lock date.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>What does the vault do?</p>
@@ -160,7 +160,7 @@ write window an optional daily slot for requests</pre>
         <button class="opt" data-ok>Refuses: the object is locked</button>
         <button class="opt">Asks the owner first</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab every try was refused with &quot;Access Denied because object protected by object lock&quot;. Tries to change the lock date were refused too.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It refuses. In our lab every attempt was refused with &quot;Access Denied because object protected by object lock&quot;. Attempts to change the lock date were refused too.</p></details>
     </div>
     <div class="q">
       <p>The same attacker tries from a server outside the allow-list. What happens?</p>
@@ -169,16 +169,16 @@ write window an optional daily slot for requests</pre>
         <button class="opt" data-ok>The vault refuses the request</button>
         <button class="opt">The vault answers reads only</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab a valid write key used from a network not on the list was refused.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The vault refuses. In our lab, a valid write key used from a network that wasn&apos;t on the list was refused.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> A lock stops deletion, not every change. A holder of the write key could still write a new version on top of a test object; the old version stayed. Unit 1.1 shows it.</p>
+  <p class="watch"><b>Watch for this.</b> A lock stops deletion. It doesn&apos;t stop every change. In our lab, someone with the write key could still write a new version on top of a test object, and the old version stayed. Unit 1.1 shows it.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Design it</span>
   <h2>Where each key goes</h2>
-  <p class="lead">Northgate makes a vault and gets its two keys. Now the worst case: the attack also destroys the Data Protect cluster.</p>
+  <p class="lead">Northgate creates a vault and gets its two keys. Now think about the worst case, where the attack also destroys the Data Protect cluster.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>Where does Northgate keep the read key?</p>
@@ -187,7 +187,7 @@ write window an optional daily slot for requests</pre>
         <button class="opt" data-ok>Apart from the backup system, for recovery only</button>
         <button class="opt">In the same password store as the admin login</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The steps in the IBM Cloud console say to give the write key to the backup cluster and keep the read key apart. An attacker who takes the backup system should not also get the key that recovers it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Apart from the backup system. The steps in the IBM Cloud console tell you to give the write key to the backup cluster and keep the read key apart. An attacker who takes over the backup system shouldn&apos;t also get the key that recovers it.</p></details>
     </div>
     <div class="q">
       <p>The old cluster is gone. What does Northgate need to get its data back?</p>
@@ -196,10 +196,10 @@ write window an optional daily slot for requests</pre>
         <button class="opt" data-ok>A new Data Protect cluster and the read key</button>
         <button class="opt">IBM to unlock the vault</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab, after the attack and the loss of the cluster, a new cluster with only the read key brought back all three workloads as they were before the attack. Module 4 walks through it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A new cluster and the read key. In our lab, after the attack and the loss of the cluster, a new cluster with only the read key recovered all three workloads as they were before the attack. Module 4 walks through it.</p></details>
     </div>
   </div>
-  <p class="small">The Cyber Vault is a Beta: it runs only in the us-south region (Dallas), and IBM gives no service level agreement (SLA) or support for it. Unit 1.3 covers its terms.</p>
+  <p class="small">The Cyber Vault is a Beta. It runs only in the us-south region (Dallas), and IBM gives no service level agreement (SLA) or support for it. Unit 1.3 covers its terms.</p>
 </section>
 
 <section class="screen">
@@ -213,7 +213,7 @@ write window an optional daily slot for requests</pre>
         <button class="opt" data-ok>A second copy, sent to an external target such as the vault</button>
         <button class="opt">A deleted backup</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The archive is the copy that can outlive the cluster.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A second copy. The archive is the copy that can outlive the cluster.</p></details>
     </div>
     <div class="q" data-check>
       <p>What does an object lock do?</p>
@@ -222,7 +222,7 @@ write window an optional daily slot for requests</pre>
         <button class="opt" data-ok>Stops the object being deleted, or its lock shortened, before a date</button>
         <button class="opt">Hides the object from the backup software</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Data Protect sets each object&apos;s lock date from the archive retention in its policy.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It stops deletion before a date. Data Protect sets each object&apos;s lock date from the archive retention in its policy.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which key goes to the backup cluster?</p>
@@ -231,7 +231,7 @@ write window an optional daily slot for requests</pre>
         <button class="opt">The read key</button>
         <button class="opt">Both</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The read key is kept apart and used to recover.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The write key. The read key is kept apart and used only to recover.</p></details>
     </div>
   </div>
 </section>
@@ -241,7 +241,7 @@ write window an optional daily slot for requests</pre>
   <h2>You know why the vault is there</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>An attacker with the backup login can delete backups. A Cyber Vault keeps an archive copy where each object is locked until a date and only listed networks are answered. The write key goes to the backup cluster; the read key is kept apart to recover.</p></div>
+    <div><span class="label">Remember</span><p>An attacker with the backup login can delete backups. A Cyber Vault keeps an archive copy where each object is locked until a date, and the vault only answers the networks on its list. The write key goes to the backup cluster, and the read key is kept apart for recovery.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

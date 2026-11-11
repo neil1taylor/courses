@@ -27,36 +27,36 @@
     <div>
       <span class="kicker">Unit 4 of Module 1</span>
       <h1>Order an instance and read what it starts with</h1>
-      <p class="lead">By the end you can follow the order form, say what a new instance contains, and predict which of its four starting policies carries a data lock.</p>
+      <p class="lead">By the end of this unit you'll be able to follow the order form, say what a new instance contains, and predict which of its four starting policies carries a data lock.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: order the instance, wait while it is Pending until it is Active, then launch the dashboard."
     data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,50,110,56],"title":"order"},{"line":[124,78,156,78],"arrow":true,"tone":"mark"},{"box":[160,50,110,56],"title":"wait"},{"line":[274,78,306,78],"arrow":true,"tone":"mark"},{"box":[310,50,100,56],"title":"launch","tone":"mark"},{"text":"Pending, then Active,","at":[20,150],"hand":true,"size":17,"tone":"muted"},{"text":"then open the dashboard","at":[20,176],"hand":true,"size":17,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It has decided to try BRS and orders its first instance in Frankfurt. Then it looks at what it was given.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It has decided to try BRS, so it orders its first instance in Frankfurt and then looks at what it&apos;s been given.</p>
     </div>
   </div>
-  <p class="small">Every screen and number in this unit comes from real runs in our lab. Names of people, servers and addresses are blurred or left out; the lab&apos;s instance name and resource group appear as they were.</p>
+  <p class="small">Every screen and number in this unit comes from real runs in our lab. Names of people, servers and addresses are blurred or left out. The lab&apos;s instance name and resource group appear as they were.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Click through the console</span>
   <h2>Order the instance and wait for it</h2>
-  <p class="lead">These screens come from the IBM Cloud console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the IBM Cloud console in our lab. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="76,10.3,9.8,3.7" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B1-1-order-form.png" alt="The create page: name cohesity-lab-brs, resource group cohesity-lab-rg, and under Configure integration the Encryption switch turned off; the summary shows Frankfurt (eu-de) and plan Premium." width="1434" height="700"></div>
       <figcaption>
         <h3>You have set the Location to Frankfurt (eu-de) and typed a name. Which line tells you the plan you will get?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. There is no plan to choose. The summary on the right shows <b>Plan: Premium</b>, and Premium is the only plan.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. There&apos;s no plan to choose. The summary on the right shows <b>Plan: Premium</b>, and Premium is the only plan.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="62.5,82.6,4,4.9" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B1-1-order-form.png" alt="The create page: name cohesity-lab-brs, resource group cohesity-lab-rg, and under Configure integration the Encryption switch turned off; the summary shows Frankfurt (eu-de) and plan Premium." width="1434" height="700"></div>
       <figcaption>
         <h3>Where is the switch that decides whether you bring your own encryption key?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The <b>Encryption</b> switch under Configure integration. The text beside it says: &quot;If disabled, encryption is provider-managed.&quot; Here it is off. Step 4 shows what it looked like when the page opened.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The <b>Encryption</b> switch under Configure integration. The text beside it says: &quot;If disabled, encryption is provider-managed.&quot; Here it&apos;s off. Step 4 shows what it looked like when the page opened.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="22,9.5,7.6,4.9" data-width="900px">
@@ -70,7 +70,7 @@
       <div class="shot"><img src="../ibm-brs/tutorials/images/B1-2-instance-active.png" alt="The instance page: cohesity-lab-brs, Active, plan Premium, location eu-de, encryption Provider managed, and a notice that OpenShift Virtualization for IBM Backup and Recovery is not generally available." width="1189" height="654"></div>
       <figcaption>
         <h3>Where do you click to open the instance&apos;s own dashboard?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Launch dashboard</b> opens it in a new tab. In our lab the tab stayed blank for about two minutes after signing in again, then showed the Summary page. Wait; do not close it.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Launch dashboard</b> opens it in a new tab. Give it time, and don&apos;t close the tab. In our lab the tab stayed blank for about two minutes after we signed in again, then showed the Summary page.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -79,7 +79,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>Which policy has no lock?</h2>
-  <p class="lead">The instance is Active. Northgate has not made anything yet, but IBM made four policies for it. Each has a schedule and a retention time. A data lock means a backup cannot be deleted until the lock ends.</p>
+  <p class="lead">The instance is Active. Northgate hasn&apos;t made anything yet, but IBM has made four policies for it. Each one has a schedule and a retention time. A data lock means a backup can&apos;t be deleted until the lock ends.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>A new instance has four policies: Gold, Silver, Bronze and Basic. Which one has no data lock?</p>
@@ -102,7 +102,7 @@ Basic    1 day          30 days   none</pre></details>
         <button class="opt" data-ok>It cannot be deleted until the lock ends, 1 week later</button>
         <button class="opt">Only an administrator can delete it</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A backup made with Gold, Silver or Bronze cannot be deleted until the lock ends, so use Basic or your own policy for a test. A locked backup also cannot be deleted &quot;not even by an administrator&quot;.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It can&apos;t be deleted until the lock ends. A backup made with Gold, Silver or Bronze is locked until its lock ends, so use Basic or your own policy for a test. A locked backup can&apos;t be deleted &quot;not even by an administrator&quot;.</p></details>
     </div>
   </div>
 </section>
@@ -116,7 +116,7 @@ Basic    1 day          30 days   none</pre></details>
       <div class="shot"><img src="../ibm-brs/tutorials/images/B1-4-dashboard-summary.png" alt="The dashboard Summary page of a new instance: Getting Started with IBM Cloud Backup, with steps to connect sources and create backup policies, Health All Healthy, and no protection or compliance activity." width="1480" height="812"></div>
       <figcaption>
         <h3>The dashboard has opened. The Getting Started panel lists two steps. Which comes first?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>1. Connect Sources</b>: you need at least one data source connection before you can protect anything. Step 2 is to create backup policies. Health shows All Healthy and there is no activity yet.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>1. Connect Sources</b>: you need at least one data source connection before you can protect anything. Step 2 is to create backup policies. Health shows All Healthy, and there&apos;s no activity yet.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="18.4,68.4,13.5,10" data-width="900px">
@@ -130,13 +130,13 @@ Basic    1 day          30 days   none</pre></details>
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-4-policy-default-lock.png" alt="Create Protection Policy as it opens: Backup every 1 Day, Retain for 2 Weeks, Lock 2 Weeks." width="632" height="418"></div>
       <figcaption>
         <h3>Northgate clicks Create Policy to make its own. Where is the lock the dialog fills in for you?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Lock 2 Weeks</b>, next to Retain for 2 Weeks. A locked backup cannot be deleted until the lock ends, not even by an administrator.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Lock 2 Weeks</b>, next to Retain for 2 Weeks. A locked backup can&apos;t be deleted until the lock ends, not even by an administrator.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="34.8,68.9,19.8,6.2" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-5-policy-no-lock.png" alt="The same dialog with the lock removed: Retain for 7 Days and the + Add DataLock link." width="632" height="418"></div>
       <figcaption>
-        <h3>Northgate does not want a lock on this policy. The lock has been removed. What does the dialog show in its place?</h3>
+        <h3>Northgate doesn&apos;t want a lock on this policy, so the lock has been removed. What does the dialog show in its place?</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>+ Add DataLock</b>. To remove the lock, point at the Lock field and click the minus sign that appears. In our lab the policy was saved as &quot;Retain 1w&quot; with no lock.</p></details>
       </figcaption>
     </figure>
@@ -145,18 +145,18 @@ Basic    1 day          30 days   none</pre></details>
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>A default you did not choose</h2>
-  <p class="lead">The last field Northgate checks is the one that matters most: whose keys protect the data.</p>
+  <h2>The Encryption switch may already be on</h2>
+  <p class="lead">The last field Northgate checks decides whose keys protect the data.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>Northgate wants provider-managed encryption keys. The create page opens as shown. What does it do before clicking Create?</p>
+      <p>Northgate wants provider-managed encryption keys. The create page opens as shown. What should it do before clicking Create?</p>
       <div class="shot" style="max-width:520px;margin-bottom:12px"><img src="../ibm-brs/tutorials/images/B1-1-encryption-default-on.png" alt="Configure integration with the Encryption switch on by default, showing a key management instance and key already chosen, and a yellow Service authorization required notice." width="941" height="339"></div>
       <div class="opts">
         <button class="opt">Nothing: the page already uses provider-managed keys</button>
         <button class="opt">Click Authorize, to use the key on the page</button>
         <button class="opt" data-ok>Turn the Encryption switch off</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The switch was <b>on by default</b>, already filled in with a Key Protect instance and root key from another project in the account, with a warning &quot;Service authorization required&quot;. Switching it off gives an instance with provider-managed keys. Unit 4.4 covers using your own key.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Turn the switch off. In our lab it was <b>on by default</b>, already filled in with a Key Protect instance and root key from another project in the account, with a warning &quot;Service authorization required&quot;. Switching it off gives you an instance with provider-managed keys. Unit 4.4 covers using your own key.</p></details>
     </div>
     <div class="q">
       <p>After the order, the instance page shows Encryption: <b>Provider managed</b>. Does that prove the switch was off?</p>
@@ -165,7 +165,7 @@ Basic    1 day          30 days   none</pre></details>
         <button class="opt" data-ok>No: the page shows it for an instance with your own key too</button>
         <button class="opt">Yes, unless it is Pending</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The page shows &quot;Provider managed&quot; for an instance with your own key too, so it does not prove the switch was off. The Key Protect registrations list does (the <code>kp registrations</code> command).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. The page shows &quot;Provider managed&quot; for an instance with your own key too, so it doesn&apos;t prove the switch was off. The Key Protect registrations list does (the <code>kp registrations</code> command).</p></details>
     </div>
   </div>
 </section>
@@ -191,7 +191,7 @@ Basic    1 day          30 days   none</pre></details>
         <button class="opt" data-ok>They cannot be deleted until the lock ends, even by an administrator</button>
         <button class="opt">They are never kept</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The dialog fills in Retain for 2 Weeks and Lock 2 Weeks. A locked backup cannot be deleted until the lock ends, not even by an administrator.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>They can&apos;t be deleted until the lock ends. The dialog fills in Retain for 2 Weeks and Lock 2 Weeks, and a locked backup can&apos;t be deleted until the lock ends, not even by an administrator.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 1.3.</b> How does BRS charge for backup storage?</p>
@@ -200,7 +200,7 @@ Basic    1 day          30 days   none</pre></details>
         <button class="opt" data-ok>Per GB-hour, scaling linearly with backup size</button>
         <button class="opt">Per protected server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A per-GB-hour metric, at a price that depends on the region. The catalog shows no instance fee or per-source fee.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Per GB-hour, at a price that depends on the region. The catalog shows no instance fee or per-source fee.</p></details>
     </div>
   </div>
 </section>

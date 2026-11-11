@@ -14,7 +14,7 @@
 
 <header class="band gut">
   <div class="wrap">
-    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 4 · Restore and prove it</span>
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 4 · Restore and check it</span>
     <span class="segs js-only" aria-label="Progress"></span>
     <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
   </div>
@@ -27,14 +27,14 @@
     <div>
       <span class="kicker">Unit 3 of Module 4</span>
       <h1>Restore SQL Server and compare the rows</h1>
-      <p class="lead">By the end you can restore a SQL Server database over the original, prove it came back by comparing numbers, and spot why the next backup then reads nothing.</p>
+      <p class="lead">By the end of this unit you'll be able to restore a SQL Server database over the original, show it was recovered by comparing numbers, and see why the next backup then reads nothing.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: the database labdb is dropped, restored from the backup, and its rows are compared."
         data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,50,120,70],"heavy":true,"title":"drop","detail":"labdb gone"},{"line":[134,85,146,85],"arrow":true,"tone":"mark"},{"box":[150,50,120,70],"heavy":true,"title":"restore","detail":"from backup"},{"line":[274,85,286,85],"arrow":true,"tone":"mark"},{"box":[290,50,120,70],"tone":"mark","title":"compare","detail":"the numbers"},{"text":"100,000 rows","at":[260,175],"hand":true,"size":17,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. Its SQL Server on a Windows server holds a database called <code>labdb</code>. Today it drops the database on purpose, restores it from the backup and compares the numbers.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its SQL Server on a Windows server holds a database called <code>labdb</code>. In this unit it drops the database on purpose, restores it from the backup and compares the numbers.</p>
     </div>
   </div>
   <p class="small">Every number and screen in this unit comes from real runs in our lab, some at the command line and some in the console. The location of the backup is blurred in the screenshots.</p>
@@ -60,7 +60,7 @@
         <button class="opt" data-ok>The row count and a checksum, with the numbers taken before the drop</button>
         <button class="opt">Only the size of the files on disk</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The test compares the row count and the checksum: 100,000 rows, and the checksum matches. The restore took 23 s.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The row count and a checksum. The test compares them with the numbers taken before: 100,000 rows, and the checksum matches. The restore took 23 s.</p></details>
     </div>
     <div class="q">
       <p>In the console run, <code>labdb</code> held 105,000 rows by then, yet the restore used the first backup, taken at 13:59 with 100,000 rows. Why?</p>
@@ -69,7 +69,7 @@
         <button class="opt" data-ok>So the result could be compared with the numbers saved earlier</button>
         <button class="opt">The console only offers the first backup</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The lab chose the first backup so that the result could be compared with <code>C:\sql\labdb-before.txt</code>. To pick another backup, click the pencil beside the recovery point, choose <b>List</b>, pick the time and click <b>Select Recovery Point</b>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>So the result could be compared. We chose the first backup so that the result could be compared with <code>C:\sql\labdb-before.txt</code>. To pick another backup, click the pencil beside the recovery point, choose <b>List</b>, pick the time and click <b>Select Recovery Point</b>.</p></details>
     </div>
   </div>
 </section>
@@ -77,7 +77,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Run it</span>
   <h2>Check the restored database</h2>
-  <p class="lead">Run each command in turn. The output is what the lab recorded. The numbers are the lab&apos;s own.</p>
+  <p class="lead">Run each command in turn. The output is what our lab recorded, and the numbers are the lab&apos;s own.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -89,13 +89,13 @@
           <p class="hand note">No database named labdb is left.</p>
         </div>
     <div class="q">
-      <p>The restore ran for 23 seconds. If the data came back unchanged, how will the second line compare with the first?</p>
+      <p>The restore ran for 23 seconds. If the data was recovered unchanged, how will the second line compare with the first?</p>
       <div class="opts">
         <button class="opt" data-ok>The same row count and the same checksum</button>
         <button class="opt">The same row count and a new checksum</button>
         <button class="opt">Fewer rows: a restore never brings back everything</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The check printed the same row count and the same checksum on both lines.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The same on both. The check printed the same row count and the same checksum on both lines.</p></details>
     </div>
         <div class="cmd">
           <p class="pre">12:36:40 UTC, after the restore</p>
@@ -118,7 +118,7 @@ after:  100000,1393371002</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Click through the console</span>
   <h2>Restore over the original</h2>
-  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="93.9,36.3,3.6,3.9" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5c-1-select-db.png" alt="Recover Microsoft SQL: labdb ticked. The selected recovery point, 2:03 pm, has a pencil beside it. The location is blurred." width="1136" height="693"></div>
@@ -140,7 +140,7 @@ after:  100000,1393371002</pre>
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>The next backup reads nothing</h2>
-  <p class="lead">Northgate checks the restored database. Then the group runs again.</p>
+  <p class="lead">Northgate&apos;s backup admin checks the restored database. Then the group runs again.</p>
   <pre class="def" aria-label="Timeline of the run after the restore">14:07 UTC   restore Succeeded in 23 s
 14:08       labdb checked: 100000 rows, same checksum
 14:08:22    next group run: read 0 bytes, lists only the host
@@ -153,7 +153,7 @@ after:  100000,1393371002</pre>
         <button class="opt" data-ok>The restored database has a new ID in BRS, and the group still holds the old one</button>
         <button class="opt">The backup agent is down</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>After the restore the database has a new ID. In the console run, <code>labdb</code> got the ID 656 and the group still held 652. In the command-line run, 49 became 53. The protection group still points at the old one, so the next backup protects nothing and gives only a warning.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The database has a new ID. In the console run, <code>labdb</code> got the ID 656 and the group still held 652. In the command-line run, 49 became 53. The protection group still points at the old one, so the next backup protects nothing and gives only a warning.</p></details>
     </div>
     <div class="q">
       <p>The run&apos;s Cloud Archive tab says Canceled, with a <code>[1-1-36]</code> periodic-full message. Is that the cause?</p>
@@ -161,7 +161,7 @@ after:  100000,1393371002</pre>
         <button class="opt">Yes</button>
         <button class="opt" data-ok>No: it is the periodic-full message from the backup run, not the cause</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The message is the periodic-full message from the backup run and is not the cause.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. The message is the periodic-full message from the backup run, and it isn&apos;t the cause.</p></details>
     </div>
   </div>
   <div class="tour">
@@ -175,12 +175,12 @@ after:  100000,1393371002</pre>
     <figure class="tstep" data-hot="2.5,41.5,94.8,16.4" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5c-6-edit-missing.png" alt="Edit Protection: a warning that objects protected by this group are missing from the source and will be removed on save. 0 Microsoft SQL Objects." width="1002" height="549"></div>
       <figcaption>
-        <h3>You open the group&apos;s menu and click <b>Edit</b>. Where does the page say what is wrong?</h3>
+        <h3>You open the group&apos;s menu and click <b>Edit</b>. Where does the page say what&apos;s wrong?</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The warning says objects of the group are missing from the source and will be removed when you save. To fix it, click the pencil under <b>Objects</b>, tick <code>labdb</code> again and click <b>Save</b>. In our lab the next run read 50.5 MB, a full backup of the new database, and listed <code>MSSQLSERVER/labdb</code> again.</p></details>
       </figcaption>
     </figure>
   </div>
-  <p class="watch"><b>Watch for this.</b> Update the group after a restore, or protect the instance with auto-protect, which was not tested. No point-in-time restore, log backup or restore to another instance was tested.</p>
+  <p class="watch"><b>Watch for this.</b> Update the group after a restore, or protect the instance with auto-protect, which we didn&apos;t test. We also didn&apos;t test a point-in-time restore, a log backup or a restore to another instance.</p>
 </section>
 
 <section class="screen">
@@ -194,7 +194,7 @@ after:  100000,1393371002</pre>
         <button class="opt">Restore the database again</button>
         <button class="opt">Nothing: the next run fixes itself</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The Edit page says objects of the group are missing from the source. Tick <code>labdb</code> again and click <b>Save</b>. In our lab the next run then read 50.5 MB.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Edit the group. The Edit page says objects of the group are missing from the source. Tick <code>labdb</code> again and click <b>Save</b>. In our lab the next run then read 50.5 MB.</p></details>
     </div>
     <div class="q" data-check>
       <p>In the console, which choice does <b>Targets</b> start at?</p>
@@ -203,7 +203,7 @@ after:  100000,1393371002</pre>
         <button class="opt" data-ok>Recover as a new Database</button>
         <button class="opt">Recover to another server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Targets starts at <b>Recover as a new Database</b>. <b>Overwrite Original Database</b> shows a warning that it cannot be undone.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Targets starts at <b>Recover as a new Database</b>. <b>Overwrite Original Database</b> shows a warning that it can&apos;t be undone.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 4.2.</b> In the console, how do you avoid the Windows path problem?</p>
@@ -212,14 +212,14 @@ after:  100000,1393371002</pre>
         <button class="opt">You type <code>C:\data\docs</code> twice</button>
         <button class="opt">You cannot restore Windows files there</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The browser shows the drive as a folder named <code>C</code>. You open it and tick <code>docs</code>; the selection reads <code>/C/data</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>You pick the folder. The browser shows the drive as a folder named <code>C</code>. You open it and tick <code>docs</code>, and the selection reads <code>/C/data</code>.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Unit complete</span>
-  <h2>You can restore a database and prove it</h2>
+  <h2>You can restore a database and check it</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>Drop, restore, then compare the row count and checksum: 100,000 rows and the same checksum in our lab. After a restore over the original, the database has a new ID in BRS, so edit the group and tick it again.</p></div>

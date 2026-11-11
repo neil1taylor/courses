@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 1 of Module 6</span>
       <h1>A source reboots, an agent stops</h1>
-      <p class="lead">By the end you can say what comes back after a Linux or a Windows server reboots, what a backup does while the Connector Agent is down, and why the console can show 1 Failed on a run that is still running.</p>
+      <p class="lead">By the end of this unit you'll know what comes back after a Linux or a Windows server reboots, what a backup does while the Connector Agent is down, and why the console can show 1 Failed on a run that&apos;s still running.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -42,7 +42,7 @@
           {"line":[194,135,226,135],"arrow":true,"tone":"mark"},
           {"text":"Linux: stays down","at":[232,141],"hand":true,"size":17,"tone":"mark"},
           {"text":"Windows: comes back","at":[232,176],"hand":true,"size":17,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. Tonight it patches two servers: <code>ng-app-01</code> (Linux) and <code>ng-win-01</code> (Windows). Both are already protected, and both must reboot.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Tonight it patches two servers: <code>ng-app-01</code> (Linux) and <code>ng-win-01</code> (Windows). Both are already protected, and both have to reboot.</p>
     </div>
   </div>
   <p class="small">Every number and screen in this unit comes from real runs in our lab. Server names and addresses were changed to made-up ones, and the server name is blurred in the screenshots.</p>
@@ -52,7 +52,7 @@
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>What comes back by itself</h2>
   <p class="lead">A protected server runs a backup agent. A server registered through a Connector Agent runs a second program, the Connector Agent, which connects the server to BRS. Look at what each one does after a reboot.</p>
-  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. On Linux the backup agent comes back by itself and the Connector Agent does not. On Windows both agents come back by themselves, and SQL Server stayed stopped in our lab."
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. On Linux the backup agent comes back by itself and the Connector Agent doesn't. On Windows both agents come back by themselves, and SQL Server stayed stopped in our lab."
     data-drawing='{"w":560,"h":210,"shapes":[
       {"text":"Linux (RHEL 9.6)","at":[10,22],"hand":true,"size":17,"tone":"muted"},
       {"box":[10,32,250,60],"title":"backup agent","detail":"comes back by itself"},
@@ -63,30 +63,30 @@
       {"text":"the same","at":[10,200],"hand":true,"size":16,"tone":"muted"}]}'></svg>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>Northgate reboots <code>ng-app-01</code>. Half a minute later the backup agent is <code>active</code>. Is the server connected to BRS?</p>
+      <p>Northgate&apos;s backup admin reboots <code>ng-app-01</code>. Half a minute later the backup agent is <code>active</code>. Is the server connected to BRS?</p>
       <div class="opts">
-        <button class="opt">Yes: a running backup agent means it is connected</button>
-        <button class="opt" data-ok>No: the Connector Agent is not running until someone starts it</button>
+        <button class="opt">Yes: a running backup agent means it&apos;s connected</button>
+        <button class="opt" data-ok>No: the Connector Agent isn&apos;t running until someone starts it</button>
         <button class="opt">Only after thirty minutes</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the backup agent came back and the Connector Agent did not: &quot;connector_agent_exec is not running.&quot; This happened with agent 7.3.12, and again with agent 7.3.13. IBM&apos;s page says: &quot;The Linux Agent must be restarted manually each time the source is rebooted.&quot;</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. In our lab the backup agent came back and the Connector Agent didn&apos;t: &quot;connector_agent_exec is not running.&quot; This happened with agent 7.3.12, and again with agent 7.3.13. IBM&apos;s page says: &quot;The Linux Agent must be restarted manually each time the source is rebooted.&quot;</p></details>
     </div>
     <div class="q">
-      <p>Northgate reboots <code>ng-win-01</code>, which also runs SQL Server. What is not running a few minutes later?</p>
+      <p>The admin reboots <code>ng-win-01</code>, which also runs SQL Server. What isn&apos;t running a few minutes later?</p>
       <div class="opts">
         <button class="opt">The Connector Agent</button>
         <button class="opt">The backup agent</button>
         <button class="opt" data-ok>SQL Server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both agents came back. SQL Server showed <code>Stopped</code> at 14:09:23 and again at 14:10:35. Its start type is Automatic (Delayed Start), which Windows starts about two minutes after boot. Check your database services too.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>SQL Server. Both agents came back, but SQL Server showed <code>Stopped</code> at 14:09:23 and again at 14:10:35. Its start type is Automatic (Delayed Start), which Windows starts about two minutes after boot. Check your database services too.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
-  <h2>How long until it is connected again?</h2>
-  <p class="lead">Northgate reboots <code>ng-win-01</code> and watches the Connector Agent. Then it starts the Linux Connector Agent by hand on <code>ng-app-01</code>. Guess both times.</p>
+  <h2>How long until it&apos;s connected again?</h2>
+  <p class="lead">The admin reboots <code>ng-win-01</code> and watches the Connector Agent. Then they start the Linux Connector Agent by hand on <code>ng-app-01</code>. How long does each one take to connect?</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>On Windows, how long after the reboot command does the Connector Agent show as connected?</p>
@@ -100,13 +100,13 @@ First run         28 s
 Second run        22 s</pre></details>
     </div>
     <div class="q">
-      <p>On Linux in the first run, how long after Northgate started the Connector Agent by hand did it show as connected?</p>
+      <p>On Linux in the first lab run, how long after the admin started the Connector Agent by hand did it show as connected?</p>
       <div class="opts">
         <button class="opt">Under 5 seconds</button>
         <button class="opt" data-ok>89 seconds</button>
         <button class="opt">About twenty minutes</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>89 seconds. In the second run the agent showed as connected from the second it was started.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>89 seconds. In the second lab run the agent showed as connected from the moment it was started.</p></details>
     </div>
   </div>
 </section>
@@ -124,27 +124,27 @@ Second run        22 s</pre></details>
           <pre class="out">active
 connector_agent_exec is not running.</pre>
           <p class="hand note">The backup agent is active.</p>
-          <p class="hand note">The Connector Agent is not running.</p>
+          <p class="hand note">The Connector Agent isn&apos;t running.</p>
         </div>
         <div class="q">
-          <p>The Connector Agent is not running. What will BRS report for this agent&apos;s connection?</p>
+          <p>The Connector Agent isn&apos;t running. What will BRS report for this agent&apos;s connection?</p>
           <div class="opts">
             <button class="opt">Connected: the backup agent is running</button>
             <button class="opt" data-ok>Not connected</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The next command shows it. The CLI&apos;s <code>connector-agent list</code> is the only place we found that shows this.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>Not connected. The next command shows it. The CLI&apos;s <code>connector-agent list</code> is the only place we found that shows this.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud backup-recovery connector-agent list --tenant-id $T --xibm-tenant-id $T --output json | jq -c '.connectorAgents[]|{c:.connectivityStatus.isConnected}'</pre>
           <pre class="out">false</pre>
           <p class="hand note">isConnected is false.</p>
-          <p class="hand note">The console has no page that shows this.</p>
+          <p class="hand note">Check this with the CLI, because we found no console page that shows it.</p>
         </div>
         <div class="cmd">
           <pre class="in">ssh vpcuser@10.0.0.10 'sudo /opt/connector_agent/bin/connector_agent.sh start'</pre>
           <pre class="out">connector_agent_exec started (PID: ...)</pre>
           <p class="hand note">Started by hand.</p>
-          <p class="hand note">In the first run it showed as connected 89 s later.</p>
+          <p class="hand note">In the first lab run it showed as connected 89 s later.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -154,13 +154,13 @@ connector_agent_exec is not running.</pre>
     </div>
     <div class="notes js-only" aria-live="polite"></div>
   </div>
-  <p class="small">The installer makes no systemd unit and no cron entry for the Connector Agent, checked in our lab. Whether a boot script fixes this is untested.</p>
+  <p class="small">The installer makes no systemd unit and no cron entry for the Connector Agent. We checked that in our lab. We didn&apos;t test whether a boot script fixes this.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>A backup while the agent is down</h2>
-  <p class="lead">Before the reboot, Northgate protected a folder on a second Linux server and set the group to paused. After the reboot the Connector Agent stayed down, and Northgate clicked Run Now. These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">Before the reboot, the admin protected a folder on a second Linux server and set the group to paused. After the reboot the Connector Agent stayed down, and the admin clicked Run Now. These screens come from the BRS console in our lab. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="46.1,75.1,5.8,7.7" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7c-1-run-waiting.png" alt="Group Details for b-linux2-files, Paused. The 2:00pm incremental has run 4m 6s with 0 Bytes read and 0/1 objects. The earlier full run read 2.7 MiB." width="1205" height="390"></div>
@@ -180,14 +180,14 @@ connector_agent_exec is not running.</pre>
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7c-3-activity.png" alt="Archival Task Activity: 2:00 PM, 1 active tasks remaining for the job; 2:02 PM, All backup tasks finished. The server name is blurred." width="1010" height="348"></div>
       <figcaption>
         <h3>The Cloud Archive tab&apos;s Show Activity window says the work is over. Which line says so?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. &quot;All backup tasks finished&quot; at 2:02 PM, although nothing had been read. This window does not say that the agent is down either.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. &quot;All backup tasks finished&quot; at 2:02 PM, although nothing had been read. This window doesn&apos;t say that the agent is down either.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="19.3,86.2,7.5,8.4" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7c-4-succeeded.png" alt="Run Details: Succeeded, 1 Succeeded, 0 Failed, 6m 57s. The object started at 2:07pm and ended at 2:07pm, read 2 MiB, 2 of 508 entities changed. The server name is blurred." width="1205" height="450"></div>
       <figcaption>
-        <h3>Northgate started the Connector Agent, and the run finished. The run was requested at 2:00pm. Where does the page show when it began its work?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The object&apos;s Start Time is 2:07pm, when the agent came back, not 2:00pm. The Failed count went back to 0, and the run read 2 MiB. The run waited, and the group was not wedged.</p></details>
+        <h3>The admin started the Connector Agent, and the run finished. The run was requested at 2:00pm. Where does the page show when it began its work?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The object&apos;s Start Time is 2:07pm, when the agent came back, not 2:00pm. The Failed count went back to 0, and the run read 2 MiB. The run waited, and the group wasn&apos;t stuck.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -204,25 +204,25 @@ connector_agent_exec is not running.</pre>
         <button class="opt" data-ok>It waits: Running, 0 bytes, no message, until the agent is back</button>
         <button class="opt">It backs up through the backup agent</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the run did not fail. It started its work only when the agent was back. A scheduled backup that starts while the agent is down will wait the same way.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It waits. In our lab the run didn&apos;t fail. It started its work only when the agent was back. A scheduled backup that starts while the agent is down will wait the same way.</p></details>
     </div>
     <div class="q" data-check>
       <p>The console shows <b>1 Failed</b> on a run whose only object is still running. What does that count mean?</p>
       <div class="opts">
         <button class="opt">The backup has failed for good</button>
-        <button class="opt" data-ok>It is not a final result: it went back to 0 when the run succeeded</button>
-        <button class="opt">The group is wedged</button>
+        <button class="opt" data-ok>It isn&apos;t a final result: it went back to 0 when the run succeeded</button>
+        <button class="opt">The group is stuck</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It showed during the wait and cleared when the agent came back. Watch <code>connector-agent list</code> as well as the run status.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It isn&apos;t final. It showed during the wait and cleared when the agent came back. Watch <code>connector-agent list</code> as well as the run status.</p></details>
     </div>
     <div class="q" data-check>
-      <p>After a Windows reboot, both agents are back. What else did Northgate find stopped in our lab?</p>
+      <p>After a Windows reboot, both agents are back. What else did we find stopped in our lab?</p>
       <div class="opts">
         <button class="opt">The protection group</button>
         <button class="opt" data-ok>SQL Server, which uses a delayed start</button>
         <button class="opt">Nothing</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>SQL Server&apos;s start type is Automatic (Delayed Start), so Windows starts it about two minutes after boot. It was still Stopped at 14:09:23 and 14:10:35.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>SQL Server. Its start type is Automatic (Delayed Start), so Windows starts it about two minutes after boot. It was still Stopped at 14:09:23 and 14:10:35.</p></details>
     </div>
   </div>
 </section>
@@ -232,7 +232,7 @@ connector_agent_exec is not running.</pre>
   <h2>You know what a reboot does to a source</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>After a reboot, a Windows server&apos;s agents come back in about half a minute in our lab. On Linux the backup agent comes back and the Connector Agent does not, so backups wait, with no error. A run can show 1 Failed while it is only waiting.</p></div>
+    <div><span class="label">Remember</span><p>After a reboot, a Windows server&apos;s agents come back in about half a minute in our lab. On Linux the backup agent comes back and the Connector Agent doesn&apos;t, so start it by hand. Until then backups wait, with no error. A run can show 1 Failed while it&apos;s only waiting.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

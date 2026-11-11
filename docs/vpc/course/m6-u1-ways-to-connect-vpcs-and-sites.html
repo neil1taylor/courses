@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 1 of Module 6</span>
       <h1>Ways to connect VPCs and sites</h1>
-      <p class="lead">By the end you can pick a way to join VPCs, regions and sites, and say what a Transit Gateway, a VPN and a prefix filter do not do.</p>
+      <p class="lead">By the end of this unit you&apos;ll be able to pick a way to join VPCs, regions and sites, and you&apos;ll know what a Transit Gateway, a VPN and a prefix filter don&apos;t do.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -46,52 +46,52 @@
           {"box":[410,20,130,60],"dashed":true,"title":"Site"},
           {"line":[410,50,150,50],"tone":"muted"},
           {"text":"VPN: a tunnel, not the gateway","at":[185,40],"hand":true,"size":16,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier. Its servers now sit in several VPCs and it still has a data centre. This module joins them and protects what passes between them.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its servers now sit in several VPCs, and it still has a data centre. Northgate&apos;s network admin wants to join them and protect what passes between them, and this module shows how.</p>
     </div>
   </div>
-  <p class="small">Every command and line of output in this unit comes from a real run. The choices come from IBM&apos;s pages. The review question repeats one from unit 2.2.</p>
+  <p class="small">Every command and line of output in this unit comes from a real run, and the choices come from IBM&apos;s pages. The review question repeats one from unit 2.2.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Design it</span>
   <h2>Pick a way for each need</h2>
-  <p class="lead">Four needs. Pick an answer, then read the worked answer.</p>
+  <p class="lead">Northgate has four needs. Pick a way to meet each one, then read the worked answer.</p>
   <div class="pair">
     <div class="q">
-      <p>Prod, dev and shared services are VPCs in one region. They must reach each other.</p>
+      <p>Northgate&apos;s prod, dev and shared services VPCs are in one region and must reach each other. What should it use?</p>
       <div class="opts">
         <button class="opt" data-ok>A local Transit Gateway</button>
         <button class="opt">A VPN between each pair</button>
         <button class="opt">A global Transit Gateway</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>A local Transit Gateway joins VPCs in one region and needs no tunnel. A gateway takes 10 VPC connections, and a VPC can join many local gateways.</p><p class="hand tilt"><b>From NSX:</b> an NSX Tier-0 or Tier-1 router maps roughly to a route table and a Transit Gateway.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A local Transit Gateway. It joins VPCs in one region and needs no tunnel. A gateway takes 10 VPC connections, and a VPC can join many local gateways.</p><p class="hand tilt"><b>From NSX:</b> an NSX Tier-0 or Tier-1 router maps roughly to a route table and a Transit Gateway.</p></details>
     </div>
     <div class="q">
-      <p>Northgate adds a recovery region. The two hub VPCs, in different regions, must reach each other.</p>
+      <p>Northgate adds a recovery region, and its two hub VPCs, in different regions, must reach each other. What should it use?</p>
       <div class="opts">
         <button class="opt">A local Transit Gateway in each region</button>
         <button class="opt" data-ok>A global Transit Gateway</button>
         <button class="opt">Direct Link</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>A global Transit Gateway joins VPCs in several regions. A VPC joins only one global gateway, and many local ones.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A global Transit Gateway. It joins VPCs in several regions. A VPC joins only one global gateway, and many local ones.</p></details>
     </div>
     <div class="q">
-      <p>The data centre must reach the VPCs over the internet, and only a few prefixes matter.</p>
+      <p>Northgate&apos;s data centre must reach the VPCs over the internet, and only a few prefixes matter. What should it use?</p>
       <div class="opts">
         <button class="opt">Client-to-site VPN</button>
         <button class="opt" data-ok>A route-mode site-to-site VPN, static</button>
         <button class="opt">GRE tunnel</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Static suits a few prefixes. A dynamic connection, with BGP, needs a Transit Gateway. A client-to-site VPN is for one person&apos;s device, and a GRE tunnel is for an appliance that runs its own tunnels.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A static route-mode site-to-site VPN. Static suits a few prefixes. A dynamic connection, with BGP, needs a Transit Gateway. A client-to-site VPN is meant for one person&apos;s device, and a GRE tunnel is meant for an appliance that runs its own tunnels.</p></details>
     </div>
     <div class="q">
-      <p>The data centre needs a private link, not the internet.</p>
+      <p>Now the data centre needs a private link instead of the internet. What should Northgate use?</p>
       <div class="opts">
         <button class="opt" data-ok>Direct Link Dedicated or Connect, joined to a Transit Gateway</button>
         <button class="opt">Direct Link on Classic</button>
         <button class="opt">Transit Gateway Connect</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Direct Link on Classic no longer takes new orders. &quot;Transit Gateway Connect&quot; is not an IBM product: there is no such page, command or type. The Direct Link row is cited from IBM&apos;s pages, not built in the lab.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Direct Link Dedicated or Connect, joined to a Transit Gateway. Direct Link on Classic no longer takes new orders. There&apos;s no IBM product called &quot;Transit Gateway Connect&quot;: no page, command or type has that name. The Direct Link row comes from IBM&apos;s pages, and we didn&apos;t build it in the lab.</p></details>
     </div>
   </div>
 </section>
@@ -111,7 +111,7 @@ Routing                          local
 Location                         us-east
 Status                           pending
 Connection count                 0</pre>
-          <p class="hand note">Local routing: it joins networks in its own region only.</p>
+          <p class="hand note">Local routing joins networks in its own region only.</p>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud tg connections &lt;gateway-id&gt;</pre>
@@ -128,14 +128,14 @@ vpct-tgw-hub vpc ... attached</pre>
             <button class="opt">Yes. The gateway joins them</button>
             <button class="opt" data-ok>No. Both time out</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>A gateway only joins networks. The prod subnet&apos;s network ACL allowed traffic only inside <code>10.20.0.0/16</code>. Each direction needs its own rule.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>No, both time out. A gateway only joins networks. The prod subnet&apos;s network ACL allowed traffic only inside <code>10.20.0.0/16</code>, and each direction needs its own rule.</p></details>
         </div>
         <div class="cmd">
           <p class="pre"># on a vpct-prod server, before any network ACL change</p>
           <pre class="in">nc -zv -w 3 $SHARED 22; nc -zv -w 3 $DEV 22</pre>
           <pre class="out err">nc: connect to 10.40.0.12 port 22 (tcp) timed out: Operation now in progress
 nc: connect to 10.30.0.4 port 22 (tcp) timed out: Operation now in progress</pre>
-          <p class="hand note">Timed out. No message says why.</p>
+          <p class="hand note">Both attempts timed out, and no message says why.</p>
         </div>
         <div class="cmd">
           <p class="pre"># after SSH rules out and the replies in, for 10.30.0.0/16 and 10.40.0.0/16</p>
@@ -168,7 +168,7 @@ vpct-tgw-shared	10.40.64.0/18	</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
   <h2>The second global gateway</h2>
-  <p class="lead">The hub VPC is already on the global gateway <code>vpct-tgw-global</code>. Someone creates a second global gateway and tries to connect the hub to it.</p>
+  <p class="lead">The hub VPC is already on the global gateway <code>vpct-tgw-global</code>. Suppose Northgate&apos;s network admin creates a second global gateway and tries to connect the hub to it.</p>
   <div class="term">
     <div class="bar"><span>bash</span></div>
     <div class="cmd">
@@ -185,7 +185,7 @@ Error message: The requested network is already connected to an existing transit
       <button class="opt" data-ok>A VPC joins only one global gateway, and the hub is on one already</button>
       <button class="opt">A gateway takes at most one VPC connection</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>The hub is on <code>vpct-tgw-global</code>. A VPC joins one global gateway and many local ones, so in this design the prod, dev and shared VPCs stay on the local gateway. Delete the second gateway once you have seen the error.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>A VPC joins only one global gateway, and the hub is on one already. The hub is on <code>vpct-tgw-global</code>. A VPC can join one global gateway and many local ones, so in this design the prod, dev and shared VPCs stay on the local gateway. Once you&apos;ve seen the error, delete the second gateway.</p></details>
   </div>
 </section>
 
@@ -201,7 +201,7 @@ Error message: The requested network is already connected to an existing transit
         <button class="opt" data-ok>Dev times out. Shared still works</button>
         <button class="opt">Both time out</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><div class="term"><div class="cmd"><pre class="out err">nc: connect to 10.30.0.4 port 22 (tcp) timed out: Operation now in progress</pre><pre class="out">Connection to 10.40.0.12 22 port [tcp/ssh] succeeded!</pre></div></div><p>The dev prefix was missing from the new route report. A route a filter drops is not shown with a status. It is gone.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><div class="term"><div class="cmd"><pre class="out err">nc: connect to 10.30.0.4 port 22 (tcp) timed out: Operation now in progress</pre><pre class="out">Connection to 10.40.0.12 22 port [tcp/ssh] succeeded!</pre></div></div><p>Dev times out, and shared still works. The dev prefix was missing from the new route report. A route that a filter drops doesn&apos;t appear in the report with a status. It&apos;s simply gone.</p></details>
     </div>
     <div class="q">
       <p>Does that filter keep dev away from prod only?</p>
@@ -209,7 +209,7 @@ Error message: The requested network is already connected to an existing transit
         <button class="opt">Yes. It sits on the path from prod</button>
         <button class="opt" data-ok>No. It hides the dev prefix from every other connection</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A filter on one connection decides which of its prefixes every other connection can reach. IBM&apos;s page says so, and a reader may expect a filter between two VPCs. The lab tested only prod to dev, because the dev server had no public address.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. A filter on one connection decides which of its prefixes every other connection can reach. IBM&apos;s page says so, even though you might expect a filter to work between two VPCs only. The lab tested only prod to dev, because the dev server had no public address.</p></details>
     </div>
   </div>
 </section>
@@ -225,16 +225,16 @@ Error message: The requested network is already connected to an existing transit
         <button class="opt" data-ok>At routes, security groups and network ACLs on both sides</button>
         <button class="opt">At the second tunnel, which is down</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The connection is <code>up</code> when one tunnel is up. In the lab the second tunnel stayed down on both sides and traffic passed. Before the network ACL rules existed, a connection from the site timed out although the tunnel was up. A new security group also allows nothing outbound.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Look at routes, security groups and network ACLs on both sides. The connection shows <code>up</code> when one tunnel is up. In the lab the second tunnel stayed down on both sides and traffic still passed. Before the network ACL rules existed, a connection from the site timed out although the tunnel was up. A new security group also allows nothing outbound.</p></details>
     </div>
     <div class="q" data-check>
-      <p>Which of these joins names, not packets?</p>
+      <p>Which of these lets VPCs share names, and doesn&apos;t carry packets?</p>
       <div class="opts">
         <button class="opt">Private Path</button>
         <button class="opt" data-ok>DNS sharing, after the network path exists</button>
         <button class="opt">A redundant GRE tunnel</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>DNS sharing lets many VPCs use one hub&apos;s resolver. Private Path joins one service to a consumer.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>DNS sharing, after the network path exists. It lets many VPCs use one hub&apos;s resolver. Private Path joins one service to a consumer.</p></details>
     </div>
     <div class="q" data-check>
       <p><span class="kicker">Review question from Unit 2.2.</span> A network ACL allows outbound traffic from a web subnet to port 443. Why does the web server still get no answer until you add an inbound rule too?</p>
@@ -243,7 +243,7 @@ Error message: The requested network is already connected to an existing transit
         <button class="opt" data-ok>A network ACL is stateless: a reply is a separate packet that it checks on its own</button>
         <button class="opt">Rules run from the bottom up</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The web ACL needs reply rules because the ACL checks each packet by itself. Rules run in order, top to bottom. A security group is the stateful one.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A network ACL is stateless. The web ACL needs reply rules because the ACL checks each packet by itself. Rules run in order, top to bottom. A security group is the stateful one.</p></details>
     </div>
   </div>
 </section>
@@ -253,7 +253,7 @@ Error message: The requested network is already connected to an existing transit
   <h2>You can choose how to connect</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>A gateway or tunnel only joins networks. Security groups and network ACLs still decide. One global gateway per VPC. A prefix filter hides a prefix from every other connection.</p></div>
+    <div><span class="label">Remember</span><p>A gateway or a tunnel only joins networks, and security groups and network ACLs still decide what passes. A VPC can join only one global gateway. A prefix filter hides a prefix from every other connection.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapter 73, Joining the VPCs with a local Transit Gateway, runs the gateway. Chapter 71 builds the VPN and chapter 79 compares every way.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

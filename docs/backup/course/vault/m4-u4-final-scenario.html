@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Final scenario: Northgate&apos;s recovery plan · Cyber Vault course</title>
-<meta name="description" content="Course unit 4.4: design Northgate Freight's recovery plan from what the course showed, answer the board, and say what stays locked after you leave. No account needed.">
+<meta name="description" content="Course unit 4.4: design Northgate Freight's recovery plan from what the course showed, answer the directors, and say what stays locked after you leave. No account needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -27,29 +27,29 @@
     <div>
       <span class="kicker">Unit 4 of Module 4</span>
       <h1>Final scenario: Northgate&apos;s recovery plan</h1>
-      <p class="lead">By the end you have built a recovery plan from what the course showed, answered the board&apos;s question about stolen keys, and said what stays locked after you leave.</p>
+      <p class="lead">By the end of this unit you&apos;ll have built a recovery plan from what the course showed, answered the directors&apos; question about stolen keys, and worked out what stays locked after you leave.</p>
       <div class="facts"><span>About 20 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
-      <svg class="sketch" role="img" aria-label="Sketch: the board asks what happens if an attacker gets the backup admin&apos;s keys. The plan answers with a rebuild from the vault, and a lock that stays for 15 days."
+      <svg class="sketch" role="img" aria-label="Sketch: the directors ask what happens if an attacker gets the backup admin&apos;s keys. The plan answers with a rebuild from the vault, and a lock that stays for 15 days."
         data-drawing='{"w":420,"h":200,"shapes":[
-          {"text":"the board asks","at":[14,30],"hand":true,"size":17,"tone":"muted"},
+          {"text":"the directors ask","at":[14,30],"hand":true,"size":17,"tone":"muted"},
           {"box":[10,40,180,60],"heavy":true,"title":"stolen keys?"},
           {"line":[194,70,226,70],"arrow":true,"tone":"mark"},
           {"text":"your plan","at":[240,30],"hand":true,"size":17,"tone":"muted"},
           {"box":[230,40,180,60],"heavy":true,"tone":"mark","title":"rebuild, check"},
           {"text":"the lock stays for 15 days","at":[90,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It backs up Linux files, Windows files and a SQL database with Defender Data Protect, and archives them to a Cyber Vault. Its board asks what happens if an attacker gets the backup admin&apos;s keys. You write the plan.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It backs up Linux files, Windows files and a SQL database with Defender Data Protect, and archives them to a Cyber Vault. Its directors want to know what happens if an attacker gets the backup admin&apos;s keys, and you&apos;re writing the plan.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab, with the date given each time. The unit reviews Module 4 and uses the tests from the earlier units. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab. The unit reviews Module 4 and uses the tests from the earlier units. We ran the rebuild twice: the second test is the one in units 4.1 to 4.3, and the first test was an earlier run on a third cluster. The vault is a Beta in us-south, and it has no SLA.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Design it</span>
   <h2>Build the recovery plan</h2>
-  <p class="lead">The attack has happened and the backup cluster is gone. For each item, decide: is it in the plan, or left out? Your answers build the plan, which you will see in step 2.</p>
+  <p class="lead">The attack has happened and the backup cluster is gone. For each item, decide whether it goes in the plan or stays out. Your answers build the plan, and you&apos;ll see it in step 2.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>Item: choose the run to download by its time, from before the attack.</p>
@@ -57,7 +57,7 @@
         <button class="opt" data-ok>In the plan</button>
         <button class="opt">Left out</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The infected runs were archived at 11:55, after the attack at 11:54. In our lab the clean runs were 11:43 and 11:44.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In the plan. The infected runs were archived at 11:55, after the attack at 11:54, and in our lab the clean runs were from 11:43 and 11:44.</p></details>
     </div>
     <div class="q">
       <p>Item: keep a record of the clean files and the clean database values from before an attack.</p>
@@ -65,7 +65,7 @@
         <button class="opt" data-ok>In the plan</button>
         <button class="opt">Left out</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Every check compared the restored data with a record made earlier: a clean manifest for the files, and <code>100000,-108923937</code> for the database.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In the plan. Every check compared the restored data with a record made earlier: a clean manifest for the files, and <code>100000,-108923937</code> for the database.</p></details>
     </div>
     <div class="q">
       <p>Item: replace the agent on each server with the new cluster&apos;s agent.</p>
@@ -73,7 +73,7 @@
         <button class="opt" data-ok>In the plan</button>
         <button class="opt">Left out</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>An agent trusts one cluster. A plain <code>rpm -Uvh --force</code> keeps the old trust and registration fails with a TLS error, so the lab removed the old package and its saved configuration first.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In the plan. An agent trusts one cluster. A plain <code>rpm -Uvh --force</code> keeps the old trust and registration fails with a TLS error, so we removed the old package and its saved configuration first.</p></details>
     </div>
     <div class="q">
       <p>Item: add the vault to the new cluster with the read key, Encryption off and Archive Object Lock off.</p>
@@ -81,7 +81,7 @@
         <button class="opt" data-ok>In the plan</button>
         <button class="opt">Left out</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Encryption is off because the archive was written without it. The lock is on the vault, and the vault enforces it, so a read-only registration does not need it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In the plan. Encryption is off because the archive was written without it. The lock is on the vault, and the vault enforces it, so a read-only registration doesn&apos;t need it.</p></details>
     </div>
     <div class="q">
       <p>Item: restore to the original server.</p>
@@ -89,7 +89,7 @@
         <button class="opt">In the plan</button>
         <button class="opt" data-ok>Left out: restore to a new location</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A retrieved group cannot restore to the original. In our lab the restores went to <code>/v7restore/data</code>, <code>C:\v7restore\data</code> and a new database <code>labdb_v7b</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Left out. A retrieved group can&apos;t restore to the original. In our lab the restores went to <code>/v7restore/data</code>, <code>C:\v7restore\data</code> and a new database <code>labdb_v7b</code>.</p></details>
     </div>
     <div class="q">
       <p>Item: treat a restore that says Succeeded as proof.</p>
@@ -97,31 +97,31 @@
         <button class="opt">In the plan</button>
         <button class="opt" data-ok>Left out: check every file and the database</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In an earlier test a Linux recovery reported Succeeded while hard-linked files came back empty. The check against a manifest found it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Left out. In an earlier test a Linux recovery reported Succeeded while hard-linked files came back empty, and the check against a manifest is what found it.</p></details>
     </div>
     <div class="q">
       <p>Item: promise that the OpenShift VMs rebuild from the vault alone on a new cluster.</p>
       <div class="opts">
         <button class="opt">In the plan</button>
-        <button class="opt" data-ok>Left out: it failed in the first round and was not run</button>
+        <button class="opt" data-ok>Left out: it failed in the first test and wasn&apos;t run in the second</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The retrieve of the VM group failed on a new cluster. The second round did not include the VMs. Say it is not proven.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Left out. Retrieving the VM group to a new cluster failed in our first test, and the second test didn&apos;t include the VMs. On its own cluster the same VM backup did restore from the vault, so restore OpenShift VMs to the cluster they were backed up from.</p></details>
     </div>
     <div class="q">
       <p>Item: delete the vault when the exercise ends.</p>
       <div class="opts">
         <button class="opt">In the plan</button>
-        <button class="opt" data-ok>Left out: the lock decides, not the plan</button>
+        <button class="opt" data-ok>Left out: the last lock decides when</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The vault holds locked data until the last lock ends, 15 days after the run, and it cannot be deleted before then. Step 4 returns to this.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Left out. The vault holds locked data until the last lock ends, 15 days after the run, and it can&apos;t be deleted before then. Step 4 comes back to this.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
-  <h2>The board&apos;s question</h2>
-  <p class="lead">Here is the plan your answers built.</p>
+  <h2>The directors&apos; question</h2>
+  <p class="lead">This is the plan your answers built.</p>
   <pre class="def" aria-label="Northgate&apos;s recovery plan">Northgate recovery plan
  1. Keep a record of the clean files and database values.
  2. Choose a run from before the attack, by its time.
@@ -129,9 +129,9 @@
  4. Add the vault with the read key: Encryption off, Archive Object Lock off.
  5. CloudRetrieve: search, pick the clean run, download.
  6. Restore to a new location. Check against the record.
- 7. Do not promise the OpenShift VMs.
- 8. Do not plan to delete the vault.</pre>
-  <p class="lead" style="margin-top:20px">Now the board asks what an attacker can do with stolen keys.</p>
+ 7. Restore OpenShift VMs to the cluster they were backed up from.
+ 8. Plan for the vault to stay until the last lock ends.</pre>
+  <p class="lead" style="margin-top:20px">Now the directors ask what an attacker can do with stolen keys.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>An attacker holds the write key. Can they delete a locked version of an archive object?</p>
@@ -140,7 +140,7 @@
         <button class="opt" data-ok>No: the vault refused it</button>
         <button class="opt">Only with the read key as well</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab a delete of a locked version was refused, with &quot;Access Denied because object protected by object lock&quot;, for the write key. It was also refused for the read key, for another key on the same storage instance, and for the account owner&apos;s token from inside the VPC.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. In our lab a delete of a locked version with the write key was refused with &quot;Access Denied because object protected by object lock&quot;. It was also refused for the read key, for another key on the same storage instance, and for the account owner&apos;s token from inside the VPC.</p></details>
     </div>
     <div class="q">
       <p>The same attacker writes a new version of an existing object with the write key. What is left?</p>
@@ -149,24 +149,24 @@
         <button class="opt" data-ok>A new latest version, and the old version still readable</button>
         <button class="opt">The write is refused</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On a test object in our lab, the write returned 200 and made a new version. The first version could still be read, with the original content. The latest version was now the new content, so a holder of the write key can hide the latest data. That is one reason the plan picks a run by its time and checks the result.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A new version, with the old one still readable. On a test object in our lab, the write returned 200 and made a new version. The first version could still be read, with its original content. The latest version was now the new content, so someone with the write key can hide the latest data. That&apos;s one reason the plan picks a run by its time and checks the result.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
-  <h2>The draft note to the board</h2>
-  <p class="lead">Northgate&apos;s admin writes: &quot;We tested the plan. Everything came back from the vault alone, and we can remove the vault once the test is over.&quot; Two things in it are wrong.</p>
+  <h2>The draft note to the directors</h2>
+  <p class="lead">Northgate&apos;s backup admin writes to the directors: &quot;We tested the plan. Everything was recovered from the vault alone, and we can remove the vault once the test is over.&quot; Which parts of that hold up?</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>Is &quot;everything came back&quot; true?</p>
+      <p>Is &quot;everything was recovered&quot; true?</p>
       <div class="opts">
         <button class="opt">Yes: all three groups matched in every run</button>
-        <button class="opt" data-ok>No: in the first round, 13,913 Linux files came back empty and the VM retrieve failed</button>
+        <button class="opt" data-ok>No: in the first test, 13,913 Linux files came back empty and the VM retrieve failed</button>
         <button class="opt">Yes: the status said Succeeded</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab, Linux (503 of 503), Windows (503 of 503) and SQL (100000 rows, checksum -108923937) came back whole. In the first round, Linux came back with 167,639 of 181,552 files, and the OpenShift VM retrieve failed on a new cluster.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No, it&apos;s true of the second test only. In that test, Linux (503 of 503), Windows (503 of 503) and SQL (100000 rows, checksum -108923937) were recovered exactly as they were before the attack. In the first test, Linux came back with 167,639 of 181,552 files, and retrieving the OpenShift VM to a new cluster failed.</p></details>
     </div>
     <div class="q">
       <p>Can Northgate remove the vault once the test is over?</p>
@@ -175,7 +175,7 @@
         <button class="opt" data-ok>No: not before the last lock ends</button>
         <button class="opt">Yes, if the account owner asks</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The console showed one day. The vault held data chunks locked for 9 to 15 days, the last 15 days after the run. A vault that holds locked data cannot be deleted before then.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. The console showed one day, but the vault held data chunks locked for 9 to 15 days, with the last lock ending 15 days after the run. A vault that holds locked data can&apos;t be deleted before then.</p></details>
     </div>
   </div>
 </section>
@@ -183,7 +183,7 @@
 <section class="screen">
   <span class="kicker">Step 4 · What stays locked</span>
   <h2>After you leave</h2>
-  <p class="lead">The test is over, and the servers and clusters can go. The vault stays.</p>
+  <p class="lead">The test is over, and the servers and clusters can go. The vault stays, and this is what the read key showed at 11:48.</p>
   <pre class="def" aria-label="What was read from the vault">What the read key showed at 11:48
 Object kind                  Count   Lock lasts
 archive_metadata             3       one day
@@ -192,25 +192,25 @@ metadata/snap_tree_objects   8       9 to 15 days
 configs                      -       no lock</pre>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>How long after the run is the earliest the vault can be deleted?</p>
+      <p>How soon after the run can the vault be deleted?</p>
       <div class="opts">
         <button class="opt">One day, as the console said</button>
         <button class="opt" data-ok>15 days</button>
         <button class="opt">Today, if the data is removed first</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>15 days after the run is when the newest lock ends. In the first round the same rule held the first test vault for 18 days.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>15 days. That&apos;s when the newest lock ends. In the first test, the same rule held that test&apos;s vault for 18 days.</p></details>
     </div>
     <div class="q">
-      <p>What should Northgate tell its auditor about how long the data cannot be deleted?</p>
+      <p>Which number tells the auditor who checks Northgate&apos;s security controls how long the data can&apos;t be deleted?</p>
       <div class="opts">
         <button class="opt">The one-day retention in the policy</button>
         <button class="opt" data-ok>The lock dates read from the vault with the read key</button>
         <button class="opt">The expiry time in the console</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The vault enforces the lock. In our lab the console and the policy said one day while the vault held data for up to 15.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The lock dates in the vault. The vault enforces the lock, and in our lab the console and the policy said one day while the vault held data for up to 15.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> A vault that holds locked data cannot be deleted until the last lock ends, and the console shows a shorter lock than the vault holds. Read the dates from the vault.</p>
+  <p class="watch"><b>Watch for this.</b> A vault that holds locked data can&apos;t be deleted until the last lock ends, and the console shows a shorter lock than the vault holds. Read the dates from the vault.</p>
 </section>
 
 <section class="screen">
@@ -224,35 +224,35 @@ configs                      -       no lock</pre>
         <button class="opt" data-ok>A run from before the attack</button>
         <button class="opt">The smallest run</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The newest run was made after the attack and holds the attacked data.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A run from before the attack. The newest run was made after the attack and holds the attacked data.</p></details>
     </div>
     <div class="q" data-check>
-      <p>Why can you not restore a retrieved group to the original server?</p>
+      <p>Why do you restore a retrieved group to a new location, not the original server?</p>
       <div class="opts">
         <button class="opt">The vault refuses the read key</button>
         <button class="opt" data-ok>A retrieved group cannot restore to the original, so restore to a new location</button>
         <button class="opt">The agent was removed</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The lab restored to a new location each time.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Because a retrieved group can&apos;t restore to the original. In our lab the console refused it, so we restored to a new location each time.</p></details>
     </div>
     <div class="q" data-check>
-      <p>The vault cannot be deleted before when?</p>
+      <p>In our lab, what was the earliest the vault could be deleted?</p>
       <div class="opts">
         <button class="opt">One day after the run</button>
         <button class="opt">9 days after the run</button>
         <button class="opt" data-ok>15 days after the run</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That is when the lock on the newest data ends.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>15 days. That&apos;s when the lock on the newest data ends.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Unit complete</span>
-  <h2>You planned a recovery, and what stays behind</h2>
+  <h2>You&apos;ve planned a recovery, and you know what stays locked</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>With only the read key, a new cluster brought back Linux, Windows and SQL whole in our lab. Choose a run from before the attack, restore to a new location, and check against a record made earlier. Do not promise the VMs. The vault cannot be deleted until the last lock ends, 15 days after the run.</p></div>
+    <div><span class="label">Remember</span><p>With only the read key, a new cluster recovered Linux, Windows and SQL in our lab, exactly as they were before the attack. Choose a run from before the attack, restore to a new location, and check against a record made earlier. Restore OpenShift VMs to the cluster they were backed up from. The vault can&apos;t be deleted until the last lock ends, 15 days after the run.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

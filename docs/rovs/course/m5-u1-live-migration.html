@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Live migration · ROVS course</title>
-<meta name="description" content="Course unit 5.1: read what a live migration reports, see what a VM keeps and loses when it moves, and learn what must be true for it to run. No cluster needed.">
+<meta name="description" content="Course unit 5.1: read what a live migration reports, see what a VM keeps and loses when it moves, and learn what has to be true for it to run. No cluster needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 1 of Module 5</span>
       <h1>Live migration</h1>
-      <p class="lead">By the end you can read what a live migration reports, say what a VM keeps and what it loses when it moves, and say what must be true for a migration to run.</p>
+      <p class="lead">By the end of this unit you'll be able to read what a live migration reports, say what a VM keeps and what it loses when it moves, and say what has to be true for a migration to run.</p>
       <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -42,16 +42,16 @@
           {"line":[95,114,160,148],"tone":"muted"},
           {"line":[325,114,260,148],"tone":"muted"},
           {"text":"both workers reach the same disk","at":[88,228],"hand":true,"size":17,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. Its admins know vMotion. Here a live migration is an object you can read, and a few conditions decide whether it runs.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that's moving off vSphere. Its admins know vMotion. On ROVS a live migration is an object you can read, and a few conditions decide whether it runs.</p>
     </div>
   </div>
-  <p class="small">Every command, output and fact in this unit comes from real runs on a test cluster. The review question repeats one from unit 2.2.</p>
+  <p class="small">Every command, output and fact in this unit comes from a real run on a test cluster. The review question repeats one from unit 2.2.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>What a migration reports</h2>
-  <p class="lead">This is the migration state of one VM after it moved. Select a part of the drawing to see what it says and which lines define it. You can also click a line.</p>
+  <p class="lead">This is the migration state of one VM after it moved. Tap a part of the drawing to see what it says and which lines define it. You can also click a line.</p>
   <div class="explorer" data-start="result"
     data-map='{"result":[[2,5]],"nodes":[[6,7]],"pods":[[8,9]],"limits":[[11,20]]}'>
     <div class="cols">
@@ -67,22 +67,22 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="result">
           <h3>Result</h3>
-          <p>The migration is <code>completed</code> and its mode is <code>PreCopy</code>: memory pages are copied while the VM keeps running, then a final switchover moves execution to the new node. A 2 GiB idle Fedora guest switched over in about one second. How long a migration takes depends on the VM&apos;s memory size, how fast it writes to memory, and the network between nodes.</p>
-          <p class="hand tilt"><b>From vSphere:</b> closest to vMotion. A rough mapping, not an IBM statement.</p>
+          <p>The migration is <code>completed</code> and its mode is <code>PreCopy</code>, which means memory pages are copied while the VM keeps running, and then a final switchover moves execution to the new node. A 2 GiB idle Fedora guest switched over in about one second. How long a migration takes depends on the VM's memory size, how fast it writes to memory, and the network between the nodes.</p>
+          <p class="hand tilt"><b>From vSphere:</b> it's closest to vMotion. That's a rough match of our own, and IBM doesn't describe it this way.</p>
         </div>
         <div class="part-info" data-part="nodes">
           <h3>Nodes</h3>
-          <p>The VM moved from one worker to another. On ROVS a live migration works within a single zone only, and a move across zones needs a shutdown. That rests on IBM&apos;s documentation: our cluster has one zone, so no run of it is shown here.</p>
-          <p class="hand tilt"><b>From vSphere:</b> there is no long-distance vMotion between sites.</p>
+          <p>The VM moved from one worker to another. On ROVS a live migration works within a single zone only, and a move across zones needs a shutdown. That comes from IBM's documentation. Our cluster has one zone, so we couldn't run it here.</p>
+          <p class="hand tilt"><b>From vSphere:</b> there's no long-distance vMotion between sites.</p>
         </div>
         <div class="part-info" data-part="pods">
           <h3>Pods</h3>
-          <p>A VM runs inside a virt-launcher pod. A migration starts a new pod on the target node, copies the memory across, then ends the source pod. The VM kept the same VirtualMachineInstance UID and creation time and never left <code>Running</code>, so the guest did not reboot.</p>
+          <p>A VM runs inside a virt-launcher pod. A migration starts a new pod on the target node, copies the memory across, then ends the source pod. The VM kept the same VirtualMachineInstance UID and creation time and never left <code>Running</code>, so the guest didn't reboot.</p>
         </div>
         <div class="part-info" data-part="limits">
           <h3>Limits</h3>
           <p>At most 5 migrations run in the cluster at once and 2 leave any one node. <code>allowAutoConverge</code> and <code>allowPostCopy</code> are both off, so a VM that writes memory faster than the link can copy it times out instead of being forced to finish.</p>
-          <p class="watch"><b>Watch for this.</b> <code>completionTimeoutPerGiB</code> is widely documented as 800. On this cluster it was 150. Read your own value before you plan a maintenance window around it.</p>
+          <p class="watch"><b>Watch for this.</b> <code>completionTimeoutPerGiB</code> is widely documented as 800, but on this cluster it was 150. Read your own value before you plan a maintenance window around it.</p>
           <p class="hand tilt"><b>From vSphere:</b> these are the concurrent vMotion limits.</p>
         </div>
       </div>
@@ -114,7 +114,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict, then run it</span>
   <h2>Two VMs, two storage classes</h2>
-  <p class="lead">Two Fedora VMs, one on each ODF RBD class, both RWX Block, both on the default pod network. Each was shown to answer on port 22 before anything moved.</p>
+  <p class="lead">There are two Fedora VMs, one on each ODF RBD class, both RWX Block, both on the default pod network. We checked that each one answered on port 22 before anything moved.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -128,7 +128,7 @@ SLM:'.status.conditions[?(@.type=="StorageLiveMigratable")].status'</pre>
           <pre class="out">NAME                     PHASE     NODE            LM     SLM
 scratch-w2c-vm-generic   Running   ...-00000167    True   True
 scratch-w2c-vm-virt      Running   ...-00000167    True   True</pre>
-          <p class="hand note">Both conditions are True before anything moves. Both VMs sit on the same worker.</p>
+          <p class="hand note">Both conditions are True before anything moves, and both VMs sit on the same worker.</p>
         </div>
         <div class="cmd">
           <p class="pre"># the VM on ocs-storagecluster-ceph-rbd-virtualization</p>
@@ -142,7 +142,7 @@ scratch-w2c-vm-virt      Running   ...-00000167    True   True</pre>
             <button class="opt">No, only the virtualization class migrates</button>
             <button class="opt">Only after a restart</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><span class="hand">The generic class migrates too.</span><p>It is the wrong class for a different reason: IBM has not validated it for VM workloads, and the exposure is guest data corruption under Windows I/O patterns, not a stranded VM. Run the command to see it move.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><span class="hand">The generic class migrates too.</span><p>Yes, as readily as the first. It's still the wrong class for VMs. IBM hasn't validated it for VM workloads, and the risk is guest data corruption under Windows I/O patterns rather than a stranded VM. Run the command to see it move.</p></details>
         </div>
         <div class="cmd">
           <p class="pre"># the VM on ocs-storagecluster-ceph-rbd</p>
@@ -155,9 +155,9 @@ scratch-w2c-vm-virt      Running   ...-00000167    True   True</pre>
           <pre class="out">NAME                        PHASE       VMI
 kubevirt-migrate-vm-c8nrh   Succeeded   scratch-w2c-vm-virt
 kubevirt-migrate-vm-vs6cf   Succeeded   scratch-w2c-vm-generic</pre>
-          <p class="hand note">Both Succeeded. Both moved from worker ...-00000167 to ...-0000039f.</p>
+          <p class="hand note">Both Succeeded, and both moved from worker ...-00000167 to ...-0000039f.</p>
           <p class="hand note">Both kept the same VMI UID and creation time and never left Running, so neither guest rebooted.</p>
-          <p class="hand note">You did not name these objects. <code>kubevirt-migrate-vm-*</code> is a migration you asked for. <code>kubevirt-evacuation-*</code> is one KubeVirt started because something tried to evict the launcher pod.</p>
+          <p class="hand note">You didn't name these objects. <code>kubevirt-migrate-vm-*</code> is a migration you asked for, and <code>kubevirt-evacuation-*</code> is one that KubeVirt started because something tried to evict the launcher pod.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -167,13 +167,13 @@ kubevirt-migrate-vm-vs6cf   Succeeded   scratch-w2c-vm-generic</pre>
     </div>
     <div class="notes js-only" aria-live="polite"></div>
   </div>
-  <p class="watch"><b>Watch for this.</b> No access mode, migration condition or test migration told the two classes apart. Audit by class name.</p>
+  <p class="watch"><b>Watch for this.</b> No access mode, migration condition or test migration told the two classes apart, so audit by class name.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
   <h2>What a client sees</h2>
-  <p class="lead">The guest does not notice a migration. Its clients might. This VM is on the default pod network, behind a ClusterIP Service.</p>
+  <p class="lead">The guest doesn't notice a migration, but its clients might. This VM is on the default pod network, behind a ClusterIP Service.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A VM on worker A has the pod IP 172.17.1.220. After the move, on worker B, the VM has the pod IP 172.17.0.58. A Service sits in front of both."
     data-drawing='{"w":560,"h":200,"shapes":[
       {"box":[20,60,170,70],"title":"Worker A","detail":"pod IP 172.17.1.220"},
@@ -190,7 +190,7 @@ kubevirt-migrate-vm-vs6cf   Succeeded   scratch-w2c-vm-generic</pre>
         <button class="opt" data-ok>It changes, from 172.17.1.220 to 172.17.0.58</button>
         <button class="opt">The VM reboots to pick up a new one</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">The guest did not change. Its address did.</span><p>The guest did not reboot and its settings did not change. But the launcher pod on the target is a new pod with a new pod IP, and with masquerade binding that pod IP is the VM&apos;s reachable address. Nothing in the migration status flags it. A probe holding the old address saw the VM disappear for good.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">The guest didn't change, but its address did.</span><p>It changes. The guest didn't reboot and its settings didn't change. The launcher pod on the target is a new pod with a new pod IP, though, and with masquerade binding that pod IP is the VM's reachable address. Nothing in the migration status flags it. A probe holding the old address saw the VM disappear for good.</p></details>
     </div>
     <div class="q">
       <p>Through a ClusterIP Service, one migration cost four failed probes out of 229. How long was the VM unreachable?</p>
@@ -199,7 +199,7 @@ kubevirt-migrate-vm-vs6cf   Succeeded   scratch-w2c-vm-generic</pre>
         <button class="opt" data-ok>Roughly 3.6 seconds</button>
         <button class="opt">Roughly 3.6 minutes</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Roughly 3.6 seconds, while the Service endpoint was reprogrammed. Then it recovered on its own. That is one probe loop, one migration and one guest, not a figure for your cluster.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Roughly 3.6 seconds, while the Service endpoint was reprogrammed. Then it recovered on its own. That's one probe loop, one migration and one guest, so it isn't a figure for your cluster.</p></details>
     </div>
     <div class="q">
       <p>Which addresses stay with the VM when it moves?</p>
@@ -208,15 +208,15 @@ kubevirt-migrate-vm-vs6cf   Succeeded   scratch-w2c-vm-generic</pre>
         <button class="opt" data-ok>An address from a localnet or Layer 2 network</button>
         <button class="opt">No address stays</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A localnet address from the VPC subnet, or a Layer 2 overlay address, follows the VM and the pod IP does not. No run of either case is shown here. A localnet VM also needs its VLAN attachment at cluster scope, so the network can float with it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A localnet or Layer 2 address. A localnet address from the VPC subnet, or a Layer 2 overlay address, follows the VM, and the pod IP doesn't. We don't show a run of either case here. A localnet VM also needs its VLAN attachment at cluster scope, so that the network can float with it.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Predict</span>
-  <h2>A migration that does not run</h2>
-  <p class="lead">Three symptoms from the troubleshooting table. Pick the likely cause.</p>
+  <h2>A migration that doesn't run</h2>
+  <p class="lead">For each of these three symptoms, pick the likely cause.</p>
   <div class="pair">
     <div class="q">
       <p>A migration sits in <code>Scheduling</code>. What do you check?</p>
@@ -225,7 +225,7 @@ kubevirt-migrate-vm-vs6cf   Succeeded   scratch-w2c-vm-generic</pre>
         <button class="opt" data-ok>Node capacity and affinity rules, and that the target workers are in the same zone</button>
         <button class="opt">The name of the storage class</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>No suitable target node: not enough resources, an affinity rule, or every candidate node is in another zone. Check capacity with <code>oc describe node</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Node capacity, affinity and zones. There's no suitable target node, because there aren't enough resources, an affinity rule rules the nodes out, or every candidate node is in another zone. Check capacity with <code>oc describe node</code>.</p></details>
     </div>
     <div class="q">
       <p>A localnet VM migrates, then loses its connectivity. Why?</p>
@@ -234,7 +234,7 @@ kubevirt-migrate-vm-vs6cf   Succeeded   scratch-w2c-vm-generic</pre>
         <button class="opt" data-ok>Its VLAN attachment is pinned to the source worker</button>
         <button class="opt">The pod IP changed</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The attachment exists only on the source worker. Reattach the VNI at cluster scope, with <code>--cluster-id</code>, so it floats with the VM within the zone.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Its VLAN attachment is pinned. The attachment exists only on the source worker. Reattach the VNI at cluster scope, with <code>--cluster-id</code>, so that it floats with the VM within the zone.</p></details>
     </div>
     <div class="q">
       <p>A migration is cancelled by a timeout. The guest writes memory fast. What can you do?</p>
@@ -243,10 +243,10 @@ kubevirt-migrate-vm-vs6cf   Succeeded   scratch-w2c-vm-generic</pre>
         <button class="opt">Nothing: ROVS forces the migration to finish</button>
         <button class="opt">Switch to a localnet network</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Auto-converge and post-copy are both off here, so nothing forces a busy VM to finish. At 150 seconds a GiB, a 64 GiB VM has a budget of roughly 2.7 hours. At the widely quoted 800 it would be about 14.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Reduce the workload, or raise the timeout. Auto-converge and post-copy are both off here, so nothing forces a busy VM to finish. At 150 seconds a GiB, a 64 GiB VM has a budget of roughly 2.7 hours. At the widely quoted 800 it would be about 14 hours.</p></details>
     </div>
   </div>
-  <p class="hand tilt" style="margin-top:16px"><b>From vSphere:</b> there is no EVC baseline. Keep VMs that migrate within pools of one bare metal flavour, because a worker with different CPU features can refuse a VM.</p>
+  <p class="hand tilt" style="margin-top:16px"><b>From vSphere:</b> there's no EVC baseline. Keep VMs that migrate within pools of one bare metal flavour, because a worker with different CPU features can refuse a VM.</p>
 </section>
 
 <section class="screen">
@@ -254,13 +254,13 @@ kubevirt-migrate-vm-vs6cf   Succeeded   scratch-w2c-vm-generic</pre>
   <h2>Four questions</h2>
   <div>
     <div class="q" data-check>
-      <p>Which pair of things must be true for a VM to live migrate?</p>
+      <p>Which pair of things has to be true for a VM to live migrate?</p>
       <div class="opts">
         <button class="opt" data-ok>Its disks are RWX, and a worker in the same zone can take it</button>
         <button class="opt">Its disk is on the virtualization class, and a worker in any zone can take it</button>
         <button class="opt">A Service sits in front of it, and its disks are RWO</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Only RWX lets the source and destination nodes use the disk at once, and a migration stays within one zone. Either RBD class migrated; only the virtualization class is validated for VMs.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>RWX disks and a worker in the same zone. Only RWX lets the source and destination nodes use the disk at once, and a migration stays within one zone. Either RBD class migrated, but only the virtualization class is validated for VMs.</p></details>
     </div>
     <div class="q" data-check>
       <p>What does <code>virtctl migrate my-vm</code> create?</p>
@@ -269,25 +269,25 @@ kubevirt-migrate-vm-vs6cf   Succeeded   scratch-w2c-vm-generic</pre>
         <button class="opt" data-ok>A migration object with a generated name</button>
         <button class="opt">A second VM</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A <code>VirtualMachineInstanceMigration</code> with a generated name. A follow-up command that assumes a name you chose will not find it. Create the object yourself if you need a predictable name.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A migration object with a generated name. It's a <code>VirtualMachineInstanceMigration</code>, and a follow-up command that assumes a name you chose won't find it. Create the object yourself if you need a predictable name.</p></details>
     </div>
     <div class="q" data-check>
-      <p>A pod-network VM has just migrated and its clients cannot reach it. What happened?</p>
+      <p>A pod-network VM has just migrated and its clients can't reach it. What happened?</p>
       <div class="opts">
         <button class="opt">The migration failed</button>
         <button class="opt" data-ok>Its pod IP changed, and the migration was fine</button>
         <button class="opt">The VM was shut down</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>This is not a migration fault. Front the VM with a Service, or give it a localnet or Layer 2 address.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Its pod IP changed, and the migration itself was fine. Put a Service in front of the VM, or give it a localnet or Layer 2 address.</p></details>
     </div>
     <div class="q" data-check>
-      <p><b>Review from unit 2.2.</b> A VM&apos;s disk shows RWX. What does that tell you about its storage class?</p>
+      <p><b>Review from unit 2.2.</b> A VM's disk shows RWX. What does that tell you about its storage class?</p>
       <div class="opts">
-        <button class="opt">That it is on the right class</button>
+        <button class="opt">That it's on the right class</button>
         <button class="opt" data-ok>Nothing. Both RBD classes offer RWX.</button>
-        <button class="opt">That it is on the generic class</button>
+        <button class="opt">That it's on the generic class</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both RBD classes offer RWX Block, and the storage profile lists it first, so a request for any mode gets RWX Block on either class. Check the class name.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Nothing. Both RBD classes offer RWX Block, and the storage profile lists it first, so a request for any mode gets RWX Block on either class. Check the class name instead.</p></details>
     </div>
   </div>
 </section>

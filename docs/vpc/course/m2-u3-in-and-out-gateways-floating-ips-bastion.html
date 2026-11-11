@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 3 of Module 2</span>
       <h1>In and out: public gateways, floating IPs and a bastion</h1>
-      <p class="lead">By the end you can choose a way for servers to reach the internet, or to be reached, and say what each choice costs you.</p>
+      <p class="lead">By the end of this unit you’ll be able to choose a way for servers to reach the internet, or to be reached from it, and you’ll know what each choice costs.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -42,16 +42,16 @@
           {"line":[96,140,160,170],"arrow":true,"tone":"mark"},
           {"box":[160,160,60,36],"title":"jump"},
           {"line":[224,178,260,178],"arrow":true,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output in this unit is real. Its servers will need updates, some will need visitors, and its admins will need a way in.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that is moving off vSphere. The output in this unit is real. Northgate’s network admin has servers that need updates, some that need to take visitors, and admins who need a way in.</p>
     </div>
   </div>
-  <p class="small">Every statement and output in this unit comes from real runs in a lab account, apart from the review question. The NAT comparison is a rough mapping. Some columns and blank lines are left out of the output, and IDs are shortened.</p>
+  <p class="small">Every statement and output in this unit comes from real runs in a lab account, apart from the review question. The NAT comparison is only a rough mapping. We left out some columns and blank lines from the output and shortened the IDs.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Four ways in and out</h2>
-  <p class="lead">Select a part of the drawing to see what it does and which lines of real output show it. You can also click a line.</p>
+  <p class="lead">Select a part of the drawing to see what it does and which lines of real output show it. You can also click a line of output.</p>
   <div class="explorer" data-start="pgw"
     data-map='{"pgw":[[1,7]],"fip":[[9,17]]}'>
     <div class="cols">
@@ -75,24 +75,24 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="pgw">
           <h3>Public gateway</h3>
-          <p>One per zone. Every server in a subnet attached to it can start connections to the internet. It accepts none that start on the internet. All its traffic leaves from one public address, a floating IP that the gateway holds.</p>
-          <p class="hand tilt"><b>From vSphere:</b> NAT maps to a public gateway or a floating IP. Source NAT here means many servers share one address.</p>
+          <p>You have one per zone. Every server in a subnet attached to it can start connections to the internet, but the gateway accepts none that start on the internet. All its traffic leaves from one public address, a floating IP that the gateway holds.</p>
+          <p class="hand tilt"><b>From vSphere:</b> NAT maps to a public gateway or a floating IP. Source NAT here means that many servers share one address.</p>
           <p class="watch"><b>Watch for this.</b> A public gateway incurs a monthly charge. The subnet’s ACL and the server’s security group still apply.</p>
         </div>
         <div class="part-info" data-part="fip">
           <h3>Floating IP</h3>
-          <p>A public address that maps to one server’s interface, for traffic in both directions. It is a one-to-one destination NAT.</p>
-          <p class="watch"><b>Watch for this.</b> It stays in the account after its server is deleted, and it is billed until you release it. If a server has both a floating IP and a public gateway, the floating IP takes precedence. Remove it, and the server uses the gateway again.</p>
+          <p>A public address that maps to one server’s interface, for traffic in both directions. It works as a one-to-one destination NAT.</p>
+          <p class="watch"><b>Watch for this.</b> It stays in the account after its server is deleted, and it is billed until you release it. If a server has both a floating IP and a public gateway, the floating IP takes precedence. If you remove the floating IP, the server uses the gateway again.</p>
         </div>
         <div class="part-info" data-part="bastion">
           <h3>Bastion host</h3>
-          <p>A server with a public address that accepts SSH. It is the only way in to servers that have none. Here it sits in the management subnet and accepts SSH from your address only. It sends SSH only to servers in a maintenance security group, so it cannot download packages.</p>
-          <p class="watch"><b>Watch for this.</b> It is one more server to patch and watch. A server joins the maintenance group only while someone administers it.</p>
+          <p>A bastion is a server with a public address that accepts SSH, and it’s the only way in to servers that have none. Here it sits in the management subnet and accepts SSH from your address only. It sends SSH only to servers in a maintenance security group, so it can’t download packages.</p>
+          <p class="watch"><b>Watch for this.</b> A bastion is one more server to patch and watch. A server joins the maintenance group only while someone administers it.</p>
         </div>
         <div class="part-info" data-part="other">
           <h3>Public address range or firewall</h3>
-          <p>A public address range is a block of public addresses for a zone. It is used only as the destination of a route, with a next hop such as a firewall. It avoids a floating IP for each server. The tutorials build the firewall in series 8.</p>
-          <p class="watch"><b>Watch for this.</b> IBM marks bring-your-own IPv4 addresses and public IPv6 ranges as beta, limited to allowlisted accounts.</p>
+          <p>A public address range is a block of public addresses for a zone. You use it only as the destination of a route, with a next hop such as a firewall, so you don’t need a floating IP for each server. The tutorials build the firewall in series 8.</p>
+          <p class="watch"><b>Watch for this.</b> IBM marks bring-your-own IPv4 addresses and public IPv6 ranges as beta, and only allowlisted accounts can use them.</p>
         </div>
       </div>
     </div>
@@ -127,7 +127,7 @@ Target           ID            Target type                 Name
         <button class="opt" data-ok>No. The gateway carries outbound traffic only</button>
         <button class="opt">Only on port 443</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A public gateway lets servers start connections to the internet. It accepts no connections that start on the internet. A floating IP carries both directions.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. A public gateway lets servers start connections to the internet, but it accepts no connections that start on the internet. A floating IP carries both directions.</p></details>
     </div>
     <div class="q">
       <p>A server’s subnet has a public gateway. The server then gets a floating IP. Which does its internet traffic use?</p>
@@ -136,7 +136,7 @@ Target           ID            Target type                 Name
         <button class="opt" data-ok>The floating IP</button>
         <button class="opt">Both, taking turns</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">One at a time.</span><p>The floating IP takes precedence. If you remove it, the server uses the gateway again. Associating a floating IP removes the server from the gateway’s many-to-one NAT.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">The server uses only one of them at a time.</span><p>The floating IP takes precedence. If you remove it, the server uses the gateway again. Associating a floating IP removes the server from the gateway’s many-to-one NAT.</p></details>
     </div>
     <div class="q">
       <p>A server with a floating IP is deleted. What happens to the floating IP?</p>
@@ -145,7 +145,7 @@ Target           ID            Target type                 Name
         <button class="opt" data-ok>It stays in the account and is billed until you release it</button>
         <button class="opt">It moves to the next server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A floating IP is bound to one interface or one public gateway at a time. It stays in the account after its server is deleted, and it is billed until you release it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It stays in the account and is billed until you release it. A floating IP is bound to one interface or one public gateway at a time, not to the server’s life.</p></details>
     </div>
   </div>
 </section>
@@ -172,8 +172,8 @@ Target           ID            Target type                 Name
 ID            Direction   IP version   Remote                 Protocol                  Local       Name
 r014-…-23fa   inbound     ipv4         &lt;your-public-ip&gt;/32   tcp Ports:Min=22,Max=22   0.0.0.0/0   bastion-ssh-in
 r014-…-b441   outbound    ipv4         vpct-prod-maint-sg     tcp Ports:Min=22,Max=22   0.0.0.0/0   bastion-ssh-out</pre>
-          <p class="hand note">SSH in from your address only.</p>
-          <p class="hand note">SSH out to the maintenance group only. No package downloads.</p>
+          <p class="hand note">The bastion accepts SSH from your address only.</p>
+          <p class="hand note">The bastion sends SSH to the maintenance group only, so it can’t download packages.</p>
         </div>
         <div class="q">
           <p>You release the web server’s floating IP. Will SSH to its old public address still work?</p>
@@ -181,27 +181,27 @@ r014-…-b441   outbound    ipv4         vpct-prod-maint-sg     tcp Ports:Min=22
             <button class="opt">Yes, the address is still in DNS</button>
             <button class="opt" data-ok>No. It stops answering</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The old address no longer answers. The next two commands show it.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>No, the old address no longer answers. The next two commands show it.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud is floating-ip-release vpct-prod-web-z1-01-fip -f</pre>
           <pre class="out">Deleting floating IP vpct-prod-web-z1-01-fip under account &lt;redacted&gt; as user &lt;redacted&gt;...
 OK
 Floating IP vpct-prod-web-z1-01-fip is deleted.</pre>
-          <p class="hand note">The server’s private address stays in its interface.</p>
+          <p class="hand note">The server keeps its private address on its interface.</p>
         </div>
         <div class="cmd">
           <pre class="in">ssh -o ConnectTimeout=5 -i ~/.ssh/id_ed25519 ubuntu@&lt;old-web-fip&gt;</pre>
           <pre class="out err">ssh: connect to host 52.116.122.115 port 22: Operation timed out</pre>
         </div>
         <div class="q">
-          <p>The web server’s security group allows SSH only from your public address. A packet from the bastion carries its private address. What lets the bastion in?</p>
+          <p>The web server’s security group allows SSH only from your public address, and a packet from the bastion carries the bastion’s private address. What lets the bastion in?</p>
           <div class="opts">
             <button class="opt" data-ok>Add the web server’s interface to the maintenance security group</button>
             <button class="opt">Give the web server a new floating IP</button>
             <button class="opt">Open SSH to <code>0.0.0.0/0</code></button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The maintenance group allows SSH from the bastion group. A server joins it only while someone administers it. The next command adds it.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>Add the interface to the maintenance group. That group allows SSH from the bastion group, and a server joins it only while someone administers it. The next command adds it.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud is security-group-target-add vpct-prod-maint-sg vpct-prod-web-z1-01-vni0 --trt virtual_network_interface --vpc vpct-prod</pre>
@@ -216,7 +216,7 @@ Resource type   virtual_network_interface</pre>
           <pre class="in">ssh -J ubuntu@$BASTION ubuntu@$WEB</pre>
           <pre class="out">Warning: Permanently added '10.20.0.4' (ED25519) to the list of known hosts.
 vpct-prod-web-z1-01</pre>
-          <p class="hand note">Through the bastion to the private address.</p>
+          <p class="hand note">The connection goes through the bastion to the private address.</p>
           <p class="hand note">The lab adds hostname to the command, so that ssh prints the server’s name and returns.</p>
         </div>
         <div class="cmd">
@@ -229,7 +229,7 @@ Target vpct-prod-web-z1-01-vni0 is detached.</pre>
           <pre class="in">ssh -o ConnectTimeout=5 -J ubuntu@$BASTION ubuntu@$WEB</pre>
           <pre class="out err">Connection timed out during banner exchange
 Connection to UNKNOWN port 65535 timed out</pre>
-          <p class="hand note">The web server accepts SSH only while it is in the maintenance group.</p>
+          <p class="hand note">The web server accepts SSH only while it’s in the maintenance group.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -244,43 +244,43 @@ Connection to UNKNOWN port 65535 timed out</pre>
 <section class="screen">
   <span class="kicker">Step 4 · Design it</span>
   <h2>Pick a way for each need</h2>
-  <p class="lead">Choose one, then open the worked answer.</p>
+  <p class="lead">Choose an answer for each need, then open the worked answer.</p>
   <div class="pair">
     <div class="q">
-      <p><b>Need A.</b> Many app servers need package updates. None may be reached from the internet.</p>
+      <p><b>Need A.</b> Northgate’s many app servers need package updates, and none may be reached from the internet. What would you use?</p>
       <div class="opts">
         <button class="opt" data-ok>A public gateway</button>
         <button class="opt">A floating IP on each server</button>
         <button class="opt">A bastion host</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>A public gateway. One gateway serves a zone, and its servers can start connections but cannot be reached. <b>The cost:</b> a monthly charge for the gateway.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A public gateway. One gateway serves a zone, and its servers can start connections but can’t be reached. <b>The cost:</b> a monthly charge for the gateway.</p></details>
     </div>
     <div class="q">
-      <p><b>Need B.</b> One short-lived test server must be reached by a browser from the internet.</p>
+      <p><b>Need B.</b> One short-lived test server must be reachable by a browser from the internet. What would you use?</p>
       <div class="opts">
         <button class="opt">A public gateway</button>
         <button class="opt" data-ok>A floating IP</button>
         <button class="opt">A bastion host</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>A floating IP carries both directions to one server. <b>The cost:</b> it exposes the server to the internet, so the security group limits who can connect. It costs one address per server and is billed until released.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A floating IP carries both directions to one server. <b>The cost:</b> it exposes the server to the internet, so the security group has to limit who can connect. It uses one address per server and is billed until you release it.</p></details>
     </div>
     <div class="q">
-      <p><b>Need C.</b> Admins must reach several private servers by SSH, through one path that can be audited.</p>
+      <p><b>Need C.</b> Northgate’s admins must reach several private servers by SSH, through one path that can be audited. What would you use?</p>
       <div class="opts">
         <button class="opt">A floating IP on each server</button>
         <button class="opt">A public gateway</button>
         <button class="opt" data-ok>A bastion host with a maintenance security group</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>A bastion fits a few servers and one admin path. <b>The cost:</b> one more server to patch and watch. A floating IP on each server would expose every one of them to the internet.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A bastion suits a few servers and one admin path. <b>The cost:</b> one more server to patch and watch. A floating IP on each server would expose every one of them to the internet.</p></details>
     </div>
     <div class="q">
-      <p><b>Need D.</b> All incoming internet traffic must pass a central firewall, with no floating IP for each server.</p>
+      <p><b>Need D.</b> All incoming internet traffic must pass a central firewall, and Northgate doesn’t want a floating IP for each server. What would you use?</p>
       <div class="opts">
         <button class="opt">A public gateway</button>
         <button class="opt" data-ok>A public address range with a firewall</button>
         <button class="opt">A bastion host</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>A public gateway carries outbound traffic only, so it cannot bring internet traffic to a firewall. A public address range is the destination of a route in an ingress route table, with the firewall as next hop. The tutorials build this in series 8.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A public address range with a firewall. A public gateway carries outbound traffic only, so it can’t bring internet traffic to a firewall. A public address range is the destination of a route in an ingress route table, with the firewall as next hop. The tutorials build this in series 8.</p></details>
     </div>
   </div>
 </section>
@@ -296,25 +296,25 @@ Connection to UNKNOWN port 65535 timed out</pre>
         <button class="opt">The security group, because it is stateless</button>
         <button class="opt">Neither</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The ACL is stateless, so the reply is checked on its own. The security group is stateful, so a rule that allows traffic one way also allows the replies.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The network ACL. It is stateless, so it checks the reply on its own. The security group is stateful, so a rule that allows traffic one way also allows the replies.</p></details>
     </div>
     <div class="q" data-check>
-      <p><code>ssh root@&lt;bastion&gt;</code> fails with <code>Permission denied (publickey)</code>. The key is right. What is wrong?</p>
+      <p><code>ssh root@&lt;bastion&gt;</code> fails with <code>Permission denied (publickey)</code>. The key is right. What is the problem?</p>
       <div class="opts">
         <button class="opt">The bastion’s security group blocks SSH</button>
         <button class="opt" data-ok>The login user. On this Ubuntu image it is <code>ubuntu</code></button>
         <button class="opt">The key must be uploaded again</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM’s bastion tutorial connects as <code>root</code>, but IBM’s Linux connection page gives <code>ubuntu</code> as the default user for Ubuntu images. The lab found that <code>ssh root@</code> fails with <code>Permission denied (publickey)</code>, so the second page is right.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The login user. IBM’s bastion tutorial connects as <code>root</code>, but IBM’s Linux connection page gives <code>ubuntu</code> as the default user for Ubuntu images. In the lab, <code>ssh root@</code> failed with <code>Permission denied (publickey)</code>, so the second page is right.</p></details>
     </div>
     <div class="q" data-check>
-      <p>One floating IP, two server interfaces at once. Possible?</p>
+      <p>Can one floating IP be bound to two server interfaces at once?</p>
       <div class="opts">
         <button class="opt">Yes, in the same zone</button>
         <button class="opt" data-ok>No. It is bound to one interface or one public gateway at a time</button>
         <button class="opt">Yes, if both interfaces are on one server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A floating IP is bound to one interface or one public gateway at a time.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. A floating IP is bound to one interface or one public gateway at a time.</p></details>
     </div>
   </div>
 </section>
@@ -324,8 +324,8 @@ Connection to UNKNOWN port 65535 timed out</pre>
   <h2>You can pick a way in and out</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>A public gateway is out only. A floating IP is both ways, and wins over the gateway. A bastion is the one way in to private servers. A floating IP is billed until you release it.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial chapter 24, Giving a subnet outbound access with a public gateway, and chapter 27, Reaching private VPC servers through a bastion host, run what you saw. Chapter 28, Choosing how a VPC server reaches the internet, sets the four ways side by side.</p></div>
+    <div><span class="label">Remember</span><p>A public gateway carries traffic out only. A floating IP carries traffic both ways and takes precedence over the gateway. A bastion is the way in to private servers, and a floating IP is billed until you release it.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 24, Giving a subnet outbound access with a public gateway, and chapter 27, Reaching private VPC servers through a bastion host, run what you saw, and chapter 28, Choosing how a VPC server reaches the internet, sets the four ways side by side.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

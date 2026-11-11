@@ -27,23 +27,23 @@
     <div>
       <span class="kicker">Unit 1 of Module 1</span>
       <h1>What IBM runs and what you run</h1>
-      <p class="lead">By the end you can say which parts of IBM Cloud Backup and Recovery IBM runs, which parts you deploy and install, and how you buy it and sign in.</p>
+      <p class="lead">By the end of this unit you'll know which parts of IBM Cloud Backup and Recovery IBM runs, which parts you deploy and install, and how you buy it and sign in.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>4 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: the service instance and the backup storage sit in a box that IBM runs. The connector and the backup agent sit in a box that the customer runs."
     data-drawing='{"w":420,"h":200,"shapes":[{"text":"IBM runs","at":[14,30],"hand":true,"size":17,"tone":"muted"},{"box":[10,40,180,120],"heavy":true},{"box":[24,56,152,40],"title":"instance"},{"box":[24,106,152,40],"title":"storage"},{"text":"you run","at":[234,30],"hand":true,"size":17,"tone":"mark"},{"box":[230,40,180,120],"heavy":true,"tone":"mark"},{"box":[244,56,152,40],"title":"connector"},{"box":[244,106,152,40],"title":"backup agent"},{"text":"two halves of one service","at":[90,188],"hand":true,"size":16,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It has Linux and Windows servers on IBM Cloud and has been asked who looks after what if it uses BRS. Today it finds out.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It has Linux and Windows servers on IBM Cloud, and its directors want to know who would look after what if it used BRS. In this unit you find out.</p>
     </div>
   </div>
-  <p class="small">Nothing in this unit was run by hand. Every statement comes from IBM&apos;s own documents and recorded in the overview and architecture pages of this repository. No real address or name appears.</p>
+  <p class="small">Nothing in this unit was run in a lab. Every statement comes from IBM&apos;s own documents, and is recorded in the overview and architecture pages of this repository. No real address or name appears.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Who runs which piece?</h2>
-  <p class="lead">BRS has a part that IBM runs and parts that sit on your side. Select a part of the drawing to see what it is. You can also click a line.</p>
+  <p class="lead">BRS has a part that IBM runs and parts that sit on your side. Tap a part of the drawing to see what it is. You can also click a line.</p>
   <div class="explorer" data-start="instance"
     data-map='{"instance":[[2,2]],"storage":[[3,3]],"connector":[[4,4]],"cagent":[[5,5]],"bagent":[[6,6]]}'>
     <div class="cols">
@@ -55,7 +55,7 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="instance">
           <h3>The service instance</h3>
-          <p>The control plane, the dashboard, the API and the policies. IBM runs it, in a region that you pick. You create it from the IBM Cloud catalog, in a region and a resource group, and each instance has its own dashboard.</p>
+          <p>This is the control plane, the dashboard, the API and the policies. IBM runs it in a region you pick. You create it from the IBM Cloud catalog, in a region and a resource group, and each instance has its own dashboard.</p>
           <p class="hand tilt">The dashboard is the Cohesity interface under an IBM name.</p>
         </div>
         <div class="part-info" data-part="storage">
@@ -64,8 +64,8 @@
         </div>
         <div class="part-info" data-part="connector">
           <h3>The connector</h3>
-          <p>A server that links your network to the service. For a VPC it is a server in your own VPC, built from an IBM catalog image. You deploy it. For VMware it is a VM from an OVA; for a cluster it runs from a Helm chart.</p>
-          <p class="watch"><b>Watch for this.</b> Who upgrades the connector is not settled: IBM&apos;s shared-responsibility page and its connector page word it differently, so this unit does not say.</p>
+          <p>A server that links your network to the service. On a VPC it&apos;s a server in your own VPC, built from an IBM catalog image, and you deploy it. On VMware it&apos;s a VM from an OVA, and on a cluster it runs from a Helm chart.</p>
+          <p class="watch"><b>Watch for this.</b> IBM&apos;s shared-responsibility page and its connector page say different things about who upgrades the connector, so this unit doesn&apos;t say.</p>
         </div>
         <div class="part-info" data-part="cagent">
           <h3>The Connector Agent</h3>
@@ -89,17 +89,17 @@ Backup agent           each protected server    you install and upgrade
 
 <section class="screen">
   <span class="kicker">Step 2 · Spot the fault</span>
-  <h2>A note that gets it half right</h2>
-  <p class="lead">A manager at Northgate has summed up IBM&apos;s service for the board in one sentence. Find what it gets wrong.</p>
+  <h2>What the note to the directors gets wrong</h2>
+  <p class="lead">Northgate&apos;s IT manager has summed up IBM&apos;s service for the directors in one sentence. Which part of it is wrong?</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>A board note says: &quot;IBM runs the whole service, so nothing is installed on our servers and nothing is deployed in our VPC.&quot; What is wrong?</p>
+      <p>The note says: &quot;IBM runs the whole service, so nothing is installed on our servers and nothing is deployed in our VPC.&quot; What&apos;s wrong with it?</p>
       <div class="opts">
         <button class="opt">Nothing: IBM runs everything</button>
         <button class="opt" data-ok>IBM runs the back end, but you deploy the connectors and install the agents</button>
         <button class="opt">IBM runs the agents too, but not the storage</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s shared-responsibility page splits it this way. IBM runs and scales the back end across the zones of a region. You deploy and scale connectors and agents. The service is agent-based.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM runs the back end, and you deploy the connectors and install the agents. IBM&apos;s shared-responsibility page splits it that way: IBM runs and scales the back end across the zones of a region, and you deploy and scale the connectors and agents. The service is agent-based.</p></details>
     </div>
     <div class="q">
       <p>A backup agent on one Northgate server is out of date. Whose job is the upgrade?</p>
@@ -108,7 +108,7 @@ Backup agent           each protected server    you install and upgrade
         <button class="opt" data-ok>Yours: you upgrade backup agents</button>
         <button class="opt">Nobody: agents never need upgrading</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The responsibility table lists &quot;Upgrades backup agents&quot; on the customer side. IBM upgrades the back end.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It&apos;s yours. The responsibility table lists &quot;Upgrades backup agents&quot; on the customer side. IBM upgrades the back end.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> The same table says you create the policies that fit your needs and manage your own encryption keys. IBM creates tenants, endpoints, networking, storage and the default policies.</p>
@@ -117,7 +117,7 @@ Backup agent           each protected server    you install and upgrade
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
   <h2>Buying it and signing in</h2>
-  <p class="lead">Northgate already has an IBM Cloud account. Before it orders anything, it asks two questions of the finance team and the security team.</p>
+  <p class="lead">Northgate already has an IBM Cloud account. Before it orders anything, its finance team wants to know how it pays, and its security team wants to know how people sign in.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>How does Northgate pay for BRS?</p>
@@ -126,7 +126,7 @@ Backup agent           each protected server    you install and upgrade
         <button class="opt" data-ok>On its IBM Cloud bill, for an instance made in a region and a resource group</button>
         <button class="opt">Through a MyCohesity account</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It is sold as a normal IBM Cloud service. You create an instance from the catalog, and it is billed on the IBM Cloud bill. The identity side uses IBM Cloud IAM, not a MyCohesity sign-in.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On its IBM Cloud bill. BRS is sold as a normal IBM Cloud service: you create an instance from the catalog, and it&apos;s billed on the IBM Cloud bill. Sign-in uses IBM Cloud IAM, not a MyCohesity account.</p></details>
     </div>
     <div class="q">
       <p>How does a person at Northgate open the dashboard of an instance?</p>
@@ -135,7 +135,7 @@ Backup agent           each protected server    you install and upgrade
         <button class="opt" data-ok>From the IBM Cloud console with Launch dashboard, under IBM Cloud IAM access</button>
         <button class="opt">With a key sent by IBM</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s pages say access is controlled by IBM Cloud IAM and that users open the dashboard from the IBM Cloud console. IAM roles can cover all instances or one instance. IBM&apos;s pages do not describe how single sign-on or multi-factor sign-in works for this service.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>From the IBM Cloud console. IBM&apos;s pages say access is controlled by IBM Cloud IAM, and that users open the dashboard from the IBM Cloud console. IAM roles can cover all instances or one instance. IBM&apos;s pages don&apos;t describe how single sign-on or multi-factor sign-in works for this service.</p></details>
     </div>
   </div>
 </section>
@@ -151,7 +151,7 @@ Backup agent           each protected server    you install and upgrade
         <button class="opt" data-ok>You</button>
         <button class="opt">Cohesity</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The customer installs and upgrades backup agents. The customer also deploys connectors and installs Connector Agents.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>You do. You install and upgrade the backup agents, and you also deploy the connectors and install the Connector Agents.</p></details>
     </div>
     <div class="q" data-check>
       <p>A zone in the region fails. IBM keeps the service running. Whose job is it to restore Northgate&apos;s own workloads into another zone?</p>
@@ -160,7 +160,7 @@ Backup agent           each protected server    you install and upgrade
         <button class="opt" data-ok>Yours</button>
         <button class="opt">Nobody&apos;s: the service moves them</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM keeps the service running if one zone fails. The customer restores their own workloads into another zone.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Yours. IBM keeps the service running if one zone fails, and you restore your own workloads into another zone.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which name do the IBM Cloud CLI, IAM and the endpoint hostnames use for the service?</p>
@@ -169,7 +169,7 @@ Backup agent           each protected server    you install and upgrade
         <button class="opt" data-ok>backup-recovery</button>
         <button class="opt">saas-connector</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p><code>backup-recovery</code>. BRS appears in IAM docs and module names. BARS is not used in any public IBM page found; it is an internal name.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p><code>backup-recovery</code>. BRS appears in IAM docs and module names. BARS doesn&apos;t appear on any public IBM page we found; it&apos;s an internal name.</p></details>
     </div>
   </div>
 </section>

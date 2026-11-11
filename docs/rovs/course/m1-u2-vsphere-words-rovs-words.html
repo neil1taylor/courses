@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 2 of Module 1</span>
       <h1>vSphere words, ROVS words</h1>
-      <p class="lead">By the end you can match the vSphere words you use every day to their ROVS words, read the shape of any resource definition, and explain why OpenShift works by declaring what you want.</p>
+      <p class="lead">By the end of this unit you'll be able to match the vSphere words you use every day to their ROVS words, read the shape of any resource definition, and say why OpenShift works by declaring what you want.</p>
       <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -38,16 +38,16 @@
           {"line":[178,100,240,100],"arrow":true,"tone":"mark"},
           {"box":[258,70,150,60],"heavy":true,"tone":"mark","title":"API server"},
           {"text":"same job, new word","at":[150,176],"hand":true,"size":18,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the words and definitions in this unit are real. Its admins know vSphere well. They need the new words fast.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that's moving off vSphere. The words and definitions in this unit are real. Northgate's admins know vSphere well, and they need the new words fast.</p>
     </div>
   </div>
-  <p class="small">Every comparison in this unit is a rough mapping for orientation, not an IBM statement.</p>
+  <p class="small">Every comparison in this unit is a rough match to help you find your feet. IBM doesn't describe the products this way.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Match the words</span>
   <h2>Nine words you already know</h2>
-  <p class="lead">Each vSphere word on the left has a close ROVS word on the right. Most matches are close, not exact.</p>
+  <p class="lead">Each vSphere word on the left has a close ROVS word on the right. Most of the matches are close rather than exact.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn two-column diagram. vCenter Server matches API server and console. ESXi host matches bare metal worker node. Resource pool and VM folder match namespace. Datastore matches StorageClass. VMDK matches PVC. VM matches VirtualMachine. VMware Tools matches QEMU Guest Agent. vMotion matches live migration. Maintenance mode matches cordon and drain."
       data-drawing='{"w":580,"h":356,"shapes":[
@@ -61,9 +61,9 @@
         {"box":[10,272,250,34],"title":"vMotion"},{"line":[270,289,330,289],"arrow":true,"tone":"mark"},{"box":[340,272,230,34],"title":"Live migration","tone":"mark"},
         {"box":[10,310,250,34],"title":"Maintenance mode"},{"line":[270,327,330,327],"arrow":true,"tone":"mark"},{"box":[340,310,230,34],"title":"cordon + drain","tone":"mark"}]}'></svg>
     <div style="display:grid;gap:14px">
-      <p><b>PVC</b> is a PersistentVolumeClaim: a request for storage from a StorageClass. Each VM disk is backed by one. A <b>namespace</b> groups resources; OpenShift calls it a project.</p>
-      <p class="hand tilt"><b>From vSphere:</b> there is no single vCenter VM. The API server is the control point, and the web console gives you the GUI.</p>
-      <p class="watch"><b>Watch for this.</b> Host Profile has no match on ROVS. The workers are IBM's, so no MachineConfigPool exists. Host configuration is IBM's, reached through <code>ibmcloud ks worker update|replace|reload</code>.</p>
+      <p>A <b>PVC</b> is a PersistentVolumeClaim, which is a request for storage from a StorageClass. Each VM disk is backed by one. A <b>namespace</b> groups resources, and OpenShift calls it a project.</p>
+      <p class="hand tilt"><b>From vSphere:</b> there's no single vCenter VM. The API server is the control point, and the web console gives you the GUI.</p>
+      <p class="watch"><b>Watch for this.</b> Host Profile has no match on ROVS. The workers are IBM's, so there's no MachineConfigPool, which is what self-managed OpenShift uses for host settings. IBM looks after the host configuration, and you reach it through <code>ibmcloud ks worker update|replace|reload</code>.</p>
     </div>
   </div>
 </section>
@@ -71,7 +71,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Explore the parts</span>
   <h2>Every resource has the same shape</h2>
-  <p class="lead">In vSphere you click through a wizard. On OpenShift you write a definition in YAML, and the definition is the source of truth. Select a part to see what it does, or click a line.</p>
+  <p class="lead">In vSphere you click through a wizard. On OpenShift you write a definition in YAML, and that definition is the source of truth. Tap a part to see what it does, or click a line.</p>
   <div class="explorer" data-start="spec"
     data-map='{"kind":[[1,2]],"where":[[3,5]],"labels":[[6,8],[12,14]],"spec":[[9,11],[15,29]],"status":[[30,32]]}'>
     <div class="cols">
@@ -88,27 +88,27 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="kind">
           <h3>Type</h3>
-          <p><code>apiVersion</code> and <code>kind</code> say what you are creating, a VM rather than a template or a network. <code>VirtualMachine</code> is a type that the OpenShift Virtualization operator adds, through a custom resource definition (CRD).</p>
+          <p><code>apiVersion</code> and <code>kind</code> say what you're creating, so a VM rather than a template or a network. <code>VirtualMachine</code> is a type that the OpenShift Virtualization operator adds, through a custom resource definition (CRD).</p>
         </div>
         <div class="part-info" data-part="where">
           <h3>Name and namespace</h3>
-          <p>The name, and the namespace the resource lives in. Every resource you create lives in a namespace.</p>
-          <p class="hand tilt"><b>From vSphere:</b> roughly a resource pool plus a VM folder.</p>
-          <p class="watch"><b>Watch for this.</b> A namespace scopes names, RBAC and quotas. It does not isolate network traffic by default: a pod accepts connections from any source until a NetworkPolicy selects it.</p>
+          <p>This is the name, and the namespace the resource lives in. Every resource you create lives in a namespace.</p>
+          <p class="hand tilt"><b>From vSphere:</b> it's roughly a resource pool plus a VM folder.</p>
+          <p class="watch"><b>Watch for this.</b> A namespace scopes names, RBAC and quotas. It doesn't isolate network traffic by default, so a pod accepts connections from any source until a NetworkPolicy selects it.</p>
         </div>
         <div class="part-info" data-part="labels">
           <h3>Labels</h3>
-          <p>Key-value pairs. A Service, a NetworkPolicy or a node selector finds its targets by label.</p>
-          <p class="hand tilt"><b>From vSphere:</b> roughly vCenter tags and categories. In VMware, tags are mostly for organisation and reporting. In Kubernetes, labels are the main way resources are linked together.</p>
+          <p>Labels are key-value pairs. A Service, a NetworkPolicy or a node selector finds its targets by label.</p>
+          <p class="hand tilt"><b>From vSphere:</b> they're roughly vCenter tags and categories. In VMware, tags are mostly for organisation and reporting. In Kubernetes, labels are the main way resources are linked together.</p>
         </div>
         <div class="part-info" data-part="spec">
           <h3>spec</h3>
-          <p>The desired state: what you want. Here, a VM that should always be running, with a virtio boot disk, 4Gi of memory and 2 CPUs requested.</p>
-          <p class="watch"><b>Watch for this.</b> Edit a running VM's spec and nothing changes live. KubeVirt sets a <code>RestartRequired</code> condition and the change applies at the next restart.</p>
+          <p>The desired state is what you want. Here it's a VM that should always be running, with a virtio boot disk, 4Gi of memory and 2 CPUs requested.</p>
+          <p class="watch"><b>Watch for this.</b> If you edit a running VM's spec, nothing changes live. KubeVirt sets a <code>RestartRequired</code> condition, and the change applies at the next restart.</p>
         </div>
         <div class="part-info" data-part="status">
           <h3>status</h3>
-          <p>The current state, written by the controller. You read it and never write it.</p>
+          <p>This is the current state, which the controller writes. You read it, and you never write it.</p>
         </div>
       </div>
     </div>
@@ -151,7 +151,7 @@ status:                              # Current state -- set by the system
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
   <h2>Which command is it?</h2>
-  <p class="lead">You know the PowerCLI commands. Pick the OpenShift one, then see the pair. <code>oc</code> is the general cluster tool; <code>virtctl</code> does the VM-specific work.</p>
+  <p class="lead">You know the PowerCLI commands. Pick the OpenShift one that does the same job, then see the pair. <code>oc</code> is the general cluster tool, and <code>virtctl</code> does the VM-specific work.</p>
   <div>
     <div class="q">
       <p>In PowerCLI you run <code>Get-VM</code>. What lists every VM on the cluster?</p>
@@ -160,7 +160,7 @@ status:                              # Current state -- set by the system
         <button class="opt"><code>oc get nodes -o wide</code></button>
         <button class="opt"><code>virtctl start my-vm</code></button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Get-VM, then oc get</span><p><code>Get-VM</code> pairs with <code>oc get virtualmachines -A</code>. The <code>-A</code> means all namespaces. <code>oc get nodes -o wide</code> is <code>Get-VMHost</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Get-VM, then oc get</span><p><code>Get-VM</code> pairs with <code>oc get virtualmachines -A</code>. The <code>-A</code> means all namespaces. <code>oc get nodes -o wide</code> is the match for <code>Get-VMHost</code>.</p></details>
     </div>
     <div class="q">
       <p>You run <code>Start-VM -VM "my-vm"</code> today. What starts it on OpenShift?</p>
@@ -172,21 +172,21 @@ status:                              # Current state -- set by the system
       <details class="reveal"><summary>Show the answer</summary><span class="hand">Start-VM, then virtctl start</span><p><code>virtctl start my-vm</code> starts it. You can also set <code>spec.runStrategy</code> to <code>Always</code>, and the console has start and stop buttons.</p></details>
     </div>
     <div class="q">
-      <p>You put an ESXi host in maintenance mode with <code>Set-VMHost -State Maintenance</code>. What is the OpenShift way?</p>
+      <p>You put an ESXi host in maintenance mode with <code>Set-VMHost -State Maintenance</code>. How do you do that on OpenShift?</p>
       <div class="opts">
         <button class="opt"><code>virtctl migrate</code> on every VM</button>
         <button class="opt" data-ok><code>oc adm cordon</code>, then <code>oc adm drain</code></button>
         <button class="opt"><code>oc delete node</code></button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">cordon, then drain</span><p><code>cordon</code> stops new workloads landing on the node, like entering maintenance mode. <code>drain</code> evicts what is already there, live migrating VMs if possible. The full form is <code>oc adm drain &lt;node-name&gt; --ignore-daemonsets --delete-emptydir-data</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">cordon, then drain</span><p><code>cordon</code> stops new workloads landing on the node, like entering maintenance mode. <code>drain</code> evicts what's already there, and live migrates the VMs if it can. The full form is <code>oc adm drain &lt;node-name&gt; --ignore-daemonsets --delete-emptydir-data</code>.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · The reconciliation loop</span>
-  <h2>You declare. A controller makes it so.</h2>
-  <p class="lead">In vSphere each command happens once: power on, add a NIC, migrate. On OpenShift you declare the state you want, and controllers keep working until the platform matches.</p>
+  <h2>You declare what you want, and a controller makes it happen</h2>
+  <p class="lead">In vSphere each command happens once: power on, add a NIC, migrate. On OpenShift you declare the state you want, and the controllers keep working until the platform matches it.</p>
   <div class="cols">
     <div style="display:grid;gap:14px">
       <svg class="sketch" role="img" aria-label="Hand-drawn loop of four boxes from top to bottom: you declare the desired state in YAML; the controller compares desired with actual state; the controller acts to create, update or delete; the actual state is the live platform. An arrow runs from the actual state back up to the comparison."
@@ -210,7 +210,7 @@ status:                              # Current state -- set by the system
           <button class="opt" data-ok>The controller creates a new pod, because the desired state is still running</button>
           <button class="opt">The VirtualMachine is deleted too</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><span class="hand">Desired state wins.</span><p>The controller sees the mismatch between running and not running, and creates a new pod. The same happens if the pod crashes or the node fails.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><span class="hand">A new pod starts.</span><p>The controller creates a new pod. It sees that the VM should be running and isn't, and acts on the difference. The same happens if the pod crashes or the node fails.</p></details>
       </div>
       <div class="q">
         <p>How do you actually stop the VM and keep it stopped?</p>
@@ -219,7 +219,7 @@ status:                              # Current state -- set by the system
           <button class="opt" data-ok>Change the desired state: set <code>runStrategy: Halted</code>, or delete the VirtualMachine</button>
           <button class="opt">Edit <code>status</code> to Stopped</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>You stop it by changing the desired state. You never write <code>status</code>.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>You change the desired state. That's the only way to keep it stopped, and you never write <code>status</code> yourself.</p></details>
       </div>
     </div>
   </div>
@@ -236,7 +236,7 @@ status:                              # Current state -- set by the system
         <button class="opt">Node Maintenance</button>
         <button class="opt" data-ok>The Migration Toolkit for Virtualization</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Only OpenShift Virtualization, NMState and Node Maintenance are blocked. Every other operator installs normally, and you own its lifecycle.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>MTV. Only OpenShift Virtualization, NMState and Node Maintenance are blocked. Every other operator installs normally, and looking after it is your job.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which vSphere idea is a namespace closest to?</p>
@@ -245,7 +245,7 @@ status:                              # Current state -- set by the system
         <button class="opt" data-ok>A resource pool and a VM folder together</button>
         <button class="opt">A vDS port group</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A namespace groups related resources, and you can apply resource limits and access controls to it. Resource quotas cap its CPU, memory and storage, like resource pool limits. The port group is a CUDN, which a later module covers.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A resource pool and a VM folder together. A namespace groups related resources, and you can apply resource limits and access controls to it. Resource quotas cap its CPU, memory and storage, like resource pool limits do. The nearest thing to a port group is a CUDN, which a later module covers.</p></details>
     </div>
     <div class="q" data-check>
       <p>What backs a VM disk on ROVS, in the place of a VMDK?</p>
@@ -254,7 +254,7 @@ status:                              # Current state -- set by the system
         <button class="opt" data-ok>A PersistentVolumeClaim, which requests storage from a StorageClass</button>
         <button class="opt">A container image</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Each VM disk is backed by a PVC. A StorageClass is the type of storage the PVC asks for, so it is closer to a datastore.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A PVC. Each VM disk is backed by one. A StorageClass is the type of storage the PVC asks for, so it's closer to a datastore.</p></details>
     </div>
   </div>
 </section>
@@ -264,7 +264,7 @@ status:                              # Current state -- set by the system
   <h2>You speak the new words</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Declare what you want in YAML; a controller makes it so. Stop a VM by changing its desired state. A running VM's edits wait for a restart.</p></div>
+    <div><span class="label">Remember</span><p>You declare what you want in YAML, and a controller makes it happen. You stop a VM by changing its desired state. Edits to a running VM wait for a restart.</p></div>
     <div><span class="label">When you have a cluster</span><p>Tutorial chapter 01, Learn OpenShift concepts for VMware admins on ROVS, runs these commands. Keep chapter 03, Map VMware concepts to OpenShift Virtualization on ROVS, open as a lookup.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

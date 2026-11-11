@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Where ROVS fits, and where it does not · ROVS course</title>
-<meta name="description" content="Course unit 1.3: know what is fixed when you order a ROVS cluster, and which workloads belong elsewhere. No cluster needed.">
+<title>Where ROVS fits, and where it doesn't · ROVS course</title>
+<meta name="description" content="Course unit 1.3: what's fixed when you order a ROVS cluster, and which workloads belong somewhere else. No cluster needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -26,8 +26,8 @@
   <div class="start">
     <div>
       <span class="kicker">Unit 3 of Module 1</span>
-      <h1>Where ROVS fits, and where it does not</h1>
-      <p class="lead">By the end you can name the settings that are sealed when you order a ROVS cluster, say which workloads belong elsewhere, and explain why three workers is a minimum and not a plan.</p>
+      <h1>Where ROVS fits, and where it doesn't</h1>
+      <p class="lead">By the end of this unit you'll know which settings are sealed when you order a ROVS cluster, which workloads belong somewhere else, and why three workers is only a minimum.</p>
       <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -38,16 +38,16 @@
           {"text":"sealed","at":[60,198],"hand":true,"tone":"mark"},
           {"box":[240,50,170,120],"heavy":true,"dashed":true,"title":"standard cluster"},
           {"text":"open","at":[290,198],"hand":true,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the screens and limits in this unit are real. Its estate is mixed. Some of it belongs on ROVS and some does not. Better to find out now than three weeks into a migration.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that's moving off vSphere. The screens and limits in this unit are real. Northgate's estate is mixed, so some of it belongs on ROVS and some of it doesn't. It's better to find out now than three weeks into a migration.</p>
     </div>
   </div>
-  <p class="small">Every screenshot and statement in this unit comes from real runs on lab clusters.</p>
+  <p class="small">Every screenshot and statement in this unit comes from a real run on a lab cluster.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · What is sealed</span>
   <h2>IBM makes these choices for you</h2>
-  <p class="lead">These settings are configured at cluster creation and cannot be changed afterwards. There is no in-place change. The fix is a new cluster.</p>
+  <p class="lead">IBM sets these when it creates the cluster, and you can't change them afterwards. There's no in-place change. If you need a different setting, you order a new cluster.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn box listing eight settings that are sealed when you order: bare metal only, RHCOS only, OVN-Kubernetes only, MTU 8900 and 9000, OVE licence only, outbound protection off, OpenShift 4.21 or later, and storage chosen once."
       data-drawing='{"w":470,"h":310,"shapes":[
@@ -57,11 +57,11 @@
         {"box":[22,102,190,44],"title":"RHCOS only"},{"box":[222,102,226,44],"title":"Outbound protection off"},
         {"box":[22,156,190,44],"title":"OVN-Kubernetes only"},{"box":[222,156,226,44],"title":"OpenShift 4.21 or later"},
         {"box":[22,210,190,44],"title":"MTU 8900 and 9000"},{"box":[222,210,226,44],"title":"Storage chosen once"},
-        {"text":"a standard cluster cannot become ROVS, or the reverse","at":[10,290],"hand":true,"size":16,"tone":"muted"}]}'></svg>
+        {"text":"a standard cluster can&apos;t become ROVS, or the reverse","at":[10,290],"hand":true,"size":16,"tone":"muted"}]}'></svg>
     <div style="display:grid;gap:14px">
-      <p>Storage is ODF or File Storage for VPC (Beta). At least one is mandatory, and IBM does not document a path to switch. Outbound traffic protection is disabled and cannot be enabled. The licence is OVE, charged per instance-hour per bare metal worker, with no BYOL.</p>
-      <p><b>You can still change:</b> the number of workers, the number of worker pools, adding zones, the cluster version, and the rules inside your security groups.</p>
-      <p class="hand tilt"><b>From vSphere:</b> this is closer to buying a converged appliance than building a cluster. The hardware envelope is chosen for you and the network settings come sealed.</p>
+      <p>Storage is ODF or File Storage for VPC (Beta). You need at least one, and IBM doesn't document a way to switch. Outbound traffic protection is disabled, and you can't enable it. The licence is OVE (OpenShift Virtualization Engine), charged per instance-hour for each bare metal worker, and you can't bring your own.</p>
+      <p>You can still change the number of workers, the number of worker pools, adding zones, the cluster version, and the rules inside your security groups.</p>
+      <p class="hand tilt"><b>From vSphere:</b> this is more like buying a converged appliance than building a cluster. The hardware is chosen for you, and the network settings come sealed.</p>
     </div>
   </div>
 </section>
@@ -69,7 +69,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>The order form says so too</h2>
-  <p class="lead">These are real screens from the ROVS ordering page. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These are real screens from the ROVS ordering page. Click where you'd click on the live form. After two misses, the page marks the right place.</p>
   <div class="tour">
     <figure class="tstep" data-hot="1.9,29.8,68.3,29.5">
       <div class="shot"><img src="../images/04/order-form-and-pricing.jpg" alt="The ROVS ordering page. A Before you begin panel gives the fixed settings: orchestrator Red Hat OpenShift on IBM Cloud, infrastructure VPC, machine type Bare metal, operating system Red Hat CoreOS, OpenShift version 4.21 and above, networking plugin Open Virtual Network, and virtualization add-on OpenShift Virtualization operator. Below it, Cluster details asks for the cluster name, resource group and tags. A Summary panel on the right prices three worker nodes, an OVE license fee and OpenShift Data Foundation." width="1563" height="736"></div>
@@ -82,7 +82,7 @@
       <div class="shot"><img src="../images/04/order-form-and-pricing.jpg" alt="The same ordering page. The Summary panel on the right lists three worker nodes, an OVE license fee that the panel says is billed for every worker node, and OpenShift Data Foundation, above a total estimated cost and a Create button." width="1563" height="736"></div>
       <figcaption>
         <h3>Which line in the Summary is the licence?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The OVE license fee, billed for every worker node. OVE is the only licence on ROVS. There is no bring-your-own-licence and no Cloud Pak entitlement.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The OVE license fee, billed for every worker node. OVE is the only licence on ROVS. You can't bring your own licence, and there's no Cloud Pak entitlement.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -91,51 +91,51 @@
 <section class="screen">
   <span class="kicker">Step 3 · Design it</span>
   <h2>Does it fit on ROVS?</h2>
-  <p class="lead">Northgate's estate has four awkward workloads. Pick an answer for each, then read why.</p>
+  <p class="lead">Northgate's estate has four awkward workloads. Pick an answer for each one, then read why.</p>
   <div class="pair">
     <div class="q">
-      <p>A Northgate team needs its workers in São Paulo.</p>
+      <p>Part of Northgate's estate has to run in São Paulo.</p>
       <div class="opts">
         <button class="opt">ROVS, in any region IBM Cloud has</button>
         <button class="opt" data-ok>A standard cluster, with OpenShift Virtualization installed yourself</button>
         <button class="opt">ROVS, if you ask IBM for an exception</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>ROVS runs in five regions only: Dallas, Washington DC, Toronto, Montreal and Frankfurt. A ROVS create in São Paulo was refused at once with "not supported in this region". For anywhere else you install OpenShift Virtualization yourself on a standard cluster.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A standard cluster. ROVS runs in five regions only: Dallas, Washington DC, Toronto, Montreal and Frankfurt. When we tried to create a ROVS cluster in São Paulo, it was refused at once with "not supported in this region". Anywhere else, you install OpenShift Virtualization yourself on a standard cluster.</p></details>
     </div>
     <div class="q">
       <p>A developer VM runs a hypervisor of its own, a nested ESXi lab.</p>
       <div class="opts">
         <button class="opt">Supported</button>
-        <button class="opt" data-ok>Not supported with IBM's support, even though it ran in a test</button>
-        <button class="opt">Blocked, so it will not start</button>
+        <button class="opt" data-ok>It runs in a test, but it isn't supported</button>
+        <button class="opt">Blocked, so it won't start</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Ran is not supported.</span><p>Nested virtualization is not supported. On the test cluster a nested hypervisor did run, but do not read a working nested lab as permission to put one in production.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">It ran, but it isn't supported.</span><p>Nested virtualization isn't supported. On our test cluster a nested hypervisor did run, but a working nested lab isn't permission to put one in production.</p></details>
     </div>
     <div class="q">
-      <p>Northgate's production SAP HANA system.</p>
+      <p>Northgate runs SAP HANA in production.</p>
       <div class="opts">
         <button class="opt">Moves to ROVS with Red Hat's support</button>
-        <button class="opt" data-ok>Stays elsewhere: SAP does not support it on OpenShift Virtualization</button>
+        <button class="opt" data-ok>Stays elsewhere: SAP doesn't support it on OpenShift Virtualization</button>
         <button class="opt">Moves to ROVS if the cluster spans three zones</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>SAP does not support SAP HANA and SAP business applications on OpenShift Virtualization, and the statement has no production carve-out. IBM's alternatives are PowerVS, RISE with SAP on PowerVS, or VPC with SAP-certified profiles. Dev and test instances are workable, with Red Hat supporting the platform and SAP not supporting the workload.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It stays elsewhere. SAP doesn't support SAP HANA and SAP business applications on OpenShift Virtualization, and its statement makes no exception for production. IBM's alternatives are PowerVS, RISE with SAP on PowerVS, or VPC with SAP-certified profiles. Dev and test instances can work, with Red Hat supporting the platform and SAP not supporting the workload.</p></details>
     </div>
     <div class="q">
-      <p>Fifty Windows Server VMs.</p>
+      <p>Northgate has fifty Windows Server VMs.</p>
       <div class="opts">
         <button class="opt">Fits, and the ROVS licence covers Windows</button>
         <button class="opt" data-ok>Fits, but the Windows licences are yours</button>
-        <button class="opt">Does not fit: Windows is not supported</button>
+        <button class="opt">Doesn't fit: Windows isn't supported</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Red Hat lists OpenShift Container Platform among the products that inherit Microsoft's SVVP certification for Windows guests. You must provide and manage the licences for every guest operating system, including Windows. Nothing in the ROVS licence covers guests.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It fits, and the Windows licences are yours. Red Hat lists OpenShift Container Platform among the products that inherit Microsoft's SVVP certification for Windows guests. You provide and manage the licences for every guest operating system, including Windows. Nothing in the ROVS licence covers guests.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Predict</span>
-  <h2>Three workers, then two problems</h2>
-  <p class="lead">Ceph keeps three copies of your data, and it needs two of them to serve it. Three workers is IBM's minimum. Six is IBM's production floor for this layout.</p>
+  <h2>One worker in maintenance, then another fails</h2>
+  <p class="lead">Ceph keeps three copies of your data, and it needs two of them to serve it. Three workers is IBM's minimum, and IBM's minimum for production with this layout is six.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn diagram of three workers. Worker 1 is hatched and marked maintenance. Worker 2 is marked fails. Worker 3 is marked last copy. Text beneath says VMs on those copies hang until a copy comes back."
       data-drawing='{"w":540,"h":240,"shapes":[
@@ -153,7 +153,7 @@
           <button class="opt" data-ok>They hang until a copy comes back</button>
           <button class="opt">They live-migrate to the third worker</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><span class="hand">They hang. They do not fail over.</span><p>With one copy left, ODF's default <code>min_size=2</code> blocks I/O rather than risk the data. Build to three and you can survive a failure or a maintenance window, but not both at once. This is not the failure a VMware admin expects.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><span class="hand">They hang, and they don't fail over.</span><p>With one copy left, ODF's default <code>min_size=2</code> blocks I/O rather than risk the data. With three workers you can survive a failure or a maintenance window, but not both at once. That isn't the behaviour a VMware admin expects, so plan for it.</p></details>
       </div>
       <div class="q">
         <p>Northgate wants to live migrate VMs to any worker and to use VNIs. Which layout?</p>
@@ -162,7 +162,7 @@
           <button class="opt">Three zones</button>
           <button class="opt">It makes no difference</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>In a single zone, live migration can go to any worker and VNI networking is simple. In three zones, live migration stays inside one zone and each VNI is tied to one zone. IBM recommends single-zone clusters for virtualization workloads. Zone and region protection then comes from a second cluster.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>One zone. In a single zone, live migration can go to any worker and VNI networking is simple. In three zones, live migration stays inside one zone and each VNI is tied to one zone. IBM recommends single-zone clusters for virtualization workloads, and you get zone and region protection from a second cluster.</p></details>
       </div>
     </div>
   </div>
@@ -179,7 +179,7 @@
         <button class="opt" data-ok>A PersistentVolumeClaim, which requests storage from a StorageClass</button>
         <button class="opt">A container image</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Each VM disk is backed by a PVC. A StorageClass is the type of storage the PVC asks for, so it is closer to a datastore.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A PVC. Each VM disk is backed by one. A StorageClass is the type of storage the PVC asks for, so it's closer to a datastore.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which of these can you still change after the cluster is ordered?</p>
@@ -188,7 +188,7 @@
         <button class="opt">ODF or File Storage for VPC</button>
         <button class="opt" data-ok>The number of workers</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The number of workers, the number of worker pools, added zones, the cluster version and the rules inside your security groups can change. Bare metal only and the storage choice are sealed.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The number of workers. You can also change the number of worker pools, add zones, change the cluster version and change the rules inside your security groups. Bare metal only and the storage choice are sealed.</p></details>
     </div>
     <div class="q" data-check>
       <p>Northgate has fifty RHEL VMs. What does the ROVS licence do for their subscriptions?</p>
@@ -197,7 +197,7 @@
         <button class="opt" data-ok>Nothing: every RHEL guest needs its own subscription</button>
         <button class="opt">It covers them on a three-zone cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A full OpenShift Container Platform subscription includes RHEL guest subscriptions. The OVE licence that ROVS uses does not.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Nothing. A full OpenShift Container Platform subscription includes RHEL guest subscriptions, but the OVE licence that ROVS uses doesn't.</p></details>
     </div>
   </div>
 </section>
@@ -207,8 +207,8 @@
   <h2>You know where the edges are</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Sealed at order: bare metal, RHCOS, OVN-Kubernetes, MTU, licence, storage. Three workers is a minimum. Vendors decide whether they support your workload, not Red Hat.</p></div>
-    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 06, Check the limits of ROVS and when not to use it, is the list to read before you commit a workload. Chapter 04, Order a ROVS cluster, lists every permanent choice.</p></div>
+    <div><span class="label">Remember</span><p>Bare metal, RHCOS, OVN-Kubernetes, the MTU, the licence and the storage are all sealed when you order. Three workers is a minimum. Each workload's vendor decides whether it supports that workload on ROVS. Red Hat doesn't decide that.</p></div>
+    <div><span class="label">When you have a cluster</span><p>Tutorial chapter 06, Check the limits of ROVS and when not to use it, is the list to read before you commit to a workload. Chapter 04, Order a ROVS cluster, lists every permanent choice.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

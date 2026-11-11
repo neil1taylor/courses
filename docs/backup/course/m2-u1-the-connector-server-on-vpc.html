@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The connector server on VPC · BRS course</title>
-<meta name="description" content="Course unit 2.1: say what the connector server does, find the missing package when the backup agent will not install, and follow the console steps that build and claim a connector server. No account needed.">
+<meta name="description" content="Course unit 2.1: say what the connector server does, find the missing package when the backup agent won't install, and follow the console steps that build and claim a connector server. No account needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 1 of Module 2</span>
       <h1>The connector server on VPC</h1>
-      <p class="lead">By the end you can say what the connector server does, find the missing package when the backup agent will not install, and follow the console steps that build a connector server and claim it.</p>
+      <p class="lead">By the end of this unit you'll know what the connector server does, how to find the missing package when the backup agent won't install, and how to build a connector server in the console and claim it.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -40,10 +40,10 @@
           {"line":[305,75,326,75],"arrow":true,"tone":"mark"},
           {"box":[330,45,85,60],"heavy":true,"title":"service"},
           {"text":"one connector, many servers","at":[90,150],"hand":true,"size":17,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It has Linux servers in a VPC in Frankfurt and wants BRS to back them up. Its first job is to build the server that links the VPC to the service.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It has Linux servers in a VPC in Frankfurt and wants BRS to back them up. Its first job is to build the server that links the VPC to the service.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from runs in our lab. Server names and addresses were changed to made-up Northgate values, for example <code>ng-app-01</code> and <code>10.0.0.10</code>. The screenshots show the lab&apos;s own resource names; the registration token is blurred.</p>
+  <p class="small">Every number and screen in this unit comes from runs in our lab. Server names and addresses were changed to made-up Northgate values, for example <code>ng-app-01</code> and <code>10.0.0.10</code>. The screenshots show the lab&apos;s own resource names, and the registration token is blurred.</p>
 </section>
 
 <section class="screen">
@@ -68,7 +68,7 @@
         <button class="opt" data-ok>It links the VPC to the service, and serves many hosts</button>
         <button class="opt">It serves one host only</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The connector is a server that links your VPC to the service. It serves many hosts. You still install the backup agent on every host that you protect.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It links the VPC to the service. The connector is a server that serves many hosts, and you still install the backup agent on every host you protect.</p></details>
     </div>
     <div class="q">
       <p>How big is the connector server, and when does it run?</p>
@@ -77,15 +77,15 @@
         <button class="opt" data-ok>4 vCPU and 16 GB, and it runs all the time</button>
         <button class="opt">Nothing to run: it is part of the service</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the connector is a 4-vCPU, 16 GB server that runs all the time. IBM&apos;s pricing notes say at least two connectors for production. The lab test used one.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>4 vCPU and 16 GB, all the time. In our lab the connector was a 4-vCPU, 16 GB server that ran all the time. IBM&apos;s pricing notes say at least two connectors for production. Our lab test used one.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 2 · Spot the fault</span>
-  <h2>The backup agent will not install</h2>
-  <p class="lead">Northgate downloads the Linux backup agent as an RPM, copies it to its Linux server and installs it. This is what came back in our lab.</p>
+  <h2>The backup agent won&apos;t install</h2>
+  <p class="lead">Northgate&apos;s backup admin downloads the Linux backup agent as an RPM, copies it to the Linux server and installs it. This is what came back in our lab.</p>
   <pre class="def" aria-label="The failed install">$ sudo rpm -Uvh /tmp/brs-agent.rpm
 Failed dependencies: lsof is needed by cohesity-agent-7.3.12-1.x86_64, wget is needed by ...</pre>
   <div class="pair" style="margin-top:20px">
@@ -96,7 +96,7 @@ Failed dependencies: lsof is needed by cohesity-agent-7.3.12-1.x86_64, wget is n
         <button class="opt" data-ok>Packages that the agent needs are missing: <code>lsof</code> and <code>wget</code></button>
         <button class="opt">The service is not running</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The message names <code>lsof</code> and <code>wget</code>. In our lab this was a pass with two missing packages.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Two packages are missing. The message names <code>lsof</code> and <code>wget</code>. We ran this in our lab on a server without those two packages.</p></details>
     </div>
     <div class="q">
       <p>What fixes it?</p>
@@ -110,33 +110,33 @@ sudo systemctl is-active cohesity-agent; sudo ss -ltn | grep -E "50051|59999"
 active; listening on 50051 and 59999</pre></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> The lab server already had <code>lsof</code>, <code>wget</code>, <code>nfs-utils</code> and <code>lvm2</code>, and the install worked first time. Check a new server for them before you install.</p>
+  <p class="watch"><b>Watch for this.</b> Check a new server for <code>lsof</code>, <code>wget</code>, <code>nfs-utils</code> and <code>lvm2</code> before you install. Our lab server already had them, and the install worked first time.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Click through the console</span>
   <h2>Make the connection and the connector server</h2>
-  <p class="lead">These screens come from the BRS console and the IBM Cloud console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console and the IBM Cloud console in our lab. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="5.3,50.5,25.8,9.1" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2a-1-deployment-platform.png" alt="The New Connection dialog with the Deployment Platform list open: VMware, VPC, ROKS Classic, ROKS VPC." width="800" height="440"></div>
       <figcaption>
         <h3>Northgate&apos;s servers are in a VPC. Which Deployment Platform do you choose?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The list starts at VMware; choose VPC. It also has ROKS and IKS (Classic and VPC). The dialog has no name field: the connection gets a generated name. The second step shows links to create the connector server and a VPE gateway, and the registration token, valid for 24 hours.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The list starts at VMware, so choose VPC. It also has ROKS and IKS (Classic and VPC). The dialog has no name field, so the connection gets a generated name. The second step shows links to create the connector server and a VPE gateway, and the registration token, which is valid for 24 hours.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="1.9,41.5,33.6,6" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2a-4-connector-server-form.png" alt="The Virtual server for VPC form: zone eu-de-1, name cohesity-lab-dsc, resource group cohesity-lab-rg; the summary shows 4 vCPUs, 16 GiB, image content-ibm-backup-recovery-ds-connector-7 version 7.3.13 and a 171 GB boot volume." width="1480" height="762"></div>
       <figcaption>
         <h3>The catalog link opens this form with the image filled in. In our lab one field started at us-south-2. Click it.</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Check every field; the defaults do not match the lab. The form started at zone us-south-2, resource group Default, profile bxf-2x8, another VPC in the account, that VPC&apos;s default security group, and no SSH key. Create virtual server stays disabled until you pick an SSH key, even though the connector refuses SSH logins. The server was running at once, and its web page answered about 1.5 minutes later.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Check every field, because the defaults didn&apos;t match our lab. The form started at zone us-south-2, resource group Default, profile bxf-2x8, another VPC in the account, that VPC&apos;s default security group, and no SSH key. Create virtual server stays disabled until you pick an SSH key, even though the connector refuses SSH logins. The server was running straight away, and its web page answered about 1.5 minutes later.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="11.5,69,59.6,15" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2a-6-connector-unhealthy-first.png" alt="The connector's status page: cohesity-lab-dsc, Unhealthy, 'Connection dropped to dataplane due to internal error'." width="520" height="500"></div>
       <figcaption>
         <h3>You pasted the token and clicked Save. The page shows this. Where does it say what is wrong?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: Unhealthy, with &quot;Connection dropped to dataplane due to internal error&quot;. The fix is to wait. Reload the page later to see Healthy.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It says Unhealthy, with &quot;Connection dropped to dataplane due to internal error&quot;. Wait a few minutes and reload the page, and it shows Healthy.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -145,16 +145,16 @@ active; listening on 50051 and 59999</pre></details>
 <section class="screen">
   <span class="kicker">Step 4 · Predict</span>
   <h2>How long until the connector stays connected?</h2>
-  <p class="lead">Northgate opens the connector&apos;s web page, logs in, sets a password, replaces the default name and pastes the claim token. Then it clicks Save.</p>
+  <p class="lead">Northgate&apos;s backup admin opens the connector&apos;s web page, logs in, sets a password, replaces the default name and pastes the claim token. Then they click Save.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>A new connector has the login <code>admin</code> / <code>admin</code>. What happens at the first login?</p>
       <div class="opts">
         <button class="opt">It works, and you can set a password later</button>
-        <button class="opt" data-ok>The page asks for a new password at once. Keep it</button>
+        <button class="opt" data-ok>The page asks for a new password at once</button>
         <button class="opt">IBM sends you a password</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The default password has expired, so you must set a new one before anything else. Keep it: it is not recoverable from IBM&apos;s side. The page also has a Domain Names field; in our lab it was already filled in with <code>cloud.ibm.com</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It asks for a new password. The default password has expired, so you have to set a new one before anything else. Keep it safe, because IBM can&apos;t recover it for you. The page also has a Domain Names field, which in our lab was already filled in with <code>cloud.ibm.com</code>.</p></details>
     </div>
     <div class="q">
       <p>The connector was saved at about 11:29 UTC. How long did it keep dropping before it stayed connected, in our lab?</p>
@@ -163,7 +163,7 @@ active; listening on 50051 and 59999</pre></details>
         <button class="opt" data-ok>About 3 minutes</button>
         <button class="opt">About an hour</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">About 3 minutes, then stable.</span><p>The API checks showed this:</p><pre class="def" aria-label="Connection checks">Time (UTC)   Check showed
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">About 3 minutes, then it stayed connected.</span><p>The API checks showed this:</p><pre class="def" aria-label="Connection checks">Time (UTC)   Check showed
 11:30:08     connected
 11:31:20     disconnected
 11:31:27     connected
@@ -193,7 +193,7 @@ active; listening on 50051 and 59999</pre></details>
         <button class="opt" data-ok>Check every field: the defaults did not match the lab</button>
         <button class="opt">Only set the name</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the form started at another zone, resource group, profile and VPC, with that VPC&apos;s default security group and no SSH key.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Check every field. In our lab the form started at another zone, resource group, profile and VPC, with that VPC&apos;s default security group and no SSH key.</p></details>
     </div>
     <div class="q" data-check>
       <p>Right after you save the connector&apos;s setup page, its status says Unhealthy. What should you do?</p>
@@ -202,7 +202,7 @@ active; listening on 50051 and 59999</pre></details>
         <button class="opt" data-ok>Wait, then reload the page</button>
         <button class="opt">Paste the token again</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the connector dropped for about 3 minutes before it stayed connected.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Wait. In our lab the connector dropped for about 3 minutes before it stayed connected.</p></details>
     </div>
   </div>
 </section>
@@ -212,7 +212,7 @@ active; listening on 50051 and 59999</pre></details>
   <h2>You can build and claim a connector server</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>The connector server links your VPC to the service and serves many hosts, but every host still needs the backup agent, and its packages first. Check each field of the server form. A new connector may show Unhealthy for a few minutes: wait.</p></div>
+    <div><span class="label">Remember</span><p>The connector server links your VPC to the service and serves many hosts, but every host still needs the backup agent, and the packages the agent depends on. Check each field of the server form. A new connector may show Unhealthy for a few minutes, so wait.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

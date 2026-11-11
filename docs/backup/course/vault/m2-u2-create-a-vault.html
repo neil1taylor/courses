@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Create a vault · Cyber Vault course</title>
-<meta name="description" content="Course unit 2.2: walk through the Create Cyber Vault form, find the default you must change, and see why six creates failed with no error. No account needed.">
+<meta name="description" content="Course unit 2.2: walk through the Create Cyber Vault form, find the default you need to change, and see what six creates that failed with no error showed. No account needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -26,8 +26,8 @@
   <div class="start">
     <div>
       <span class="kicker">Unit 2 of Module 2</span>
-      <h1>Create a vault: the settings you cannot change later</h1>
-      <p class="lead">By the end you can name the settings on the Create Cyber Vault form, find the default you must change before you click Create, and say what six failed creates did and did not show.</p>
+      <h1>Create a vault: the settings you can&apos;t change later</h1>
+      <p class="lead">By the end of this unit you&apos;ll know the settings on the Create Cyber Vault form, which default to change before you click Create, and what six failed creates did and didn&apos;t show.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -38,17 +38,17 @@
           {"box":[10,40,180,60],"heavy":true,"title":"30 days"},
           {"text":"Northgate sets","at":[234,30],"hand":true,"size":17,"tone":"muted"},
           {"box":[230,40,180,60],"heavy":true,"tone":"mark","title":"0 days"},
-          {"text":"it cannot be modified later","at":[80,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier. It has access to the Beta and now makes its first vault. The console warns that the vault cannot be modified once it is created.</p>
+          {"text":"it can&apos;t be modified later","at":[80,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its backup admin has access to the Beta and is about to create the first vault. The console warns that the vault can&apos;t be modified once it&apos;s created.</p>
     </div>
   </div>
-  <p class="small">The console screens come from our lab. The six failed creates are from earlier attempts. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">The console screens come from our lab, and the six failed creates come from our earlier attempts. The vault is a Beta in us-south, and it has no SLA.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>What the form asks</h2>
-  <p class="lead">The form has few choices. You pick some. IBM fixes the others. When you click Create, the vault is set.</p>
+  <p class="lead">The form doesn&apos;t have many choices. You pick some of them, IBM fixes the others, and once you click Create the vault is set.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram of the Create Cyber Vault form. You choose a name prefix, a COS instance, the object lock default retention, optional write restrictions and context-based restrictions. The location offers only Dallas and encryption has no choice. The result is a vault and two keys."
     data-drawing='{"w":580,"h":300,"shapes":[
       {"box":[10,5,270,60],"title":"Name prefix","detail":"IBM adds a suffix"},
@@ -61,13 +61,13 @@
       {"box":[300,215,270,60],"heavy":true,"title":"Result","detail":"a vault and two keys"}]}'></svg>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>Northgate gets the network wrong and wants to change it after the vault is created. What does the console say?</p>
+      <p>Suppose Northgate&apos;s admin gets the network wrong and wants to change it after the vault is created. What does the console say?</p>
       <div class="opts">
         <button class="opt">You can edit the network at any time</button>
         <button class="opt" data-ok>&quot;Once created, the vault configuration cannot be modified.&quot;</button>
         <button class="opt">Only the name can be changed</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That warning is at the top of the form. Check every setting before you click Create.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>That the configuration can&apos;t be modified. The warning is at the top of the form, so check every setting before you click Create.</p></details>
     </div>
     <div class="q">
       <p>Which encryption choices does the form offer?</p>
@@ -76,7 +76,7 @@
         <button class="opt" data-ok>None: IBM creates and rotates the keys</button>
         <button class="opt">A choice of two key lengths</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>&quot;IBM automatically creates and rotates FIPS 140-2 Level 3 certified encryption keys.&quot; There is no choice. You tick the licence agreement and click Create.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>None. The form says: &quot;IBM automatically creates and rotates FIPS 140-2 Level 3 certified encryption keys.&quot; You tick the licence agreement and click Create.</p></details>
     </div>
   </div>
 </section>
@@ -84,20 +84,20 @@
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>Four screens</h2>
-  <p class="lead">These screens come from the IBM Cloud console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the IBM Cloud console in our lab. Click where you&apos;d click. After two misses, the page marks the right place.</p>
   <div class="tour">
     <figure class="tstep" data-hot="69.5,55.5,10.5,34" data-width="900px">
       <div class="shot"><img src="../../cyber-vault/tutorials/images/V2-1-cyber-vault-list.png" alt="Cyber Vaults list: three vaults, all Active, us-south, Provider-managed, Retention 0 days, with Create Cyber Vault at the top right." width="1227" height="585"></div>
       <figcaption>
         <h3>Three vaults are listed. Which column shows the default retention?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Retention is the default retention, not a maximum lock. It shows 0 days because the vaults have object lock on with no default rule.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Retention here means the default retention, and there&apos;s no maximum lock. It shows 0 days because the vaults have object lock on with no default rule.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="5,33.5,15.5,5.2" data-width="900px">
       <div class="shot"><img src="../../cyber-vault/tutorials/images/V2-2-create-default-retention.png" alt="Create Cyber Vault form: Location Dallas (us-south), Object lock retention period with Default retention (days) set to 30, and Time-based write restrictions Disabled." width="1227" height="762"></div>
       <figcaption>
         <h3>The form has filled in a number by itself. Where?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Default retention is 30 days. Every object written would be locked for a month. Set 0 so that Data Protect sets each object&apos;s lock from its archive retention (unit 2.4). There is no field for a maximum lock.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Default retention is 30 days, which would lock every object for a month. Set it to 0 so that Data Protect sets each object&apos;s lock from its archive retention (unit 2.4). There&apos;s no field for a maximum lock.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="66.5,42.3,31,5.6" data-width="900px">
@@ -120,7 +120,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
   <h2>What does the default do?</h2>
-  <p class="lead">Northgate clicks Create without touching the lock field. The form still says 30.</p>
+  <p class="lead">Suppose Northgate&apos;s admin clicks Create without touching the lock field, so the form still says 30.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>What does a default retention of 30 days do?</p>
@@ -129,7 +129,7 @@
         <button class="opt" data-ok>Every object written would be locked for a month</button>
         <button class="opt">It sets the maximum lock for Data Protect</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The form says object lock stops objects being deleted for a fixed amount of time. There is no field for a maximum lock.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Every object would be locked for a month. The form says object lock stops objects being deleted for a fixed amount of time, and there&apos;s no field for a maximum lock.</p></details>
     </div>
     <div class="q">
       <p>What does a default retention of 0 mean?</p>
@@ -138,15 +138,15 @@
         <button class="opt" data-ok>Locks are applied per object: Data Protect sets each one from its archive retention</button>
         <button class="opt">Every object is locked for ever</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>&quot;Enter 0 to apply locks manually per-object.&quot; The first vaults in our lab used 0.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Locks are set per object. The form says: &quot;Enter 0 to apply locks manually per-object.&quot; The first vaults in our lab used 0.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>Six creates that failed with no error</h2>
-  <p class="lead">Northgate&apos;s first account tried six creates in our lab. Each was accepted, then went to failed. Here are the six.</p>
+  <h2>What six failed creates tell you</h2>
+  <p class="lead">In our lab, the first account we used tried six creates. Each one was accepted and then went to failed. Look at the six and work out the most likely cause.</p>
   <pre class="def" aria-label="The six creates">#  Retention (min/default/max)  Network
 1  1/0/3                        VPC and IP range
 2  0/0/3                        VPC and IP range
@@ -159,13 +159,13 @@ All six: HTTP 202, then failed in 17 to 40 s.
 The status record has no error text.</pre>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>The retention, the network, the COS instance and the Editor role were each changed. None fixed it. What is the most likely cause?</p>
+      <p>We changed the retention, the network, the COS instance and the Editor role in turn, and none of them fixed it. What&apos;s the most likely cause?</p>
       <div class="opts">
         <button class="opt">The retention values</button>
         <button class="opt" data-ok>The account was not on the allow list (most likely; IBM did not confirm)</button>
         <button class="opt">The network range</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The six attempts ruled out the retention values, the VPC and the IP range, the COS instance and the Editor role. Only IBM can see the cause. One create from the same account became active in about 30 seconds.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Most likely the account wasn&apos;t yet on the allow list. The six attempts ruled out the retention values, the VPC and the IP range, the COS instance and the Editor role. Only IBM can see the real cause. Later, one create from the same account became active in about 30 seconds.</p></details>
     </div>
     <div class="q">
       <p>What did each failed vault leave behind?</p>
@@ -174,10 +174,10 @@ The status record has no error text.</pre>
         <button class="opt" data-ok>Two service IDs and two keys on the COS instance, but no bucket</button>
         <button class="opt">A bucket with no lock</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The service made the keys before it failed. No bucket and no context-based restriction rule appeared. In our lab the keys were deleted by hand.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Two service IDs and two keys. The service made the keys before it failed. No bucket and no context-based restriction rule appeared. In our lab we deleted the keys by hand, so look for them after a failed create.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> HTTP 202 only means the request was accepted. In our lab, six creates went to failed in 17 to 40 seconds with no error text. Changing the settings did not help, and the most likely cause was access.</p>
+  <p class="watch"><b>Watch for this.</b> HTTP 202 only means the request was accepted, so check the status afterwards. In our lab, six creates went to failed in 17 to 40 seconds with no error text. Changing the settings didn&apos;t help, and the most likely cause was that the account wasn&apos;t yet on the allow list.</p>
 </section>
 
 <section class="screen">
@@ -200,26 +200,26 @@ The status record has no error text.</pre>
         <button class="opt" data-ok>0</button>
         <button class="opt">1</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The form fills in 30. Set 0.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>0. The form fills in 30, and you set it to 0.</p></details>
     </div>
     <div class="q" data-check>
-      <p>A create returns HTTP 202, then failed within a minute, with no error text. What is the most likely cause in our lab?</p>
+      <p>A create returns HTTP 202, then goes to failed within a minute, with no error text. What is the most likely cause in our lab?</p>
       <div class="opts">
         <button class="opt">The vault name</button>
         <button class="opt" data-ok>The account was not on the allow list</button>
         <button class="opt">The lock length</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Most likely, not confirmed by IBM. Six creates failed; one worked.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The allow list, most likely. IBM didn&apos;t confirm it. Six creates failed and one worked.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Unit complete</span>
-  <h2>You know what the form fixes</h2>
+  <h2>You know what to check before you click Create</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>The vault cannot be modified once created, so check the form first. The form fills in 30 days of default retention: set 0. Encryption has no choice. In our lab, six creates failed with no error text, most likely because of access.</p></div>
+    <div><span class="label">Remember</span><p>The vault can&apos;t be modified once it&apos;s created, so check the form first. The form fills in 30 days of default retention, and you set it to 0. There&apos;s no choice of encryption. In our lab, six creates failed with no error text, most likely because the account wasn&apos;t yet on the allow list.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

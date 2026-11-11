@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 3 of Module 1</span>
       <h1>Accounts, resource groups and access</h1>
-      <p class="lead">By the end you can say how a resource group, an access group and an identity fit together, pick the right identity for a person, a script and a server, and read the real console screens that set them up.</p>
+      <p class="lead">By the end of this unit you&apos;ll be able to say how a resource group, an access group and an identity fit together, pick the right identity for a person, a script and a server, and read the real console screens that set them up.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -41,16 +41,16 @@
           {"text":"access group","at":[246,32],"hand":true,"tone":"mark"},
           {"box":[234,40,176,140],"heavy":true,"tone":"mark"},
           {"grid":[250,60,3,2,34,24,46,34],"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving its vSphere estate to IBM Cloud VPC. The company is made up; the output and screens in this unit are real. In vCenter its admins used roles and permissions. They ask what replaces them.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that is moving its vSphere estate to IBM Cloud VPC. The output and screens in this unit are real. In vCenter, Northgate&apos;s admins used roles and permissions, and they want to know what replaces them.</p>
     </div>
   </div>
-  <p class="small">Every screenshot and line of output in this unit comes from real runs in a lab account. The vCenter comparison is a rough mapping.</p>
+  <p class="small">Every screenshot and line of output in this unit comes from a real run in a lab account. The vCenter comparison is a rough mapping.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Design it</span>
   <h2>A container, a group, and who is in it</h2>
-  <p class="lead">Every resource you create belongs to one resource group. An access group holds identities and gives them IAM policies, each a role on a target such as a resource group.</p>
+  <p class="lead">Every resource you create belongs to one resource group. An access group holds identities and gives them IAM policies. Each policy is a role on a target, such as a resource group.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn diagram. An account holds a resource group called vpct-lab with the VPC inside it. An access group called vpct-lab-admins holds a user, a service ID and a trusted profile. An arrow labelled policy runs from the access group to the resource group."
       data-drawing='{"w":600,"h":320,"shapes":[
@@ -67,19 +67,19 @@
         {"text":"policy","at":[300,116],"hand":true,"tone":"mark"}]}'></svg>
     <div style="display:grid;gap:14px">
       <p>A policy gives a role on a target. A <b>platform role</b>, such as Viewer or Administrator, covers managing a resource. A <b>service role</b>, such as Reader or Manager, covers using the service itself.</p>
-      <p class="hand tilt"><b>From vSphere:</b> roughly, vCenter roles and permissions become IAM access groups and policies. vCenter tags become tags, and user tags and access tags do different jobs. A rough mapping.</p>
-      <p class="watch"><b>Watch for this.</b> You choose the resource group when you create a resource, and you cannot change it afterwards.</p>
+      <p class="hand tilt"><b>From vSphere:</b> roughly, vCenter roles and permissions become IAM access groups and policies. vCenter tags become tags, and user tags and access tags do different jobs.</p>
+      <p class="watch"><b>Watch for this.</b> You choose the resource group when you create a resource, and you can&apos;t change it afterwards.</p>
     </div>
   </div>
   <div class="pair">
     <div class="q">
-      <p>Northgate&apos;s Terraform will run on a laptop, and later in automation outside IBM Cloud. Which identity should it run as?</p>
+      <p>Northgate&apos;s network admin will run Terraform on a laptop, and later in automation outside IBM Cloud. Which identity should Terraform run as?</p>
       <div class="opts">
         <button class="opt">The administrator&apos;s own user API key</button>
         <button class="opt" data-ok>A service ID with its own API key</button>
         <button class="opt">A trusted profile</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A service ID is the identity for automation outside IBM Cloud, such as Terraform on your computer. It is not tied to a user, so it stays when a user leaves the account.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A service ID with its own API key. A service ID is the identity for automation outside IBM Cloud, such as Terraform on your computer. It isn&apos;t tied to a user, so it stays when a user leaves the account.</p></details>
     </div>
     <div class="q">
       <p>A script runs on a virtual server inside the VPC. Which identity needs no stored key?</p>
@@ -88,7 +88,7 @@
         <button class="opt">A service ID API key</button>
         <button class="opt" data-ok>A trusted profile for the server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A trusted profile with a compute resource identity has no stored credential: the server logs in with its own identity. It needs the Instance Metadata service enabled on the server and the server linked to the profile. The session lasts 60 minutes.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A trusted profile for the server. A trusted profile with a compute resource identity has no stored credential, because the server logs in with its own identity. It needs the Instance Metadata service enabled on the server and the server linked to the profile. The session lasts 60 minutes.</p></details>
     </div>
   </div>
 </section>
@@ -96,41 +96,41 @@
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>Make a key, then read an access group</h2>
-  <p class="lead">These are real screens. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These are real screens. Click where you&apos;d click. After two misses, the page marks the right place.</p>
   <div class="tour">
     <figure class="tstep" data-hot="2,34,96,20" data-width="640px">
       <div class="shot"><img src="../images/10/iam-create-api-key-form-vpct-lab-cli.png" alt="The Create IBM Cloud API key form with the name vpct-lab-cli, the description CLI key for the VPC tutorials, Disable the leaked key selected, Set expiration cleared and Session management set to No." width="700" height="601"></div>
       <figcaption>
-        <h3>Northgate needs a key for the CLI. Which setting decides what IBM does if the key leaks?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Leaked action. The default is Disable the leaked key.</p></details>
+        <h3>Northgate&apos;s network admin needs a key for the CLI. Which setting decides what IBM does if the key leaks?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the Leaked action setting, and the default is Disable the leaked key.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="2,57,96,10.5" data-width="640px">
       <div class="shot"><img src="../images/10/iam-create-api-key-form-vpct-lab-cli.png" alt="The Create IBM Cloud API key form with the name vpct-lab-cli, the description CLI key for the VPC tutorials, Disable the leaked key selected, Set expiration cleared and Session management set to No." width="700" height="601"></div>
       <figcaption>
         <h3>Which setting would make the key stop working on a date?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. API key expiration. Set expiration is cleared by default, so this key does not expire.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the API key expiration setting. Set expiration is cleared by default, so this key won&apos;t expire.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="50,90.3,50,9.7" data-width="640px">
       <div class="shot"><img src="../images/10/iam-create-api-key-form-vpct-lab-cli.png" alt="The Create IBM Cloud API key form with the name vpct-lab-cli, the description CLI key for the VPC tutorials, Disable the leaked key selected, Set expiration cleared and Session management set to No." width="700" height="601"></div>
       <figcaption>
         <h3>The settings are right. Which button creates the key?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Create. The dialog that follows shows the key, and the key is shown only at creation. Copy it or download it then, and never share it.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the Create button. The dialog that follows shows the key, and IBM Cloud shows the key only when you create it. Copy it or download it then, and don&apos;t share it.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="38.9,18.6,12.3,8.6">
       <div class="shot"><img src="../images/11/access-group-vpct-lab-admins-access-tab.png" alt="The Access tab of the vpct-lab-admins access group, with two policies on the vpct-lab resource group: Administrator and Manager on all Identity and Access enabled services, and Viewer on the resource group only." width="1190" height="420"></div>
       <figcaption>
         <h3>Open the tab that lists what the access group may do.</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Access tab. The other tabs list the users, service IDs and trusted profiles in the group.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the Access tab. The other tabs list the users, service IDs and trusted profiles in the group.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="1.3,67,97,9.5">
       <div class="shot"><img src="../images/11/access-group-vpct-lab-admins-access-tab.png" alt="The Access tab of the vpct-lab-admins access group, with two policies on the vpct-lab resource group: Administrator and Manager on all Identity and Access enabled services, and Viewer on the resource group only." width="1190" height="420"></div>
       <figcaption>
         <h3>Which row lets the group manage every service in vpct-lab?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. All Identity and Access enabled services on the vpct-lab resource group, with the roles Administrator and Manager. The Viewer row is on the resource group only.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the row for All Identity and Access enabled services on the vpct-lab resource group, with the roles Administrator and Manager. The Viewer row applies to the resource group only.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -150,7 +150,7 @@
 OK
 Resource group vpct-lab was created.
 Resource Group ID: &lt;resource-group-id&gt;</pre>
-          <p class="hand note">The command takes only a name.</p>
+          <p class="hand note">The command needs only a name.</p>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud iam access-group-create vpct-lab-admins -d "Administrators of the vpct-lab resource group"</pre>
@@ -163,13 +163,13 @@ ID:            AccessGroupId-&lt;access-group-uuid&gt;
 Description:   Administrators of the vpct-lab resource group</pre>
         </div>
         <div class="q">
-          <p>A member of the group needs one role on the resource group itself to create resources in it. Which?</p>
+          <p>Which role does a member of the group need on the resource group itself to create resources in it?</p>
           <div class="opts">
             <button class="opt" data-ok>Viewer</button>
             <button class="opt">Administrator</button>
             <button class="opt">None. The Manager role on the services is enough</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>At least Viewer on the resource group itself. Run the command to create that policy first.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>Viewer. A member needs at least Viewer on the resource group itself. Run the command to create that policy first.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud iam access-group-policy-create vpct-lab-admins \
@@ -188,7 +188,7 @@ Resources:
              Resource Group ID     &lt;resource-group-id&gt;
              Resource Group Name   vpct-lab
              Memo                  Policy applies to the resource group</pre>
-          <p class="hand note">The memo says: the resource group itself.</p>
+          <p class="hand note">The Memo line says the policy applies to the resource group itself.</p>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud iam access-group-policy-create vpct-lab-admins \
@@ -222,25 +222,25 @@ Resources:
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>The service ID that was not found</h2>
-  <p class="lead">Northgate creates a service ID named <code>vpct-lab-tester</code> for its automation, and adds it to <code>vpct-lab-admins</code> by name. The command fails.</p>
+  <h2>Add a service ID to an access group by its UUID</h2>
+  <p class="lead">Northgate&apos;s network admin creates a service ID named <code>vpct-lab-tester</code> for its automation and tries to add it to <code>vpct-lab-admins</code> by name. The command fails.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
         <div class="bar"><span>bash</span><span data-term-count></span></div>
         <div class="q">
-          <p>The service ID exists. Why can the command not find it?</p>
+          <p>The service ID exists. Why can&apos;t the command find it?</p>
           <div class="opts">
-            <button class="opt">A service ID cannot join an access group</button>
+            <button class="opt">A service ID can&apos;t join an access group</button>
             <button class="opt" data-ok>The command takes the service ID&apos;s UUID, not its name</button>
             <button class="opt">The service ID needs a tag first</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>Run the commands to see the message and the fix.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>The command takes the service ID&apos;s UUID. Run the commands to see the message and the fix.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud iam access-group-service-id-add vpct-lab-admins vpct-lab-tester</pre>
           <pre class="out err">Service ID 'vpct-lab-tester' was not found.</pre>
-          <p class="hand note">This message is recorded in text, not the whole output.</p>
+          <p class="hand note">We recorded only this message, as text.</p>
         </div>
         <div class="cmd">
           <pre class="in">SID=$(ibmcloud iam service-id vpct-lab-tester --uuid)
@@ -253,7 +253,7 @@ Retrieving all service IDs of access group vpct-lab-admins as &lt;redacted&gt;
 OK
 ID                                               IAM ID                                               NAME
 ServiceId-&lt;service-id-uuid&gt;   iam-ServiceId-&lt;service-id-uuid&gt;   vpct-lab-tester</pre>
-          <p class="hand note">The UUID works. The service ID now holds the access group&apos;s policies.</p>
+          <p class="hand note">Using the UUID works, and the service ID now holds the access group&apos;s policies.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -270,22 +270,22 @@ ServiceId-&lt;service-id-uuid&gt;   iam-ServiceId-&lt;service-id-uuid&gt;   vpct
   <h2>Three questions</h2>
   <div>
     <div class="q" data-check>
-      <p><span class="kicker">Review question from Unit 1.2.</span> Northgate wants one rule that covers every server in a subnet. Which VPC object gives it one place to write the rule?</p>
+      <p><span class="kicker">Review question from Unit 1.2.</span> Northgate&apos;s network admin wants one rule that covers every server in a subnet. Which VPC object gives the admin one place to write the rule?</p>
       <div class="opts">
         <button class="opt" data-ok>A network ACL rule on the subnet</button>
         <button class="opt">A security group rule on each server</button>
         <button class="opt">A route in the default route table</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A network ACL applies to whole subnets, not to individual servers. A security group is attached to a network interface.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A network ACL rule on the subnet. A network ACL applies to whole subnets, not to individual servers, and a security group is attached to a network interface.</p></details>
     </div>
     <div class="q" data-check>
       <p>You create a VPC and name no resource group. Where does it go, and can you move it later?</p>
       <div class="opts">
         <button class="opt">Into a group named after the VPC, and yes</button>
-        <button class="opt" data-ok>Into the Default resource group, and the choice cannot be changed afterwards</button>
+        <button class="opt" data-ok>Into the Default resource group, and the choice can&apos;t be changed afterwards</button>
         <button class="opt">The command fails until you name one</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM says that if you do not specify a resource group, the resource is created in the Default resource group. The choice is made when the resource is created and cannot be changed afterwards. Every create command in the lab names the resource group.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The Default resource group, and you can&apos;t change it afterwards. IBM says that if you don&apos;t specify a resource group, the resource is created in the Default resource group. You make the choice when you create the resource. Every create command in the lab names the resource group.</p></details>
     </div>
     <div class="q" data-check>
       <p>The service ID <code>vpct-lab-tester</code> is in <code>vpct-lab-admins</code>. It logs in and lists the resource groups. What does it see?</p>
@@ -294,7 +294,7 @@ ServiceId-&lt;service-id-uuid&gt;   iam-ServiceId-&lt;service-id-uuid&gt;   vpct
         <button class="opt" data-ok>Only vpct-lab</button>
         <button class="opt">None, because a service ID has no access</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In the lab the service ID sees the <code>vpct-lab</code> resource group and nothing else, which is the access the group was given.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Only vpct-lab. In the lab the service ID sees the <code>vpct-lab</code> resource group and nothing else, which is the access the group was given.</p></details>
     </div>
   </div>
 </section>
@@ -304,7 +304,7 @@ ServiceId-&lt;service-id-uuid&gt;   iam-ServiceId-&lt;service-id-uuid&gt;   vpct
   <h2>You can set up access</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>A resource group is fixed when you create the resource. An access group holds identities and policies. Automation uses a service ID, a server uses a trusted profile.</p></div>
+    <div><span class="label">Remember</span><p>A resource group is fixed when you create the resource. An access group holds identities and policies. Automation uses a service ID, and a server uses a trusted profile.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapter 10, Install the IBM Cloud CLI and create an API key, chapter 11, Creating a resource group and access group in IBM Cloud, and chapter 12, Authorizing VPC services and a service ID in IBM Cloud IAM, run everything you just saw.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 1 of Module 3</span>
       <h1>Policies and protection groups</h1>
-      <p class="lead">By the end you can say which built-in policies lock their backups, find the lock in the Create Policy dialog, and make a file-based protection group that waits until you run it.</p>
+      <p class="lead">By the end of this unit you'll know which built-in policies lock their backups, where the lock is in the Create Policy dialog, and how to make a file-based protection group that waits until you run it.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -39,10 +39,10 @@
           {"box":[10,85,180,55],"tone":"mark","title":"Bronze","detail":"data lock"},
           {"box":[230,85,180,55],"dashed":true,"title":"Basic","detail":"no lock"},
           {"text":"a locked backup cannot be deleted early","at":[10,185],"hand":true,"size":16,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It has just ordered a BRS instance and wants to protect the folder <code>/data</code> on a Linux server. Before the first backup it must choose a policy and make a group.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It has just ordered a BRS instance and wants to protect the folder <code>/data</code> on a Linux server. Before the first backup it has to choose a policy and make a group.</p>
     </div>
   </div>
-  <p class="small">Every number and screen in this unit comes from real runs in our lab. The server name is blurred in the screenshots; no address appears.</p>
+  <p class="small">Every number and screen in this unit comes from real runs in our lab. The server name is blurred in the screenshots, and no address appears.</p>
 </section>
 
 <section class="screen">
@@ -75,7 +75,7 @@ Basic    none</pre></details>
         <button class="opt" data-ok>Basic, or a policy of its own</button>
         <button class="opt">Any of them: an administrator can delete a locked backup</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A backup made with a locked policy cannot be deleted until the lock ends, not even by an administrator. For a test, use Basic or your own policy.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Basic, or its own policy. A backup made with a locked policy can&apos;t be deleted until the lock ends, not even by an administrator.</p></details>
     </div>
   </div>
 </section>
@@ -83,20 +83,20 @@ Basic    none</pre></details>
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>Find the lock</h2>
-  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="21,72.5,16.5,6.5" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B1-5-default-policies.png" alt="Policies list of a new instance: Basic, Backup 1d, Retain 30d; Bronze with a padlock, Backup 1d, Retain 30d, DataLock 30d; Gold with a padlock, Backup 4h, Retain 1w, DataLock 1w; Silver with a padlock, Backup 12h, Retain 2w, DataLock 2w." width="1480" height="500"></div>
       <figcaption>
         <h3>This is Data Protection &gt; Policies. Where does the list say how long Gold&apos;s lock lasts?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The line under the name reads Backup 4h, Retain 1w, DataLock 1w. A padlock beside the name marks the three locked policies; Basic has neither.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The line under the name reads Backup 4h, Retain 1w, DataLock 1w. A padlock beside the name marks the three locked policies. Basic has neither.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="33,63,27,13" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-4-policy-default-lock.png" alt="Create Protection Policy as it opens: Backup every 1 Day, Retain for 2 Weeks, Lock 2 Weeks." width="632" height="418"></div>
       <figcaption>
         <h3>Northgate clicks Create Policy. The dialog opens like this. Which field would lock every backup the new policy makes?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The dialog fills in a data lock of its own: Retain for 2 Weeks, Lock 2 Weeks. Leave it and backups cannot be deleted until the lock ends, not even by an administrator. To remove it, point at the Lock field and click the minus sign that appears.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The dialog fills in a data lock of its own: Retain for 2 Weeks, Lock 2 Weeks. Leave it there and the backups can&apos;t be deleted until the lock ends, not even by an administrator. To remove it, point at the Lock field and click the minus sign that appears.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="35,68,19,8" data-width="760px">
@@ -130,7 +130,7 @@ Basic    none</pre></details>
         <button class="opt" data-ok>A file-based group reads only what changed on an incremental run; a volume-based one reads the whole volume every time</button>
         <button class="opt">File-based keeps backups longer</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That is what our lab run shows. The console makes the choice for you: it offers no volume-based type.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A file-based group reads only what changed. That&apos;s what our lab run showed. The console makes the choice for you, because it offers no volume-based type.</p></details>
     </div>
     <div class="q">
       <p>In the group&apos;s options for the server, Include Path starts as <code>/</code>. What does that protect?</p>
@@ -139,7 +139,7 @@ Basic    none</pre></details>
         <button class="opt" data-ok>The whole server</button>
         <button class="opt">Only the home folders</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Specify directories is chosen and Include Path is <code>/</code>, the whole server. Northgate changes it to <code>/data</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The whole server. Specify directories is chosen and Include Path is <code>/</code>, which is the whole server. Northgate changes it to <code>/data</code>.</p></details>
     </div>
   </div>
   <div class="tour" style="margin-top:20px">
@@ -156,7 +156,7 @@ Basic    none</pre></details>
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>A group that starts by itself</h2>
-  <p class="lead">Northgate wants to run its first backup by hand, when it is ready. It fills in the group form, picks the daily policy and clicks <b>Protect</b>. It does not open Additional Settings.</p>
+  <p class="lead">Northgate&apos;s backup admin wants to run the first backup by hand, when they&apos;re ready. They fill in the group form, pick the daily policy and click <b>Protect</b>, without opening Additional Settings.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>What does the group do next?</p>
@@ -165,21 +165,21 @@ Basic    none</pre></details>
         <button class="opt" data-ok>It runs on its daily schedule, counted from the moment Northgate opened the form</button>
         <button class="opt">It runs once at midnight</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The start time is the moment you open the form, so without the pause the daily schedule runs from now.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It runs on its daily schedule. The start time is the moment you open the form, so without the pause the daily schedule runs from then.</p></details>
     </div>
   </div>
   <div class="tour" style="margin-top:20px">
     <figure class="tstep" data-hot="35,74,18,17" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-9-pause-runs.png" alt="Additional Settings: Start Time 1:40pm, Europe/London; the Pause Future Runs switch is on, with the note: once enabled, no runs will be scheduled." width="1002" height="270"></div>
       <figcaption>
-        <h3>Where does Northgate stop the schedule before it clicks Protect?</h3>
+        <h3>Where does the admin stop the schedule before clicking Protect?</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Under Additional Settings, click the Pause Future Runs row, switch it on and click the tick. The note reads: once enabled, no runs will be scheduled.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="38,81,5.5,11" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-10-group-paused.png" alt="Protection: b-linux-files, Physical Files, policy b-daily-7d, with a Paused tag." width="1227" height="330"></div>
       <figcaption>
-        <h3>Northgate clicked Protect. Where does the list show the group is paused?</h3>
+        <h3>The admin clicked Protect. Where does the list show that the group is paused?</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Paused tag beside the group. In our lab the command line agreed: the group was paused, file-based, on <code>/data</code>.</p></details>
       </figcaption>
     </figure>
@@ -206,7 +206,7 @@ Basic    none</pre></details>
         <button class="opt" data-ok>2 Weeks: remove it if you do not want a lock</button>
         <button class="opt">The same as the policy you used last</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The dialog fills in Retain for 2 Weeks and Lock 2 Weeks. A locked backup cannot be deleted until the lock ends.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>2 Weeks. The dialog fills in Retain for 2 Weeks and Lock 2 Weeks, and a locked backup can&apos;t be deleted until the lock ends.</p></details>
     </div>
     <div class="q" data-check>
       <p>You make a group and do not switch on Pause Future Runs. When does its daily schedule start?</p>
@@ -215,7 +215,7 @@ Basic    none</pre></details>
         <button class="opt" data-ok>From the moment you opened the form</button>
         <button class="opt">At the start of the next week</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The start time is the moment you open the form. Switch on Pause Future Runs to keep only manual runs.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>From the moment you opened the form. Switch on Pause Future Runs if you only want manual runs.</p></details>
     </div>
   </div>
 </section>
@@ -225,7 +225,7 @@ Basic    none</pre></details>
   <h2>You can choose a policy and make a group</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>A new instance has four policies; Gold, Silver and Bronze lock their backups and Basic does not. The Create Policy dialog adds a lock of its own: remove it for a test. A new group runs from the moment you open the form unless you pause it.</p></div>
+    <div><span class="label">Remember</span><p>A new instance has four policies. Gold, Silver and Bronze lock their backups, and Basic doesn&apos;t. The Create Policy dialog adds a lock of its own, so remove it for a test. A new group runs from the moment you open the form unless you pause it.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>
