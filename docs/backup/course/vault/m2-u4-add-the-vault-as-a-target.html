@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Add the vault as a target · Cyber Vault course</title>
-<meta name="description" content="Course unit 2.4: register a Cyber Vault as an external target in the Data Protect console, change the two defaults that go against what the setup needs, and find why a policy will not create. No account needed.">
+<meta name="description" content="Course unit 2.4: register a Cyber Vault as an external target in the Data Protect console, change the two defaults that don't suit the setup, and fix a policy that won't create. No account needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 4 of Module 2</span>
       <h1>Add the vault as an external target</h1>
-      <p class="lead">By the end you can register a Cyber Vault in the Data Protect console, name the two defaults that go against what the setup needs, and fix a policy that will not create.</p>
+      <p class="lead">By the end of this unit you&apos;ll be able to register a Cyber Vault in the Data Protect console, change the two defaults that don&apos;t suit this setup, and fix a policy that won&apos;t create.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>6 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -39,11 +39,11 @@
           {"text":"write key","at":[172,48],"hand":true,"size":16,"tone":"mark"},
           {"box":[260,30,150,60],"heavy":true,"title":"Vault","detail":"locked bucket"},
           {"box":[260,120,150,60],"dashed":true,"title":"Read key","detail":"kept apart"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect, and it has made its vault. Now the cluster must be able to archive to it.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect, and its backup admin has created the vault. Now the cluster needs to be able to archive to it.</p>
     </div>
   </div>
   <p class="small">The console screens come from our lab, in the Data Protect console of a 7.4.1 cluster, with a vault made as in unit 2.2.</p>
-  <p class="small"><b>Terms used.</b> <b>S3-compatible</b>: speaks the same request format as Amazon&apos;s S3 storage. <b>Snapshot</b>: a saved copy of data as it was at one point in time. <b>Archive Object Lock</b>: the Data Protect switch that makes it lock each archived object; it cannot be switched off again. <b>DataLock</b>: a Data Protect setting that locks a backup copy so that it cannot be deleted until its lock ends. <b>Governance mode</b>: a weaker lock than Compliance mode; a user with the right permission can remove it with the bypass header.</p>
+  <p class="small"><b>Terms used.</b> <b>S3-compatible</b>: speaks the same request format as Amazon&apos;s S3 storage. <b>Snapshot</b>: a saved copy of data as it was at one point in time. <b>Archive Object Lock</b>: the Data Protect switch that makes it lock each archived object; it can&apos;t be switched off again. <b>DataLock</b>: a Data Protect setting that locks a backup copy so that it can&apos;t be deleted until its lock ends. <b>Governance mode</b>: a weaker lock than Compliance mode; a user with the right permission can remove it with the bypass header.</p>
 </section>
 
 <section class="screen">
@@ -66,7 +66,7 @@
         <button class="opt">The read key</button>
         <button class="opt">Both, in two fields</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Give the write key to the backup cluster and keep the read key apart.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The write key. It goes to the backup cluster, and you keep the read key apart.</p></details>
     </div>
     <div class="q">
       <p>In the policy builder you can click Add Archive or Add Vault. Which one sends data to your Cyber Vault?</p>
@@ -75,24 +75,24 @@
         <button class="opt">Add Vault</button>
         <button class="opt">Add CloudSpin</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Add Vault is Cohesity&apos;s own vault service. Your target is an archive target.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Add Archive. Add Vault is for Cohesity&apos;s own vault service, and your Cyber Vault is an archive target.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
-  <h2>Which defaults are wrong?</h2>
-  <p class="lead">The Register External Target form opens with some switches already set. Two of them go against what Northgate needs.</p>
+  <h2>Which defaults need changing?</h2>
+  <p class="lead">The Register External Target form opens with some switches already set. Two of them don&apos;t suit what Northgate needs.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>Which two defaults go against what the setup needs?</p>
+      <p>Which two defaults do you change?</p>
       <div class="opts">
         <button class="opt">Compression is on and the port is 443</button>
         <button class="opt" data-ok>Archive Object Lock is off, and Encryption is on</button>
         <button class="opt">HTTPS is on and Signature Version is 4</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Switch Archive Object Lock on, and switch Encryption off. Keep Compression on. The register form keeps HTTPS and AWS Signature Version 4 as they are.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Archive Object Lock and Encryption. Switch Archive Object Lock on, and switch Encryption off. Keep Compression on, and leave HTTPS and AWS Signature Version 4 as they are.</p></details>
     </div>
     <div class="q">
       <p>Why switch Encryption off?</p>
@@ -101,7 +101,7 @@
         <button class="opt" data-ok>So that another cluster can read the archive later</button>
         <button class="opt">Because the vault already has no encryption</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>With Cohesity-managed keys no other cluster can read the archive later. Module 4 reads the archive from a new cluster.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>So that another cluster can read it. With Cohesity-managed keys, no other cluster can read the archive, and in Module 4 a new cluster has to read it.</p></details>
     </div>
   </div>
 </section>
@@ -109,7 +109,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Click through the console</span>
   <h2>Register the target</h2>
-  <p class="lead">These screens come from the Data Protect console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the Data Protect console in our lab. Click where you&apos;d click. After two misses, the page marks the right place.</p>
   <div class="tour">
     <figure class="tstep" data-hot="3.8,33.5,45,7" data-width="520px">
       <div class="shot"><img src="../../cyber-vault/tutorials/images/V3-1-register-form.png" alt="Register External Target: Purpose Archival, Storage Type S3Compatible, Storage Class Standard, the vault as Bucket Name, the direct endpoint, port 443, region us-south. The key fields are still empty." width="632" height="675"></div>
@@ -121,7 +121,7 @@
     <figure class="tstep" data-hot="3.5,19.5,30,4.5" data-width="520px">
       <div class="shot"><img src="../../cyber-vault/tutorials/images/V3-2-object-lock-compliance.png" alt="Archive Object Lock switched on, with the warning that once enabled it cannot be disabled. Object Lock Mode Compliance is chosen and the box that asks you to type YES is empty. The Encryption switch is off and Compression is on." width="646" height="682"></div>
       <figcaption>
-        <h3>Which switch must you turn on? The warning says it cannot be turned off again.</h3>
+        <h3>Which switch do you need to turn on? The warning says it can&apos;t be turned off again.</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Archive Object Lock. Its mode starts at Governance. Choose Compliance and type YES in the box. Then switch Encryption off and click Register.</p></details>
       </figcaption>
     </figure>
@@ -138,7 +138,7 @@
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>Make a policy</h2>
-  <p class="lead">Open Data Protection, then Policies, then Create Policy. The dialog fills in values you did not choose.</p>
+  <p class="lead">Open Data Protection, then Policies, then Create Policy. The dialog fills in some values for you, and you&apos;ll change a few of them.</p>
   <div class="tour">
     <figure class="tstep" data-hot="67,67.4,25,8.3" data-width="520px">
       <div class="shot"><img src="../../cyber-vault/tutorials/images/V3-5-policy-default-lock.png" alt="Create Protection Policy as it opens: Backup every 1 Day, Keep on Local, Retain for 2 Weeks, Lock 2 Weeks." width="632" height="423"></div>
@@ -151,7 +151,7 @@
       <div class="shot"><img src="../../cyber-vault/tutorials/images/V3-6-archive-defaults.png" alt="Policy builder with an Archive section as it opens: Archive to empty, Every Run, Retain for 1 Month, Lock 14 Days. DataLock is switched on at the top." width="1003" height="752"></div>
       <figcaption>
         <h3>You clicked Add Archive. Which field has filled in a 14-day lock?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The archive section fills in Retain 1 Month and Lock 14 Days. Pick the target in Archive to. For a target with object lock the Lock field goes away. Set Retain for to 1 Day.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The archive section fills in Retain 1 Month and Lock 14 Days. Pick the target in Archive to. For a target with object lock, the Lock field goes away. Set Retain for to 1 Day.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -159,8 +159,8 @@
 
 <section class="screen">
   <span class="kicker">Step 5 · Spot the fault</span>
-  <h2>&quot;This Policy is incomplete&quot;</h2>
-  <p class="lead">Northgate&apos;s admin has picked the target and set Retain for to 1 Day. The Lock field has gone. She clicks Create.</p>
+  <h2>Fix a policy that says it&apos;s incomplete</h2>
+  <p class="lead">Northgate&apos;s backup admin has picked the target and set Retain for to 1 Day. The Lock field has gone. She clicks Create, and the console refuses.</p>
   <div class="tour">
     <figure class="tstep" data-hot="3.8,90.2,62.5,8.3" data-width="760px">
       <div class="shot"><img src="../../cyber-vault/tutorials/images/V3-7-datalock-duration-error.png" alt="Policy builder: Archive to the target, every Run, Retain for 1 Day, and the note that snapshots on this target cannot be deleted. A red message at the bottom reads: This Policy is incomplete. Please specify DataLock duration." width="1003" height="660"></div>
@@ -185,7 +185,7 @@
         <button class="opt" data-ok>Switch DataLock off at the top of the builder</button>
         <button class="opt">Click Add Vault instead</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>DataLock stays on after the Lock field is removed, and Create then fails. With it off, Create works: &quot;Protection Policy created.&quot;</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Switch DataLock off. It stays on after the Lock field is removed, and that&apos;s what makes Create fail. With it off, Create works and the console says &quot;Protection Policy created.&quot;</p></details>
     </div>
     <div class="q">
       <p>The note in the archive section says snapshots on this target cannot be deleted. By whom?</p>
@@ -194,10 +194,10 @@
         <button class="opt" data-ok>Not from Cohesity and not from the storage provider interface</button>
         <button class="opt">Only from the vault&apos;s own console</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The note reads: &quot;Snapshots stored on this target cannot be deleted either from Cohesity or from storage provider interface.&quot;</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>From neither of them. The note reads: &quot;Snapshots stored on this target cannot be deleted either from Cohesity or from storage provider interface.&quot;</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> The two defaults, Archive Object Lock off and Encryption on, cause no error. They only go against what the setup needs. Check both before you click Register. Archive Object Lock cannot be switched off again.</p>
+  <p class="watch"><b>Watch for this.</b> The two defaults, Archive Object Lock off and Encryption on, don&apos;t cause an error. They just don&apos;t suit this setup, so check both before you click Register. Archive Object Lock can&apos;t be switched off again.</p>
 </section>
 
 <section class="screen">
@@ -220,7 +220,7 @@
         <button class="opt" data-ok>Archive Object Lock on, and Encryption off</button>
         <button class="opt">Compression off and HTTPS off</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Lock on, in Compliance mode with YES typed. Encryption off, so another cluster can read the archive later.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Archive Object Lock on, in Compliance mode with YES typed, and Encryption off so that another cluster can read the archive later.</p></details>
     </div>
     <div class="q" data-check>
       <p>Create says &quot;This Policy is incomplete. Please specify DataLock duration.&quot; What do you do?</p>
@@ -229,7 +229,7 @@
         <button class="opt" data-ok>Switch DataLock off at the top of the builder</button>
         <button class="opt">Delete the target and add it again</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>With DataLock off, the policy was created in our lab.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Switch DataLock off. With it off, the policy was created in our lab.</p></details>
     </div>
   </div>
 </section>

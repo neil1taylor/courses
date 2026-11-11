@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 1 of Module 4</span>
       <h1>Block or file?</h1>
-      <p class="lead">By the end you can say which kind of storage fits a need, read the output of creating and attaching a data volume, and avoid the two mistakes that catch people on their first mount.</p>
+      <p class="lead">By the end of this unit you&apos;ll know which kind of storage fits a need, how to read the output of creating and attaching a data volume, and how to avoid the two mistakes that catch people on their first mount.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -41,16 +41,16 @@
           {"box":[258,40,70,140],"heavy":true,"title":"server"},
           {"box":[340,40,70,140],"dashed":true,"title":"shared"},
           {"text":"disk or folder?","at":[250,206],"hand":true,"size":18,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its app servers each need a disk of their own, and a folder that every app server can read. The company is made up; the names and output are real.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its app servers each need a disk of their own, and a folder that every app server can read. The names and output are real, even though the company is made up.</p>
     </div>
   </div>
-  <p class="small">Every name and line of output in this unit comes from a real run. The comparison of storage options rests on IBM&apos;s pages, plus a short run with <code>sdp</code> volumes.</p>
+  <p class="small">Every name and line of output in this unit comes from a real run. The comparison of storage options comes from IBM&apos;s pages, plus a short run with <code>sdp</code> volumes.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>A disk of its own, and a folder to share</h2>
-  <p class="lead">Four parts, in the commands that create them. Select a part of the drawing to see what it does and which lines make it. You can also click a line. The resource group and tag options are left out.</p>
+  <p class="lead">The drawing shows four parts, and the commands below create them. Select a part to see what it does and which lines make it, or click a line. We left out the resource group and tag options.</p>
   <div class="explorer" data-start="volume"
     data-map='{"volume":[[1,1]],"attach":[[2,2]],"share":[[3,3]],"mount":[[4,7]]}'>
     <div class="cols">
@@ -86,7 +86,7 @@
           <h3>File share</h3>
           <p>A shared folder reached over NFS by many servers at once. The zonal profile is <code>dp2</code>, from 10 GB. Servers mount it over NFS version 4.1 or higher.</p>
           <p class="hand tilt"><b>From vSphere:</b> roughly the other half of a datastore: a folder for many hosts, where a volume is a disk for one.</p>
-          <p class="watch"><b>Watch for this.</b> Windows is not supported. You cannot change a share&apos;s profile after creation.</p>
+          <p class="watch"><b>Watch for this.</b> Windows isn&apos;t supported, and you can&apos;t change a share&apos;s profile after you create it.</p>
         </div>
         <div class="part-info" data-part="mount">
           <h3>Mount target</h3>
@@ -108,7 +108,7 @@ ibmcloud is share-mount-target-create vpct-prod-app-share --name vpct-prod-app-s
 <section class="screen">
   <span class="kicker">Step 2 · Run it</span>
   <h2>Find the new disk, then format it</h2>
-  <p class="lead">A new data volume has no file system. Run each command in turn. The output is what the lab returned. Long output is cut with <code>...</code>.</p>
+  <p class="lead">A new data volume has no file system yet. Run each command in turn. The output is what the lab returned, and we cut long output with <code>...</code>.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -118,7 +118,7 @@ ibmcloud is share-mount-target-create vpct-prod-app-share --name vpct-prod-app-s
           <pre class="out">ID                                          Name                            Volume                         Status     Type   Device                                            Auto delete
 0757-…-c6   vpct-prod-app-z1-01-data1-att   vpct-prod-app-z1-01-data1      attached   data   0757-…-9t8b6   true
 0757-…-57   vpct-prod-app-z1-01-boot        vpct-prod-app-z1-01-boot-vol   attached   boot   0757-…-x8tkv   true</pre>
-          <p class="hand note">One boot attachment, one data attachment, both attached.</p>
+          <p class="hand note">The server has one boot attachment and one data attachment, and both are attached.</p>
         </div>
         <div class="q">
           <p>On the server, <code>lsblk</code> lists the disks. Which one is the new 10 GB data disk?</p>
@@ -126,7 +126,7 @@ ibmcloud is share-mount-target-create vpct-prod-app-share --name vpct-prod-app-s
             <button class="opt">The first disk after the boot disk</button>
             <button class="opt" data-ok>The 10 GB disk with no partitions</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>Do not take the first disk after the boot disk. Run the next command and look at the sizes.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>The 10 GB disk with no partitions. Don&apos;t pick the first disk after the boot disk, because in the lab that was a small configuration disk. Run the next command and look at the sizes.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">lsblk</pre>
@@ -140,7 +140,7 @@ vdb     253:16   0  366K  0 disk
 vdc     253:32   0   44K  0 disk 
 vdd     253:48   0   10G  0 disk </pre>
           <p class="hand note">vdb and vdc are small configuration disks: 366K and 44K.</p>
-          <p class="hand note">vdd is the data disk. Formatting vdb would overwrite a configuration disk.</p>
+          <p class="hand note">vdd is the data disk. If you formatted vdb, you would overwrite a configuration disk.</p>
         </div>
         <div class="cmd">
           <p class="pre"># DEV=/dev/vdd, as in the lab</p>
@@ -155,7 +155,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
           <pre class="in">df -h /data</pre>
           <pre class="out">Filesystem      Size  Used Avail Use% Mounted on
 /dev/vdd        9.8G  2.1M  9.3G   1% /data</pre>
-          <p class="hand note">The mount does not survive a reboot. Add the volume&apos;s UUID to /etc/fstab with the nofail option.</p>
+          <p class="hand note">The mount doesn&apos;t survive a reboot, so add the volume&apos;s UUID to /etc/fstab with the nofail option.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -170,34 +170,34 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Design it</span>
   <h2>Disk, folder or object store?</h2>
-  <p class="lead">Three Northgate needs. Pick a choice, then read the worked answer.</p>
+  <p class="lead">Northgate needs three things. Pick an answer for each, then read the worked answer.</p>
   <div class="pair">
     <div class="q">
-      <p>Each app server needs its own data disk.</p>
+      <p>Each app server needs its own data disk. What should Northgate use?</p>
       <div class="opts">
         <button class="opt" data-ok>A <code>general-purpose</code> block volume</button>
         <button class="opt">An <code>sdp</code> block volume</button>
         <button class="opt">A file share</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>The series uses a <code>general-purpose</code> volume. The <code>sdp</code> profile needs an allowlisted account. A block volume is one server&apos;s own disk.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A <code>general-purpose</code> block volume. The series uses it because the <code>sdp</code> profile needs an allowlisted account, and a block volume is one server&apos;s own disk.</p></details>
     </div>
     <div class="q">
-      <p>Both app servers must read and write the same folder.</p>
+      <p>Both app servers must read and write the same folder. What should Northgate use?</p>
       <div class="opts">
         <button class="opt">One block volume attached to both</button>
         <button class="opt" data-ok>A zonal <code>dp2</code> file share</button>
         <button class="opt">Two block volumes</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>A block volume is not shared. A zonal <code>dp2</code> share is mounted over NFS by many servers, and it can have a replica in another zone or region.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A file share. A block volume isn&apos;t shared, but a zonal <code>dp2</code> share is mounted over NFS by many servers, and it can have a replica in another zone or region.</p></details>
     </div>
     <div class="q">
-      <p>Backups and logs must be kept outside the VPC.</p>
+      <p>Backups and logs must be kept outside the VPC. What should Northgate use?</p>
       <div class="opts">
         <button class="opt">A file share</button>
         <button class="opt" data-ok>Object Storage</button>
         <button class="opt">A larger boot volume</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>The comparison table sends backups and logs outside the VPC to Object Storage. Objects are reached over HTTP, not files over NFS.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Object Storage. The comparison table sends backups and logs outside the VPC to Object Storage. You reach objects over HTTP, and you don&apos;t reach them as files over NFS.</p></details>
     </div>
   </div>
 </section>
@@ -213,7 +213,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
         <button class="opt" data-ok>Grow the file system into the new space</button>
         <button class="opt">Stop the server, then start it</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Two steps, not one.</span><p>The lab ran <code>sudo resize2fs /dev/vdd</code> and then <code>df -h /data</code> showed 20G. The file written before was still there. IBM says capacity of a tiered volume can only grow, and only while it is attached to a running server.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Raising the capacity is only the first of two steps.</span><p>You grow the file system into the new space. The lab ran <code>sudo resize2fs /dev/vdd</code> and then <code>df -h /data</code> showed 20G. The file written before was still there. IBM says capacity of a tiered volume can only grow, and only while it is attached to a running server.</p></details>
     </div>
     <div style="display:grid;gap:10px;align-content:start">
       <p>A Northgate admin mounts the share on an Ubuntu 26.04 server with no extra options:</p>
@@ -226,7 +226,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
           <button class="opt" data-ok>The option <code>-o sec=sys</code></button>
           <button class="opt">Encryption in transit</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>Without it the client mounted with <code>sec=null</code>, and every write failed. The lab used <code>sudo mount -t nfs4 -o sec=sys &lt;mount-path&gt; /mnt/share</code>.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>The security option. Mount with it set, because without it the client mounted with <code>sec=null</code> and every write failed. The lab used <code>sudo mount -t nfs4 -o sec=sys &lt;mount-path&gt; /mnt/share</code>.</p></details>
       </div>
     </div>
   </div>
@@ -240,10 +240,10 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
       <p>Northgate tries to create a <code>general-purpose</code> volume from a snapshot of an <code>sdp</code> volume. The error is <code>volume_not_implemented</code>. What does that tell you?</p>
       <div class="opts">
         <button class="opt">The zone is full</button>
-        <button class="opt" data-ok>The two profiles are different storage generations and cannot be mixed this way</button>
+        <button class="opt" data-ok>The two profiles are different storage generations and can&apos;t be mixed this way</button>
         <button class="opt">The snapshot is still pending</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A test run tried it: an <code>sdp</code> snapshot to a <code>general-purpose</code> volume was refused with this error, and so was an <code>sdp</code> volume from a first-generation boot snapshot. An <code>sdp</code> volume from an <code>sdp</code> snapshot worked, in the same zone and in another.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The two profiles are different storage generations. A test run tried it: an <code>sdp</code> snapshot to a <code>general-purpose</code> volume was refused with this error, and so was an <code>sdp</code> volume from a first-generation boot snapshot. An <code>sdp</code> volume from an <code>sdp</code> snapshot worked, in the same zone and in another.</p></details>
     </div>
     <div class="q" data-check>
       <p>A data volume was attached with auto-delete true. You delete the server. What happens to the volume?</p>
@@ -252,7 +252,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
         <button class="opt">It stays, unattached</button>
         <button class="opt">It moves to a file share</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The lab deleted server 01 and its volume went with it. Server 02&apos;s volume, detached first, was still listed.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It&apos;s deleted with the server. The lab deleted server 01 and its volume went with it. Server 02&apos;s volume, which was detached first, was still listed.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which statement about a file share&apos;s mount target is right?</p>
@@ -261,7 +261,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
         <button class="opt" data-ok>It needs a network interface and a security group that allows inbound NFS</button>
         <button class="opt">It works for Windows servers</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM says a mount target needs a network interface and a security group, and Windows is not supported.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It needs a network interface and a security group that allows inbound NFS. IBM says a mount target needs a network interface and a security group, and Windows isn&apos;t supported.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 3.1.</b> A server profile name has a <code>d</code> in it. What does that give you, and what is the catch?</p>
@@ -270,7 +270,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
         <button class="opt" data-ok>Instance storage: temporary disks on the host, which can be lost</button>
         <button class="opt">A dedicated host</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Instance storage is temporary solid-state disks on the host, for scratch space and swap that can be lost.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Instance storage. It&apos;s temporary solid-state disks on the host, for scratch space and swap, and it can be lost.</p></details>
     </div>
   </div>
 </section>
@@ -280,7 +280,7 @@ Writing superblocks and filesystem accounting information:  0/80     done</pre>
   <h2>You can pick the storage</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Block is one server&apos;s disk. A file share is a folder for many. Find the 10 GB disk before you format. Grow the file system after you grow the volume. Mount with <code>sec=sys</code>.</p></div>
+    <div><span class="label">Remember</span><p>A block volume is one server&apos;s disk, and a file share is a folder for many servers. Find the 10 GB disk before you format it, grow the file system after you grow the volume, and mount the share with <code>sec=sys</code>.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapter 41, Adding and growing data volumes on VPC servers, runs the disk steps. Chapter 45, Sharing files with a VPC file share and replicating it, runs the share.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

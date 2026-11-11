@@ -27,23 +27,23 @@
     <div>
       <span class="kicker">Unit 2 of Module 1</span>
       <h1>The pieces</h1>
-      <p class="lead">By the end you can name the pieces a backup needs (instance, connector, Connector Agent, source, policy and protection group) and follow how data flows between them.</p>
+      <p class="lead">By the end of this unit you'll be able to name the pieces a backup needs (instance, connector, Connector Agent, source, policy and protection group) and follow how data flows between them.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: a server with its agent sends data through a connector to the service instance. A policy and a protection group say what to back up and when."
     data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,50,110,56],"title":"server","detail":"with agent"},{"line":[124,78,156,78],"arrow":true,"tone":"mark"},{"box":[160,50,110,56],"title":"connector"},{"line":[274,78,306,78],"arrow":true,"tone":"mark"},{"box":[310,50,100,56],"title":"instance"},{"text":"a policy and a group say","at":[20,150],"hand":true,"size":17,"tone":"muted"},{"text":"what to back up, and when","at":[20,176],"hand":true,"size":17,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It wants to back up the folder <code>/data</code> on a Linux server. Today it learns what it must set up, and in what order.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It wants to back up the folder <code>/data</code> on a Linux server. In this unit you see what it has to set up, and in what order.</p>
     </div>
   </div>
-  <p class="small">The facts here come from IBM&apos;s pages, and from runs in our lab. Addresses, the server&apos;s name and IDs were replaced with made-up values or blurred.</p>
+  <p class="small">The facts here come from IBM&apos;s pages and from runs in our lab. We replaced addresses, the server&apos;s name and IDs with made-up values, or blurred them.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
-  <h2>Seven pieces, one backup</h2>
-  <p class="lead">These are the three commands that register a server, make a policy and make a group. The values are placeholders. Select a part of the drawing to see what it is, and which lines belong to it.</p>
+  <h2>The seven pieces of one backup</h2>
+  <p class="lead">The three commands below register a server, make a policy and make a group. The values are placeholders. Tap a part of the drawing to see what it is, and which lines belong to it.</p>
   <div class="explorer" data-start="source"
     data-map='{"source":[[1,2]],"policy":[[3,4]],"group":[[5,7]]}'>
     <div class="cols">
@@ -72,15 +72,15 @@
         </div>
         <div class="part-info" data-part="instance">
           <h3>The instance</h3>
-          <p>IBM runs it. It holds the control plane, the dashboard, the API, the policies and the protection groups. You make it once, in a region, and many connections, sources and groups use it.</p>
+          <p>IBM runs it. It holds the control plane, the dashboard, the API, the policies and the protection groups. You create it once, in a region, and many connections, sources and groups use it.</p>
         </div>
         <div class="part-info" data-part="policy">
           <h3>The policy</h3>
-          <p>When to back up and how long to keep each backup. The one in the lines shown runs daily, keeps backups for 7 days and has no data lock.</p>
+          <p>This says when to back up and how long to keep each backup. The one in the command shown runs daily, keeps backups for 7 days and has no data lock.</p>
         </div>
         <div class="part-info" data-part="group">
           <h3>The protection group</h3>
-          <p>What to back up: a source and its paths, plus a policy. This one is file-based, on <code>/data</code>, and paused so that only manual runs happen.</p>
+          <p>This says what to back up: a source and its paths, plus a policy. This one is file-based, on <code>/data</code>, and paused, so only manual runs happen.</p>
         </div>
       </div>
     </div>
@@ -98,7 +98,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>What comes first, and which route</h2>
-  <p class="lead">Northgate has a Linux server with the backup agent installed and a new BRS instance. It asks what it must make, and in what order.</p>
+  <p class="lead">Northgate has a Linux server with the backup agent installed, and a new BRS instance. What does it need to create, and in what order?</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>Northgate wants to register its Linux server as a source through a connector server. What must exist before the register command works?</p>
@@ -107,7 +107,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
         <button class="opt" data-ok>A connected connector or agent, whose connection ID goes into the command</button>
         <button class="opt">A policy with a data lock</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Registering a source needs &quot;a connected connector or agent; you need its connection ID&quot;. The server also needs the backup agent installed, as the Sources page says. The policy and the group come after the source.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A connected connector or agent. IBM&apos;s page says registering a source needs &quot;a connected connector or agent; you need its connection ID&quot;. The server also needs the backup agent installed, as the Sources page says. The policy and the group come after the source.</p></details>
     </div>
     <div class="q">
       <p>Which route needs no connector server running all the time?</p>
@@ -116,7 +116,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
         <button class="opt" data-ok>The Connector Agent route</button>
         <button class="opt">Neither: both need one</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The Connector Agent has no 4-vCPU, 16 GB server, no catalog image, no browser step and no password to keep. The cost is that each protected host needs its own agent, where one connector server serves many hosts. Both routes need the backup agent on the host.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The Connector Agent route. There&apos;s no 4-vCPU, 16 GB server, no catalog image, no browser step and no password to keep. The cost is that each protected host needs its own agent, whereas one connector server serves many hosts. Both routes need the backup agent on the host.</p></details>
     </div>
   </div>
 </section>
@@ -124,7 +124,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
 <section class="screen">
   <span class="kicker">Step 3 · Click through the console</span>
   <h2>Source, then group</h2>
-  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="26.4,28.6,44.9,8.2" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-1-register-external.png" alt="Register Physical Server, step 1: Connection Type with Direct and External Data Source; External Data Source chosen and a Data Source Connection list." width="758" height="510"></div>
@@ -136,15 +136,15 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
     <figure class="tstep" data-hot="3.6,74,46.8,8.3" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2b-2-agent-in-register-list.png" alt="Register Physical Server with Direct chosen; the Connector Agent field lists cohesity-lab-agent." width="770" height="605"></div>
       <figcaption>
-        <h3>You chose Direct. Where does the Connector Agent you claimed on the server show up?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The <b>Connector Agent</b> field lists the connection name you sent when you claimed the agent. In our lab a dialog left open from before the claim showed an empty list; reloading the page fixed it.</p></details>
+        <h3>You chose Direct. When the Connector Agent was set up on the server, it was claimed: it was sent a connection name. Where does that agent show up now?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The <b>Connector Agent</b> field lists the connection name you sent when you claimed the agent. If the list is empty, reload the page. In our lab, a dialog we&apos;d left open from before the claim showed an empty list until we reloaded.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="33,78.3,5.7,7.2" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-3-source-registered.png" alt="Sources: one physical source, not protected, 99.9 GiB. The server name is blurred." width="1227" height="470"></div>
       <figcaption>
         <h3>The server is registered. Where does the page tell you nothing protects it yet?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Protected: No</b> and 0 Bytes protected. Registering makes a source; a protection group is what protects it.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It says <b>Protected: No</b> and 0 Bytes protected. Registering creates a source, and a protection group is what protects it.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="7.5,86.1,16.3,9.1" data-width="900px">
@@ -159,26 +159,26 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>Two things that look wrong and are not</h2>
-  <p class="lead">Northgate sets up a connector server and a Connector Agent on two servers. Two screens look odd.</p>
+  <h2>Two screens that look wrong but aren&apos;t</h2>
+  <p class="lead">Northgate&apos;s backup admin sets up a connector server and a Connector Agent on two servers. Two of the screens look odd. What do they mean?</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>A Connector Agent has been claimed. Northgate opens <b>System &gt; Data Source Connections</b> and the agent&apos;s connection is not listed. What does that mean?</p>
+      <p>The admin has claimed a Connector Agent, then opens <b>System &gt; Data Source Connections</b> and finds the agent&apos;s connection isn&apos;t listed. What does that mean?</p>
       <div class="opts">
         <button class="opt">The claim failed</button>
         <button class="opt" data-ok>Nothing is wrong: that page lists only the connector server&apos;s connections</button>
         <button class="opt">The instance has lost the agent</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the page showed only the connector server&apos;s connection, and the command-line list for connections showed the same. The agent&apos;s connection appears in the Connector Agent field when you register a source.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Nothing is wrong. In our lab that page showed only the connector server&apos;s connection, and the command-line list of connections showed the same. The agent&apos;s connection appears in the Connector Agent field when you register a source.</p></details>
     </div>
     <div class="q">
-      <p>A new connector server&apos;s page shows <b>Unhealthy</b> with &quot;Connection dropped to dataplane due to internal error&quot;. What does Northgate do?</p>
+      <p>A new connector server&apos;s page shows <b>Unhealthy</b> with &quot;Connection dropped to dataplane due to internal error&quot;. What should the admin do?</p>
       <div class="opts">
         <button class="opt">Delete the server and start again</button>
         <button class="opt" data-ok>Wait, then reload the page</button>
         <button class="opt">Add vCPUs to the server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The fix is to wait. In our lab the connector went from connected to disconnected twice, then stayed connected from 11:32:54 to the last check at 11:36:26. Reload the page to see Healthy.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Wait. In our lab the connector went from connected to disconnected twice, then stayed connected from 11:32:54 to our last check at 11:36:26. Reload the page and it shows Healthy.</p></details>
     </div>
   </div>
 </section>
@@ -194,7 +194,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
         <button class="opt" data-ok>A source with its paths, and a policy</button>
         <button class="opt">An instance and a region</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The create-group command gives the source&apos;s object and paths, and the policy ID.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A source and a policy. The create-group command gives the source&apos;s object and paths, and the policy ID.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 1.1.</b> Who installs and upgrades the backup agent on a protected server?</p>
@@ -203,7 +203,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
         <button class="opt" data-ok>You</button>
         <button class="opt">The connector, by itself</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The customer installs and upgrades backup agents, in IBM&apos;s shared-responsibility table.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>You do. IBM&apos;s shared-responsibility table puts installing and upgrading backup agents on the customer&apos;s side.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which piece sits on the source host and replaces the connector server for that host?</p>
@@ -222,7 +222,7 @@ ibmcloud backup-recovery protection-group create --xibm-tenant-id $T --environme
   <h2>You can name the pieces</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>A backup needs an instance, a connection with a connector (or a Connector Agent on the host), the backup agent on the server, a registered source, a policy, and a protection group that joins a source to a policy. The Connector Agent needs no connector server but must be on every protected host.</p></div>
+    <div><span class="label">Remember</span><p>A backup needs an instance, a connection with a connector (or a Connector Agent on the host), the backup agent on the server, a registered source, a policy, and a protection group that joins a source to a policy. The Connector Agent doesn&apos;t need a connector server, but it has to be on every protected host.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

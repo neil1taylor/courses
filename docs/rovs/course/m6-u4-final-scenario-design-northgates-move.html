@@ -26,8 +26,8 @@
   <div class="start">
     <div>
       <span class="kicker">Unit 4 of Module 6 · the last unit</span>
-      <h1>Final scenario: design Northgate&apos;s move</h1>
-      <p class="lead">By the end you have made the main decisions for a whole move to ROVS, and compared each one with the answer the tutorials give.</p>
+      <h1>Final scenario: design Northgate's move</h1>
+      <p class="lead">By the end of this unit you'll have made the main decisions for a whole move to ROVS, and compared each one with the answer the tutorials give.</p>
       <div class="facts"><span>About 20 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -40,7 +40,7 @@
           {"line":[254,95,286,95],"arrow":true},
           {"box":[290,60,110,70],"heavy":true,"tone":"mark","title":"db"},
           {"text":"must not be reached from web","at":[190,170],"hand":true,"size":17,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It runs a web, app and database application on vSphere, and it has a few physical servers. The database must survive the loss of a cluster.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that's moving off vSphere. It runs a web, app and database application on vSphere, and it has a few physical servers. The database has to survive the loss of a cluster.</p>
     </div>
   </div>
   <p class="small">The needs are made up. Every answer is a statement already made in the earlier units, with the conditions given there. Where a test measured something once, the unit says so. The review question repeats one from unit 3.2.</p>
@@ -49,7 +49,7 @@
 <section class="screen">
   <span class="kicker">Step 1 · Design it</span>
   <h2>The cluster, the tier network and the disks</h2>
-  <p class="lead">Three decisions about the target. Pick an answer, then read the worked answer. The drawing shows the tier layout.</p>
+  <p class="lead">The first three decisions are about the target. Pick an answer for each one, then read the worked answer. The drawing shows the tier layout.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram of one Layer 2 primary network spanning three namespaces. The web VM reaches the app VM on port 8080 and the app VM reaches the db VM on port 5432, both marked allowed. A dashed arrow from web to db is marked denied, and one from db to app is marked denied."
     data-drawing='{"w":560,"h":230,"shapes":[
       {"box":[10,10,540,170],"dashed":true,"title":"one Layer 2 primary network"},
@@ -68,16 +68,16 @@
         <button class="opt" data-ok>One zone</button>
         <button class="opt">Three zones, for resilience</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>IBM recommends single-zone deployments for virtualisation workloads, because cross-zone storage replication adds latency to every VM write. Live migration is same-zone only, and VNIs and their VLAN attachments are zone-scoped. A zone spread does not survive a region loss. For production with three ODF copies, IBM&apos;s floor is six workers, not three.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>One zone. IBM recommends single-zone deployments for virtualisation workloads, because cross-zone storage replication adds latency to every VM write. Live migration is same-zone only, and VNIs and their VLAN attachments are zone-scoped. A zone spread doesn't survive a region loss. For production with three ODF copies, IBM's minimum is six workers rather than three.</p></details>
     </div>
     <div class="q">
-      <p>The database tier must not be reachable from the web tier, and the platform must enforce it. Which design?</p>
+      <p>The web tier must never reach the database tier, and the platform has to enforce that. Which design?</p>
       <div class="opts">
         <button class="opt">VPC security groups</button>
         <button class="opt">Each tier as a secondary interface, with NetworkPolicy</button>
         <button class="opt" data-ok>A Layer 2 primary network, one namespace per tier, with NetworkPolicy</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>If tier traffic must be policed by the platform, the tier network has to be the primary network. Security groups do not see traffic inside the overlay, and traffic between VMs on one worker can bypass them. NetworkPolicy never sees a secondary interface. In the run, web to db was proven open first, then denied by policy.</p><p><b>Cost.</b> One namespace per tier. OVN gives guests their addresses, and a fixed address means reserving a range. A primary network alone gave no inbound path: an edge Route returned 503 against a service proven in-cluster. This was measured on one cluster.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A Layer 2 primary network. If tier traffic has to be policed by the platform, the tier network has to be the primary network. Security groups don't see traffic inside the overlay, and traffic between VMs on one worker can bypass them. NetworkPolicy never sees a secondary interface. In our run, web reached db first, and then the policy denied it.</p><p><b>What it costs.</b> You need one namespace per tier. OVN gives guests their addresses, and a fixed address means reserving a range. A primary network on its own gave no inbound path, and an edge Route returned 503 against a service that worked inside the cluster. We measured this on one cluster.</p></details>
     </div>
     <div class="q">
       <p>Which StorageClass does every Northgate VM disk use, and where do you set it for the migration?</p>
@@ -86,7 +86,7 @@
         <button class="opt" data-ok>ocs-storagecluster-ceph-rbd-virtualization, in the MTV storage map</button>
         <button class="opt">ocs-storagecluster-cephfs, in the storage map</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>The virtualization class is the one validated for VM disks. Choose it in the storage map, not afterwards. On the test cluster, two MTV storage maps named the generic class, the VMs sat on it, and nothing warned. Name RWX and Block yourself.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>The virtualization class, in the storage map. It's the one validated for VM disks. Choose it in the storage map rather than afterwards. On the test cluster, two MTV storage maps named the generic class, the VMs sat on it, and nothing warned. Name RWX and Block yourself.</p></details>
     </div>
   </div>
 </section>
@@ -94,7 +94,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Design it</span>
   <h2>Getting the VMs across</h2>
-  <p class="lead">Three decisions about the move itself.</p>
+  <p class="lead">The next three decisions are about the move itself.</p>
   <div class="pair">
     <div class="q">
       <p>Northgate has vSphere VMs and a few physical servers. Which tool for each?</p>
@@ -103,25 +103,25 @@
         <button class="opt" data-ok>MTV for the vSphere VMs, RackWare RMM for the physical servers</button>
         <button class="opt">RackWare RMM for all of them</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>MTV talks to vCenter and has no P2V path. For vSphere, MTV is documented on ROVS, was run end to end, and is free. RMM costs $110 per source VM, licence included. It needs the source powered on and SSH to every source. A ROVS target for RMM migration is documented by no public source and was observed on RMM 7.7.4.19 only. Where the ROVS target must be certain today, the chapter says MTV, or RMM to a VPC virtual server.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>MTV for the vSphere VMs and RMM for the physical servers. MTV talks to vCenter and has no P2V path. For vSphere, MTV is documented on ROVS, we ran it end to end, and it's free. RMM costs $110 per source VM, licence included. It needs the source powered on and SSH to every source. No public source documents a ROVS target for RMM migration, and we saw it work on RMM 7.7.4.19 only. Where the ROVS target has to be certain, use MTV, or RMM to a VPC virtual server.</p></details>
     </div>
     <div class="q">
-      <p>Northgate wants migrated VMs to keep their IP addresses, on the Layer 2 primary network. What must be true?</p>
+      <p>Northgate wants migrated VMs to keep their IP addresses, on the Layer 2 primary network. What has to be true?</p>
       <div class="opts">
         <button class="opt">Nothing. MTV always keeps them</button>
         <button class="opt" data-ok>The source VM is powered on and runs a VMware Guest Agent, and the destination subnet matches the source</button>
-        <button class="opt">The VM must be on a localnet network</button>
+        <button class="opt">The VM has to be on a localnet network</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Preserve static IPs needs a Layer 2 primary target, the source VM powered on, and VMware Tools or <code>open-vm-tools</code>. A subnet mismatch means deleting and re-creating the network. If the source was off or had no agent, the VM gets a free address. Localnet and secondary networks do not preserve it, so every topology the tutorials teach otherwise means new addresses.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>The source VM is on and has an agent, and the subnets match. Preserve static IPs needs a Layer 2 primary target, the source VM powered on, and VMware Tools or <code>open-vm-tools</code>. A subnet mismatch means deleting and re-creating the network. If the source was off or had no agent, the VM gets a free address. Localnet and secondary networks don't preserve it, so every other topology the tutorials teach means new addresses.</p></details>
     </div>
     <div class="q">
-      <p>MTV reports every VM Running. Name one check that decides how the VM behaves from now on.</p>
+      <p>MTV reports every VM Running. Which check decides how the VM behaves from now on?</p>
       <div class="opts">
         <button class="opt">None. Running is the end</button>
-        <button class="opt" data-ok>Run <code>virtctl migrate</code>. If it cannot migrate, the storage class is wrong</button>
+        <button class="opt" data-ok>Run <code>virtctl migrate</code>. If it can't migrate, the storage class is wrong</button>
         <button class="opt">Delete the migration plan</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>MTV hands you a running VM, not a working service. The chapter&apos;s list also has DNS, the guest agent, access rights, network policies, restarting applications and backup. Module 5 covers day two. For Regional DR, archive every MTV plan and remove its leftovers before you protect a migrated VM.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Run <code>virtctl migrate</code>. MTV hands you a running VM, and a working service is still your job. The checklist also has DNS, the guest agent, access rights, network policies, restarting applications and backup. Module 5 covers day two. For Regional DR, archive every MTV plan and remove its leftovers before you protect a migrated VM.</p></details>
     </div>
   </div>
 </section>
@@ -129,7 +129,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Design it</span>
   <h2>Protecting the order database</h2>
-  <p class="lead">The goal is stated: the database must survive the loss of a cluster. Read what each answer costs before you choose.</p>
+  <p class="lead">The goal is set: the database has to survive the loss of a cluster. Read what each answer costs before you choose.</p>
   <div class="pair">
     <div class="q">
       <p>Which copy of the data survives the loss of the whole cluster?</p>
@@ -138,25 +138,25 @@
         <button class="opt" data-ok>A backup in Cloud Object Storage, in a different region</button>
         <button class="opt">The three ODF replicas</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>A VM snapshot lives on the same Ceph cluster, on the same local NVMe in the same workers. It survives a mistake, not a cluster loss. A copy outside the cluster needs object storage in a different region. One restore of a 30 GiB VM took 142 seconds, and its guest agent connected 13 seconds later. That is one run.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A backup in a different region. A VM snapshot lives on the same Ceph cluster, on the same local NVMe in the same workers. It survives a mistake, and it doesn't survive a cluster loss. A copy outside the cluster needs object storage in a different region. One restore of a 30 GiB VM took 142 seconds, and its guest agent connected 13 seconds later. That's one run.</p></details>
     </div>
     <div class="q">
-      <p>Northgate wants minutes of data loss, not hours, after a cluster loss. Which designs meet that?</p>
+      <p>Northgate wants to lose minutes of data after a cluster loss, rather than hours. Which designs meet that?</p>
       <div class="opts">
         <button class="opt">Backup and rebuild only</button>
         <button class="opt" data-ok>Regional DR, or RackWare to running standby machines</button>
         <button class="opt">Doing nothing</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Backup and rebuild has an RPO of hours. Regional DR&apos;s RPO is its policy interval, 5 minutes in IBM&apos;s example, and the run lost up to one interval. The chapter&apos;s choice for a few VMs that cannot wait for a restore, on ROVS with vendor-documented mechanics, is Regional DR. RackWare needs no hub and publishes no RPO. On one RHEL 9 machine a 5-minute sync schedule ran 12 cycles with no drift. Its standbys must keep running.</p><p><b>Cost.</b> A second production-sized cluster, running all the time. A hub cluster. An RHACM licence, bought separately. ODF Advanced on both clusters, chosen at ordering and not changeable. The DR stack is yours to update.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Regional DR, or RackWare to running standbys. Backup and rebuild has an RPO of hours. Regional DR's RPO is its policy interval, which is 5 minutes in IBM's example, and our run lost up to one interval. For a few VMs that can't wait for a restore, on ROVS with vendor-documented mechanics, we'd choose Regional DR. RackWare needs no hub and publishes no RPO. On one RHEL 9 machine a 5-minute sync schedule ran 12 cycles with no drift. Its standbys have to keep running.</p><p><b>What it costs.</b> You need a second production-sized cluster running all the time, a hub cluster, an RHACM licence bought separately, and ODF Advanced on both clusters, which you choose at ordering and can't change later. The DR stack is yours to update.</p></details>
     </div>
     <div class="q">
-      <p>What must the runbook do when the VM fails over to the DR cluster?</p>
+      <p>What does the runbook have to do when the VM fails over to the DR cluster?</p>
       <div class="opts">
         <button class="opt">Nothing. The network follows the VM</button>
         <button class="opt" data-ok>Re-address it. The DR cluster needs an equivalent network built in advance</button>
         <button class="opt">Copy the VNI to the DR cluster</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>The network does not follow the VM. The VNI, the VLAN attachment, the CUDN and the security groups do not replicate, and the DR cluster is a different VPC with different subnets. Build the equivalent plumbing in advance, and add a step that updates whatever points at the old addresses.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Re-address it. The network doesn't follow the VM. The VNI, the VLAN attachment, the CUDN and the security groups don't replicate, and the DR cluster is a different VPC with different subnets. Build the equivalent plumbing in advance, and add a step that updates whatever points at the old addresses.</p></details>
     </div>
   </div>
   <svg class="sketch" style="margin-top:24px" role="img" aria-label="Hand-drawn diagram of Northgate's whole design. A primary cluster in one zone holds the web, app and db VMs on one primary network, with disks on the virtualization class. The db disk is copied every 5 minutes to a DR cluster. A hub cluster manages both clusters. Backups go to Cloud Object Storage in a different region."
@@ -179,40 +179,40 @@
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>Review Northgate&apos;s draft plan</h2>
-  <p class="lead">A colleague wrote the draft plan. Each line is checked against the tutorials. Does it hold?</p>
+  <h2>Review Northgate's draft plan</h2>
+  <p class="lead">One of Northgate's admins wrote the draft plan. Check each line against what the earlier units showed. Does it hold?</p>
   <div class="pair">
     <div class="q">
-      <p>Draft: &quot;Map every vSphere datastore to <code>ocs-storagecluster-ceph-rbd</code>. It is the default class, and RWX works.&quot;</p>
+      <p>Draft: &quot;Map every vSphere datastore to <code>ocs-storagecluster-ceph-rbd</code>. It's the default class, and RWX works.&quot;</p>
       <div class="opts">
         <button class="opt">It holds</button>
-        <button class="opt" data-ok>It does not hold</button>
+        <button class="opt" data-ok>It doesn't hold</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The generic class is not explicitly validated for VM workloads and has no <code>mapOptions: krbd:rxbounce</code>. Access mode does not tell the classes apart, because MTV asks for RWX and the generic class grants it. Nothing fails at migration time. Use the virtualization class.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It doesn't hold. The generic class isn't explicitly validated for VM workloads and has no <code>mapOptions: krbd:rxbounce</code>. Access mode doesn't tell the classes apart, because MTV asks for RWX and the generic class grants it. Nothing fails at migration time. Use the virtualization class.</p></details>
     </div>
     <div class="q">
       <p>Draft: &quot;Put each tier on its own secondary interface and add three NetworkPolicy objects selecting the VMs. Check it with <code>nc</code> from web to db.&quot;</p>
       <div class="opts">
         <button class="opt">It holds</button>
-        <button class="opt" data-ok>It does not hold</button>
+        <button class="opt" data-ok>It doesn't hold</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>NetworkPolicy never saw that interface, and a refusal or a timeout on its own proves nothing. On a Layer 2 secondary network the identical denied flow succeeded with the policies in force. Prove the service reachable first, then prove it refused.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It doesn't hold. NetworkPolicy never saw that interface, and a refusal or a timeout on its own proves nothing. On a Layer 2 secondary network the identical denied flow succeeded with the policies in force. Check that the service is reachable first, then check that the policy refuses it.</p></details>
     </div>
     <div class="q">
       <p>Draft: &quot;The order database disk is cloned from the golden-image DataSource. Protect it with Regional DR.&quot;</p>
       <div class="opts">
         <button class="opt">It holds</button>
-        <button class="opt" data-ok>It does not hold</button>
+        <button class="opt" data-ok>It doesn't hold</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A disk cloned from a DataSource is an RBD clone, and mirroring cannot be enabled on a clone until it is flattened. In the run the DRPC stayed <code>Protected=False</code>. A disk imported from a registry was protected within two minutes.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It doesn't hold. A disk cloned from a DataSource is an RBD clone, and mirroring can't be enabled on a clone until it's flattened. In our run the DRPC stayed <code>Protected=False</code>. A disk imported from a registry was protected within two minutes.</p></details>
     </div>
     <div class="q">
       <p>Draft: &quot;Stop the Warm RackWare targets overnight to save cost. RackWare starts them at failover.&quot;</p>
       <div class="opts">
         <button class="opt">It holds</button>
-        <button class="opt" data-ok>It does not hold</button>
+        <button class="opt" data-ok>It doesn't hold</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>RackWare has no power driver for OpenShift or KubeVirt and did not start a stopped target. The failover answered <code>No syncs were started</code>. On ROVS, Warm and Hot are the same build, so price Warm as running. Something outside RackWare must start the machine, and that was seen on RMM 7.7.4.19.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It doesn't hold. RackWare has no power driver for OpenShift or KubeVirt, and it didn't start a stopped target. The failover answered <code>No syncs were started</code>. On ROVS, Warm and Hot are the same build, so price Warm as running. Something outside RackWare has to start the machine. We saw that on RMM 7.7.4.19.</p></details>
     </div>
   </div>
 </section>
@@ -225,10 +225,10 @@
       <p>Is a zone spread a disaster recovery design?</p>
       <div class="opts">
         <button class="opt">Yes, it survives a region loss</button>
-        <button class="opt" data-ok>No. It does not survive a region loss, and live migration stays inside one zone</button>
+        <button class="opt" data-ok>No. It doesn't survive a region loss, and live migration stays inside one zone</button>
         <button class="opt">Yes, if ODF has six nodes</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>High availability keeps VMs running when a worker fails. Disaster recovery covers a cluster, zone or region becoming unavailable. A zone spread does not survive a region loss, so it is not the second.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. High availability keeps VMs running when a worker fails. Disaster recovery covers a cluster, zone or region becoming unavailable. A zone spread doesn't survive a region loss, so it isn't disaster recovery.</p></details>
     </div>
     <div class="q" data-check>
       <p>A VM with a VPC-routable address from a localnet subnet fails over to the DR cluster. What survives?</p>
@@ -237,7 +237,7 @@
         <button class="opt" data-ok>Not its address. The DR cluster is a different VPC with a different subnet</button>
         <button class="opt">Its VNI</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A VM that took its address from DHCP came up with no address. A VM with its own MAC and a static address, on a DR VNI holding the same address, worked.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Not its address. In our run, a VM that took its address from DHCP came up with no address. A VM with its own MAC and a static address, on a DR VNI holding the same address, worked.</p></details>
     </div>
     <div class="q" data-check>
       <p>The DR policy says 5 minutes. What does a failover lose?</p>
@@ -246,16 +246,16 @@
         <button class="opt" data-ok>Up to the writes since the last completed sync</button>
         <button class="opt">The whole disk</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In the run, the VM was Running on the DR cluster 81 seconds after the failover was requested, and the line written two minutes after the last sync was gone. A relocate made a final sync first and lost nothing. All the clusters in that run were in one region.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The writes since the last completed sync. In our run, the VM was Running on the DR cluster 81 seconds after we requested the failover, and the line written two minutes after the last sync was gone. A relocate made a final sync first and lost nothing. All the clusters in that run were in one region.</p></details>
     </div>
     <div class="q" data-check>
-      <p><span class="kicker">Review question from Unit 3.2.</span> Northgate wants a different pod network range after the cluster is ordered. Can it change?</p>
+      <p><span class="kicker">Review question from Unit 3.2.</span> Northgate wants a different pod network range after the cluster is ordered. Can it change it?</p>
       <div class="opts">
         <button class="opt">Yes, patch the network operator</button>
         <button class="opt">Only the service range can change</button>
         <button class="opt" data-ok>No. Neither range can change after creation</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Neither range can change after the cluster is created. That is why Regional DR starts by planning non-overlapping addresses: the second cluster&apos;s network must not overlap the primary&apos;s.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. Neither range can change after the cluster is created. That's why Regional DR starts by planning non-overlapping addresses, because the second cluster's network can't overlap the primary's.</p></details>
     </div>
   </div>
 </section>
@@ -265,7 +265,7 @@
   <h2>You have designed a whole move</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>One zone. A Layer 2 primary network, one namespace per tier. The virtualization class, set in the storage map. MTV for vSphere, RackWare for what MTV cannot see. An off-cluster backup, and Regional DR for the database, with its cost stated. Build the DR cluster&apos;s network before the failover.</p></div>
+    <div><span class="label">Remember</span><p>Put the workers in one zone. Use a Layer 2 primary network, with one namespace per tier. Set the virtualization class in the storage map. Use MTV for vSphere, and RackWare for what MTV can't see. Keep an off-cluster backup, and use Regional DR for the database, with its cost stated. Build the DR cluster's network before the failover.</p></div>
     <div><span class="label">When you have a cluster</span><p>Tutorial chapter 62, Build a three-tier app on a ROVS primary Layer 2 UDN, builds the tiers. Chapter 37 migrates, and chapter 53 chooses the protection.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

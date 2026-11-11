@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 4 of Module 4</span>
       <h1>Which backup when</h1>
-      <p class="lead">By the end you can pick between a snapshot, VPC Backup, file share replication and IBM Cloud Backup and Recovery for a stated need, and say what each one cannot do.</p>
+      <p class="lead">By the end of this unit you&apos;ll know how to pick between a snapshot, VPC Backup, file share replication and IBM Cloud Backup and Recovery for a stated need, and what each one can&apos;t do.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -40,16 +40,16 @@
           {"box":[208,60,92,100],"heavy":true,"title":"replica"},
           {"box":[308,60,104,100],"heavy":true,"tone":"mark","title":"Backup and Recovery"},
           {"text":"by the need","at":[150,196],"hand":true,"size":18,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier. In vSphere it had one answer for protecting a VM. In VPC there are four, and they are not interchangeable. The company is made up; the output is real.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. In vSphere it had one way to protect a VM. In VPC there are four, and they aren&apos;t interchangeable. The output is real, even though the company is made up.</p>
     </div>
   </div>
-  <p class="small">The comparison rests on IBM&apos;s pages. The recorded runs come from a lab account. Unit 4.3 covered snapshots and VPC Backup in detail.</p>
+  <p class="small">The comparison comes from IBM&apos;s pages, and the recorded runs come from a lab account. Unit 4.3 covered snapshots and VPC Backup in detail.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Four options side by side</h2>
-  <p class="lead">A table compares them. Here each option is one block of its rows. Select a box to see what it is for and which lines describe it. You can also click a line.</p>
+  <p class="lead">IBM&apos;s pages compare the four options, and here each option has its own box. Select a box to see what it is for and which lines describe it, or click a line.</p>
   <div class="explorer" data-start="snap"
     data-map='{"snap":[[1,9]],"backup":[[10,18]],"replica":[[19,27]],"brs":[[28,36]]}'>
     <div class="cols">
@@ -67,22 +67,22 @@
         <div class="part-info" data-part="snap">
           <h3>Snapshot</h3>
           <p>One copy now, made by hand, of one volume or of several in a consistency group. It stays until you delete it. Restore gives a new volume.</p>
-          <p class="watch"><b>Watch for this.</b> It is crash-consistent, not application-consistent.</p>
+          <p class="watch"><b>Watch for this.</b> It&apos;s crash-consistent. It isn&apos;t application-consistent.</p>
         </div>
         <div class="part-info" data-part="backup">
           <h3>VPC Backup</h3>
           <p>Snapshots made by a policy on a cron schedule, chosen by tag, deleted after a set period or count. Cross-region copy works for block volumes, not for file shares.</p>
-          <p class="watch"><b>Watch for this.</b> IBM&apos;s Backup and Recovery documents say it is a different service from Backup and Recovery. The names get confused.</p>
+          <p class="watch"><b>Watch for this.</b> IBM&apos;s Backup and Recovery documents say VPC Backup is a different service from Backup and Recovery, and the two names are easy to mix up.</p>
         </div>
         <div class="part-info" data-part="replica">
           <h3>File share replication</h3>
           <p>A copy of a file share in another zone, or another region in the same account, refreshed on a schedule as often as every 15 minutes. You restore by failing over to the replica.</p>
-          <p class="hand tilt"><b>From vSphere:</b> Site Recovery Manager maps roughly to snapshots, replicas, Backup and Recovery and a recovery region together. A rough mapping, not an IBM statement.</p>
+          <p class="hand tilt"><b>From vSphere:</b> Site Recovery Manager maps roughly to snapshots, replicas, Backup and Recovery and a recovery region taken together. This is a rough mapping, not an IBM statement.</p>
         </div>
         <div class="part-info" data-part="brs">
           <h3>Backup and Recovery</h3>
           <p>A separate IBM service with its own instance. It reaches files, folders and databases through an agent, and is the only option of the four that is application-consistent. It needs a connector server in your VPC.</p>
-          <p class="watch"><b>Watch for this.</b> On databases, IBM&apos;s pages disagree. The workload table says Oracle on a VPC server is not supported; its supported software page lists Oracle 19c, 21c and 23ai.</p>
+          <p class="watch"><b>Watch for this.</b> On databases, check both of IBM&apos;s pages, because they disagree. The workload table says Oracle on a VPC server isn&apos;t supported, but its supported software page lists Oracle 19c, 21c and 23ai.</p>
         </div>
       </div>
     </div>
@@ -128,52 +128,52 @@ Billed by: GB-hour of backup stored</pre>
 <section class="screen">
   <span class="kicker">Step 2 · Design it</span>
   <h2>Pick the option for each need</h2>
-  <p class="lead">Five Northgate needs. Pick an answer, then read the worked answer. IBM says backups and snapshots are not a disaster recovery solution: restoring from either is a manual operation that takes time.</p>
+  <p class="lead">Northgate needs five things. Pick an answer for each, then read the worked answer. IBM says backups and snapshots aren&apos;t a disaster recovery solution, because restoring from either is a manual operation that takes time.</p>
   <div class="pair">
     <div class="q">
-      <p>Before Friday&apos;s change, one copy of the app server&apos;s boot and data volumes that agree with each other.</p>
+      <p>Before Friday&apos;s change, Northgate wants one copy of the app server&apos;s boot and data volumes that agree with each other. Which option fits?</p>
       <div class="opts">
         <button class="opt" data-ok>A snapshot, in a consistency group</button>
         <button class="opt">File share replication</button>
         <button class="opt">Backup and Recovery</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>One copy of a volume now is a snapshot, and copies of several volumes of one server that agree are a consistency group, by hand or by a VPC Backup policy on the server.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A snapshot, in a consistency group. One copy of a volume now is a snapshot, and copies of several volumes of one server that agree are a consistency group, by hand or by a VPC Backup policy on the server.</p></details>
     </div>
     <div class="q">
-      <p>A copy of the app volumes every night, with old copies deleted automatically.</p>
+      <p>Northgate wants a copy of the app volumes every night, with old copies deleted automatically. Which option fits?</p>
       <div class="opts">
         <button class="opt">Snapshots by hand</button>
         <button class="opt" data-ok>VPC Backup</button>
         <button class="opt">File share replication</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Regular copies with automatic deletion are VPC Backup. A hand-made snapshot has no schedule and no automatic deletion.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>VPC Backup. Regular copies with automatic deletion are what VPC Backup does. A snapshot made by hand has no schedule and no automatic deletion.</p></details>
     </div>
     <div class="q">
-      <p>A second copy of the app tier&apos;s shared folder, in another zone, that can take over.</p>
+      <p>Northgate wants a second copy of the app tier&apos;s shared folder, in another zone, that can take over. Which option fits?</p>
       <div class="opts">
         <button class="opt">VPC Backup</button>
         <button class="opt" data-ok>File share replication</button>
         <button class="opt">A snapshot copy</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>A test run created a replica in a second zone, failed over to it, mounted it, and read the file written before the failover.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>File share replication. A test run created a replica in a second zone, failed over to it, mounted it, and read the file written before the failover.</p></details>
     </div>
     <div class="q">
-      <p>Restore one deleted folder, or one SQL Server database, with the application&apos;s help.</p>
+      <p>Northgate wants to restore one deleted folder, or one SQL Server database, with the application&apos;s help. Which option fits?</p>
       <div class="opts">
         <button class="opt">A consistency group</button>
         <button class="opt">VPC Backup</button>
         <button class="opt" data-ok>Backup and Recovery</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Restore of single files, or of a database, with the application&apos;s help is Backup and Recovery. One run restored a folder; another restored a SQL Server database.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Backup and Recovery. Restoring single files, or a database, with the application&apos;s help is what Backup and Recovery does. One run restored a folder, and another restored a SQL Server database.</p></details>
     </div>
     <div class="q">
-      <p>A copy of the shared folder outside the region.</p>
+      <p>Northgate wants a copy of the shared folder outside the region. Which option fits?</p>
       <div class="opts">
         <button class="opt">A VPC Backup cross-region copy</button>
         <button class="opt" data-ok>A cross-region file share replica, in the same account</button>
         <button class="opt">Backup and Recovery, which documents cross-region copy</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>VPC Backup copies across regions for block volumes, not for file shares. Backup and Recovery&apos;s cross-region copy is not documented. A test run built a replica in us-south; it could not be mounted until a VPC existed there.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A cross-region file share replica, in the same account. VPC Backup copies across regions for block volumes, but not for file shares. Backup and Recovery&apos;s cross-region copy isn&apos;t documented. A test run built a replica in us-south, and it couldn&apos;t be mounted until a VPC existed there.</p></details>
     </div>
   </div>
 </section>
@@ -181,7 +181,7 @@ Billed by: GB-hour of backup stored</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>What Backup and Recovery did with a folder and a database</h2>
-  <p class="lead">Three runs of one protection group on <code>/data</code>, a restore, and a SQL Server restore. Output is copied from real runs. Times and IDs are cut.</p>
+  <p class="lead">This step shows three runs of one protection group on <code>/data</code>, a restore, and a SQL Server restore. The output is copied from real runs, and we cut times and IDs.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -190,7 +190,7 @@ Billed by: GB-hour of backup stored</pre>
           <p class="pre"># the first run: a full backup of /data</p>
           <pre class="in">ibmcloud backup-recovery protection-group-run list --id &lt;group-id&gt; --xibm-tenant-id $T --include-object-details --output json | jq -c '.runs[0].objects[0].archivalInfo.archivalTargetResults[0] | {status, startTimeUsecs, endTimeUsecs, stats}'</pre>
           <pre class="out">{"status":"Succeeded","startTimeUsecs":1793359903476011,"endTimeUsecs":1793359925480159,"stats":{"avgLogicalTransferRateBps":32513,"backupFileCount":106,"bytesRead":3422554,"fileWalkDone":true,"logicalBytesTransferred":3422554,"logicalSizeBytes":3422554,"physicalBytesTransferred":227596,"totalFileCount":106}}</pre>
-          <p class="hand note">106 files, 3,422,554 bytes read: everything.</p>
+          <p class="hand note">The run read all 106 files, 3,422,554 bytes.</p>
         </div>
         <div class="q">
           <p>The next run starts with no file changed. How many bytes will it read?</p>
@@ -198,19 +198,19 @@ Billed by: GB-hour of backup stored</pre>
             <button class="opt">About the same: 3.4 MB</button>
             <button class="opt" data-ok>None</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>A file-based incremental run reads only what changed. A run with no changes reads 0 bytes.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>None. A file-based incremental run reads only what changed, so a run with no changes reads 0 bytes.</p></details>
         </div>
         <div class="cmd">
           <p class="pre"># the second run: no file changes (same list command)</p>
           <pre class="in">ibmcloud backup-recovery protection-group-run list --id &lt;group-id&gt; --xibm-tenant-id $T --include-object-details --output json | jq -c '.runs[0].objects[0].archivalInfo.archivalTargetResults[0] | {status, startTimeUsecs, endTimeUsecs, stats}'</pre>
           <pre class="out">{"status":"Succeeded","startTimeUsecs":1793359964484874,"endTimeUsecs":1793359983486796,"stats":{"avgLogicalTransferRateBps":0,"bytesRead":0,"fileWalkDone":true,"logicalBytesTransferred":0,"logicalSizeBytes":3422554,"physicalBytesTransferred":0,"totalFileCount":106}}</pre>
-          <p class="hand note">bytesRead 0.</p>
+          <p class="hand note">bytesRead is 0.</p>
         </div>
         <div class="cmd">
           <p class="pre"># the third run: after adding 5 small files and one 3 MB file (same list command)</p>
           <pre class="in">ibmcloud backup-recovery protection-group-run list --id &lt;group-id&gt; --xibm-tenant-id $T --include-object-details --output json | jq -c '.runs[0].objects[0].archivalInfo.archivalTargetResults[0] | {status, startTimeUsecs, endTimeUsecs, stats}'</pre>
           <pre class="out">{"status":"Succeeded","startTimeUsecs":1793360039492770,"endTimeUsecs":1793360059495018,"stats":{"avgLogicalTransferRateBps":0,"backupFileCount":8,"bytesRead":3159568,"fileWalkDone":true,"logicalBytesTransferred":3159568,"logicalSizeBytes":6582122,"physicalBytesTransferred":0,"totalFileCount":112}}</pre>
-          <p class="hand note">bytesRead 3,159,568 of a 6,582,122-byte total: the changes only.</p>
+          <p class="hand note">The run read 3,159,568 bytes of a 6,582,122-byte total, which is only the changes.</p>
         </div>
         <div class="cmd">
           <p class="pre"># after the restore of /data/docs from the full run's snapshot</p>
@@ -238,34 +238,34 @@ after      100000  1620878498</pre>
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>Join the connector to the service</h2>
-  <p class="lead">Backup and Recovery needs a connector server in your VPC. A new connector has the login <code>admin</code> with the password <code>admin</code>, and that password has expired, so you change it first. Then you open its page. This is the real page. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">Backup and Recovery needs a connector server in your VPC. A new connector has the login <code>admin</code> with the password <code>admin</code>, and that password has expired, so you change it first. Then you open its page, which is shown here as it really looks. Click where you would click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="2,44,10,3.6" data-width="760px">
       <div class="shot"><img src="../images/47/claim-page.png" alt="The connector's configuration page, status Not Configured. Primary Network shows the connector's address 10.20.1.5, subnet mask 255.255.255.0, gateway 10.20.1.1, two DNS servers and the NTP server time.google.com. The Domain Names field is empty, Connector Name reads Data-Source-Connector, and the Description and Connection Claim Token fields are empty above the Save button." width="2800" height="1758"></div>
       <figcaption>
-        <h3>The connector exists but has not joined. Which label says so?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Not Configured, on the left. The page also shows the connector&apos;s own address in the app subnet.</p></details>
+        <h3>The connector exists but hasn&apos;t joined. Which label says so?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The label is Not Configured, on the left. The page also shows the connector&apos;s own address in the app subnet.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="40.4,47,53.5,3.8" data-width="760px">
       <div class="shot"><img src="../images/47/claim-page.png" alt="The connector's configuration page, status Not Configured, with an empty Domain Names field, a Connector Name field reading Data-Source-Connector, an empty Connection Claim Token field and a Save button." width="2800" height="1758"></div>
       <figcaption>
         <h3>The Save button stays disabled until one field has a value. Click that field.</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Domain Names. IBM&apos;s page names <code>cloud.ibm.com</code> as the domain name.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the Domain Names field, and IBM&apos;s page names <code>cloud.ibm.com</code> as the domain name.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="40.4,81.4,53.5,3.8" data-width="760px">
       <div class="shot"><img src="../images/47/claim-page.png" alt="The lower part of the connector's configuration page: Connector Details with the name Data-Source-Connector, an empty Description field and an empty Connection Claim Token field, then the Save and Cancel buttons." width="2800" height="1758"></div>
       <figcaption>
         <h3>Where do you paste the claim token you made for the connection?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Connection Claim Token. The token is a secret, valid for 24 hours, that ties a new connector to its connection.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It goes in the Connection Claim Token field. The token is a secret, valid for 24 hours, that ties a new connector to its connection.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="38.6,91.7,4.6,4.1" data-width="760px">
       <div class="shot"><img src="../images/47/claim-page.png" alt="The connector's configuration page with the Save button at the bottom left of the form, below the Connection Claim Token field." width="2800" height="1758"></div>
       <figcaption>
         <h3>The domain name and the token are filled in. Which button claims the connector?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Save. Afterwards <code>data-source-connector list</code> shows <code>isConnected</code> true. It can read false for a short time after the claim.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Click Save. Afterwards <code>data-source-connector list</code> shows <code>isConnected</code> true, though it can read false for a short time after the claim.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -279,10 +279,10 @@ after      100000  1620878498</pre>
       <p><b>Spot the fault.</b> A Northgate SQL Server backup fails after about six minutes with nothing in the run message. The SQL error log shows error 3041, &quot;BACKUP failed to complete&quot;, and error 18210 with operating system error 995 on the virtual device. The agent&apos;s log says it is unable to connect to the connector on port 11117. What is wrong?</p>
       <div class="opts">
         <button class="opt">The database is too large</button>
-        <button class="opt" data-ok>Port 11117 between the agent and the connector is not open</button>
+        <button class="opt" data-ok>Port 11117 between the agent and the connector isn&apos;t open</button>
         <button class="opt">The protection policy has no full backup</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Open the port: inbound TCP 11117 in the connector&apos;s security group, from the server&apos;s group. The service retried the run by itself, and the third attempt succeeded. A policy with no full backup shows a different symptom: the host ends as <code>SucceededWithWarning</code> and mentions a periodic full backup.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Port 11117 between the agent and the connector isn&apos;t open. To fix it, open inbound TCP 11117 in the connector&apos;s security group, from the server&apos;s group. The service retried the run by itself, and the third attempt succeeded. A policy with no full backup shows a different symptom: the host ends as <code>SucceededWithWarning</code> and mentions a periodic full backup.</p></details>
     </div>
     <div class="q" data-check>
       <p>Are VPC Backup and IBM Cloud Backup and Recovery the same service?</p>
@@ -291,7 +291,7 @@ after      100000  1620878498</pre>
         <button class="opt" data-ok>No. IBM&apos;s Backup and Recovery documents say they are different services</button>
         <button class="opt">Yes, but only for Linux</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>VPC Backup is the scheduled-snapshot service. Backup and Recovery, with the service name <code>backup-recovery</code> in IAM and the CLI, is the managed service. Names such as BRS and baas are other labels for it, not separate products.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No, they&apos;re different services. VPC Backup is the scheduled-snapshot service. Backup and Recovery, with the service name <code>backup-recovery</code> in IAM and the CLI, is the managed service. Names such as BRS and baas are other labels for it, and they aren&apos;t separate products.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which of the four options is application-consistent?</p>
@@ -300,7 +300,7 @@ after      100000  1620878498</pre>
         <button class="opt">VPC Backup</button>
         <button class="opt" data-ok>Backup and Recovery, through an agent</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Snapshots are crash-consistent, and VPC Backup and file share replication are marked No. Backup and Recovery makes backups with the agreement of the application, through an agent on the server.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Backup and Recovery. Snapshots are crash-consistent, and VPC Backup and file share replication are marked No. Backup and Recovery makes backups with the agreement of the application, through an agent on the server.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 4.3.</b> You set a VPC Backup plan for a time a few minutes ahead and look for the job straight after. How late can the job start?</p>
@@ -309,7 +309,7 @@ after      100000  1620878498</pre>
         <button class="opt" data-ok>Up to 90 minutes after the scheduled time</button>
         <button class="opt">Up to 4 seconds after</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM says a backup job can start up to 90 minutes after the scheduled time. Until then the job list is empty. The 4 seconds is the longest I/O pause of a consistency group.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Up to 90 minutes after the scheduled time. IBM says a backup job can start that late. Until then the job list is empty. The 4 seconds is the longest I/O pause of a consistency group.</p></details>
     </div>
   </div>
 </section>
@@ -319,7 +319,7 @@ after      100000  1620878498</pre>
   <h2>You can pick the backup</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Snapshot now. VPC Backup on a schedule. A replica for a file share. Backup and Recovery for files and databases, through an agent, and it needs a connector. None of the four is disaster recovery.</p></div>
+    <div><span class="label">Remember</span><p>Use a snapshot for a copy now, VPC Backup for copies on a schedule, and a replica for a file share. Use Backup and Recovery for files and databases through an agent, and it needs a connector. None of the four is disaster recovery.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapter 49, Choosing between the backup options for IBM VPC, has the table. Chapters 47 and 48 set up and run Backup and Recovery, and 58 backs up SQL Server.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

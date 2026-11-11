@@ -27,23 +27,23 @@
     <div>
       <span class="kicker">Unit 2 of Module 5</span>
       <h1>Register the cluster as a source</h1>
-      <p class="lead">By the end you can say what registering a ROVS cluster needs, click through the registration, and tell what each failure message our lab met was pointing at.</p>
+      <p class="lead">By the end of this unit you'll know what registering a ROVS cluster needs, how to click through the registration, and what each failure message our lab met was pointing at.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: an endpoint and a token go in, a registered source comes out."
-        data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,30,160,50],"title":"endpoint, token","detail":"what BRS needs"},{"line":[174,55,226,55],"arrow":true,"tone":"mark"},{"box":[230,30,180,50],"tone":"mark","title":"source","detail":"registered"},{"text":"some messages say why not","at":[90,150],"hand":true,"size":17,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. Its ROVS cluster, ng-cluster-01, now has a connector. The next job is to register the cluster as a source.</p>
+        data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,30,160,50],"title":"endpoint, token","detail":"what BRS needs"},{"line":[174,55,226,55],"arrow":true,"tone":"mark"},{"box":[230,30,180,50],"tone":"mark","title":"source","detail":"registered"},{"text":"error messages point at the cause","at":[90,150],"hand":true,"size":17,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its ROVS cluster, ng-cluster-01, now has a connector. The next job is to register the cluster as a source.</p>
     </div>
   </div>
-  <p class="small">OpenShift Virtualization VM backup was not generally available when we tested it. IBM lists it for the AU-SYD region only: its pages, call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them. Names, endpoints and IDs in messages were changed. Every screen and result comes from our lab.</p>
+  <p class="small">OpenShift Virtualization VM backup wasn&apos;t generally available when we tested it. IBM lists it for the AU-SYD region only. Its pages call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them. Names, endpoints and IDs in messages were changed. Every screen and result comes from our lab.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>What registration needs</h2>
-  <p class="lead">Registering the cluster as a source needs four things. Three go in the form; the fourth is the connection from unit 5.1.</p>
+  <p class="lead">Registering the cluster as a source needs four things. Three go in the form, and the fourth is the connection from unit 5.1.</p>
 <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Four boxes, connection, cluster endpoint, service account token and distribution, each with an arrow to one box, Kubernetes source, which showed 340 GiB in our lab."
         data-drawing='{"w":560,"h":230,"shapes":[{"box":[10,10,230,40],"title":"connection (-RoksVpc)"},{"box":[10,60,230,40],"title":"cluster endpoint"},{"box":[10,110,230,40],"title":"service account token"},{"box":[10,160,230,40],"title":"distribution"},{"line":[244,30,326,90],"arrow":true,"tone":"mark"},{"line":[244,80,326,100],"arrow":true,"tone":"mark"},{"line":[244,130,326,120],"arrow":true,"tone":"mark"},{"line":[244,180,326,140],"arrow":true,"tone":"mark"},{"box":[330,70,220,80],"tone":"mark","title":"Kubernetes source","detail":"340 GiB in our lab"}]}'></svg>
   <div class="pair" style="margin-top:20px">
@@ -54,7 +54,7 @@
         <button class="opt" data-ok>The token of the service account secret brs-sa-token</button>
         <button class="opt">A token from your own login to the BRS console</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The field takes the service account token. Do not use the Helm registration token: it was tried and BRS answered <code>Unauthorized access. Please check the credentials.[kUnauthorized]</code>. In our lab the service account <code>brs-sa</code>, a cluster-admin role binding and the secret <code>brs-sa-token</code> were made on the cluster, and the token was copied from the secret without showing it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The service account token. Don&apos;t use the Helm registration token. We tried it, and BRS answered <code>Unauthorized access. Please check the credentials.[kUnauthorized]</code>. In our lab we made the service account <code>brs-sa</code>, a cluster-admin role binding and the secret <code>brs-sa-token</code> on the cluster, and copied the token from the secret without showing it.</p></details>
     </div>
     <div class="q">
       <p>Which Kubernetes Distribution do you pick for a ROVS cluster?</p>
@@ -63,20 +63,20 @@
         <button class="opt" data-ok>IBM Red Hat OpenShift Kubernetes Service</button>
         <button class="opt">Either: they behave the same</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The form offers those two. The lab chose IBM Red Hat OpenShift Kubernetes Service. In the command line the same choice is <code>kROKS</code>, and a wrong value gave: &quot;Only IKS and ROKS kubernetes distributions are supported in IBM environment&quot;.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM Red Hat OpenShift Kubernetes Service. The form offers those two, and we chose that one. In the command line the same choice is <code>kROKS</code>, and a wrong value gave: &quot;Only IKS and ROKS kubernetes distributions are supported in IBM environment&quot;.</p></details>
     </div>
   </div>
 </section>
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>Register the source</h2>
-  <p class="lead">These screens come from the BRS console in our lab, with the connection from unit 5.1. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab, with the connection from unit 5.1. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="2.1,63.1,48.8,9.3" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3e-2-connection.png" alt="Register Kubernetes Source, step 1: the RoksVpc connection picked." width="758" height="428"></div>
       <figcaption>
         <h3>The form asks for a Data Source Connection. Where do you pick it?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Pick the connection whose name ends in <b>-RoksVpc</b> and click Continue. Do not use Create Data Source Connection on this page: it gives the VMware flow (unit 5.1).</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Pick the connection whose name ends in <b>-RoksVpc</b> and click Continue. Don&apos;t use Create Data Source Connection on this page, because it gives the VMware flow (unit 5.1).</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="47,26.2,44.9,5.8" data-width="760px">
@@ -90,22 +90,22 @@
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3e-4-optional.png" alt="Source Details, Optional: priority class, labels, annotations and image paths, all empty." width="758" height="694"></div>
       <figcaption>
         <h3>Optional settings are listed under the form. Where would you set a priority class?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Priority Class Name (Optional)</b>. Optional also holds the Datamover connection type (Host Port), labels, annotations and image paths. The lab kept every default.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Priority Class Name (Optional)</b>. Optional also holds the Datamover connection type (Host Port), labels, annotations and image paths. We kept every default.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="64.3,91.9,5.8,7.2" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3e-5-registered.png" alt="Sources: the Kubernetes source (blurred), not protected, 340 GiB." width="1164" height="640"></div>
       <figcaption>
         <h3>You clicked Complete and the source appeared. Where is its size?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Total Size</b>, 340 GiB. At 07:30 UTC the console said &quot;Registered Kubernetes Source successfully&quot; at the first try, and none of the errors in the next step came back.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Total Size</b>, 340 GiB. At 07:30 UTC the console said &quot;Registered Kubernetes Source successfully&quot; first time, and none of the errors in the next step came back.</p></details>
       </figcaption>
     </figure>
   </div>
 </section>
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
-  <h2>Read the message</h2>
-  <p class="lead">Across several tests our lab met these messages while registering. Each question gives a message. Pick the cause. Values in the messages were changed.</p>
+  <h2>What each message points at</h2>
+  <p class="lead">Our lab saw these messages while registering, across several tests. For each message, which cause fits? Values in the messages were changed.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>The command line answers: KInternalError, &quot;Encountered HTTP connection error&quot;. What does it tell you?</p>
@@ -114,7 +114,7 @@
         <button class="opt" data-ok>BRS could not reach the cluster: check that the connection has connectors and the connector pods run</button>
         <button class="opt">The cluster is already registered</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That is the rule. The connection used had no connectors, and the same error came back every time. After that, check the network.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>BRS couldn&apos;t reach the cluster. The connection we used had no connectors, and the same error came back every time. If the connectors are fine, check the network next.</p></details>
     </div>
     <div class="q">
       <p>The answer is: Unauthorized access. Please check the credentials.[kUnauthorized]. What went wrong?</p>
@@ -123,7 +123,7 @@
         <button class="opt">The connection has no connectors</button>
         <button class="opt">The cluster endpoint ends in a slash</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The field needs a valid cluster token: use the secret <code>brs-sa-token</code>, not the registration token.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The Helm token was used. The field needs a valid cluster token, so use the secret <code>brs-sa-token</code>, not the registration token.</p></details>
     </div>
   </div>
   <div class="pair" style="margin-top:20px">
@@ -134,7 +134,7 @@
         <button class="opt" data-ok>Remove the other Cohesity registration first, or use another endpoint</button>
         <button class="opt">Create a second connection</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the cluster endpoint was registered to a self-managed Cohesity cluster. A cluster can have only one Cohesity registration.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Remove the other registration first. In our lab the cluster endpoint was registered to a self-managed Cohesity cluster, and a cluster can have only one Cohesity registration.</p></details>
     </div>
     <div class="q">
       <p>Every command answers: Authentication failed: Neither session cookie nor token is present in the request. The token is fine. What else?</p>
@@ -143,14 +143,14 @@
         <button class="opt">The instance is in the wrong region</button>
         <button class="opt">The cluster has no storage class</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab, without the trailing <code>/</code> on the tenant ID, every command gave <code>KStatusUnauthorized</code>; with it, the same command worked. Once the service URL pointed at another instance and gave the same error. These two came from the command line, not the console.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The tenant ID or the service URL. In our lab, without the trailing <code>/</code> on the tenant ID, every command gave <code>KStatusUnauthorized</code>, and with it the same command worked. Once, the service URL pointed at another instance and gave the same error. Both of these came from the command line, not the console.</p></details>
     </div>
   </div>
 </section>
 <section class="screen">
   <span class="kicker">Step 4 · Predict</span>
   <h2>Eight attempts, then a success</h2>
-  <p class="lead">Here are the eight attempts that did not register the cluster. A later registration worked.</p>
+  <p class="lead">These are the eight attempts that didn&apos;t register the cluster. A later registration worked.</p>
   <pre class="def" aria-label="The eight attempts">What was run (instance in au-syd)            Result
 CLI register, no connection ID                            KInternalError: Encountered HTTP connection error
 CLI register, connection with no connectors               same error
@@ -162,13 +162,13 @@ eu-de instance, brs-sa-token, another API port            no answer in 120 s: Cl
 au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encountered HTTP timeout error</pre>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>What did our lab establish as the reason it worked?</p>
+      <p>What did our lab find out about why it worked?</p>
       <div class="opts">
         <button class="opt">The BRS instance must be in the same region as the cluster</button>
         <button class="opt" data-ok>Nothing for sure: one fact fits, the connection used in the failed attempts had no connectors and the one used in the working registration had two</button>
         <button class="opt">An upgrade of the cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>What changed between the two days is not established. An earlier version said the instance must be in the same region; that was wrong, because the au-syd instance registered the eu-de cluster. An eu-de instance and an eu-de cluster worked too. IBM&apos;s pages still say the VM feature is for testing in au-syd.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Nothing for sure. We don&apos;t know what changed between the failed attempts and the one that worked. The instance doesn&apos;t have to be in the same region as the cluster: the au-syd instance registered the eu-de cluster, and an eu-de instance registered an eu-de cluster too. IBM&apos;s pages still say the VM feature is for testing in au-syd.</p></details>
     </div>
     <div class="q">
       <p>Which attempt failed because the cluster endpoint was not the cluster API server?</p>
@@ -177,7 +177,7 @@ au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encoun
         <button class="opt">The first: the connection ID was left out</button>
         <button class="opt">The one with the registration token</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The last one. That value is the BRS URL, not the cluster API server, so it was a wrong input. The Cloudflare 524 means BRS waited 120 seconds for the cluster and got no answer.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The last one. That value is the BRS URL, not the cluster API server, so the endpoint was wrong. The Cloudflare 524 means BRS waited 120 seconds for the cluster and got no answer.</p></details>
     </div>
   </div>
 </section>
@@ -192,7 +192,7 @@ au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encoun
         <button class="opt">One for each namespace</button>
         <button class="opt">As many as you like</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A cluster can have only one Cohesity registration. A second one gives the &quot;already registered&quot; message.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>One. A cluster can have only one Cohesity registration, and a second one gives the &quot;already registered&quot; message.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 5.1.</b> The Helm command says deployed, and a minute later the connector pod is Pending. What is the likely cause on a ROVS cluster?</p>
@@ -201,7 +201,7 @@ au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encoun
         <button class="opt">The token is wrong</button>
         <button class="opt">The source is already registered</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the claim was Pending for that reason; setting the cluster&apos;s own storage class fixed it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The storage class. In our lab the claim was Pending for that reason, and setting the cluster&apos;s own storage class fixed it.</p></details>
     </div>
     <div class="q" data-check>
       <p>Registration says Encountered HTTP connection error. What do you check first?</p>
@@ -210,7 +210,7 @@ au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encoun
         <button class="opt">The cluster&apos;s CPU</button>
         <button class="opt">The instance&apos;s region</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Then check network access. It is the first thing to try.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>That the connection has connectors. It&apos;s the first thing to check, and network access comes next.</p></details>
     </div>
   </div>
 </section>
@@ -219,7 +219,7 @@ au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encoun
   <h2>You can register a cluster</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Use the service account token, not the Helm registration token. A cluster can have only one Cohesity registration. Three of our lab&apos;s eight failed attempts gave one error, Encountered HTTP connection error, and the first thing to check is that the connection has connectors. The cause of the change to success is not established.</p></div>
+    <div><span class="label">Remember</span><p>Use the service account token, not the Helm registration token. A cluster can have only one Cohesity registration. Three of our lab&apos;s eight failed attempts gave one error, Encountered HTTP connection error, and the first thing to check is that the connection has connectors. We don&apos;t know for sure why it worked in the end.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

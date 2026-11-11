@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 3 of Module 6</span>
       <h1>Move Classic backups to VPC with the migration tool</h1>
-      <p class="lead">By the end you can say what IBM&apos;s Classic-to-VPC migration tool does and does not do, read the failures that stopped its first applies, predict a clean re-run and a second run, and find its results in the BRS console.</p>
+      <p class="lead">By the end of this unit you'll know what IBM&apos;s Classic-to-VPC migration tool does and doesn&apos;t do, what stopped its first applies, what a clean re-run and a second run do, and where its results are in the BRS console.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -40,7 +40,7 @@
           {"line":[264,60,286,60],"arrow":true,"tone":"mark"},
           {"box":[290,30,120,60],"title":"VPC","detail":"one restore"},
           {"text":"files and folders, not the whole server","at":[10,140],"hand":true,"size":17,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It has files on a Classic server, <code>ng-classic-01</code>, and wants them on a VPC server, <code>ng-vpc-01</code>. IBM publishes a tool for exactly that.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It has files on a Classic server, <code>ng-classic-01</code>, and wants them on a VPC server, <code>ng-vpc-01</code>. IBM publishes a tool for exactly that.</p>
     </div>
   </div>
   <p class="small">Every number and screen in this unit comes from real runs in our lab. Server names, addresses and IDs were changed to made-up ones, and server names are blurred in the screenshots.</p>
@@ -49,7 +49,7 @@
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>What the tool is</h2>
-  <p class="lead">The tool is a Terraform toolkit that moves <b>files and folders</b> from a Classic server to a VPC server. It does not clone the operating system. It uses BRS itself: it installs the BRS agent on the source and on the target, runs one on-demand file backup of the source, and restores it onto volumes already attached to the target.</p>
+  <p class="lead">The tool is a Terraform toolkit that moves <b>files and folders</b> from a Classic server to a VPC server. It doesn&apos;t clone the operating system. It uses BRS itself: it installs the BRS agent on the source and on the target, runs one on-demand file backup of the source, and restores it onto volumes already attached to the target.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A Tool server in Classic runs Terraform. Terraform sets up two connectors, a backup and a restore in BRS, between a Classic source and a VPC target."
     data-drawing='{"w":560,"h":230,"shapes":[
       {"box":[10,15,150,60],"title":"Classic source","detail":"agent installed"},
@@ -68,7 +68,7 @@
         <button class="opt" data-ok>One on-demand file backup, then one restore</button>
         <button class="opt">A backup after every change</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s documents describe one on-demand file backup and one restore per volume. The tool does no final sync, no delta step and no rollback.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>One. IBM&apos;s documents describe one on-demand file backup and one restore per volume. The tool does no final sync, no delta step and no rollback.</p></details>
     </div>
     <div class="q">
       <p>Does the tool check that the copy is right?</p>
@@ -77,7 +77,7 @@
         <button class="opt" data-ok>No: it checks that a snapshot exists and that the restore ended Succeeded</button>
         <button class="opt">Yes, by comparing file counts</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>There is no checksum and no compare in the tool. In our lab we compared every file ourselves with SHA-256. All 507 files matched, and the modes, owners and a hard-linked pair matched too.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. There&apos;s no checksum and no compare in the tool, so in our lab we compared every file ourselves with SHA-256. All 507 files matched, and the modes, owners and a hard-linked pair matched too.</p></details>
     </div>
   </div>
 </section>
@@ -85,7 +85,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Spot the fault</span>
   <h2>Why the first applies failed</h2>
-  <p class="lead">Our lab needed six applies and five fixes that IBM&apos;s documents do not mention. IBM&apos;s documents say only port 50051 needs to be opened. We needed more. Read what each failed apply said, and pick the cause.</p>
+  <p class="lead">Plan the network rules before the first apply. IBM&apos;s documents say only port 50051 needs to be opened, and our lab needed five more fixes, and six applies, to get through. For each failed apply below, which cause fits what it said?</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p><b>Apply 1.</b> The policy, connections, connector servers and agents were made. Then: <code>Create Endpoint Gateway failed An endpoint gateway already exists for this service</code>, HTTP 409. What does it mean?</p>
@@ -94,7 +94,7 @@
         <button class="opt">The API key has no access to the VPC</button>
         <button class="opt">The Transit Gateway is missing</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The fix was to set <code>brs_vpe_name</code> to the name of the endpoint the VPC already had.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The VPC already had an endpoint. The fix was to set <code>brs_vpe_name</code> to the name of the endpoint the VPC already had.</p></details>
     </div>
     <div class="q">
       <p><b>Apply 2.</b> After 17 minutes: <code>Process exited with status 1</code>, at the VPC connector registration. The tool hides the output because it holds a secret. How was the cause found?</p>
@@ -103,7 +103,7 @@
         <button class="opt" data-ok>With <code>curl</code>: the connector&apos;s port 443 was closed to the Classic source</button>
         <button class="opt">By asking IBM</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The fix was rules for TCP 443 on the connector&apos;s own security group, from the Classic subnet and from the VPC subnet.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>With <code>curl</code>. The fix was rules for TCP 443 on the connector&apos;s own security group, from the Classic subnet and from the VPC subnet.</p></details>
     </div>
     <div class="q">
       <p><b>Apply 3.</b> After 22 minutes the log said <code>WARNING: VPC connector health check timeout. Continuing...</code> Did the apply continue?</p>
@@ -111,7 +111,7 @@
         <button class="opt">Yes: it carried on to the backup</button>
         <button class="opt" data-ok>No: the step then exits 1 and stops the apply</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The health check made 30 tries of <code>isConnected</code> and never got true. The cause: the BRS private endpoint&apos;s own security group allowed 443 only from the lab group. The connection also needs TCP 29991. Rules for both from the connector group fixed it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No, it stopped. The health check made 30 tries of <code>isConnected</code> and never got true. The cause was that the BRS private endpoint&apos;s own security group allowed 443 only from the lab group, and the connection also needs TCP 29991. Rules for both from the connector group fixed it.</p></details>
     </div>
     <div class="q">
       <p><b>Apply 5.</b> Both connector health checks passed and the source registered. Then: <code>Failed to connect to ... cannot be reached due to transport error</code>, at the target. Which port was closed?</p>
@@ -120,14 +120,14 @@
         <button class="opt" data-ok>TCP 50051, from the connector group</button>
         <button class="opt">TCP 5986</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Rules for TCP 50051 from the connector group fixed it. The sixth apply passed: <code>Apply complete! Resources: 10 added, 0 changed, 0 destroyed.</code> In the first run the backup took 11 min 50 s.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>TCP 50051. Rules for TCP 50051 from the connector group fixed it. The sixth apply passed: <code>Apply complete! Resources: 10 added, 0 changed, 0 destroyed.</code> In the first run the backup took 11 min 50 s.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
-  <h2>The clean run, a second run, and what is left</h2>
+  <h2>The clean run, a second run, and what&apos;s left</h2>
   <p class="lead">After the first run, we wrote &quot;the clean path&quot;: a list of rules to add before the first apply. We ran the tool again on a rebuilt lab, with those rules in place.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
@@ -141,33 +141,33 @@
 Apply started               18:42:58
 Backup                      18:54:20 to 18:55:59 (1 min 39 s)
 Restore                     32 s
-Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The backup read 97,484,800 bytes in 1 min 39 s, against 11 min 50 s in the first run. Check of the data: 507 files, 0 SHA-256 differences.</p></details>
+Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The backup read 97,484,800 bytes in 1 min 39 s, against 11 min 50 s in the first run. Our check of the data found 507 files and 0 SHA-256 differences.</p></details>
     </div>
     <div class="q">
-      <p>A file changes on the Classic server after the copy. Northgate runs the tool again with the same variables. What does Terraform plan?</p>
+      <p>A file changes on the Classic server after the copy. Northgate&apos;s backup admin runs the tool again with the same variables. What does Terraform plan?</p>
       <div class="opts">
         <button class="opt">A new backup and restore of the changed files</button>
         <button class="opt" data-ok>No backup and no restore</button>
         <button class="opt">A delete of the target&apos;s files</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The plan was &quot;1 to add&quot;, a local file that holds the API key. The tool treats the first copy as final. When we forced the steps to run again, the restore used the first snapshot: six files differed, three new files were missing, and two deleted files were still on the target. The advice for a real move: run the tool once, at the moment of the switch.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No backup and no restore. The plan was &quot;1 to add&quot;, a local file that holds the API key. The tool treats the first copy as final. When we forced the steps to run again, the restore used the first snapshot: six files differed, three new files were missing, and two deleted files were still on the target. For a real move, run the tool once, at the moment of the switch.</p></details>
     </div>
   </div>
   <div class="q" style="margin-top:20px">
-    <p>Northgate runs <code>terraform destroy</code> on the Tool server after the migration. What does it leave behind?</p>
+    <p>The admin runs <code>terraform destroy</code> on the Tool server after the migration. What does it leave behind?</p>
     <div class="opts">
       <button class="opt">Nothing: it removes everything the tool made</button>
       <button class="opt" data-ok>The protection group&apos;s snapshot until it expires, and the agents on the two servers</button>
       <button class="opt">The two connector servers</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>It destroyed 28 resources with no error. It did not delete the group&apos;s snapshot. The group stayed in BRS, renamed <code>_DELETED_classic-to-vpc-protection-group-&lt;time&gt;</code>, with its snapshot until it expired a week after the backup. It left the agents on both servers. The Tool server and source server, the target and its volume, the Classic security group and key, and the added rules were deleted by hand.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>The snapshot and the agents. It destroyed 28 resources with no error, but it didn&apos;t delete the group&apos;s snapshot. The group stayed in BRS, renamed <code>_DELETED_classic-to-vpc-protection-group-&lt;time&gt;</code>, with its snapshot until it expired a week after the backup. It left the agents on both servers. We deleted the Tool server and source server, the target and its volume, the Classic security group and key, and the added rules by hand.</p></details>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>What the tool left in the BRS console</h2>
-  <p class="lead">The tool has no console of its own. These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">The tool has no console of its own. These screens come from the BRS console in our lab. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="1,82.5,60,15.5" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/M1-1-connections.png" alt="System > Data Source Connections: 4 Healthy, 0 Unhealthy, 1 Unused. Two rows begin migration-data_source_connection-classic and migration-data_source_connection-vpc, each with 1 source and 1 connector." width="1180" height="570"></div>
@@ -194,14 +194,14 @@ Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The bac
       <div class="shot"><img src="../ibm-brs/tutorials/images/M1-4-recovery.png" alt="Recoveries: classic-to-vpc-protection-group-recovery-...-data, Succeeded, 23s, from 6:57pm; and Recover_Files, Succeeded, 23s." width="1180" height="340"></div>
       <figcaption>
         <h3>Which entry is the tool&apos;s restore?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It is named after the group: <code>classic-to-vpc-protection-group-recovery-...-data</code>. It is a normal BRS recovery, Succeeded, 23 s here.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s named after the group: <code>classic-to-vpc-protection-group-recovery-...-data</code>. It&apos;s a normal BRS recovery, Succeeded, 23 s here.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="19.7,59.6,20.3,15.5" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/M1-5-upgrade-alerts.png" alt="System > Health, Alerts: 2 Critical. Two critical alerts named DataSourceConnectorUpgradeFailed, 2 occurrences each." width="1180" height="490"></div>
       <figcaption>
-        <h3>The Health page shows a problem the migration did not hit. Click the alerts.</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Two critical DataSourceConnectorUpgradeFailed alerts, one for each connector. The tool&apos;s connectors run release 7.2.18 and BRS cannot upgrade them: &quot;Not enough free disk space ... Required: 4518 MB, Available: 3990 MB&quot;. The backup and restore worked on 7.2.18 all the same.</p></details>
+        <h3>The Health page also shows alerts that didn&apos;t stop the migration. Click them.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Two critical DataSourceConnectorUpgradeFailed alerts, one for each connector. The tool&apos;s connectors run release 7.2.18 and BRS can&apos;t upgrade them: &quot;Not enough free disk space ... Required: 4518 MB, Available: 3990 MB&quot;. The backup and restore worked on 7.2.18 all the same.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -218,7 +218,7 @@ Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The bac
         <button class="opt">It clones the whole server, operating system included</button>
         <button class="opt">It keeps the two servers in sync after the first copy</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It moves files and folders only, with one backup and one restore. A second run does not copy changes.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>One backup and one restore. It moves files and folders only, and a second run doesn&apos;t copy changes.</p></details>
     </div>
     <div class="q" data-check>
       <p>The tool&apos;s run finished and Terraform says <code>Apply complete!</code> How does Northgate know every file arrived?</p>
@@ -227,7 +227,7 @@ Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The bac
         <button class="opt" data-ok>It checks them itself, for example with SHA-256 against a list made on the source</button>
         <button class="opt">The restore says Succeeded, so they did</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The tool never compares the copy with the source. In our lab, 507 files and 0 differences by SHA-256.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It checks them itself. The tool never compares the copy with the source. In our lab we found 507 files and 0 differences by SHA-256.</p></details>
     </div>
     <div class="q" data-check>
       <p><span class="kicker">Review from unit 6.2.</span> BRS tries to upgrade the tool&apos;s connectors and fails. Did that stop the backup and restore?</p>
@@ -235,7 +235,7 @@ Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The bac
         <button class="opt">Yes</button>
         <button class="opt" data-ok>No: both worked on release 7.2.18</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The alert said there was not enough free disk space for the upgrade. The migration worked.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. The alert said there wasn&apos;t enough free disk space for the upgrade, and the migration worked all the same.</p></details>
     </div>
   </div>
 </section>
@@ -245,7 +245,7 @@ Apply complete              18:57:51, 29 added, about 15 minutes</pre><p>The bac
   <h2>You know what the tool does and what it leaves</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>The tool makes one backup and one restore of files and folders. It never checks the copy, a second run copies nothing, and <code>terraform destroy</code> leaves the snapshot and the agents. With the network rules added first, one apply took about 15 minutes in our lab.</p></div>
+    <div><span class="label">Remember</span><p>The tool makes one backup and one restore of files and folders. Check the copy yourself, and run the tool once, at the moment of the switch, because a second run copies nothing. After <code>terraform destroy</code>, remove the agents yourself and let the snapshot expire. With the network rules added first, one apply took about 15 minutes in our lab.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

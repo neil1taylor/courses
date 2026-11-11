@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Find your way around a cluster · ROVS course</title>
-<meta name="description" content="Course unit 1.4: find a ROVS cluster, read its health in the console and with oc, and know what is missing on purpose. No cluster needed.">
+<meta name="description" content="Course unit 1.4: find a ROVS cluster, read its health in the console and with oc, and know what's missing on purpose. No cluster needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 4 of Module 1</span>
       <h1>Find your way around a cluster</h1>
-      <p class="lead">By the end you can find a ROVS cluster, read its health in the console and with <code>oc</code>, and tell what is missing on purpose from what is broken.</p>
+      <p class="lead">By the end of this unit you'll be able to find a ROVS cluster, read its health in the console and with <code>oc</code>, and tell what's missing on purpose from what's broken.</p>
       <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -39,36 +39,36 @@
           {"line":[95,134,200,180],"arrow":true,"tone":"muted"},
           {"line":[325,134,220,180],"arrow":true,"tone":"mark"},
           {"box":[150,182,120,32],"title":"your cluster"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the screens and output in this unit are real. Its first ROVS cluster is ready. Where do its admins look first?</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that's moving off vSphere. The screens and output in this unit are real. Northgate's first ROVS cluster is ready, and its admins want to know where to look first.</p>
     </div>
   </div>
-  <p class="small">Every screenshot and line of output in this unit comes from real runs on lab clusters, apart from the review question. This page shortens some names.</p>
+  <p class="small">Every screenshot and line of output in this unit comes from a real run on a lab cluster, apart from the review question. Some names are shortened to fit the page.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Click through the console</span>
   <h2>Three screens to know</h2>
-  <p class="lead">These are real screens. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These are real screens. Click where you'd click on a live console. After two misses, the page marks the right place.</p>
   <div class="tour">
     <figure class="tstep" data-hot="3.6,36.6,34.3,14.2" data-width="640px">
       <div class="shot"><img src="../images/02/perspective-switcher.jpg" alt="The console's perspective switcher open in the top-left corner, showing exactly two options: Core platform and Virtualization." width="700" height="268"></div>
       <figcaption>
         <h3>Older material says to switch to the Administrator perspective. Which entry holds the VM views?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Virtualization. On OpenShift 4.21 there is no Administrator perspective. The switcher offers exactly two entries, Core platform and Virtualization. A cluster administrator can also reach the VM pages from the Core platform menu.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Virtualization. On OpenShift 4.21 there's no Administrator perspective. The switcher offers exactly two entries, Core platform and Virtualization. A cluster administrator can also reach the VM pages from the Core platform menu.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="20.3,71.3,11.6,6.9">
       <div class="shot"><img src="../images/02/cluster-overview.jpg" alt="The OpenShift console Overview page. The Details card gives the Cluster API address, the Cluster ID, Infrastructure provider IBMCloud, OpenShift version 4.21.35 and Update channel Not available. The Status card shows Cluster, Dynamic Plugins, Operators, Storage and OpenShift Virtualization green. The left menu runs from Home to Administration and includes Virtualization and Migration for Virtualization." width="1563" height="722"></div>
       <figcaption>
         <h3>On a self-managed cluster this field names the update stream you chose. Which field reads differently on ROVS?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Update channel reads Not available, because IBM owns the upgrade path. You do not pick a channel.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Update channel reads Not available, because IBM looks after the upgrade path. You don't pick a channel.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="82.1,36.6,10.4,6.5">
       <div class="shot"><img src="../images/02/nodes-list.jpg" alt="The console's Nodes list. Three nodes, all Ready, all with the role worker and the instance type mx3d.metal.64x512. No control-plane node appears. Memory reads 503.6 GiB per node and CPU 64 cores per node." width="1264" height="465"></div>
       <figcaption>
         <h3>Which column tells you the server flavor?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Instance type: <code>mx3d.metal.64x512</code>, a bare metal flavor. All three nodes have the role worker, and no control-plane node appears.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Instance type. It reads <code>mx3d.metal.64x512</code>, which is a bare metal flavor. All three nodes have the role worker, and there's no control-plane node.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -77,7 +77,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>Where things are</h2>
-  <p class="lead">The console layout maps to the vSphere Client roughly like this. It is a rough mapping, not an IBM statement.</p>
+  <p class="lead">The console layout matches the vSphere Client roughly like this. It's a rough match of our own, and IBM doesn't describe it this way.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn two-column diagram. Hosts and Clusters view matches Compute, Nodes. VMs and Templates view matches Virtualization, VirtualMachines. Datastores view matches Storage, PersistentVolumeClaims. Networking view matches Networking, Services and Routes. Tasks and Events matches Home, Events. Monitoring and Alarms matches Observe, Dashboards and Alerting. Administration and Permissions matches User Management, RoleBindings."
       data-drawing='{"w":660,"h":300,"shapes":[
@@ -96,7 +96,7 @@
           <button class="opt" data-ok>Infrastructure &gt; OpenShift virtualization</button>
           <button class="opt">Nowhere: you can only reach it with <code>ibmcloud ks clusters</code></button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>A ROVS cluster does not appear under OpenShift &gt; Clusters. On one account that page showed no clusters at all while <code>ibmcloud ks clusters</code> listed them. Infrastructure &gt; OpenShift virtualization is the only place they appear in the console.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>Infrastructure &gt; OpenShift virtualization. A ROVS cluster doesn't appear under OpenShift &gt; Clusters. On one account that page showed no clusters at all while <code>ibmcloud ks clusters</code> listed them. Infrastructure &gt; OpenShift virtualization is the only place they appear in the console.</p></details>
       </div>
     </div>
   </div>
@@ -115,7 +115,7 @@
           <pre class="out">NAME      VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
 version   4.21.27   True        False         36d     Cluster version is 4.21.27</pre>
           <p class="hand note">ROVS needs OpenShift 4.21 or later.</p>
-          <p class="hand note">A lower version means this is not a ROVS cluster.</p>
+          <p class="hand note">A lower version means this isn't a ROVS cluster.</p>
         </div>
         <div class="cmd">
           <pre class="in">oc get co</pre>
@@ -142,21 +142,21 @@ operator-lifecycle-manager-packageserver   4.21.27   True        False         F
 service-ca                                 4.21.27   True        False         False      39d
 storage                                    4.21.27   True        False         False      39d</pre>
           <p class="hand note">AVAILABLE True and DEGRADED False for every healthy operator.</p>
-          <p class="hand note">This is the full list, not an extract.</p>
+          <p class="hand note">This is the full list, and nothing has been cut from it.</p>
         </div>
         <div class="q">
-          <p>You know the self-managed list. There is no <code>authentication</code> operator here. Is that a fault?</p>
+          <p>You know the self-managed list, and there's no <code>authentication</code> operator here. Is that a fault?</p>
           <div class="opts">
             <button class="opt">Yes, something failed to install</button>
-            <button class="opt" data-ok>No. It is absent on purpose</button>
+            <button class="opt" data-ok>No. It's absent on purpose</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>On ROKS and ROVS the OAuth server runs in IBM's account, so it is not a ClusterOperator you can see. <code>machine-api</code>, <code>machine-config</code> and <code>etcd</code> are absent for the same reason.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>No. On ROKS and ROVS the OAuth server runs in IBM's account, so it isn't a ClusterOperator you can see. <code>machine-api</code>, <code>machine-config</code> and <code>etcd</code> are absent for the same reason.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">oc get co authentication</pre>
           <pre class="out err"></pre>
-          <p class="hand note">The chapter records this returning NotFound.</p>
-          <p class="hand note">Do not write a health check that needs this operator.</p>
+          <p class="hand note">On the lab cluster this returned NotFound.</p>
+          <p class="hand note">Don't write a health check that needs this operator.</p>
         </div>
         <div class="cmd">
           <pre class="in">oc get sc</pre>
@@ -165,9 +165,9 @@ localblock                                   kubernetes.io/no-provisioner       
 ocs-storagecluster-ceph-rbd (default)        openshift-storage.rbd.csi.ceph.com      Delete          Immediate              true                   39d
 ocs-storagecluster-ceph-rbd-virtualization   openshift-storage.rbd.csi.ceph.com      Delete          Immediate              true                   39d
 ocs-storagecluster-cephfs                    openshift-storage.cephfs.csi.ceph.com   Delete          Immediate              true                   39d</pre>
-          <p class="hand note">Four classes on a cluster that has only ODF.</p>
+          <p class="hand note">There are four classes on a cluster that has only ODF.</p>
           <p class="hand note">VM disks use ocs-storagecluster-ceph-rbd-virtualization.</p>
-          <p class="hand note">localblock is ODF's own plumbing. Never name it in a PVC.</p>
+          <p class="hand note">localblock is ODF's own plumbing, so never name it in a PVC.</p>
         </div>
         <div class="cmd">
           <pre class="in">oc get datasources -n openshift-virtualization-os-images</pre>
@@ -185,8 +185,8 @@ win2k16           39d
 win2k19           39d
 win2k22           39d
 win2k25           39d</pre>
-          <p class="hand note">Thirteen stock rows on a cluster nobody has added to.</p>
-          <p class="hand note">A row you cannot name an operator for is worth asking about.</p>
+          <p class="hand note">There are thirteen stock rows on a cluster nobody has added to.</p>
+          <p class="hand note">If you can't say which operator added a row, ask about it.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -213,13 +213,13 @@ win2k25           39d</pre>
   </div>
   <div class="pair">
     <div class="q">
-      <p>The Overview says 0 VirtualMachines. The list says 1 Running. Which is right?</p>
+      <p>The Overview says 0 VirtualMachines, and the list says 1 Running. Which one is right?</p>
       <div class="opts">
-        <button class="opt">The Overview: the VM is not really running</button>
+        <button class="opt">The Overview: the VM isn't really running</button>
         <button class="opt" data-ok>The list: it reads the Kubernetes API. The Overview cards read Prometheus, which returned nothing</button>
         <button class="opt">Neither: the cluster is broken</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Trust the list.</span><p><code>oc get vm -A</code> agreed with the list. Nothing was scraping the service that publishes VM metrics, because no ServiceMonitor selected it. Use the VirtualMachines list, not the Overview, to answer what is running.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Trust the list.</span><p><code>oc get vm -A</code> agreed with the list. Nothing was scraping the service that publishes VM metrics, because no ServiceMonitor selected it. When you want to know what's running, use the VirtualMachines list.</p></details>
     </div>
     <div class="q">
       <p><code>oc get datasources</code> listed thirteen rows. Is every boot image present?</p>
@@ -228,7 +228,7 @@ win2k25           39d</pre>
         <button class="opt" data-ok>Not necessarily: ask for the Ready condition</button>
         <button class="opt">Yes, but only on ODF clusters</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>On one cluster seven of the thirteen stock DataSources were Ready=False. Six were the Windows ones, which are placeholders because Red Hat cannot redistribute Windows media. The seventh, <code>rhel7</code>, had no import cron, so nothing ever populated its disk. Do not conclude that Windows is the unready one.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Not necessarily. On one cluster seven of the thirteen stock DataSources were Ready=False. Six were the Windows ones, which are placeholders because Red Hat can't redistribute Windows media. The seventh, <code>rhel7</code>, had no import cron, so nothing ever filled its disk. So check each one, rather than assuming that only the Windows rows are unready.</p></details>
     </div>
   </div>
 </section>
@@ -244,7 +244,7 @@ win2k25           39d</pre>
         <button class="opt">Three zones</button>
         <button class="opt">It makes no difference</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In a single zone, live migration can go to any worker and VNI networking is simple. In three zones, live migration stays inside one zone and each VNI is tied to one zone.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>One zone. In a single zone, live migration can go to any worker and VNI networking is simple. In three zones, live migration stays inside one zone and each VNI is tied to one zone.</p></details>
     </div>
     <div class="q" data-check>
       <p><code>oc get nodes</code> shows only workers, and <code>oc get co</code> has no <code>authentication</code> operator. What do you do?</p>
@@ -253,7 +253,7 @@ win2k25           39d</pre>
         <button class="opt" data-ok>Nothing: IBM runs those parts in its own account</button>
         <button class="opt">Treat it as a fault in the add-on</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The control plane and the OAuth server run in IBM's account, so they are not objects you can list. Check the masters with Master status from the IBM Cloud side.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Nothing. The control plane and the OAuth server run in IBM's account, so they aren't objects you can list. You check the masters with Master status from the IBM Cloud side.</p></details>
     </div>
     <div class="q" data-check>
       <p>Two storage classes carry a default mark. Which one is the default for VirtualMachines?</p>
@@ -262,7 +262,7 @@ win2k25           39d</pre>
         <button class="opt" data-ok><code>ocs-storagecluster-ceph-rbd-virtualization</code></button>
         <button class="opt"><code>localblock</code></button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The console marks <code>ocs-storagecluster-ceph-rbd-virtualization</code> as the default for VirtualMachines. The cluster default is a different annotation, on <code>ocs-storagecluster-ceph-rbd</code>. Two annotations, two classes.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The console marks <code>ocs-storagecluster-ceph-rbd-virtualization</code> as the default for VirtualMachines. The cluster default is a different annotation, and it's on <code>ocs-storagecluster-ceph-rbd</code>. There are two annotations, and they point at two different classes.</p></details>
     </div>
   </div>
 </section>
@@ -272,7 +272,7 @@ win2k25           39d</pre>
   <h2>You can find your way around</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Missing is not broken: no masters in the node list, no authentication operator. Trust the VirtualMachines list over the Overview. A listed DataSource may have no image.</p></div>
+    <div><span class="label">Remember</span><p>Missing doesn't mean broken. There are no masters in the node list and no authentication operator, and that's by design. Trust the VirtualMachines list over the Overview. A DataSource can be listed and still have no image.</p></div>
     <div><span class="label">When you have a cluster</span><p>Tutorial chapter 02, Explore a ROVS cluster and check it is ready for VMs, runs every check you just saw.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

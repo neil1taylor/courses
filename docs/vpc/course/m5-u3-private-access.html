@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 3 of Module 5</span>
       <h1>Private access: endpoints and context-based restrictions</h1>
-      <p class="lead">By the end you can say what an endpoint gateway gives a server, what a context-based restriction adds to IAM, and how a restriction can block a service you did not mean to block.</p>
+      <p class="lead">By the end of this unit you'll know what an endpoint gateway gives a server, what a context-based restriction adds to IAM, and how a restriction can block a service you didn't mean to block.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -43,7 +43,7 @@
           {"line":[360,30,360,190],"tone":"mark"},
           {"line":[352,30,352,190],"tone":"mark"},
           {"text":"outside","at":[330,212],"hand":true,"size":16,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its backups and keys live in IBM Cloud services, and its security team wants that traffic kept private and refused from anywhere else. The commands and output below are real, from a test account.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its backups and keys live in IBM Cloud services, and its security team wants that traffic to stay private and to be refused from anywhere else. The commands and output below are real, from a test account.</p>
     </div>
   </div>
   <p class="small">Every command and output in this unit comes from real runs in a lab account, apart from the review question.</p>
@@ -84,32 +84,32 @@
         <div class="part-info" data-part="target">
           <h3>Target</h3>
           <p>The service the gateway connects to. A cloud service is named by its CRN.</p>
-          <p class="watch"><b>Watch for this.</b> Key Protect&apos;s target is an endpoint entry, not your instance&apos;s CRN. With the instance CRN, <code>endpoint-gateway-create</code> fails with <code>Could not find service</code>.</p>
+          <p class="watch"><b>Watch for this.</b> For Key Protect, the target is an endpoint entry, not your instance&apos;s CRN. If you use the instance CRN, <code>endpoint-gateway-create</code> fails with <code>Could not find service</code>.</p>
         </div>
         <div class="part-info" data-part="sg">
           <h3>Security group</h3>
           <p>IBM says a gateway with no security group takes the VPC&apos;s default group. The lab makes a group that allows only HTTPS, port 443, from the app servers&apos; group.</p>
-          <p class="watch"><b>Watch for this.</b> Delete that one rule and a connection to port 443 times out. Add it back and it succeeds.</p>
+          <p class="watch"><b>Watch for this.</b> If you delete that rule, a connection to port 443 times out. If you add it back, the connection succeeds.</p>
         </div>
         <div class="part-info" data-part="ips">
           <h3>Reserved IPs</h3>
-          <p>One address in each of the three app subnets, deleted with the gateway. The service&apos;s name now resolves to these addresses, so the server reaches the service inside the VPC.</p>
+          <p>The gateway has one address in each of the three app subnets, and they&apos;re deleted with the gateway. The service&apos;s name now resolves to these addresses, so the server reaches the service inside the VPC.</p>
           <p class="watch"><b>Watch for this.</b> A server that resolved the same name to a public address would reach the service over the public endpoint instead.</p>
         </div>
         <div class="part-info" data-part="zone">
           <h3>Network zone</h3>
           <p>A list of allowed locations: addresses, ranges, subnets, VPCs or services. This zone holds one VPC, <code>vpct-prod</code>.</p>
-          <p class="watch"><b>Watch for this.</b> A request through the public gateway carries the gateway&apos;s address, not the VPC. It does not match this zone.</p>
+          <p class="watch"><b>Watch for this.</b> A request through the public gateway carries the gateway&apos;s address, not the VPC&apos;s, so it doesn&apos;t match this zone.</p>
         </div>
         <div class="part-info" data-part="rule">
           <h3>Rule</h3>
-          <p>Ties one or more resources to one or more zones. A rule has no name field, so the description carries the name. Each rule here names one service instance.</p>
-          <p class="watch"><b>Watch for this.</b> The lab account is shared. A rule on a whole service instead of one instance would deny other teams.</p>
+          <p>A rule ties one or more resources to one or more zones. A rule has no name field, so the name goes in the description. Each rule here names one service instance.</p>
+          <p class="watch"><b>Watch for this.</b> The lab account is shared, so a rule on a whole service instead of one instance would deny other teams.</p>
         </div>
         <div class="part-info" data-part="mode">
           <h3>Enforcement mode</h3>
-          <p><code>Enable</code> denies requests that do not match and reports them. <code>Report-only</code> allows everything and logs what a rule would deny. <code>Disable</code> does nothing.</p>
-          <p class="watch"><b>Watch for this.</b> The lab creates both rules in report-only mode, looks at what they would block, and only then enforces them.</p>
+          <p><code>Enable</code> denies requests that don&apos;t match and reports them. <code>Report-only</code> allows everything and logs what a rule would deny. <code>Disable</code> does nothing.</p>
+          <p class="watch"><b>Watch for this.</b> In the lab we created both rules in report-only mode, looked at what they would block, and only then enforced them.</p>
         </div>
       </div>
     </div>
@@ -140,7 +140,7 @@ ibmcloud cbr rule-patch $COS_RULE --enforcement-mode enabled
           <p class="pre"># on a vpct-prod server</p>
           <pre class="in">dig +short s3.direct.us.cloud-object-storage.appdomain.cloud</pre>
           <pre class="out">10.20.1.24</pre>
-          <p class="hand note">A private address in the app subnet, one of the gateway&apos;s reserved IPs.</p>
+          <p class="hand note">The name resolves to a private address in the app subnet, one of the gateway&apos;s reserved IPs.</p>
         </div>
         <div class="cmd">
           <pre class="in">nc -zv -w 5 s3.direct.us.cloud-object-storage.appdomain.cloud 443</pre>
@@ -151,7 +151,7 @@ ibmcloud cbr rule-patch $COS_RULE --enforcement-mode enabled
           <pre class="out">Deleting rule r014-1414…4045 from security group  vpct-prod-vpe-sg
 OK
 Rule r014-1414…4045 is deleted.</pre>
-          <p class="hand note">The one rule that allows port 443 is gone.</p>
+          <p class="hand note">The only rule that allows port 443 has been deleted.</p>
         </div>
         <div class="q">
           <p>The same <code>nc</code> command runs again. What happens?</p>
@@ -160,7 +160,7 @@ Rule r014-1414…4045 is deleted.</pre>
             <button class="opt" data-ok>It times out</button>
             <button class="opt">The name stops resolving</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The gateway&apos;s security group is what allows the connection. Run the command to see it.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>It times out. The gateway&apos;s security group is what allows the connection, and you can run the command to see that.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">nc -zv -w 5 s3.direct.us.cloud-object-storage.appdomain.cloud 443</pre>
@@ -189,25 +189,25 @@ enforcement_mode      enabled</pre>
             <button class="opt">The list still returns, because the laptop has the right IAM access</button>
             <button class="opt" data-ok>The request is denied</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>A context-based restriction applies in addition to IAM. The laptop&apos;s IAM access is fine, but its request does not come from the VPC.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>The request is denied. A context-based restriction applies in addition to IAM. The laptop&apos;s IAM access is fine, but its request doesn&apos;t come from the VPC.</p></details>
         </div>
         <div class="cmd">
           <p class="pre"># from the laptop, rule enabled</p>
           <pre class="in">ibmcloud cos buckets --ibm-service-instance-id $COS_GUID</pre>
           <pre class="out err">FAILED
 Access to the IBM Cloud account was denied — please verify that the Service Instance ID / CRN is valid, and ensure the correct endpoint URL is being used (check using ‘ibmcloud cos config list’).</pre>
-          <p class="hand note">The message does not say a restriction caused it.</p>
+          <p class="hand note">The message doesn&apos;t say that a restriction caused it.</p>
         </div>
         <div class="cmd">
           <p class="pre"># on a vpct-prod server, through the gateway; the token goes in on standard input</p>
           <pre class="in">curl -s -o /dev/null -w "%{http_code}\n" -H @- https://s3.direct.us.cloud-object-storage.appdomain.cloud/vpct-backups-nrt29b</pre>
           <pre class="out">200</pre>
-          <p class="hand note">200 from inside the VPC.</p>
+          <p class="hand note">From inside the VPC the answer is 200.</p>
         </div>
         <div class="cmd">
           <pre class="in"># the same request from the laptop, for comparison</pre>
           <pre class="out">403</pre>
-          <p class="hand note">403 from outside it.</p>
+          <p class="hand note">From outside the VPC the answer is 403.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -222,7 +222,7 @@ Access to the IBM Cloud account was denied — please verify that the Service In
 <section class="screen">
   <span class="kicker">Step 3 · Design it</span>
   <h2>How does a VPC reach a service in another VPC?</h2>
-  <p class="lead">This sets Private Path beside the other ways. Northgate&apos;s shared-services team runs a web service in one VPC, and the prod VPC needs it.</p>
+  <p class="lead">This compares Private Path with the other ways. Northgate&apos;s shared-services team runs a web service in one VPC, and the prod VPC needs to use it.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn list of four options. Private Path: the provider controls who connects; the consumer sees one private address. Transit Gateway: the VPCs trust each other; whole networks are joined by routes. Public load balancer: the service is for the internet. VPN: two sites."
       data-drawing='{"w":640,"h":220,"shapes":[
@@ -248,7 +248,7 @@ Access to the IBM Cloud account was denied — please verify that the Service In
           <button class="opt">Transit Gateway</button>
           <button class="opt">A public load balancer</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>The provider creates the service and gives consumers its CRN. The consumer creates an endpoint gateway with that CRN, which sends a connection request. The provider permits or denies it. Traffic stays on IBM&apos;s backbone.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>Private Path. The provider creates the service and gives consumers its CRN. The consumer creates an endpoint gateway with that CRN, which sends a connection request. The provider permits or denies it. Traffic stays on IBM&apos;s backbone.</p></details>
       </div>
       <div class="q">
         <p>Two VPCs trust each other, and whole networks in each should reach the other. Which option?</p>
@@ -256,7 +256,7 @@ Access to the IBM Cloud account was denied — please verify that the Service In
           <button class="opt">Private Path</button>
           <button class="opt" data-ok>Transit Gateway</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>Transit Gateway is for VPCs that trust each other, because it joins whole networks by routes. Module 6 covers it.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>Transit Gateway. It&apos;s for VPCs that trust each other, because it joins whole networks by routes. Module 6 covers it.</p></details>
       </div>
     </div>
   </div>
@@ -268,16 +268,16 @@ r014-edb3…5eaa   &lt;redacted&gt;    pending   stable</pre>
     <p>The binding shows <code>pending</code>. Can the consumer reach the service?</p>
     <div class="opts">
       <button class="opt">Yes, the endpoint gateway exists</button>
-      <button class="opt" data-ok>No. The provider has not permitted it yet</button>
+      <button class="opt" data-ok>No. The provider hasn&apos;t permitted it yet</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>The service&apos;s default access policy was <code>review</code>, which leaves each request for the provider to approve. After the provider permitted it, the status read <code>permitted</code>. The consumer then bound a reserved IP to the gateway, and a request to that address returned the page from the provider&apos;s server, although the two VPCs have no route between them.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>No. The service&apos;s default access policy was <code>review</code>, which leaves each request for the provider to approve. After the provider permitted it, the status read <code>permitted</code>. The consumer then bound a reserved IP to the gateway, and a request to that address returned the page from the provider&apos;s server, although the two VPCs have no route between them.</p></details>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>The rule that blocked the disk</h2>
-  <p class="lead">Northgate has enforced a rule on its Key Protect instance, so only the VPC can reach it. An admin inside the VPC then tries to create an encrypted volume with a key from that instance.</p>
+  <h2>An enforced rule blocks an encrypted volume create</h2>
+  <p class="lead">Northgate has enforced a rule on its Key Protect instance, so only the VPC can reach it. Northgate&apos;s admin, working inside the VPC, then tries to create an encrypted volume with a key from that instance.</p>
   <pre class="def" aria-label="The failed volume create">$ ibmcloud is volume-create vpct-cbr-test-vol general-purpose us-east-1 --capacity 10 --encryption-key $KEY_CRN --resource-group-name vpct-lab
 Creating volume vpct-cbr-test-vol in resource group vpct-lab
 FAILED
@@ -294,7 +294,7 @@ Error message: You are not authorized to access the provided volume encryption k
         <button class="opt" data-ok>The enforced rule on Key Protect</button>
         <button class="opt">The VPC&apos;s network ACL</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>With the Key Protect rule set back to report-only, the same command succeeded. So the rule is what blocks it. The request to Key Protect comes from VPC block storage, not from the admin&apos;s server.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The enforced rule on Key Protect. With the rule set back to report-only, the same command succeeded, so the rule is what blocks it. The request to Key Protect comes from VPC block storage, not from the admin&apos;s server.</p></details>
     </div>
     <div class="q">
       <p>How do you keep the rule and still allow the volume create?</p>
@@ -303,7 +303,7 @@ Error message: You are not authorized to access the provided volume encryption k
         <button class="opt" data-ok>Add a zone for the service <code>server-protect</code> as a second context of the rule</button>
         <button class="opt">Add a zone for the service <code>is</code></button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>VPC block storage reaches Key Protect as the service <code>server-protect</code>. With that zone as a second context, the volume create succeeded and a request from the laptop was still denied. Two contexts mean a request is allowed if it matches either. A zone for the service named <code>is</code> did not help.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Add a zone for <code>server-protect</code>. VPC block storage reaches Key Protect as that service. With that zone as a second context, the volume create succeeded and a request from the laptop was still denied. Two contexts mean a request is allowed if it matches either. A zone for the service named <code>is</code> didn&apos;t help.</p></details>
     </div>
     <div class="q">
       <p>Right after you enforce the Key Protect rule, the same request from your laptop sometimes succeeds. Is the rule broken?</p>
@@ -311,7 +311,7 @@ Error message: You are not authorized to access the provided volume encryption k
         <button class="opt">Yes. Delete it and start again</button>
         <button class="opt" data-ok>No. It takes about four minutes to apply everywhere</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>During that time the same request sometimes succeeds and sometimes fails. The advice is to wait until it fails every time before you trust a denial. The Object Storage rule was denied at once.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. During that time the same request sometimes succeeds and sometimes fails. Wait until it fails every time before you trust a denial. The Object Storage rule was denied at once.</p></details>
     </div>
   </div>
 </section>
@@ -324,10 +324,10 @@ Error message: You are not authorized to access the provided volume encryption k
       <p><span class="kicker">Review question from Unit 5.2.</span> A server resolves <code>app.vpct.internal</code> to an address, but <code>curl</code> to it times out. The two VPCs have no route between them. What is missing?</p>
       <div class="opts">
         <button class="opt">Another record in the zone</button>
-        <button class="opt" data-ok>A route between the VPCs. Resolving a name does not give it one</button>
+        <button class="opt" data-ok>A route between the VPCs. Resolving a name doesn&apos;t give it one</button>
         <button class="opt">Another permitted network</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Name resolution and reachability are separate. Both VPCs resolved the name, and the connection still timed out because no route joined them.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A route between the VPCs. Name resolution and reachability are separate. Both VPCs resolved the name, and the connection still timed out because no route joined them.</p></details>
     </div>
     <div class="q" data-check>
       <p>What does a context-based restriction look at that an IAM policy does not?</p>
@@ -336,7 +336,7 @@ Error message: You are not authorized to access the provided volume encryption k
         <button class="opt" data-ok>Where the request comes from</button>
         <button class="opt">Which resource group the service is in</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A restriction limits access by where a request comes from, on top of IAM. An IAM policy limits access by who is asking and does not look at the network.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Where the request comes from. A restriction limits access by where a request comes from, on top of IAM. An IAM policy limits access by who is asking and doesn&apos;t look at the network.</p></details>
     </div>
     <div class="q" data-check>
       <p>A server reaches Object Storage through the public gateway. The restriction&apos;s zone holds only the VPC. Is the request allowed?</p>
@@ -344,7 +344,7 @@ Error message: You are not authorized to access the provided volume encryption k
         <button class="opt">Yes, it comes from the VPC</button>
         <button class="opt" data-ok>No. It carries the public gateway&apos;s address</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM says that to allow access from a VPC to public endpoints, you add the public gateway addresses to the zone as well. The lab&apos;s zone has none, so requests that leave through the public gateway do not match.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. IBM says that to allow access from a VPC to public endpoints, you add the public gateway addresses to the zone as well. The lab&apos;s zone has none, so requests that leave through the public gateway don&apos;t match.</p></details>
     </div>
     <div class="q" data-check>
       <p>In a shared account you write a rule for the whole Object Storage service, not one instance. What is the risk?</p>
@@ -352,7 +352,7 @@ Error message: You are not authorized to access the provided volume encryption k
         <button class="opt">None. A rule only affects your own instance</button>
         <button class="opt" data-ok>It denies other teams&apos; requests too</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Every rule in the lab names one service instance, never a whole service, for this reason.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It denies other teams&apos; requests too. Every rule in our lab names one service instance and never a whole service, to avoid this.</p></details>
     </div>
   </div>
 </section>
@@ -362,7 +362,7 @@ Error message: You are not authorized to access the provided volume encryption k
   <h2>You can keep service traffic private</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>An endpoint gateway gives a service a private address. A restriction adds a network test to IAM. Report first, enforce second. A rule on a key service must still let the services that use the key in.</p></div>
+    <div><span class="label">Remember</span><p>An endpoint gateway gives a service a private address, and a restriction adds a network test on top of IAM. Create a rule in report-only mode first and enforce it afterwards. A rule on a key service still has to let the services that use the key in.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapter 60, Reaching Object Storage and Key Protect with VPE gateways, builds the gateways. Chapter 61, Restricting Object Storage and Key Protect to your VPC, adds the rules, and chapter 56, Offering a service from the shared VPC with Private Path, runs Private Path.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

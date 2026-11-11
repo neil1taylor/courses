@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 2 of Module 5</span>
       <h1>DNS in a VPC</h1>
-      <p class="lead">By the end you can say what a private zone, a permitted network and a custom resolver each do, choose a DNS option for a question, and explain why a name can resolve while the server still cannot connect.</p>
+      <p class="lead">By the end of this unit you'll know what a private zone, a permitted network and a custom resolver each do, how to choose a DNS option for a question, and why a name can resolve while the server still can't connect.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -42,10 +42,10 @@
           {"text":"DNS","at":[210,118],"hand":true,"size":22},
           {"line":[292,110,350,110],"arrow":true,"tone":"muted"},
           {"text":"10.20.1.19","at":[296,92],"hand":true,"size":18,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its servers find each other by name, and some names live on a data centre it has not left yet. The commands and output below are real, from a test account.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its servers find each other by name, and some names live in a data centre it hasn&apos;t left yet. The commands and output below are real, from a test account.</p>
     </div>
   </div>
-  <p class="small">Every command and output in this unit comes from real runs in a lab account, apart from the review question. The vSphere comparison is a rough mapping. The comparison of DNS options is built from IBM&apos;s own pages and was not run.</p>
+  <p class="small">Every command and output in this unit comes from real runs in a lab account, except the review question. The vSphere comparison is only a rough match. The comparison of DNS options comes from IBM&apos;s own pages, and we didn&apos;t run it.</p>
 </section>
 
 <section class="screen">
@@ -76,27 +76,27 @@
         <div class="part-info" data-part="instance">
           <h3>DNS Services instance</h3>
           <p>IBM Cloud&apos;s private DNS. Its zones resolve only on IBM Cloud, and only from permitted networks.</p>
-          <p class="hand tilt"><b>From vSphere:</b> the closest term is a DNS service. It is a rough match.</p>
-          <p class="watch"><b>Watch for this.</b> The command line needs a plug-in first: <code>ibmcloud plugin install dns</code>.</p>
+          <p class="hand tilt"><b>From vSphere:</b> the closest thing is a DNS service, but it&apos;s only a rough match.</p>
+          <p class="watch"><b>Watch for this.</b> You need to install a plug-in before you can use the command line: <code>ibmcloud plugin install dns</code>.</p>
         </div>
         <div class="part-info" data-part="zone">
           <h3>Private zone</h3>
-          <p>A zone that only permitted VPCs can resolve. This one is <code>vpct.internal</code>. Outside the permitted VPCs its names do not exist.</p>
+          <p>A zone that only permitted VPCs can resolve. This one is <code>vpct.internal</code>. Outside the permitted VPCs, its names don&apos;t exist.</p>
         </div>
         <div class="part-info" data-part="record">
           <h3>Resource record</h3>
           <p>One entry in the zone. Here an A record maps <code>app.vpct.internal</code> to an address, with a TTL of 900 seconds.</p>
-          <p class="watch"><b>Watch for this.</b> The lab meant the record to point at a network load balancer. By then the load balancer was gone, so the run used an app server&apos;s address, <code>10.20.1.19</code>.</p>
+          <p class="watch"><b>Watch for this.</b> We meant the record to point at a network load balancer, but by then the load balancer was gone, so the run used an app server&apos;s address, <code>10.20.1.19</code>.</p>
         </div>
         <div class="part-info" data-part="permit">
           <h3>Permitted network</h3>
           <p>A VPC that is allowed to resolve the zone. Both VPCs were added and showed <code>ACTIVE</code>.</p>
-          <p class="watch"><b>Watch for this.</b> IBM says a permitted VPC resolves the zone because its DHCP server returns <code>161.26.0.7</code> and <code>161.26.0.8</code> as the DNS servers. A server with DHCP disabled needs those addresses set by hand.</p>
+          <p class="watch"><b>Watch for this.</b> IBM says a permitted VPC resolves the zone because its DHCP server returns <code>161.26.0.7</code> and <code>161.26.0.8</code> as the DNS servers. If DHCP is disabled on a server, you have to set those addresses by hand.</p>
         </div>
         <div class="part-info" data-part="rule">
           <h3>Forwarding rule</h3>
           <p>Sends queries for a zone to the upstream resolvers you list. This rule sends <code>onprem.vpct.internal</code> to <code>192.168.0.10</code>. A default rule for <code>*</code> already existed.</p>
-          <p class="watch"><b>Watch for this.</b> The lab&apos;s on-premises network was not built yet, so nothing answered at that address. The lab proves the rule exists, not that the answer came back.</p>
+          <p class="watch"><b>Watch for this.</b> The lab&apos;s on-premises network wasn&apos;t built yet, so nothing answered at that address. The test shows only that the rule exists, because no answer came back.</p>
         </div>
         <div class="part-info" data-part="resolver">
           <h3>Custom resolver</h3>
@@ -137,7 +137,7 @@ Per_Page     200
 
 ID                  Name                Type   TTL   Content
 A:2de4450d-…        app.vpct.internal   A      900   10.20.1.19</pre>
-          <p class="hand note">One record, in one zone.</p>
+          <p class="hand note">The zone holds one record.</p>
         </div>
         <div class="q">
           <p>You run <code>dig +short app.vpct.internal</code> on a server in <code>vpct-prod</code> and on a server in <code>vpct-shared</code>. The two VPCs have no route between them. What comes back?</p>
@@ -146,7 +146,7 @@ A:2de4450d-…        app.vpct.internal   A      900   10.20.1.19</pre>
             <button class="opt" data-ok>Both servers return the same address</button>
             <button class="opt">Neither resolves it until a route exists</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>Both VPCs are permitted networks of the zone, so both resolve it. Run the commands to see.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>Both servers return the same address. Both VPCs are permitted networks of the zone, so both resolve it. You can run the commands to see.</p></details>
         </div>
         <div class="cmd">
           <p class="pre"># on vpct-prod-app-z1-01, through the bastion</p>
@@ -157,15 +157,15 @@ A:2de4450d-…        app.vpct.internal   A      900   10.20.1.19</pre>
           <p class="pre"># on vpct-shared-svc-z1-01, over SSH to its floating IP</p>
           <pre class="in">dig +short app.vpct.internal</pre>
           <pre class="out">10.20.1.19</pre>
-          <p class="hand note">Two VPCs, one answer.</p>
+          <p class="hand note">Both VPCs returned the same address.</p>
         </div>
         <div class="q">
           <p>The shared server now calls <code>curl http://app.vpct.internal:8080/</code>. Does it connect?</p>
           <div class="opts">
             <button class="opt">Yes, the name resolved</button>
-            <button class="opt" data-ok>No. Resolving a name does not give it a route</button>
+            <button class="opt" data-ok>No. Resolving a name doesn&apos;t give it a route</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>No route joined the two VPCs yet. Name resolution and reachability are separate. Module 6 covers ways to join them.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>No. Name resolution and reachability are separate, and no route joined the two VPCs yet. Module 6 covers ways to join them.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">curl -m 4 http://app.vpct.internal:8080/</pre>
@@ -185,7 +185,7 @@ A:2de4450d-…        app.vpct.internal   A      900   10.20.1.19</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
   <h2>After the custom resolver is switched on</h2>
-  <p class="lead">Northgate enables the custom resolver in <code>vpct-shared</code>. The test server&apos;s security group allows DNS out only to <code>161.26.0.0/24</code>. The server renews its lease and reports this.</p>
+  <p class="lead">Northgate&apos;s network admin enables the custom resolver in <code>vpct-shared</code>. The test server&apos;s security group allows DNS out only to <code>161.26.0.0/24</code>. After the server renews its lease, it reports this.</p>
   <pre class="def" aria-label="The resolver the server uses after the lease renews">$ sudo dhclient -r &amp;&amp; sudo dhclient
 $ resolvectl status | grep -E "DNS Servers|Current DNS"
 Current DNS Server: 10.40.0.5
@@ -198,7 +198,7 @@ Current DNS Server: 10.40.0.5
         <button class="opt" data-ok>Time out</button>
         <button class="opt">Return NXDOMAIN</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The server now asks <code>10.40.0.5</code> and <code>10.40.64.4</code>, and its group allows port 53 only to <code>161.26.0.0/24</code>. The lab adds outbound rules for UDP and TCP port 53 to the two subnets that hold the resolver&apos;s addresses, <code>10.40.0.0/24</code> and <code>10.40.64.0/24</code>. Without them every lookup times out.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>They time out. The server now asks <code>10.40.0.5</code> and <code>10.40.64.4</code>, and its group allows port 53 only to <code>161.26.0.0/24</code>. In our lab we added outbound rules for UDP and TCP port 53 to the two subnets that hold the resolver&apos;s addresses, <code>10.40.0.0/24</code> and <code>10.40.64.0/24</code>. Without them every lookup times out.</p></details>
     </div>
   </div>
   <p class="lead" style="margin-top:20px">The resolver has two forwarding rules.</p>
@@ -213,7 +213,7 @@ ID             Description               Type      Match                  Forwar
         <button class="opt">The on-premises rule</button>
         <button class="opt" data-ok>The default rule</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It matches only the <code>*</code> of the default rule. IBM says the DNS Services resolvers also resolve public names that are not in a private zone.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The default rule. The name matches only the <code>*</code> of the default rule, and IBM says the DNS Services resolvers also resolve public names that aren&apos;t in a private zone.</p></details>
     </div>
     <div class="q">
       <p>Where does a lookup of <code>x.onprem.vpct.internal</code> go?</p>
@@ -221,7 +221,7 @@ ID             Description               Type      Match                  Forwar
         <button class="opt" data-ok>To <code>192.168.0.10</code></button>
         <button class="opt">To <code>161.26.0.7</code></button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A name under <code>onprem.vpct.internal</code> goes to <code>192.168.0.10</code>. In the lab nothing answered there yet, because the on-premises network was built later.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>To the on-premises resolver. A name under <code>onprem.vpct.internal</code> goes to <code>192.168.0.10</code>. In our lab nothing answered yet, because we built the on-premises network later.</p></details>
     </div>
   </div>
 </section>
@@ -229,7 +229,7 @@ ID             Description               Type      Match                  Forwar
 <section class="screen">
   <span class="kicker">Step 4 · Design it</span>
   <h2>Which DNS option answers which question?</h2>
-  <p class="lead">This table sets four options side by side. It is built from IBM&apos;s pages and was not run.</p>
+  <p class="lead">This compares four options side by side. It comes from IBM&apos;s pages, and we didn&apos;t run it.</p>
   <div class="cols">
     <svg class="sketch" role="img" aria-label="Hand-drawn grid of four DNS options. Cloud Internet Services: anyone on the internet resolves it; holds your public domain's records. DNS Services private zone: servers in permitted VPCs; holds private records. Custom resolver: VPC servers and on-premises resolvers; holds forwarding rules, no records. DNS sharing: spokes, through the hub's custom resolver; holds a binding and a resolver type."
       data-drawing='{"w":640,"h":240,"shapes":[
@@ -251,39 +251,39 @@ ID             Description               Type      Match                  Forwar
         {"text":"holds: a binding, a resolver type","at":[344,210],"size":15}]}'></svg>
     <div>
       <div class="q">
-        <p>Customers on the internet must resolve a public name, with protection in front of it.</p>
+        <p>Northgate&apos;s customers on the internet must resolve a public name, with protection in front of it. Which option?</p>
         <div class="opts">
           <button class="opt" data-ok>Cloud Internet Services</button>
           <button class="opt">A private zone</button>
           <button class="opt">A custom resolver</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>Cloud Internet Services is public. IBM lists DDoS protection, a web application firewall, rate limiting, a content delivery network and global load balancing. The lab has no public domain, so the lab does not build it.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>Cloud Internet Services. It&apos;s a public service, and IBM lists DDoS protection, a web application firewall, rate limiting, a content delivery network and global load balancing. The lab has no public domain, so we didn&apos;t build it.</p></details>
       </div>
       <div class="q">
-        <p>A name only Northgate&apos;s own VPCs should resolve.</p>
+        <p>Northgate wants a name that only its own VPCs can resolve. Which option?</p>
         <div class="opts">
           <button class="opt" data-ok>A DNS Services private zone, with each VPC permitted</button>
           <button class="opt">Cloud Internet Services</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>IBM says private zones are resolvable only on IBM Cloud, and only from explicitly permitted networks in an account.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>A private zone, with each VPC permitted. IBM says private zones are resolvable only on IBM Cloud, and only from explicitly permitted networks in an account.</p></details>
       </div>
       <div class="q">
-        <p>Servers in a VPC must resolve a name that an on-premises resolver holds.</p>
+        <p>Servers in a VPC must resolve a name that an on-premises resolver holds. Which option?</p>
         <div class="opts">
           <button class="opt">A private zone with a record for it</button>
           <button class="opt" data-ok>A custom resolver with a forwarding rule</button>
           <button class="opt">DNS sharing</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>IBM says a custom resolver also lets on-premises resolvers resolve names in the VPC.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>A custom resolver with a forwarding rule. IBM says a custom resolver also lets on-premises resolvers resolve names in the VPC.</p></details>
       </div>
       <div class="q">
-        <p>Many VPCs in one region must all use one resolver.</p>
+        <p>Many VPCs in one region must all use one resolver. Which option?</p>
         <div class="opts">
           <button class="opt">A permitted network on each</button>
           <button class="opt" data-ok>DNS sharing: a hub, with each VPC bound to it as a spoke</button>
           <button class="opt">One custom resolver per VPC</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>The spokes use the hub&apos;s custom resolver. Hub and spokes must be in the same region, and a spoke has one binding, so one hub.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>DNS sharing. The spokes use the hub&apos;s custom resolver. Hub and spokes must be in the same region, and a spoke has one binding, so one hub.</p></details>
       </div>
     </div>
   </div>
@@ -300,16 +300,16 @@ ID             Description               Type      Match                  Forwar
         <button class="opt" data-ok>Wait until the status reads <code>active</code>, then run the update again</button>
         <button class="opt">Run the update with a different method</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A load balancer accepts one change at a time. Wait until the provisioning status reads <code>active</code> between updates.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Wait, then run it again. A load balancer accepts one change at a time, so wait until the provisioning status reads <code>active</code> between updates.</p></details>
     </div>
     <div class="q" data-check>
       <p>IBM&apos;s page on the resolver type shows <code>ibmcloud is vpc-create ... --dns-resolver-type delegate</code>. What does IBM&apos;s CLI reference say?</p>
       <div class="opts">
-        <button class="opt">That is right. <code>vpc-create</code> accepts <code>delegate</code></button>
+        <button class="opt">That&apos;s right. <code>vpc-create</code> accepts <code>delegate</code></button>
         <button class="opt" data-ok>Use <code>vpc-update</code> with <code>delegated</code> and <code>--delegate-to-vpc</code></button>
         <button class="opt">Use <code>vpc-create</code> with <code>--dns-enable-hub</code></button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p><code>vpc-create</code> accepts <code>manual</code> and <code>system</code>. <code>vpc-update</code> accepts <code>delegated</code>, and <code>--delegate-to-vpc</code> is required. The same IBM page uses <code>delegated</code> in its later examples. Follow the reference.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Use the update command. <code>vpc-create</code> accepts <code>manual</code> and <code>system</code>. <code>vpc-update</code> accepts <code>delegated</code>, and <code>--delegate-to-vpc</code> is required. The same IBM page uses <code>delegated</code> in its later examples, so follow the reference.</p></details>
     </div>
     <div class="q" data-check>
       <p>A spoke VPC is bound to one DNS hub. Can it also bind to a second?</p>
@@ -317,15 +317,15 @@ ID             Description               Type      Match                  Forwar
         <button class="opt">Yes, up to the hub&apos;s limit</button>
         <button class="opt" data-ok>No. A spoke has one binding, so one hub</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM says a spoke can have one binding. A hub cannot have a binding of its own, and the hub and spokes must be in the same region.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. IBM says a spoke can have only one binding. A hub can&apos;t have a binding of its own, and the hub and spokes must be in the same region.</p></details>
     </div>
     <div class="q" data-check>
       <p>The same name exists in a Cloud Internet Services zone and in a private zone. Do the two services share records?</p>
       <div class="opts">
         <button class="opt">Yes, a change in one updates the other</button>
-        <button class="opt" data-ok>No. The two services do not share records</button>
+        <button class="opt" data-ok>No. The two services don&apos;t share records</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A name can exist in both, answering different audiences. Cloud Internet Services is public. DNS Services is private.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. A name can exist in both, and each service answers a different audience. Cloud Internet Services answers the public, and DNS Services answers your private networks.</p></details>
     </div>
   </div>
 </section>
@@ -335,7 +335,7 @@ ID             Description               Type      Match                  Forwar
   <h2>You can pick a DNS option</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>A private zone resolves only from permitted VPCs. A custom resolver forwards to other resolvers. A name that resolves is not a name that connects. A new resolver needs port 53 open to its subnets.</p></div>
+    <div><span class="label">Remember</span><p>A private zone resolves only from permitted VPCs. A custom resolver forwards queries to other resolvers. Resolving a name doesn&apos;t give the server a route to it. A new resolver needs port 53 open to its subnets.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapter 54, Resolving names across VPCs with a DNS Services private zone, builds the zone. Chapter 55, Forwarding on-premises names with a custom resolver, adds the resolver. Chapter 57, Choosing a DNS option for IBM Cloud VPC servers, compares the four, and chapter 78, Sharing DNS across VPCs through a DNS hub in IBM Cloud, runs DNS sharing.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

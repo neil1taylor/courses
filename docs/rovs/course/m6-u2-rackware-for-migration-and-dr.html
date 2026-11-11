@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 2 of Module 6</span>
       <h1>RackWare for migration and DR</h1>
-      <p class="lead">By the end you can say what RackWare RMM reaches that MTV cannot, which target patterns worked on ROVS, and why a standby machine has to keep running.</p>
+      <p class="lead">By the end of this unit you'll be able to say what RackWare RMM reaches that MTV can't, which target patterns worked on ROVS, and why a standby machine has to keep running.</p>
       <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -42,16 +42,16 @@
           {"line":[270,95,312,95],"arrow":true},
           {"box":[316,60,96,70],"heavy":true,"tone":"mark","title":"target"},
           {"text":"standby","at":[330,156],"hand":true,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It has a few physical servers that MTV cannot see, and some VMs that need a second copy somewhere else.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that's moving off vSphere. It has a few physical servers that MTV can't see, and some VMs that need a second copy somewhere else.</p>
     </div>
   </div>
-  <p class="small">No public source documents RMM as a ROVS migration target. The runs here were on test clusters with RMM 7.7.4.19, and their results should not be carried to another build. Every result in this unit is quoted with that condition. The review question repeats one from unit 6.1.</p>
+  <p class="small">No public source documents RMM as a ROVS migration target. The runs here were on test clusters with RMM 7.7.4.19, and their results shouldn't be carried over to another build. Every result in this unit is quoted with that condition. The review question repeats one from unit 6.1.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>How RMM copies a running machine</h2>
-  <p class="lead">RackWare RMM does not move disks. It copies the filesystem of a running machine, then rebuilds it on a target. This is the chapter&apos;s own sequence. Select a part of the drawing to see what it does and which lines describe it. You can also click a line.</p>
+  <p class="lead">RackWare RMM doesn't move disks. It copies the filesystem of a running machine, then rebuilds it on a target. Tap a part of the drawing to see what it does and which lines describe it. You can also click a line.</p>
   <div class="explorer" data-start="source"
     data-map='{"source":[[1,2]],"target":[[3,4]],"transfer":[[5,5]],"finish":[[6,7]]}'>
     <div class="cols">
@@ -70,23 +70,23 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="source">
           <h3>The source</h3>
-          <p>RMM logs into the running source over SSH, port 22, or through <code>RWSSHDService</code> on Windows. It inventories the filesystems and snapshots them, with LVM on Linux and VSS on Windows. It never touches the hypervisor, so it does not care whether there is one.</p>
-          <p class="watch"><b>Watch for this.</b> For disaster recovery, protected Linux machines must keep their data on LVM, with 15% of used space free as extents in every volume group. Windows machines need the same 15% as VSS shadow storage.</p>
-          <p class="hand tilt"><b>From vSphere:</b> MTV is roughly cross-vCenter vMotion. RMM is roughly a P2V converter, or Zerto for the disaster recovery case. These are approximate mappings, not IBM statements.</p>
+          <p>RMM logs into the running source over SSH, port 22, or through <code>RWSSHDService</code> on Windows. It inventories the filesystems and snapshots them, with LVM on Linux and VSS on Windows. It never touches the hypervisor, so it doesn't care whether there is one.</p>
+          <p class="watch"><b>Watch for this.</b> For disaster recovery, protected Linux machines have to keep their data on LVM, with 15% of used space free as extents in every volume group. Windows machines need the same 15% as VSS shadow storage.</p>
+          <p class="hand tilt"><b>From vSphere:</b> MTV is roughly cross-vCenter vMotion. RMM is roughly a P2V converter, or Zerto for the disaster recovery case. These are rough matches of our own, and IBM doesn't describe the products this way.</p>
         </div>
         <div class="part-info" data-part="target">
           <h3>The target</h3>
-          <p>RMM boots the target into a RackWare microkernel, then reformats and re-lays-out its disk to match the source. On RMM 7.7.4.19 this worked on a KubeVirt VM: on a machine built in advance, RMM booted RackWare&apos;s <code>neoramfs</code> from the machine&apos;s own <code>/boot</code>. It was observed on that version only.</p>
+          <p>RMM boots the target into a RackWare microkernel, then reformats and re-lays-out its disk to match the source. On RMM 7.7.4.19 this worked on a KubeVirt VM. On a machine built in advance, RMM booted RackWare's <code>neoramfs</code> from the machine's own <code>/boot</code>. We saw it on that version only.</p>
         </div>
         <div class="part-info" data-part="transfer">
           <h3>The transfer</h3>
-          <p>The target pulls file data from the source over a reverse SSH tunnel. Two engines do it. RWSync is the default: agentless, slower, tolerant of network outages. TNG is much faster but needs a delta file tracker agent on every source, does not support remote NFS or CIFS mounts, and is more sensitive to outages.</p>
-          <p class="watch"><b>Watch for this.</b> &quot;Agentless&quot; is true of the default engine only. An aggressive recovery point target pushes you to TNG, and then you maintain an agent on every protected source.</p>
+          <p>The target pulls file data from the source over a reverse SSH tunnel. Two engines do it. RWSync is the default. It's agentless, slower, and tolerant of network outages. TNG is much faster, but it needs a delta file tracker agent on every source, doesn't support remote NFS or CIFS mounts, and is more sensitive to outages.</p>
+          <p class="watch"><b>Watch for this.</b> &quot;Agentless&quot; is true of the default engine only. An aggressive recovery point target pushes you to TNG, and then you're maintaining an agent on every protected source.</p>
         </div>
         <div class="part-info" data-part="finish">
           <h3>After the copy</h3>
-          <p>RMM injects drivers, rewrites the bootloader for the new platform and reboots into the replicated system. Every later pass is a delta sync that repeats the microkernel boot.</p>
-          <p class="watch"><b>Watch for this.</b> RMM logs into the target as <code>root</code> and copies its own private key onto it, so the target can pull from the source. For a migration that exists for a few weeks. For disaster recovery it exists permanently.</p>
+          <p>RMM injects the drivers, rewrites the bootloader for the new platform and reboots into the replicated system. Every later pass is a delta sync that repeats the microkernel boot.</p>
+          <p class="watch"><b>Watch for this.</b> RMM logs into the target as <code>root</code> and copies its own private key onto it, so that the target can pull from the source. For a migration, that key exists for a few weeks. For disaster recovery, it exists permanently.</p>
         </div>
       </div>
     </div>
@@ -103,7 +103,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Design it</span>
   <h2>MTV or RackWare?</h2>
-  <p class="lead">Three Northgate sources. Pick a tool for each, then read why.</p>
+  <p class="lead">Northgate has three kinds of source. Pick a tool for each one, then read why.</p>
   <div class="pair">
     <div class="q">
       <p>A Northgate VM runs on vSphere. Which tool?</p>
@@ -111,7 +111,7 @@
         <button class="opt" data-ok>MTV</button>
         <button class="opt">RackWare RMM</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>If the source is vSphere, use MTV. It is documented on ROVS, it was run end to end on the series&apos; own cluster, and it is free. RMM costs $110 per source VM, licence included, at the IBM catalog price.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>MTV. If the source is vSphere, use MTV. It's documented on ROVS, we ran it end to end on our own cluster, and it's free. RMM costs $110 per source VM, licence included, at the IBM catalog price.</p></details>
     </div>
     <div class="q">
       <p>A Northgate application runs on a physical server. Which tool?</p>
@@ -119,15 +119,15 @@
         <button class="opt">MTV</button>
         <button class="opt" data-ok>RackWare RMM</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>MTV talks to vCenter and has no P2V path. RMM is for physical servers, Hyper-V, Nutanix, KVM, Xen and machines in other clouds. Physical servers are its original use case.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>RackWare RMM. MTV talks to vCenter and has no P2V path. RMM is for physical servers, Hyper-V, Nutanix, KVM, Xen and machines in other clouds. Physical servers are what it was built for.</p></details>
     </div>
     <div class="q">
-      <p>A source VM may only be copied while it is switched off. Which tool allows that?</p>
+      <p>A source VM may only be copied while it's switched off. Which tool allows that?</p>
       <div class="opts">
         <button class="opt" data-ok>MTV, with a cold migration</button>
         <button class="opt">RackWare RMM</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>RMM needs the source powered on, because it replicates a running system over SSH. MTV does not, because it reads the disks through vCenter. RMM also needs inbound SSH to every source, and no hypervisor credentials.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>MTV, with a cold migration. RMM needs the source powered on, because it replicates a running system over SSH. MTV doesn't, because it reads the disks through vCenter. RMM also needs inbound SSH to every source, and no hypervisor credentials.</p></details>
     </div>
   </div>
 </section>
@@ -135,35 +135,35 @@
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
   <h2>Two failures with no clear message</h2>
-  <p class="lead">Both come from test runs with RMM 7.7.4.19. Read the output, then pick the cause.</p>
+  <p class="lead">Both of these come from test runs with RMM 7.7.4.19. Hot and Warm targets are standby machines built in advance. With Pilot Light, RackWare creates the machine at failover. Read the output, then pick the cause.</p>
   <div class="pair">
     <div style="display:grid;gap:10px;align-content:start">
       <p>A Northgate team stops its Warm target to save cost. At failover, RackWare answers:</p>
       <pre class="def" aria-label="The failover answer">No syncs were started</pre>
       <p>It never contacted the machine, and the failover group stayed stuck.</p>
       <div class="q">
-        <p>What is the cause?</p>
+        <p>What's the cause?</p>
         <div class="opts">
-          <button class="opt" data-ok>RackWare cannot start a stopped OpenShift machine</button>
+          <button class="opt" data-ok>RackWare can't start a stopped OpenShift machine</button>
           <button class="opt">The licence slot is used up</button>
           <button class="opt">The target is too small</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><span class="hand">Warm costs what Hot costs.</span><p>RackWare has no power driver for OpenShift or KubeVirt. <code>rw host poweron</code> on a stopped machine fails with <code>Host 'rackware-warm' is powered off and there is no power controller to power cycle it.</code> Starting the machine and repeating the identical command succeeded. The tested Linux machine took about a minute to start. A stopped VPC virtual server behaved the same.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><span class="hand">Keep the standby running.</span><p>RackWare can't start it. It has no power driver for OpenShift or KubeVirt. <code>rw host poweron</code> on a stopped machine fails with <code>Host 'rackware-warm' is powered off and there is no power controller to power cycle it.</code> Once we started the machine and repeated the identical command, it succeeded. The Linux machine we tested took about a minute to start. A stopped VPC virtual server behaved the same way, so keep the standby running.</p></details>
       </div>
     </div>
     <div style="display:grid;gap:10px;align-content:start">
-      <p>Pilot Light onto the DR cluster, with the RMM on the source cluster. RackWare built the machine on the DR cluster, asked to use the network <code>cudn-rackware-dr2</code>. The machine&apos;s definition says:</p>
+      <p>This one is Pilot Light onto the DR cluster, with the RMM on the source cluster. RackWare built the machine on the DR cluster and was asked to use the network <code>cudn-rackware-dr2</code>. The machine's definition says this.</p>
       <pre class="def" aria-label="The network settings RackWare gave the machine">interfaces: [{"name":"cudn-rackware-dr2","masquerade":{}, ...}]
 networks:   [{"name":"cudn-rackware-dr2","pod":{}}]</pre>
       <p>The RMM polled the machine for 25 minutes, then reported <code>Failed to find reachable IP addresses for new VM.</code> and deleted it.</p>
       <div class="q">
-        <p>What is the cause?</p>
+        <p>What's the cause?</p>
         <div class="opts">
           <button class="opt">The network name was wrong</button>
           <button class="opt" data-ok>RackWare put the machine on the pod network, which nothing outside that cluster can reach</button>
           <button class="opt">Secure Boot blocked the machine</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><span class="hand">The name was kept. The network was not.</span><p>The interface keeps the name it was given, but the network behind it is <code>pod</code>. This was seen twice, on RMM 7.7.4.19. No message names the network. Until that changes, Pilot Light onto a ROVS cluster needs an RMM inside each DR cluster. RackWare has not confirmed this as a defect.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><span class="hand">The machine landed on the pod network.</span><p>RackWare put the machine on the pod network. The interface keeps the name it was given, but the network behind it is <code>pod</code>. We saw this twice, on RMM 7.7.4.19, and no message names the network. On that version, Pilot Light onto a ROVS cluster needs an RMM inside each DR cluster. RackWare hasn't confirmed this as a defect.</p></details>
       </div>
     </div>
   </div>
@@ -172,7 +172,7 @@ networks:   [{"name":"cudn-rackware-dr2","pod":{}}]</pre>
 <section class="screen">
   <span class="kicker">Step 4 · Predict</span>
   <h2>Where the targets worked</h2>
-  <p class="lead">The chapter ran failover and failback from an RMM on the source cluster. A solid line worked. The dashed marked line failed.</p>
+  <p class="lead">We ran failover and failback from an RMM on the source cluster. A solid line means it worked, and the dashed line means it failed.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A source cluster holding the RMM and a protected VM. Three arrows lead to three targets. A Hot target built in advance on the DR cluster is marked worked. A Pilot Light target on the DR cluster is dashed and marked failed. A VPC virtual server is marked worked, for Pilot Light and for a server built in advance."
     data-drawing='{"w":560,"h":270,"shapes":[
       {"box":[10,20,190,230],"heavy":true,"title":"Source cluster"},
@@ -192,16 +192,16 @@ networks:   [{"name":"cudn-rackware-dr2","pod":{}}]</pre>
         <button class="opt" data-ok>About 6 minutes</button>
         <button class="opt">About an hour</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>6 minutes 5 seconds, with RMM 7.7.4.19. Windows Server 2022 took 487 seconds. Failback of the Linux machine took 2 minutes 53 seconds. Because both clusters were in one region, these times are for a same-region link and may be longer over a longer one.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>About 6 minutes. It took 6 minutes 5 seconds, with RMM 7.7.4.19. Windows Server 2022 took 487 seconds. Failback of the Linux machine took 2 minutes 53 seconds. Both clusters were in one region, so these times are for a same-region link and may be longer over a longer one.</p></details>
     </div>
     <div class="q">
-      <p>Linux failback stops silently at the status <code>Prt Fallen Back</code>. What do you do before it?</p>
+      <p>Linux failback stops silently at the status <code>Prt Fallen Back</code>. What do you do before you fail back?</p>
       <div class="opts">
         <button class="opt">Switch from RWSync to TNG</button>
         <button class="opt" data-ok>Give the recovered volume group free space</button>
         <button class="opt">Restart the RMM</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>RackWare builds the target&apos;s volume group with zero free extents, then refuses to fail back from it. The only record is <code>SYNC_ERROR_INSUFFICIENT_ORIGIN_FREE_EXTENTS</code> in the job log. One <code>vgextend</code> fixed it. Failback also overwrites the source: anything written there after the last image sync is lost.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Give the volume group free space. RackWare builds the target's volume group with zero free extents, then refuses to fail back from it. The only record is <code>SYNC_ERROR_INSUFFICIENT_ORIGIN_FREE_EXTENTS</code> in the job log. One <code>vgextend</code> fixed it. Failback also overwrites the source, so anything written there after the last image sync is lost.</p></details>
     </div>
   </div>
 </section>
@@ -214,10 +214,10 @@ networks:   [{"name":"cudn-rackware-dr2","pod":{}}]</pre>
       <p>What does RMM copy onto the target so that the target can pull from the source?</p>
       <div class="opts">
         <button class="opt">The vCenter password</button>
-        <button class="opt" data-ok>RMM&apos;s own private key</button>
+        <button class="opt" data-ok>RMM's own private key</button>
         <button class="opt">Nothing. The source pushes.</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>RMM logs into the target as <code>root</code> and copies its own private key onto it. Take that to your security review. What you control is the lifetime of the RMM, the network it sits on, and how quickly it is destroyed after a migration wave.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Its own private key. RMM logs into the target as <code>root</code> and copies its own private key onto it. Take that to your security review. What you control is the lifetime of the RMM, the network it sits on, and how quickly it's destroyed after a migration wave.</p></details>
     </div>
     <div class="q" data-check>
       <p>Does RackWare publish a recovery point or recovery time figure?</p>
@@ -226,25 +226,25 @@ networks:   [{"name":"cudn-rackware-dr2","pod":{}}]</pre>
         <button class="opt" data-ok>No. &quot;Near-zero RPO&quot; is marketing copy with no method behind it</button>
         <button class="opt">Yes, 5 minutes</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>RackWare publishes no RPO or RTO number anywhere. The figures in this unit are measurements from test runs, each with the conditions it states.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. RackWare publishes no RPO or RTO number anywhere. The figures in this unit are measurements from our test runs, each with the conditions it states.</p></details>
     </div>
     <div class="q" data-check>
-      <p>Pilot Light onto a ROVS DR cluster, with the RMM outside that cluster. What happened on RMM 7.7.4.19?</p>
+      <p>We ran Pilot Light onto a ROVS DR cluster on RMM 7.7.4.19, with the RMM outside that cluster. What happened?</p>
       <div class="opts">
         <button class="opt">It worked</button>
         <button class="opt" data-ok>It failed. The created machine went onto the pod network</button>
         <button class="opt">It worked only for Windows</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Plan on Hot or Warm targets, both running, for a ROVS DR site. Pilot Light did work onto a VPC virtual server, for Linux and Windows, from an RMM anywhere that reaches the subnet.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It failed. Plan on Hot or Warm targets, both running, for a ROVS DR site. Pilot Light did work onto a VPC virtual server, for Linux and Windows, from an RMM anywhere that reaches the subnet.</p></details>
     </div>
     <div class="q" data-check>
       <p><span class="kicker">Review question from Unit 6.1.</span> Northgate has a physical server. Can MTV migrate it?</p>
       <div class="opts">
         <button class="opt">Yes, through vCenter</button>
         <button class="opt" data-ok>No. MTV talks to vCenter and has no P2V path</button>
-        <button class="opt">Yes, after it is converted to OVA</button>
+        <button class="opt">Yes, after it's converted to OVA</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>MTV reaches vSphere and nothing else. That is the gap RMM fills.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. MTV reaches vSphere and nothing else. That's the gap RMM fills.</p></details>
     </div>
   </div>
 </section>
@@ -254,7 +254,7 @@ networks:   [{"name":"cudn-rackware-dr2","pod":{}}]</pre>
   <h2>You know where RackWare fits</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>RMM copies a running machine over SSH and reaches what MTV cannot. Its standbys must keep running. Pilot Light onto ROVS needs an RMM inside the DR cluster. Every RackWare result here belongs to RMM 7.7.4.19 and a same-region link.</p></div>
+    <div><span class="label">Remember</span><p>RMM copies a running machine over SSH and reaches what MTV can't. Its standbys have to keep running. Pilot Light onto ROVS needs an RMM inside the DR cluster. Every RackWare result here belongs to RMM 7.7.4.19 and a same-region link.</p></div>
     <div><span class="label">When you have a cluster</span><p>Tutorial chapter 58, Protect ROVS VMs with RackWare RMM disaster recovery, has the results and limits. Chapter 57 covers the engine and the migration case.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

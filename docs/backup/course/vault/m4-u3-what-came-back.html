@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>What came back and what did not · Cyber Vault course</title>
-<meta name="description" content="Course unit 4.3: read the results of both rebuilds from the vault alone, and say what came back whole and what did not. No account needed.">
+<title>What was recovered, and two things to check · Cyber Vault course</title>
+<meta name="description" content="Course unit 4.3: read the results of both rebuilds from the vault alone, see what was recovered, and learn two things to check when you plan your own recovery. No account needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -26,30 +26,30 @@
   <div class="start">
     <div>
       <span class="kicker">Unit 3 of Module 4</span>
-      <h1>What came back and what did not</h1>
-      <p class="lead">By the end you can say what the rebuild brought back whole, what came back with a gap in the first round, and what did not come back at all.</p>
+      <h1>What was recovered, and two things to check</h1>
+      <p class="lead">By the end of this unit you&apos;ll be able to say what the rebuild recovered, how it was checked, and two things to check when you plan your own recovery.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
-      <svg class="sketch" role="img" aria-label="Sketch: three groups came back whole. In the first round, some Linux files came back empty and the OpenShift VM did not come back."
+      <svg class="sketch" role="img" aria-label="Sketch: in the second test every file and the database were recovered. The first test showed two things to check: hard-linked Linux files, and OpenShift VMs retrieved to a new cluster."
         data-drawing='{"w":420,"h":200,"shapes":[
-          {"text":"second round","at":[14,30],"hand":true,"size":17,"tone":"muted"},
-          {"box":[10,40,180,60],"heavy":true,"title":"came back whole"},
-          {"text":"first round","at":[234,30],"hand":true,"size":17,"tone":"muted"},
-          {"box":[230,40,180,60],"heavy":true,"tone":"mark","title":"gaps"},
-          {"text":"say what, with the date","at":[100,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. Its board will ask one question: did everything come back? The honest answer has dates and numbers in it.</p>
+          {"text":"second test","at":[14,30],"hand":true,"size":17,"tone":"muted"},
+          {"box":[10,40,180,60],"heavy":true,"title":"recovered"},
+          {"text":"first test","at":[234,30],"hand":true,"size":17,"tone":"muted"},
+          {"box":[230,40,180,60],"heavy":true,"tone":"mark","title":"two things to check"},
+          {"text":"check against a record made before the attack","at":[30,150],"hand":true,"size":16,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight, a made-up haulier, has rebuilt its systems from the vault, and its directors will ask whether everything was recovered. In the second test, every file and the database were recovered exactly as they were before the attack. This unit also shows two things to check when you plan your own recovery.</p>
     </div>
   </div>
-  <p class="small">The second-round numbers come from one run in our lab. The first-round numbers come from one run. Each is a single run, not a promise. The vault is a Beta in us-south, with no SLA.</p>
+  <p class="small">We ran the rebuild twice in our lab. The second test is the one in units 4.1 and 4.2, on a new cluster with only the read key. The first test was an earlier run on a third cluster that also had only the read key, with a much larger set of Linux files. Each is a single run. The vault is a Beta in us-south, and it has no SLA.</p>
   <p class="small"><b>Terms used.</b> <b>Hard-linked file</b>: a Linux file whose name points to the same data as another name. <b>Retrieve and restore</b>: retrieve downloads a backup from the vault to the new cluster, and restore writes its data back to a server.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
-  <h2>The second-round results</h2>
-  <p class="lead">The lab restored each clean run to a new location and checked it against a record made before the attack. All three Succeeded.</p>
+  <h2>What the second test recovered</h2>
+  <p class="lead">We restored each clean run to a new location and checked it against a record made before the attack. All three restores succeeded, and every file and the database matched.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Linux files: 503 of 503 match. Windows files: 503 of 503 match. SQL database labdb_v7b: 100000 rows, checksum -108923937, the clean value."
     data-drawing='{"w":560,"h":150,"shapes":[
       {"box":[10,20,170,64],"tone":"mark","title":"Linux files","detail":"503 of 503 match"},
@@ -68,16 +68,16 @@ SQL            labdb_v7b, a new database   100000,-108923937 (the clean value)</
         <button class="opt">It equals the attacked database, which reads -426859948</button>
         <button class="opt">It cannot be compared</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The clean value was <code>100000,-108923937</code>. The attacked <code>labdb</code> still read -426859948 after the restore, so the restored database was not the attacked one.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It equals the clean value. The attacked <code>labdb</code> still read -426859948 after the restore, so the restored database was recovered from the clean run.</p></details>
     </div>
     <div class="q">
-      <p>Why did the lab restore to a new location, not to the original server?</p>
+      <p>Why did we restore to a new location rather than the original server?</p>
       <div class="opts">
         <button class="opt">The original server had no space</button>
         <button class="opt" data-ok>A retrieved group cannot restore to the original</button>
         <button class="opt">The vault only allows one restore of each run</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In the first round the same restore to the original source was refused for a retrieved group: &quot;Restore of a database to the original source is not allowed for remote jobs&quot;. The lab restored to new locations.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A retrieved group can&apos;t restore to the original. In the first test the console refused it with &quot;Restore of a database to the original source is not allowed for remote jobs&quot;, so we restored to new locations.</p></details>
     </div>
   </div>
 </section>
@@ -85,7 +85,7 @@ SQL            labdb_v7b, a new database   100000,-108923937 (the clean value)</
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>What the console shows before the restore</h2>
-  <p class="lead">After the download, each retrieved group lists its snapshots. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">After the download, each retrieved group lists its snapshots. Click where you&apos;d click. After two misses, the page marks the right place.</p>
   <div class="tour">
     <figure class="tstep" data-hot="75,61.5,21,23" data-width="900px">
       <div class="shot"><img src="../../cyber-vault/tutorials/images/V7b-10-retrieved-groups-success.png" alt="CloudRetrieve, Downloaded Protection Groups: three groups, cv-sql-labdb, cv-linux-data and cv-win-data, all Success. Snapshot times are 11:44am, 11:43am and 11:43am. Three protection groups, six tasks, all successful." width="1036" height="568"></div>
@@ -103,41 +103,41 @@ SQL            labdb_v7b, a new database   100000,-108923937 (the clean value)</
         <button class="opt" data-ok>The clean vault copy: the vault copy whose snapshot ID decodes with <code>h_vaultId</code>, from before the attack</button>
         <button class="opt">The infected vault copy</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The three are a metadata-only local copy, the clean vault copy and the infected vault copy. In the first round the metadata-only copy failed with &quot;File lookup failed&quot;. The lab used the clean vault copy.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The clean vault copy. The three are a metadata-only local copy, the clean vault copy and the infected vault copy. Pick the clean vault copy. In the first test, a restore from the metadata-only copy gave &quot;File lookup failed&quot;.</p></details>
     </div>
     <div class="q">
-      <p>How did the lab check the Linux files?</p>
+      <p>How did we check the Linux files?</p>
       <div class="opts">
         <button class="opt">By the Succeeded status of the recovery</button>
         <button class="opt" data-ok>With <code>sha256sum -c</code> against the clean manifest</button>
         <button class="opt">By counting the files</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The manifest was made before the attack. 503 of 503 matched. The next steps show why a Succeeded status is not enough.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>With <code>sha256sum -c</code> against the manifest, which was made before the attack. 503 of 503 matched. The next step shows why it&apos;s worth checking the files as well as the status.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
-  <h2>The first-round results</h2>
-  <p class="lead">The lab ran an attack and a rebuild like these, on a third cluster that had only the read key. The results table is below, with the question marks to fill.</p>
-  <pre class="def" aria-label="First-round results">Workload        Check
+  <h2>What the first test showed</h2>
+  <p class="lead">Before the second test, we ran an attack and a rebuild like these on a third cluster that had only the read key, with a much larger set of Linux files. Windows and SQL were recovered. Can you fill in the Linux row?</p>
+  <pre class="def" aria-label="First-test results">Workload        Check
 Linux files     ?
 Windows files   503 of 503 match
 SQL Server      100000 rows, same checksum as before</pre>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>Linux has 181,552 files. How many matched in the first round?</p>
+      <p>Linux had 181,552 files. How many matched in the first test?</p>
       <div class="opts">
         <button class="opt">All 181,552</button>
         <button class="opt" data-ok>167,639</button>
         <button class="opt">About half</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><pre class="def" aria-label="First-round results">Workload        Check
+      <details class="reveal"><summary>Show the answer</summary><pre class="def" aria-label="First-test results">Workload        Check
 Linux files     167,639 of 181,552 match;
                 13,913 hard-linked files come back empty
 Windows files   503 of 503 match
-SQL Server      100000 rows, same checksum as before</pre><p>The lab called this &quot;pass, known gap&quot;.</p></details>
+SQL Server      100000 rows, same checksum as before</pre><p>We recorded this as a pass with a known gap, and it&apos;s the first thing to check in your own recovery.</p></details>
     </div>
     <div class="q">
       <p>Which files came back empty?</p>
@@ -146,25 +146,25 @@ SQL Server      100000 rows, same checksum as before</pre><p>The lab called this
         <button class="opt" data-ok>The hard-linked files</button>
         <button class="opt">The largest files</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>13,913 hard-linked files came back empty. An earlier test found the same gap, and says the cause is the file backup, not the vault.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The hard-linked files. 13,913 of them came back empty. An earlier test found the same thing and traced the cause to the file backup rather than the vault. So after a restore, check hard-linked Linux files: their content comes from the file backup, not the vault.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> The first-round times, in our lab: Linux retrieve 17 minutes and restore 38 minutes; Windows retrieve about 1 minute and restore 1 minute 22 seconds; SQL restore 1 minute 32 seconds. The second-round run did not record its times.</p>
+  <p class="watch"><b>Watch for this.</b> These are the first test&apos;s times in our lab. Linux: retrieve 17 minutes and restore 38 minutes. Windows: retrieve about 1 minute and restore 1 minute 22 seconds. SQL: restore 1 minute 32 seconds. We didn&apos;t record times in the second test.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>&quot;Everything came back&quot;</h2>
-  <p class="lead">Northgate&apos;s admin drafts a note for the board: &quot;We rebuilt every workload from the vault alone, and every restore said Succeeded.&quot;</p>
+  <h2>The note leaves out the VMs</h2>
+  <p class="lead">Northgate&apos;s backup admin drafts a note for the directors: &quot;We rebuilt every workload from the vault alone, and every restore said Succeeded.&quot; Which workload has she left out, and what else should she check?</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>Which workload does the note leave out?</p>
       <div class="opts">
         <button class="opt">Windows files</button>
-        <button class="opt" data-ok>The OpenShift VM: its retrieve failed on a new cluster in the first round</button>
+        <button class="opt" data-ok>The OpenShift VM: its retrieve to a new cluster failed in the first test</button>
         <button class="opt">SQL Server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The retrieve of the VM group failed on a new cluster: indexing succeeded, but the snapshot failed with &quot;Cannot find magneto view for icebox view&quot;. The VM registration on that cluster stayed Pending for 29 minutes. The second-round run did not try the VMs. The same VM backup did restore from the vault on its own cluster, in 6 minutes 6 seconds, with 20 of 20 files matching.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The OpenShift VM. Restore OpenShift VMs to the cluster they were backed up from; retrieving them to a new cluster failed in our first test. On its own cluster, the same VM backup restored from the vault in 6 minutes 6 seconds, with 20 of 20 files matching. On the new cluster, indexing succeeded but the snapshot failed with &quot;Cannot find magneto view for icebox view&quot;, and the VM registration stayed Pending for 29 minutes. The second test didn&apos;t try the VMs.</p></details>
     </div>
     <div class="q">
       <p>What found the empty Linux files?</p>
@@ -173,10 +173,10 @@ SQL Server      100000 rows, same checksum as before</pre><p>The lab called this
         <button class="opt" data-ok>A checksum check against a manifest made before the attack</button>
         <button class="opt">The vault, which reported the empty files</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In an earlier test the recovery reported Succeeded, and the checksum check found 13,902 files that differed. A status is not proof that the data is whole.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The checksum check. In an earlier test the recovery reported Succeeded, and the checksum check found 13,902 files that differed. So check the files as well as the status.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> Say what you tested, and in which round. In the second round, Linux, Windows and SQL came back whole. In the first round, Linux had a gap and the VM did not come back.</p>
+  <p class="watch"><b>Watch for this.</b> In the second test, Linux, Windows and SQL were recovered exactly as they were before the attack. The first test showed two things to check in your own recovery: hard-linked Linux files, and OpenShift VMs restored to a different cluster.</p>
 </section>
 
 <section class="screen">
@@ -190,35 +190,35 @@ SQL Server      100000 rows, same checksum as before</pre><p>The lab called this
         <button class="opt" data-ok>503 of 503, with 0 bad and 0 missing</button>
         <button class="opt">Not checked</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>SHA-256 against the clean list: 503 match, 0 bad, 0 missing.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>503 of 503. SHA-256 against the clean list: 503 match, 0 bad, 0 missing.</p></details>
     </div>
     <div class="q" data-check>
-      <p>In the first round, how did the Linux check come out?</p>
+      <p>In the first test, how did the Linux check come out?</p>
       <div class="opts">
         <button class="opt">All 181,552 matched</button>
         <button class="opt" data-ok>167,639 matched; 13,913 hard-linked files came back empty</button>
         <button class="opt">Nothing came back</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A known gap. The second-round run checked 503 files, which matched.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>167,639 matched. The hard-linked files are the ones to check after a restore. In the second test, all 503 files matched.</p></details>
     </div>
     <div class="q" data-check>
-      <p>What happened to the OpenShift VM in the first round?</p>
+      <p>What happened to the OpenShift VM in the first test?</p>
       <div class="opts">
         <button class="opt">It came back, with a gap</button>
         <button class="opt" data-ok>Its retrieve failed on a new cluster</button>
         <button class="opt">It was not backed up</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The snapshot failed during the retrieve on a new cluster. On its own cluster the VM did restore from the vault.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The retrieve to a new cluster failed at the snapshot. On its own cluster the VM restored from the vault, so restore VMs to the cluster they were backed up from.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Unit complete</span>
-  <h2>You can say what came back</h2>
+  <h2>You can say what was recovered</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>In the second round, Linux, Windows and SQL came back whole from the vault alone. In the first round, 13,913 hard-linked Linux files came back empty and the OpenShift VM did not come back on a new cluster. Check against a record made before the attack, not against the status.</p></div>
+    <div><span class="label">Remember</span><p>In the second test, Linux, Windows and SQL were recovered from the vault alone, exactly as they were before the attack. After a restore, check hard-linked Linux files, because in the first test 13,913 of them came back empty, and restore OpenShift VMs to the cluster they were backed up from. Check everything against a record made before the attack, as well as the status.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

@@ -27,14 +27,14 @@
     <div>
       <span class="kicker">Unit 3 of Module 3</span>
       <h1>Placement groups, dedicated hosts and bare metal</h1>
-      <p class="lead">By the end you can choose between a placement group, a dedicated host and a bare metal server, and say what each one cannot do.</p>
+      <p class="lead">By the end of this unit you'll be able to choose between a placement group, a dedicated host and a bare metal server, and say what each one can't do.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: three hosts. A shared host holds servers from several accounts, a dedicated host holds only your servers, and a bare metal server is the whole machine."
         data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,30,110,120],"heavy":true},{"box":[22,44,86,30]},{"box":[22,84,86,30],"fill":"hatch","tone":"mark"},{"box":[22,118,86,24]},{"text":"shared","at":[34,176],"hand":true,"tone":"muted","size":17},{"box":[150,30,110,120],"heavy":true},{"box":[162,50,86,40],"fill":"hatch","tone":"mark"},{"box":[162,100,86,40],"fill":"hatch","tone":"mark"},{"text":"dedicated","at":[170,176],"hand":true,"tone":"muted","size":17},{"box":[290,30,110,120],"heavy":true,"fill":"hatch","tone":"mark"},{"text":"bare metal","at":[300,176],"hand":true,"tone":"muted","size":17}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the commands and output are real. Two of its app servers must not fail together, and one workload must not share a host with anyone. Each need has a different answer.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that is moving off vSphere, though the commands and output are real. Two of its app servers mustn&apos;t fail together, and one workload mustn&apos;t share a host with anyone. Each of those needs a different answer.</p>
     </div>
   </div>
   <p class="small">Every command and line of output in this unit comes from real runs in a test account. Bare metal comes from IBM's own pages.</p>
@@ -56,17 +56,17 @@
         <div class="part-info" data-part="family">
           <h3>Family and class</h3>
           <p>A dedicated host belongs to a group. The group, the host and every server on it share one family (<code>balanced</code>) and one class (<code>bx2</code>). A dedicated host is a physical compute node reserved for your account, and only your account's servers run on it.</p>
-          <p class="watch"><b>Watch for this.</b> The supported profile list holds only <code>bx2</code> profiles. A memory profile will not be accepted. You will see the error in step 3.</p>
+          <p class="watch"><b>Watch for this.</b> The supported profile list holds only <code>bx2</code> profiles. A memory profile won't be accepted, and you'll see the error in step 3.</p>
         </div>
         <div class="part-info" data-part="placement">
           <h3>Placement switch</h3>
           <p>When <code>Instance Placement Enabled</code> is off, no new server can be created on the host.</p>
-          <p class="watch"><b>Watch for this.</b> The host cannot be deleted until placement is turned off. You will see that error too.</p>
+          <p class="watch"><b>Watch for this.</b> You can't delete the host until placement is turned off, and you'll see that error too.</p>
         </div>
         <div class="part-info" data-part="capacity">
           <h3>Capacity</h3>
-          <p>The host has 152 vCPUs and 608 GiB. After one <code>bx2-2x8</code> server, it shows 150 vCPUs and 600 available. The four NUMA nodes had 38 each; the one holding the server shows 36.</p>
-          <p class="watch"><b>Watch for this.</b> IBM bills the host by the hour. It does not bill the vCPU and memory of the servers on it.</p>
+          <p>The host has 152 vCPUs and 608 GiB. After one <code>bx2-2x8</code> server, it shows 150 vCPUs and 600 available. The four NUMA nodes had 38 each, and the one holding the server shows 36.</p>
+          <p class="watch"><b>Watch for this.</b> IBM bills the host by the hour, and it doesn't bill the vCPU and memory of the servers on it.</p>
         </div>
         <div class="part-info" data-part="servers">
           <h3>Servers on the host</h3>
@@ -120,8 +120,8 @@ Name             vpct-prod-app-pg
 State            pending
 Strategy         host_spread
 Resource Group   vpct-lab</pre>
-          <p class="hand note">Host spread: each server of the group on a separate compute host. Up to 12 servers.</p>
-          <p class="hand note">IBM says the strategy cannot be changed after creation.</p>
+          <p class="hand note">Host spread puts each server of the group on a separate compute host, for up to 12 servers.</p>
+          <p class="hand note">IBM says you can't change the strategy after creation.</p>
         </div>
         <div class="cmd">
           <p class="pre"># create each of the two servers with the group (other options trimmed)</p>
@@ -137,7 +137,7 @@ Profile                               bx2-2x8
 ...
 Placement                             ID                  Name               Resource type
                                       r014-…-52af         vpct-prod-app-pg   placement_group</pre>
-          <p class="hand note">If no separate host is free, provisioning fails and IBM does not retry. Stop and start the server to try again.</p>
+          <p class="hand note">If no separate host is free, provisioning fails and IBM doesn't retry. To try again, stop and start the server.</p>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud is instance vpct-prod-app-z1-01 --output json | jq '{name, placement_target}'</pre>
@@ -149,15 +149,15 @@ Placement                             ID                  Name               Res
     "resource_type": "placement_group"
   }
 }</pre>
-          <p class="hand note">The server shows its group, not its host. IBM does not show the host. The guarantee is the strategy.</p>
+          <p class="hand note">The server shows its group, and IBM doesn't show you which host it landed on. What you get is the guarantee that the strategy gives.</p>
         </div>
         <div class="q">
-          <p>Before you run the next command: both servers are running in the group. Can you delete the group?</p>
+          <p>Before you run the next command, suppose both servers are running in the group. Can you delete the group?</p>
           <div class="opts">
             <button class="opt">Yes, the servers just lose their placement</button>
-            <button class="opt" data-ok>No, a group with servers cannot be deleted</button>
+            <button class="opt" data-ok>No, a group with servers can't be deleted</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>IBM says a group with servers cannot be deleted, and a server cannot be moved out of a group. To remove a server from a group, delete the server.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>No. IBM says you can't delete a group that has servers, and you can't move a server out of a group. To remove a server from a group, delete the server.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud is placement-group-delete vpct-prod-app-pg -f</pre>
@@ -168,7 +168,7 @@ Failed to delete placement group vpct-prod-app-pg.
 FAILED
 Error code: placement_group_in_use
 Error message: placement group is referenced by one or more instances</pre>
-          <p class="hand note">Delete the servers first, then wait until they are gone, then delete the group.</p>
+          <p class="hand note">Delete the servers first, wait until they're gone, and then delete the group.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -195,22 +195,22 @@ Error code: conflict_field
 Error message: Instance placement must be disabled before deleting a dedicated host</pre>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>The host is a <code>bx2</code> balanced host and the server asked for <code>mx2-2x16</code>. Why did the create fail?</p>
+      <p>The host is a <code>bx2</code> balanced host and Northgate's server asked for <code>mx2-2x16</code>. Why did the create fail?</p>
       <div class="opts">
         <button class="opt">The host is full</button>
         <button class="opt" data-ok>A balanced host accepts only balanced servers: its supported list holds only bx2 profiles</button>
         <button class="opt">The zone is wrong</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Family and class must match.</span><p>The host's supported instance profile list is <code>bx2-2x8</code> up to <code>bx2-128x512</code>. The family and class of the group, the host and every server on it must be the same.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">The family and class didn't match.</span><p>A balanced host accepts only balanced servers. The host's supported instance profile list is <code>bx2-2x8</code> up to <code>bx2-128x512</code>, and the family and class of the group, the host and every server on it must be the same.</p></details>
     </div>
     <div class="q">
-      <p>The host delete failed. What do you run before you try again?</p>
+      <p>The host delete failed. What do you run before you try the delete again?</p>
       <div class="opts">
         <button class="opt" data-ok><code>ibmcloud is dedicated-host-update vpct-dh-z1-01 --enabled false</code></button>
         <button class="opt"><code>ibmcloud is dedicated-host-group-delete vpct-dhg-z1 -f</code></button>
         <button class="opt">Nothing: wait and run the same delete again</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Switch it off first.</span><p>Delete the server, then turn placement off, then delete the host, then the group. In the recorded run, the delete worked once <code>Instance Placement Enabled</code> showed <code>false</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Placement has to be switched off first.</span><p>The first command. The order is to delete the server, turn placement off, delete the host, and then delete the group. In the recorded run, the delete worked once <code>Instance Placement Enabled</code> showed <code>false</code>.</p></details>
     </div>
   </div>
 </section>
@@ -222,31 +222,31 @@ Error message: Instance placement must be disabled before deleting a dedicated h
         data-drawing='{"w":560,"h":210,"shapes":[{"text":"Shared host","at":[20,26],"hand":true,"tone":"muted","size":17},{"box":[10,36,120,100],"heavy":true},{"box":[20,46,100,24]},{"box":[20,76,100,24],"fill":"hatch","tone":"mark"},{"box":[20,106,100,24]},{"text":"Host spread","at":[160,26],"hand":true,"tone":"muted","size":17},{"box":[150,36,56,100],"heavy":true},{"box":[158,66,40,36],"fill":"hatch","tone":"mark"},{"box":[216,36,56,100],"heavy":true},{"box":[224,66,40,36],"fill":"hatch","tone":"mark"},{"text":"Dedicated host","at":[300,26],"hand":true,"tone":"muted","size":17},{"box":[290,36,120,100],"heavy":true},{"box":[300,48,100,34],"fill":"hatch","tone":"mark"},{"box":[300,90,100,34],"fill":"hatch","tone":"mark"},{"text":"Bare metal","at":[440,26],"hand":true,"tone":"muted","size":17},{"box":[430,36,120,100],"heavy":true,"fill":"hatch","tone":"mark"},{"text":"other accounts’ servers: plain box","at":[10,170],"hand":true,"tone":"muted","size":16},{"text":"your servers: hatched","at":[10,194],"hand":true,"tone":"mark","size":16}]}'></svg>
   <div>
     <div class="q">
-      <p>Design it. Two Northgate app servers must not share a host. Other servers may share with other accounts. What do you use?</p>
+      <p>Two Northgate app servers must not share a host, but other servers may share with other accounts. What do you use?</p>
       <div class="opts">
         <button class="opt" data-ok>A placement group with host spread</button>
         <button class="opt">A dedicated host</button>
         <button class="opt">A bare metal server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Host spread puts each server of the group on a separate compute host, up to 12 servers. Power spread is the other strategy: separate power and network supplies, up to four servers.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A placement group with host spread. It puts each server of the group on a separate compute host, for up to 12 servers. The other strategy is power spread, which uses separate power and network supplies for up to four servers.</p></details>
     </div>
     <div class="q">
-      <p>Design it. One workload must not share a host with other accounts' servers. What do you use?</p>
+      <p>One Northgate workload must not share a host with other accounts' servers. What do you use?</p>
       <div class="opts">
         <button class="opt">A placement group with host spread</button>
         <button class="opt" data-ok>A dedicated host</button>
         <button class="opt">No group: IBM spreads servers anyway</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A dedicated host is for a server that must not share a host with other accounts. Without a group, IBM spreads servers on a best-effort basis, with no guarantee. A server in a placement group does not work with a dedicated host.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A dedicated host. It's for a server that must not share a host with other accounts. Without a group, IBM spreads servers on a best-effort basis, with no guarantee, and a server in a placement group doesn't work with a dedicated host.</p></details>
     </div>
     <div class="q">
-      <p>Design it. A team wants to install a hypervisor of its own on IBM Cloud. What do you use?</p>
+      <p>Another Northgate team wants to install a hypervisor of its own on IBM Cloud. What do you use?</p>
       <div class="opts">
         <button class="opt" data-ok>A bare metal server</button>
         <button class="opt">A dedicated host</button>
         <button class="opt">A server on a shared host</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM says to pick a bare metal server to install a hypervisor, or for real-time workloads that use physical cores, full memory bandwidth or local storage.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A bare metal server. IBM says to pick one to install a hypervisor, or for real-time workloads that use physical cores, full memory bandwidth or local storage.</p></details>
     </div>
     <p class="hand tilt">On bare metal in a VMware environment, a PCI interface is an uplink on a vSwitch and a VLAN interface is a virtual network adapter.</p>
   </div>
@@ -262,24 +262,24 @@ Error message: Instance placement must be disabled before deleting a dedicated h
         <button class="opt">Yes: cloud-init starts it on every boot</button>
         <button class="opt" data-ok>No: cloud-init runs this user data once, on the first boot</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In the recorded run, the page came back after the first boot. After a reboot, the request failed with <code>Failed to connect</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. In the recorded run, the page came back after the first boot, and after a reboot the request failed with <code>Failed to connect</code>.</p></details>
     </div>
     <div class="q" data-check>
       <p>A bare metal server is powered off for a month. What happens to its billing?</p>
       <div class="opts">
         <button class="opt">Billing is suspended, as for a virtual server</button>
-        <button class="opt" data-ok>The data stays and billing continues. Suspending billing is not supported</button>
+        <button class="opt" data-ok>The data stays and billing continues, because suspending billing isn't supported</button>
         <button class="opt">The server is deleted</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>From IBM's pages: a bare metal server powered off keeps its data and keeps billing. A virtual server's billing is suspended when stopped, except for servers on dedicated hosts, and its storage keeps billing.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The data stays and billing continues. From IBM's pages: a bare metal server that is powered off keeps its data and keeps billing. A virtual server's billing is suspended when it's stopped, except for servers on dedicated hosts, and its storage keeps billing.</p></details>
     </div>
     <div class="q" data-check>
       <p>A server is in a placement group. Can it also run on a dedicated host?</p>
       <div class="opts">
         <button class="opt">Yes, both can be set when you create it</button>
-        <button class="opt" data-ok>No: a server in a placement group does not work with a dedicated host</button>
+        <button class="opt" data-ok>No: a server in a placement group doesn't work with a dedicated host</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM's page on placement groups says placement groups and dedicated hosts do not mix.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. IBM's page on placement groups says placement groups and dedicated hosts don't mix.</p></details>
     </div>
   </div>
 </section>
@@ -289,7 +289,7 @@ Error message: Instance placement must be disabled before deleting a dedicated h
   <h2>You can choose a placement now</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Placement group to spread, dedicated host to keep other accounts off, bare metal for a whole machine. A group with servers cannot be deleted. Disable placement before deleting a host.</p></div>
+    <div><span class="label">Remember</span><p>Use a placement group to spread servers, a dedicated host to keep other accounts off, and bare metal for a whole machine. You can't delete a group that has servers, and you need to disable placement before you delete a host.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapters 33 and 34 run what you saw here. Chapter 35 compares bare metal with virtual servers.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

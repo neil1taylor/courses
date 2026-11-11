@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Migrate from vSphere with MTV · ROVS course</title>
-<meta name="description" content="Course unit 6.1: name the objects of an MTV migration, build a plan that maps networks and storage, and see what decides whether a VM keeps its IP address. No cluster needed.">
+<meta name="description" content="Course unit 6.1: the objects of an MTV migration, a plan that maps networks and storage, and what decides whether a VM keeps its IP address. No cluster needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 1 of Module 6</span>
       <h1>Migrate from vSphere with MTV</h1>
-      <p class="lead">By the end you can name the objects of an MTV migration, say what a plan maps, and say which choices decide whether a VM keeps its IP address.</p>
+      <p class="lead">By the end of this unit you'll be able to name the objects of an MTV migration, say what a plan maps, and say which choices decide whether a VM keeps its IP address.</p>
       <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -40,7 +40,7 @@
           {"text":"MTV copies and converts","at":[150,78],"hand":true,"size":16,"tone":"mark"},
           {"box":[280,50,120,90],"heavy":true,"tone":"mark","title":"ROVS"},
           {"text":"a VirtualMachine","at":[290,170],"hand":true,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. Its VMs run on vSphere today. The Migration Toolkit for Virtualization (MTV) copies them to ROVS.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that's moving off vSphere. Its VMs run on vSphere today, and the Migration Toolkit for Virtualization (MTV) copies them to ROVS.</p>
     </div>
   </div>
   <p class="small">Every command, output and fact in this unit comes from a real run on a test cluster with MTV 2.12.8. The review question repeats one from unit 4.1.</p>
@@ -49,7 +49,7 @@
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>The objects of a migration</h2>
-  <p class="lead">MTV adds five kinds of object to the cluster. This is the list the cluster returned. Select a part of the drawing to see what it does and which line names it. You can also click a line.</p>
+  <p class="lead">MTV adds five kinds of object to the cluster, and this is the list the cluster returned. Tap a part of the drawing to see what it does and which line names it. You can also click a line.</p>
   <div class="explorer" data-start="provider"
     data-map='{"network":[[1,1]],"storage":[[2,2]],"plan":[[3,3]],"provider":[[4,4]],"migration":[[5,5]]}'>
     <div class="cols">
@@ -71,30 +71,30 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="provider">
           <h3>Provider</h3>
-          <p>Connection details and credentials for a source or a target. The source is vCenter or an ESXi host. The ROVS cluster you migrate into is registered for you as the host provider. You add a target provider only to migrate into a different cluster.</p>
-          <p class="watch"><b>Watch for this.</b> MTV is not pre-installed on ROVS. The add-on installs three operators, and MTV is not one of them. You install it from OperatorHub yourself and own its lifecycle afterwards.</p>
-          <p class="hand tilt"><b>From vSphere:</b> the source Provider is closest to vCenter Server. This is an approximate mapping, not an IBM statement.</p>
+          <p>This holds the connection details and credentials for a source or a target. The source is vCenter or an ESXi host. The ROVS cluster you migrate into is registered for you as the host provider, and you add a target provider only to migrate into a different cluster.</p>
+          <p class="watch"><b>Watch for this.</b> MTV isn't pre-installed on ROVS. The add-on installs three operators, and MTV isn't one of them. You install it from OperatorHub yourself, and looking after it afterwards is your job.</p>
+          <p class="hand tilt"><b>From vSphere:</b> the source Provider is closest to vCenter Server. That's a rough match of our own, and IBM doesn't describe it this way.</p>
         </div>
         <div class="part-info" data-part="network">
           <h3>NetworkMap</h3>
-          <p>Maps each source network to a target network. The target is a CUDN or a NetworkAttachmentDefinition. If a plan maps several source and destination networks, create a NetworkAttachmentDefinition for each additional destination network first.</p>
-          <p class="hand tilt"><b>From vSphere:</b> a port group, or a distributed port group.</p>
+          <p>This maps each source network to a target network. The target is a CUDN or a NetworkAttachmentDefinition. If a plan maps several source and destination networks, create a NetworkAttachmentDefinition for each additional destination network first.</p>
+          <p class="hand tilt"><b>From vSphere:</b> it's a port group, or a distributed port group.</p>
         </div>
         <div class="part-info" data-part="storage">
           <h3>StorageMap</h3>
-          <p>Maps each source datastore to a target StorageClass. Use <code>ocs-storagecluster-ceph-rbd-virtualization</code> for VM disks.</p>
-          <p class="watch"><b>Watch for this.</b> On the test cluster, two storage maps named <code>ocs-storagecluster-ceph-rbd</code> and the VMs they created sat on it. Nothing failed and nothing warned. Choose the virtualization class in the map, and re-read any map you inherited.</p>
-          <p class="hand tilt"><b>From vSphere:</b> a datastore.</p>
+          <p>This maps each source datastore to a target StorageClass. Use <code>ocs-storagecluster-ceph-rbd-virtualization</code> for VM disks.</p>
+          <p class="watch"><b>Watch for this.</b> On the test cluster, two storage maps named <code>ocs-storagecluster-ceph-rbd</code>, and the VMs they created sat on it. Nothing failed and nothing warned. Choose the virtualization class in the map, and re-read any map you've inherited.</p>
+          <p class="hand tilt"><b>From vSphere:</b> it's a datastore.</p>
         </div>
         <div class="part-info" data-part="plan">
           <h3>Plan</h3>
-          <p>A list of VMs that share migration settings, with its network map and storage map. A plan cannot hold more than 500 VMs or 500 disks. IBM suggests about 100 VMs per plan, which is faster than one large plan and limits how many VMs one failure affects.</p>
-          <p class="hand tilt"><b>From vSphere:</b> a migration wave in a runbook.</p>
+          <p>This is a list of VMs that share migration settings, with its network map and storage map. A plan can't hold more than 500 VMs or 500 disks. IBM suggests about 100 VMs per plan, which is faster than one large plan and limits how many VMs one failure affects.</p>
+          <p class="hand tilt"><b>From vSphere:</b> it's a migration wave in a runbook.</p>
         </div>
         <div class="part-info" data-part="migration">
           <h3>Migration</h3>
-          <p>The object that executes a plan. You start it from the console or by creating it.</p>
-          <p class="watch"><b>Watch for this.</b> IBM&apos;s workflow page calls two of these kinds <code>NetworkMapping</code> and <code>StorageMapping</code>. Those kinds do not exist. The real kinds are the ones in the list.</p>
+          <p>This is the object that runs a plan. You start it from the console or by creating it.</p>
+          <p class="watch"><b>Watch for this.</b> IBM's workflow page calls two of these kinds <code>NetworkMapping</code> and <code>StorageMapping</code>. Those kinds don't exist. The real kinds are the ones in the list.</p>
         </div>
       </div>
     </div>
@@ -109,7 +109,7 @@ migrations    forklift.konveyor.io/v1beta1   true   Migration</pre>
 <section class="screen">
   <span class="kicker">Step 2 · Predict, then run it</span>
   <h2>Install it, then use the right name</h2>
-  <p class="lead">Two questions, each followed by what the cluster returned on the test run.</p>
+  <p class="lead">Answer each question, then see what the cluster returned on the test run.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -119,31 +119,31 @@ migrations    forklift.konveyor.io/v1beta1   true   Migration</pre>
           <div class="opts">
             <button class="opt">Yes, the add-on installs it</button>
             <button class="opt" data-ok>No. You install it from OperatorHub</button>
-            <button class="opt">No, and it cannot be installed</button>
+            <button class="opt">No, and it can't be installed</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The add-on installs OpenShift Virtualization, NMState and Node Maintenance. IBM&apos;s limitations page blocks only those three from OperatorHub, so MTV installs normally. Run the command to see the result.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>No, you install it yourself. The add-on installs OpenShift Virtualization, NMState and Node Maintenance. IBM's limitations page blocks only those three from OperatorHub, so MTV installs normally. Run the command to see the result.</details>
         </div>
         <div class="cmd">
           <p class="pre"># after MTV was installed from OperatorHub</p>
           <pre class="in">oc get csv -n openshift-mtv</pre>
           <pre class="out">NAME                   DISPLAY                                         VERSION   PHASE
 mtv-operator.v2.12.8   Migration Toolkit for Virtualization Operator   2.12.8    Succeeded</pre>
-          <p class="hand note">Succeeded. From applying the Subscription to this took under two minutes.</p>
-          <p class="hand note">The operator does nothing until you create a ForkliftController. That then brought up eight pods.</p>
+          <p class="hand note">It reached Succeeded less than two minutes after the Subscription was applied.</p>
+          <p class="hand note">The operator does nothing until you create a ForkliftController. In our run, that then brought up eight pods.</p>
         </div>
         <div class="q">
-          <p>IBM&apos;s workflow page says a plan uses a <code>NetworkMapping</code>. What does the cluster say to <code>oc get networkmapping</code>?</p>
+          <p>IBM's workflow page says a plan uses a <code>NetworkMapping</code>. What does the cluster say to <code>oc get networkmapping</code>?</p>
           <div class="opts">
             <button class="opt">It lists the maps</button>
-            <button class="opt" data-ok>The server does not have that resource type</button>
+            <button class="opt" data-ok>The server doesn't have that resource type</button>
             <button class="opt">It lists nothing, with no error</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The kind is <code>NetworkMap</code>. Run the command to see the error.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>It doesn't have that resource type. The kind is <code>NetworkMap</code>. Run the command to see the error.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">oc get networkmapping</pre>
           <pre class="out err">the server doesn't have a resource type "networkmapping"</pre>
-          <p class="hand note">IBM&apos;s page names the kind wrongly.</p>
+          <p class="hand note">IBM's page names the kind wrongly.</p>
           <p class="hand note">Use NetworkMap and StorageMap.</p>
         </div>
       </div>
@@ -159,20 +159,20 @@ mtv-operator.v2.12.8   Migration Toolkit for Virtualization Operator   2.12.8   
 <section class="screen">
   <span class="kicker">Step 3 · Console tour</span>
   <h2>Build the plan in the console</h2>
-  <p class="lead">These are real screens from the test cluster. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These are real screens from the test cluster. Click where you'd click on the live console. After two misses, the page marks the right place.</p>
   <div class="tour">
     <figure class="tstep" data-hot="17.5,38.8,6.5,5">
       <div class="shot"><img src="../images/37/create-plan-wizard.jpg" alt="The Create migration plan wizard, on the General step. The left rail lists Basic setup with four sub-steps: General, Virtual machines, Network map and Storage map. Then come 2 Additional setup and 3 Review and create. The form asks for a Plan name, a Plan project set to openshift-mtv, a Description, and a Source provider." width="1567" height="640"></div>
       <figcaption>
-        <h3>You are creating a plan. Which sub-step maps the source datastores to a StorageClass?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Storage map. Choose <code>ocs-storagecluster-ceph-rbd-virtualization</code> here, in the map, not afterwards.</p></details>
+        <h3>You're creating a plan. Which sub-step maps the source datastores to a StorageClass?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Storage map. Choose <code>ocs-storagecluster-ceph-rbd-virtualization</code> here, in the map, rather than afterwards.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="17.5,31.8,6.5,5">
       <div class="shot"><img src="../images/37/create-plan-wizard.jpg" alt="The Create migration plan wizard, on the General step. The left rail lists Basic setup with four sub-steps: General, Virtual machines, Network map and Storage map. Then come 2 Additional setup and 3 Review and create. The form asks for a Plan name, a Plan project set to openshift-mtv, a Description, and a Source provider." width="1567" height="640"></div>
       <figcaption>
         <h3>Which sub-step maps each source port group to a target network?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Network map. If you choose Preserve static IPs, every mapping in the plan must point at a Layer 2 primary network.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Network map. If you choose Preserve static IPs, every mapping in the plan has to point at a Layer 2 primary network.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="29.5,83.8,31.5,5">
@@ -195,7 +195,7 @@ mtv-operator.v2.12.8   Migration Toolkit for Virtualization Operator   2.12.8   
 <section class="screen">
   <span class="kicker">Step 4 · Design it, then spot the fault</span>
   <h2>Three Northgate decisions</h2>
-  <p class="lead">Pick an answer for each, then read why.</p>
+  <p class="lead">Pick an answer for each one, then read why.</p>
   <div class="pair">
     <div class="q">
       <p>Northgate needs every migrated VM to keep its current IP address. Which target network?</p>
@@ -204,7 +204,7 @@ mtv-operator.v2.12.8   Migration Toolkit for Virtualization Operator   2.12.8   
         <button class="opt">A localnet CUDN</button>
         <button class="opt">A Layer 2 secondary CUDN</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Only a Layer 2 primary network can preserve a static IP, and the source VM must be powered on and run a VMware Guest Agent. The cost: you leave the localnet and secondary patterns, the namespace needs an immutable label set when it is created, and outside reach needs a router pattern or BGP route advertisement, not a VPC VNI per VM.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A Layer 2 primary network. It's the only kind that can preserve a static IP, and the source VM has to be powered on and running a VMware Guest Agent. The cost is that you leave the localnet and secondary patterns behind, the namespace needs an immutable label set when it's created, and reaching the VM from outside needs a router pattern or BGP route advertisement rather than a VPC VNI per VM.</p></details>
     </div>
     <div class="q">
       <p>Northgate puts its VMs on a localnet network instead. Do they keep their addresses?</p>
@@ -212,33 +212,33 @@ mtv-operator.v2.12.8   Migration Toolkit for Virtualization Operator   2.12.8   
         <button class="opt">Yes, if the source VM is powered on</button>
         <button class="opt" data-ok>No. Every VM is given a new address</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Localnet and secondary networks do not support Preserve static IPs, and every topology the tutorials teach is a secondary network. Plan the re-IP: DNS, firewall rules, licence bindings and anything with a hardcoded address.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. Localnet and secondary networks don't support Preserve static IPs, and every topology the tutorials teach is a secondary network. Plan the re-IP, which means DNS, firewall rules, licence bindings and anything with a hardcoded address.</p></details>
     </div>
     <div class="q">
       <p>Northgate wants the shortest downtime for VMs with data on several disks. Cold or warm?</p>
       <div class="opts">
-        <button class="opt">Cold: it is the default</button>
+        <button class="opt">Cold: it's the default</button>
         <button class="opt" data-ok>Warm, which needs a VDDK image</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Warm copies while the VM runs, so downtime is the cutover only. It needs a VDDK image on the provider, and Changed Block Tracking on the VM and on each disk. Cold suits large single-disk VMs and anything with a maintenance window.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Warm. It copies while the VM runs, so the downtime is the cutover only. It needs a VDDK image on the provider, and Changed Block Tracking on the VM and on each disk. Cold suits large single-disk VMs and anything with a maintenance window.</p></details>
     </div>
   </div>
-  <p class="lead" style="margin-top:24px"><span class="kicker">Spot the fault.</span> A cold migration fails. The provider shows Ready and Connected, and its secret holds the vCenter CA certificate. The provider has no VDDK image. The log says:</p>
+  <p class="lead" style="margin-top:24px"><span class="kicker">Spot the fault.</span> A cold migration fails. The provider shows Ready and Connected, and its secret holds the vCenter CA certificate. The provider has no VDDK image. The log says this.</p>
   <pre class="def" aria-label="The virt-v2v error from the failed migration">virt-v2v: error: downloading
 https://VCENTER/folder/FOLDER/VM-flat.vmdk?dcPath=DATACENTER&amp;dsName=DATASTORE:
 external command 'curl' ...: exited with error 60</pre>
   <div class="q">
-    <p>What is the cause?</p>
+    <p>What's the cause?</p>
     <div class="opts">
       <button class="opt">Port 902 is closed to the ESXi hosts</button>
       <button class="opt" data-ok>The fallback download checks the certificate itself and ignores the CA in the provider secret</button>
       <button class="opt">The storage map names the wrong class</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><span class="hand">Read curl error 60 as: certificate not trusted.</span><p>With no VDDK image, <code>virt-v2v</code> fetches the disk over plain HTTPS from the datastore browser. That download does not use the <code>cacert</code> in the provider secret. A privately issued certificate fails here. The same cold migration of one powered-off VM with a 10 GiB disk, run against one vCenter:</p>
+    <details class="reveal"><summary>Show the answer</summary><span class="hand">curl error 60 means the certificate isn't trusted.</span><p>The fallback download checks the certificate itself. With no VDDK image, <code>virt-v2v</code> fetches the disk over plain HTTPS from the datastore browser, and that download doesn't use the <code>cacert</code> in the provider secret, so a privately issued certificate fails here. We ran the same cold migration of one powered-off VM with a 10 GiB disk against one vCenter three ways, with these results.</p>
 <pre class="out">VDDK image set, insecureSkipVerify true    Succeeded in 3 minutes 50 seconds
 VDDK image set, insecureSkipVerify false   Succeeded in 3 minutes 30 seconds
 No VDDK image,  insecureSkipVerify false   Failed in 1 minute 24 seconds with curl error 60</pre>
-      <p>With the certificate check turned off and no VDDK image, a 10 GiB disk holding about 1.3 GiB of data took 37 minutes 16 seconds. These are single runs on one test environment.</p></details>
+      <p>With the certificate check turned off and no VDDK image, a 10 GiB disk holding about 1.3 GiB of data took 37 minutes 16 seconds. These are single runs on one test environment, so they're not figures for yours.</p></details>
   </div>
 </section>
 
@@ -251,9 +251,9 @@ No VDDK image,  insecureSkipVerify false   Failed in 1 minute 24 seconds with cu
       <div class="opts">
         <button class="opt">Yes, through vCenter</button>
         <button class="opt" data-ok>No. MTV talks to vCenter and has no P2V path</button>
-        <button class="opt">Yes, after it is converted to OVA</button>
+        <button class="opt">Yes, after it's converted to OVA</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>MTV reaches vSphere and nothing else. For physical servers, Hyper-V, Nutanix or machines in another cloud, the tool is RackWare RMM. Unit 6.2 covers it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. MTV reaches vSphere and nothing else. For physical servers, Hyper-V, Nutanix or machines in another cloud, the tool is RackWare RMM, and unit 6.2 covers it.</p></details>
     </div>
     <div class="q" data-check>
       <p>A warm plan is created for a provider with no VDDK image. What happens?</p>
@@ -262,15 +262,15 @@ No VDDK image,  insecureSkipVerify false   Failed in 1 minute 24 seconds with cu
         <button class="opt" data-ok>The wizard warns, accepts the plan, and the migration fails during the run</button>
         <button class="opt">It falls back to cold</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The alert is a warning, not a block. Warm migration fails without VDDK. Cold migration works without it, slowly.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The wizard warns and accepts the plan. The alert is a warning rather than a block. Cold migration works without VDDK, slowly, and warm migration needs it.</p></details>
     </div>
     <div class="q" data-check>
       <p>MTV reports the migrated VM as Running. Is the move finished?</p>
       <div class="opts">
         <button class="opt">Yes</button>
-        <button class="opt" data-ok>No. MTV hands you a running VM, not a working service</button>
+        <button class="opt" data-ok>No. MTV hands you a running VM, and a working service is still your job</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Check each VM: network settings and DNS if it was re-IP&apos;d, <code>qemu-guest-agent</code>, the storage class, access rights, network policies, whether it can live migrate, the applications, and backup.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. Check each VM for its network settings and DNS if it was re-IP'd, <code>qemu-guest-agent</code>, the storage class, access rights, network policies, whether it can live migrate, the applications, and backup.</p></details>
     </div>
     <div class="q" data-check>
       <p><span class="kicker">Review question from Unit 4.1.</span> A VM has an RWX boot disk and an RWO data disk. What does the RWO disk do?</p>
@@ -279,7 +279,7 @@ No VDDK image,  insecureSkipVerify false   Failed in 1 minute 24 seconds with cu
         <button class="opt" data-ok>It stops the whole VM live migrating</button>
         <button class="opt">It makes the boot disk RWO too</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Every disk attached to a VM must be RWX. That is why the chapter tells you to run <code>virtctl migrate</code> on each migrated VM: if it cannot migrate, the storage class is wrong, and you want to know now.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It stops the whole VM live migrating. Every disk attached to a VM has to be RWX. That's why you run <code>virtctl migrate</code> on each migrated VM. If it can't migrate, the storage class is wrong, and you want to know now.</p></details>
     </div>
   </div>
 </section>
@@ -289,7 +289,7 @@ No VDDK image,  insecureSkipVerify false   Failed in 1 minute 24 seconds with cu
   <h2>You can read an MTV plan</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Five objects: Provider, NetworkMap, StorageMap, Plan, Migration. Put the virtualization class in the storage map. Only a Layer 2 primary network keeps IP addresses. Warm needs VDDK. A running VM is not a finished move.</p></div>
+    <div><span class="label">Remember</span><p>There are five objects: Provider, NetworkMap, StorageMap, Plan and Migration. Put the virtualization class in the storage map. Only a Layer 2 primary network keeps IP addresses. Warm needs VDDK. A running VM isn't a finished move.</p></div>
     <div><span class="label">When you have a cluster</span><p>Tutorial chapter 37, Migrate VMware vSphere VMs to ROVS with the MTV operator, has every step, the VDDK image build and the troubleshooting table.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

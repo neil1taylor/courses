@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 2 of Module 2</span>
       <h1>The Connector Agent on Linux and Windows</h1>
-      <p class="lead">By the end you can say what the Connector Agent replaces, follow its install and claim on Linux and Windows, and read the error that a wrong platform name gives.</p>
+      <p class="lead">By the end of this unit you'll know what the Connector Agent replaces, how to install and claim it on Linux and Windows, and what the error looks like when you give the wrong platform name.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -41,7 +41,7 @@
           {"line":[184,114,300,114],"arrow":true,"tone":"mark"},
           {"box":[304,84,106,60],"heavy":true,"title":"service"},
           {"text":"no connector server","at":[190,185],"hand":true,"size":17,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. Its Linux server <code>ng-app-01</code> and its Windows server <code>ng-win-01</code> each get their own Connector Agent, so Northgate builds no connector server for them.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its Linux server <code>ng-app-01</code> and its Windows server <code>ng-win-01</code> each get their own Connector Agent, so Northgate doesn&apos;t build a connector server for them.</p>
     </div>
   </div>
   <p class="small">Every number and message in this unit comes from runs in our lab. Server names, addresses and the connection name were changed to made-up Northgate values, and the registration token is blurred in the screenshots.</p>
@@ -67,7 +67,7 @@
         <button class="opt" data-ok>The connector server, for that host</button>
         <button class="opt">The BRS instance</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It replaces the connector server for that host. You still install the backup agent on the host. The agent is one program per host, so each protected host needs one, while a connector server serves many hosts.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The connector server, for that host. You still install the backup agent on the host. The Connector Agent is one program per host, so each protected host needs its own, whereas one connector server serves many hosts.</p></details>
     </div>
     <div class="q">
       <p>Which outbound ports does IBM say the Connector Agent needs?</p>
@@ -84,7 +84,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Run it</span>
   <h2>Install and claim the agent on Linux</h2>
-  <p class="lead">Run each command in turn. The output is what our lab returned. The installer file was copied to the server and installed with <code>chmod +x</code> and <code>sudo /tmp/connector_agent_installer -- --install -y</code>; the <code>-y</code> skips the &quot;install? [y/N]&quot; question.</p>
+  <p class="lead">Run each command in turn. The output is what our lab returned. We copied the installer file to the server and installed it with <code>chmod +x</code> and <code>sudo /tmp/connector_agent_installer -- --install -y</code>. The <code>-y</code> skips the &quot;install? [y/N]&quot; question.</p>
   <div class="term-block">
     <div class="term">
       <div class="bar"><span>bash</span><span data-term-count></span></div>
@@ -102,7 +102,7 @@
         <pre class="in">jq -nc --rawfile t claim.tok '{registrationToken:($t|rtrimstr("\n")),connectionName:"ng-agent",joinExistingConnection:false}' | ssh vpcuser@10.0.0.10 'curl -s -i -X POST -H "Content-Type: application/json" -d @- http://localhost:8080/v1/connector-agents/registration'</pre>
         <pre class="out">HTTP/1.1 204 No Content
 X-Registration-Status: registered</pre>
-        <p class="hand note">The token came from the CLI. It is a secret: do not print it.</p>
+        <p class="hand note">The token came from the CLI. It&apos;s a secret, so don&apos;t print it.</p>
       </div>
       <div class="cmd">
         <pre class="in">ibmcloud backup-recovery connector-agent list --tenant-id $T --xibm-tenant-id $T --output json</pre>
@@ -124,7 +124,7 @@ Result           204, registered             204 registered</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
   <h2>HTTP 400 on the download</h2>
-  <p class="lead">Northgate calls the download API for the Connector Agent installer with the platform written as <code>Linux</code>. This is what came back in our lab.</p>
+  <p class="lead">Northgate&apos;s backup admin calls the download API for the Connector Agent installer with the platform written as <code>Linux</code>. This is what came back in our lab.</p>
   <pre class="def" aria-label="The failed download">GET /v2/connector-agents/download/Linux
 HTTP 400, "platform in path should be one of [kLinux kWindows]"</pre>
   <div class="pair" style="margin-top:20px">
@@ -135,7 +135,7 @@ HTTP 400, "platform in path should be one of [kLinux kWindows]"</pre>
         <button class="opt" data-ok>The platform name is wrong: the path needs <code>kLinux</code></button>
         <button class="opt">The installer does not exist for Linux</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The message lists the valid names: <code>kLinux</code> and <code>kWindows</code>. With <code>kLinux</code> the same call returned HTTP 200 and a 28.6 MB self-extracting script.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The platform name is wrong. The message lists the valid names: <code>kLinux</code> and <code>kWindows</code>. With <code>kLinux</code> the same call returned HTTP 200 and a 28.6 MB self-extracting script.</p></details>
     </div>
     <div class="q">
       <p>Would the lower-case <code>linux</code> have worked?</p>
@@ -144,7 +144,7 @@ HTTP 400, "platform in path should be one of [kLinux kWindows]"</pre>
         <button class="opt" data-ok>No: it gave the same HTTP 400</button>
         <button class="opt">Only on Windows</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>We tested both <code>linux</code> and <code>Linux</code>. Both gave HTTP 400 with the same message.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. We tested both <code>linux</code> and <code>Linux</code>, and both gave HTTP 400 with the same message.</p></details>
     </div>
   </div>
 </section>
@@ -152,27 +152,27 @@ HTTP 400, "platform in path should be one of [kLinux kWindows]"</pre>
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>Find the downloads and the agents</h2>
-  <p class="lead">These screens come from the BRS console in our lab. The console downloads the installers, but it has no step for the claim: the agent&apos;s only interface is the local port, so the claim is the <code>curl</code> POST you ran in step 2. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. The console downloads the installers, but it has no step for the claim. The agent&apos;s only interface is the local port, so the claim is the <code>curl</code> POST you ran in step 2. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="2.9,23.9,23.9,9.5" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2b-1-connector-agent-download.png" alt="Download Connector Agent: Operating System Linux, the Configuration Token (blurred here) with copy, download and refresh buttons, and the Download Connector Agent link." width="830" height="485"></div>
       <figcaption>
         <h3>Northgate chose Direct and clicked Download Connector Agent. Where do you switch between Linux and Windows?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: the Operating System list, Linux or Windows. The dialog also has the Configuration Token, with copy, download and refresh buttons. It is the same kind of token that the CLI command gives.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the Operating System list, Linux or Windows. The dialog also has the Configuration Token, with copy, download and refresh buttons. It&apos;s the same kind of token that the CLI command gives.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="40,70.5,18.5,15.5" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2c-1-backup-agent-windows.png" alt="Download Agents with Agent set to Windows: no Type list, only the Download button." width="540" height="277"></div>
       <figcaption>
-        <h3>This is the backup agent download, with Agent set to Windows. Linux has a Type list here. What is left for Windows?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: only the Download button. On Linux the Type list offers Script Installer, RPM, Debian, Suse RPM and PowerPC RPM. The Windows installer was 21.9 MB.</p></details>
+        <h3>This is the backup agent download, with Agent set to Windows. On Linux there&apos;d be a Type list here. What&apos;s left to click for Windows?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Only the Download button is left. On Linux the Type list offers Script Installer, RPM, Debian, Suse RPM and PowerPC RPM. The Windows installer was 21.9 MB.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="3.9,82,46.1,7.6" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B2c-3-both-agents-listed.png" alt="Register Physical Server, Direct: the Connector Agent list shows cohesity-lab-agent and cohesity-lab-win-agent." width="770" height="605"></div>
       <figcaption>
         <h3>Both agents are claimed and you start a Direct registration. Click the agent for the Windows server.</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: the second name, the Windows agent. Reload the page first if the list looks empty: a dialog left open from before the claim showed an empty list in our lab. System &gt; Data Source Connections does not list a Connector Agent&apos;s connection; it shows only the connector server&apos;s.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the second name, the Windows agent. If the list looks empty, reload the page first. In our lab a dialog we&apos;d left open from before the claim showed an empty list. System &gt; Data Source Connections doesn&apos;t list a Connector Agent&apos;s connection. It shows only the connector server&apos;s.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -198,7 +198,7 @@ HTTP 400, "platform in path should be one of [kLinux kWindows]"</pre>
         <button class="opt" data-ok>POST the token to the agent&apos;s local port, 8080, on the server</button>
         <button class="opt">Log in to a web page on the agent</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The console has no claim step. The agent listens on 127.0.0.1:8080 only. A good claim returns 204 and <code>X-Registration-Status: registered</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>POST the token to the local port. The console has no claim step, and the agent listens on 127.0.0.1:8080 only. A good claim returns 204 and <code>X-Registration-Status: registered</code>.</p></details>
     </div>
     <div class="q" data-check>
       <p>You call the Connector Agent download API with the platform <code>Linux</code>. What do you get?</p>
@@ -207,7 +207,7 @@ HTTP 400, "platform in path should be one of [kLinux kWindows]"</pre>
         <button class="opt" data-ok>HTTP 400: the platform must be kLinux or kWindows</button>
         <button class="opt">HTTP 401: you need a new token</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The message was &quot;platform in path should be one of [kLinux kWindows]&quot;.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>HTTP 400. The message was &quot;platform in path should be one of [kLinux kWindows]&quot;.</p></details>
     </div>
   </div>
 </section>
@@ -217,7 +217,7 @@ HTTP 400, "platform in path should be one of [kLinux kWindows]"</pre>
   <h2>You can install and claim a Connector Agent</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>The Connector Agent replaces the connector server for its own host, and you still install the backup agent. The platform names are kLinux and kWindows. The claim is a POST to 127.0.0.1:8080 on the server: the console has no step for it.</p></div>
+    <div><span class="label">Remember</span><p>The Connector Agent replaces the connector server for its own host, and you still install the backup agent. The platform names are kLinux and kWindows. The claim is a POST to 127.0.0.1:8080 on the server, because the console has no step for it.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

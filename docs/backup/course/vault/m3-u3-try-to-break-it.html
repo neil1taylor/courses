@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 3 of Module 3</span>
       <h1>Try to break it</h1>
-      <p class="lead">By the end you can say what each key, and the account owner, could and could not do to locked data in the vault: delete it, shorten its lock, or overwrite it.</p>
+      <p class="lead">By the end of this unit you&apos;ll be able to say what each key, and the account owner, could and couldn&apos;t do to locked data in the vault: delete it, shorten its lock, or overwrite it.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -41,17 +41,17 @@
           {"line":[134,122,190,100],"arrow":true},
           {"line":[134,181,190,130],"arrow":true},
           {"box":[194,50,216,100],"heavy":true,"title":"Locked vault","detail":"old version stays"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier. Its board asks what happens if an attacker gets the backup admin&apos;s keys. Here is what we tried, in our lab, with each key.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its directors want to know what happens if an attacker gets the backup admin&apos;s keys. In this unit you see what we tried in our lab with each key, and what the vault did.</p>
     </div>
   </div>
-  <p class="small">Every result comes from real tests in our lab. The vault is a Beta in us-south, with no SLA. Vault names, hosts and keys are made-up or placeholders: the values were changed.</p>
-  <p class="small"><b>Terms used.</b> <b>GET, PUT, DELETE and HEAD</b>: requests to storage. GET reads an object, PUT writes one, DELETE removes one, and HEAD asks about an object without reading it. <b>Object key</b>: the name an object is stored under. It is not a secret key.</p>
+  <p class="small">Every result comes from real tests in our lab. The vault is a Beta in us-south, and it has no SLA. Vault names, hosts and keys are made-up or placeholders, because we changed the real values.</p>
+  <p class="small"><b>Terms used.</b> <b>GET, PUT, DELETE and HEAD</b>: requests to storage. GET reads an object, PUT writes one, DELETE removes one, and HEAD asks about an object without reading it. <b>Object key</b>: the name an object is stored under. It isn&apos;t a secret key.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Four holders, one locked vault</h2>
-  <p class="lead">The vault gives two keys: a write key and a read key. We also tried a third key, for the same storage instance but not made for the vault, and the account owner&apos;s own token from inside the allowed network.</p>
+  <p class="lead">The vault gives you two keys, a write key and a read key. We also tried a third key, made for the same storage instance but not for the vault, and the account owner&apos;s own token from inside the allowed network.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Four holders point at a locked vault: the write key, the read key, an HMAC key of the same storage instance, and the account owner's token."
     data-drawing='{"w":560,"h":300,"shapes":[
       {"box":[10,10,230,62],"title":"Write key","detail":"Data Protect uses it"},
@@ -71,7 +71,7 @@
         <button class="opt" data-ok>The read key</button>
         <button class="opt">Both</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The read key could read the lock. The write key could list, read and write with a lock, but could not read the lock.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The read key. The write key could list, read and write with a lock, but it couldn&apos;t read the lock.</p></details>
     </div>
     <div class="q">
       <p>Which key could write a new object with a lock?</p>
@@ -80,7 +80,7 @@
         <button class="opt">The read key</button>
         <button class="opt">Neither</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The write key wrote with a lock (HTTP 200). The read key got 403 on a write.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The write key. It wrote with a lock and got HTTP 200. The read key got 403 on a write.</p></details>
     </div>
   </div>
 </section>
@@ -88,7 +88,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>Try to delete a locked version</h2>
-  <p class="lead">The lab tried to delete one real data chunk and the real archive_metadata object, both locked. Each holder sent a delete for one version.</p>
+  <p class="lead">We tried to delete one real data chunk and the real archive_metadata object, both locked. Each of the four holders sent a delete for one version. How many do you think got through?</p>
   <pre class="def" aria-label="The attempts">DELETE /&lt;OBJECT_KEY&gt;?versionId=&lt;VERSION_ID&gt;
 
 holder                    result
@@ -104,11 +104,11 @@ owner token, in the VPC   ?</pre>
         <button class="opt">Only the write key</button>
         <button class="opt">Only the account owner</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">None got through.</span><pre class="def" aria-label="The results">holder                    result
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">All four were refused.</span><pre class="def" aria-label="The results">holder                    result
 write key                 403 Access Denied because object protected by object lock
 read key                  403 Access Denied
 instance HMAC key         403 Access Denied (it could not even list)
-owner token, in the VPC   403 on GET, HEAD and DELETE</pre><p>Both objects still answered HEAD 200 afterwards. The instance HMAC key was the strongest key we had: an account-owner HMAC key does not exist in our account.</p></details>
+owner token, in the VPC   403 on GET, HEAD and DELETE</pre><p>Both objects still answered HEAD 200 afterwards. The instance HMAC key was the strongest key we had, because an account-owner HMAC key doesn&apos;t exist in our account.</p></details>
     </div>
     <div class="q">
       <p>Same delete with the write key, now with the header <code>x-amz-bypass-governance-retention: true</code>. What happened?</p>
@@ -117,7 +117,7 @@ owner token, in the VPC   403 on GET, HEAD and DELETE</pre><p>Both objects still
         <button class="opt" data-ok>403, with the same text</button>
         <button class="opt">The vault asked for the read key</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>403 with the same text. The lock is COMPLIANCE, not GOVERNANCE.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>403 with the same text. The lock is COMPLIANCE, so the bypass header for GOVERNANCE locks doesn&apos;t apply.</p></details>
     </div>
   </div>
 </section>
@@ -125,7 +125,7 @@ owner token, in the VPC   403 on GET, HEAD and DELETE</pre><p>Both objects still
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>Shorten the lock, then overwrite</h2>
-  <p class="lead">Two more tries with the write key, run in our lab. The first changes the lock. The second writes new content over an old key. The overwrite used a probe object, not a real archive key.</p>
+  <p class="lead">We made two more attempts with the write key in our lab. The first tries to change the lock, and the second writes new content over an old key. For the overwrite we used a test object, probe/p1.txt, rather than a real archive object.</p>
   <pre class="def" aria-label="Shorten and overwrite attempts">PUT /&lt;OBJECT_KEY&gt;?retention&amp;versionId=&lt;VERSION_ID&gt;
     COMPLIANCE until 18:00 today                    write key
     GOVERNANCE plus the bypass header               write key
@@ -138,7 +138,7 @@ PUT /probe/p1.txt        other content              write key</pre>
         <button class="opt" data-ok>Both got 403 &quot;protected by object lock&quot;</button>
         <button class="opt">The vault ignored them and answered 200</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both got 403 &quot;protected by object lock&quot;, on both real objects and on the probe. At bucket level, a default retention change and a versioning change to Suspended also got 403, and the configuration was unchanged afterwards.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Both got 403 &quot;protected by object lock&quot;, on both real objects and on the probe. At bucket level, a change to the default retention and a change of versioning to Suspended also got 403, and the configuration hadn&apos;t changed afterwards.</p></details>
     </div>
     <div class="q">
       <p>The write key writes new content to the key <code>probe/p1.txt</code>, which already holds locked content. What does the vault do?</p>
@@ -147,28 +147,28 @@ PUT /probe/p1.txt        other content              write key</pre>
         <button class="opt" data-ok>Accepts it as a new version and the old version stays</button>
         <button class="opt">Replaces the old content for good</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Accepted, with a caveat.</span><pre class="def" aria-label="The overwrite result">PUT probe/p1.txt other content   -> 200, new version id
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Accepted as a new version.</span><pre class="def" aria-label="The overwrite result">PUT probe/p1.txt other content   -> 200, new version id
 list                             -> two versions
 GET ?versionId=&lt;FIRST&gt;           -> the original content (SHA-256 prefix 44e743c48cb20203)
-latest version                   -> the new content</pre><p><b>Caveat.</b> The latest version is now the new content. A holder of the write key can write a new latest version that hides the data. The old version stays. This is why the test never overwrote a real archive key: Data Protect would read the newest version.</p></details>
+latest version                   -> the new content</pre><p><b>One thing to note:</b> the latest version is now the new content, so someone with the write key can write a new latest version that hides the data. The old version stays. We never overwrote a real archive object, because Data Protect would read the newest version.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> The lock protects each version. It does not stop a write key adding a new version on top. Hand the write key only to the backup cluster, and keep the read key apart.</p>
+  <p class="watch"><b>Watch for this.</b> The lock protects each version, and it doesn&apos;t stop a write key adding a new version on top. Give the write key only to the backup cluster, and keep the read key apart.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>Three claims for the board</h2>
-  <p class="lead">Northgate&apos;s draft board note makes three statements. Each has a fault. Choose the true version.</p>
+  <h2>Three statements for the directors</h2>
+  <p class="lead">Northgate&apos;s IT manager has drafted a note for the directors with three statements in it. Each one needs correcting. For each, pick what our tests showed.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>&quot;The account owner can switch on audit events and see every attempt.&quot; What did we find?</p>
+      <p>&quot;The account owner can switch on audit events and see every attempt.&quot; What did we see?</p>
       <div class="opts">
         <button class="opt">It worked from the VPC but not from outside</button>
         <button class="opt" data-ok>The owner got 403 on the bucket&apos;s event settings, and no event for the vault reached either log route</button>
         <button class="opt">It worked, but only after one day</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The owner got 403 for the change and for a read, from the Mac and from the lab VPC. We searched two log instances: no vault events, not even for the refused delete. In our lab the account owner could not audit this vault.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The owner got 403. That was for the change and for a read, from a laptop outside the allowed network and from the lab VPC. We searched two log instances and found no vault events, not even for the refused delete. So before you tell anyone the owner can audit the vault, check that the events appear in your own account.</p></details>
     </div>
     <div class="q">
       <p>&quot;A Defender admin who deletes the archive and the target removes the data from the vault.&quot; What happened?</p>
@@ -177,7 +177,7 @@ latest version                   -> the new content</pre><p><b>Caveat.</b> The l
         <button class="opt">The vault data was deleted after 45 seconds</button>
         <button class="opt">The vault turned inactive</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Three archive copies were marked deleted and the target was removed. The versions under the checked prefix were still 7, with the same key list, and the lock was unchanged. The vault stayed active. That cluster held only the read key, so the test did not show what the archive-delete task would do with a write key.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The vault kept the data. Three archive copies were marked deleted and the target was removed, but the prefix we checked still held 7 versions, with the same object keys, and the lock hadn&apos;t changed. The vault stayed active. That cluster held only the read key, so the test doesn&apos;t show what the archive-delete task would do with a write key.</p></details>
     </div>
   </div>
   <div class="q" style="margin-top:20px">
@@ -187,7 +187,7 @@ latest version                   -> the new content</pre><p><b>Caveat.</b> The l
       <button class="opt" data-ok>The call was accepted and the vault stuck in &quot;deleting&quot;; the end state is not known</button>
       <button class="opt">The vault was deleted in one minute</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s page says it cannot be done. In our lab the call returned 202 and the vault stayed in &quot;deleting&quot;. At 16:25 UTC the write key still listed and read all three locked objects. This was a test vault with no data of value.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>The call was accepted and the vault stayed in &quot;deleting&quot;. IBM&apos;s page says a vault with locked objects can&apos;t be deleted. In our lab the call returned 202, and at 16:25 UTC the write key could still list and read all three locked objects. This was a test vault with no data of value.</p></details>
   </div>
 </section>
 
@@ -211,7 +211,7 @@ latest version                   -> the new content</pre><p><b>Caveat.</b> The l
         <button class="opt" data-ok>Write a new latest version; the old version stays</button>
         <button class="opt">Nothing at all</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The PUT on the probe object gave 200 and a new latest version. The first version still returned the original content.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Write a new latest version. The PUT on the probe object gave 200 and a new latest version, and the first version still returned the original content.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which key could read an object&apos;s lock?</p>
@@ -227,10 +227,10 @@ latest version                   -> the new content</pre><p><b>Caveat.</b> The l
 
 <section class="screen">
   <span class="kicker">Unit complete</span>
-  <h2>You know what the keys can and cannot do</h2>
+  <h2>You know what the keys can and can&apos;t do</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>In our lab, no key and not the account owner could delete a locked version or shorten its lock. A write key could add a new latest version over an old key; the old version stayed. The owner could not audit the vault.</p></div>
+    <div><span class="label">Remember</span><p>In our lab, none of the keys, and not the account owner either, could delete a locked version or shorten its lock. A write key could add a new latest version over an old key, and the old version stayed. The owner couldn&apos;t see audit events for the vault, so check that in your own account.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

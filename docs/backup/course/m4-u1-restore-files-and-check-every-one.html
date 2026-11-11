@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Restore files and check every one · BRS course</title>
-<meta name="description" content="Course unit 4.1: restore a deleted folder from a backup, see how long it takes and prove that every file came back. No account needed.">
+<meta name="description" content="Course unit 4.1: restore a deleted folder from a backup, see how long it takes and check that every file came back. No account needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -14,7 +14,7 @@
 
 <header class="band gut">
   <div class="wrap">
-    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 4 · Restore and prove it</span>
+    <span class="crumb"><a href="index.html">BRS course</a> <span>·</span> Module 4 · Restore and check it</span>
     <span class="segs js-only" aria-label="Progress"></span>
     <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
   </div>
@@ -27,14 +27,14 @@
     <div>
       <span class="kicker">Unit 1 of Module 4</span>
       <h1>Restore files and check every one</h1>
-      <p class="lead">By the end you can restore a deleted folder from a backup, say how long it takes, and prove that every file came back.</p>
+      <p class="lead">By the end of this unit you'll be able to restore a deleted folder from a backup, say how long it takes, and show that every file was recovered.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: a folder is deleted, restored from the backup, and every file is checked against a list."
         data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,50,120,70],"heavy":true,"title":"lose","detail":"folder gone"},{"line":[134,85,146,85],"arrow":true,"tone":"mark"},{"box":[150,50,120,70],"heavy":true,"title":"restore","detail":"from backup"},{"line":[274,85,286,85],"arrow":true,"tone":"mark"},{"box":[290,50,120,70],"tone":"mark","title":"check","detail":"every file"},{"text":"503 of 503 match","at":[240,175],"hand":true,"size":17,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It backs up the folder <code>/data</code> on a Linux server. Today it deletes <code>/data/docs</code> on purpose, restores it and checks every file.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It backs up the folder <code>/data</code> on a Linux server. In this unit it deletes <code>/data/docs</code> on purpose, restores it and checks every file.</p>
     </div>
   </div>
   <p class="small">Every number and screen in this unit comes from real runs in our lab, some at the command line and some in the console. The server name is blurred in the screenshots.</p>
@@ -43,7 +43,7 @@
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Lose it, restore it, check it</h2>
-  <p class="lead">The test has three parts. Northgate deletes the folder <code>/data/docs</code>, which holds 500 files, so that 3 files are left. It restores the folder to its original place. Then it checks every file against a checksum list.</p>
+  <p class="lead">The test has three parts. Northgate&apos;s backup admin deletes the folder <code>/data/docs</code>, which holds 500 files, so that only 3 files are left in /data. They restore the folder to its original place. Then they check every file against a checksum list.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Delete the folder, leaving 3 files, then restore it from the backup. Then check every file against a checksum list made before, with a result of 503 of 503 match."
     data-drawing='{"w":560,"h":200,"shapes":[
       {"box":[10,15,220,60],"title":"delete the folder","detail":"3 files are left"},
@@ -54,13 +54,13 @@
       {"box":[290,110,260,60],"tone":"mark","title":"check every file","detail":"503 of 503 match"}]}'></svg>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>Northgate deletes <code>/data/docs</code> and restores it. How does it know every file came back?</p>
+      <p>The admin deletes <code>/data/docs</code> and restores it. How do they know every file was recovered?</p>
       <div class="opts">
         <button class="opt">The recovery says Succeeded</button>
-        <button class="opt" data-ok>It checks every file against the checksum list</button>
+        <button class="opt" data-ok>They check every file against the checksum list</button>
         <button class="opt">It counts the folders</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That is the proof that the backup works: every file is checked against the checksum list. In both runs the recovery ended Succeeded, and then 503 of 503 files matched.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>By checking every file against the checksum list. That&apos;s how you know the backup works. In both runs the recovery ended Succeeded, and then 503 of 503 files matched.</p></details>
     </div>
     <div class="q">
       <p>Which backup does a restore read from?</p>
@@ -69,15 +69,15 @@
         <button class="opt">Always the first backup</button>
         <button class="opt">Whatever is on the server now</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In the console the file browser opens on the latest snapshot; the list at the top right picks another. On the command line you give the snapshot ID: <code>archivalInfo.archivalTargetResults[0].snapshotId</code> of the run you restore from.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The latest snapshot. In the console the file browser opens on the latest snapshot, and the list at the top right picks another. On the command line you give the snapshot ID: <code>archivalInfo.archivalTargetResults[0].snapshotId</code> of the run you restore from.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
-  <h2>How long does it take, and what is checked?</h2>
-  <p class="lead">Northgate deletes <code>/data/docs</code> and restores it to its original place, overwriting. Then it runs the check.</p>
+  <h2>How long does it take, and what&apos;s checked?</h2>
+  <p class="lead">The admin deletes <code>/data/docs</code> and restores it to its original place, overwriting. Then they run the check.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>How long does the restore take?</p>
@@ -98,7 +98,7 @@ Console                             23 s</pre><p>Both command-line runs showed 5
         <button class="opt" data-ok>Five files were added after the list was made</button>
         <button class="opt">The check skips new files</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The folder held 505 files: the 500 of the list and the 5 added later. The check read 503 of 503 OK.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Five files were added after the list was made. The folder held 505 files: the 500 on the list and the 5 added later. The check read 503 of 503 OK.</p></details>
     </div>
   </div>
 </section>
@@ -106,7 +106,7 @@ Console                             23 s</pre><p>Both command-line runs showed 5
 <section class="screen">
   <span class="kicker">Step 3 · Click through the console</span>
   <h2>Restore the folder</h2>
-  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="1.2,37.6,3.4,5.6" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5a-1-select-folder.png" alt="The snapshot browser: data opened, docs ticked, 1 Selected docs /data." width="1184" height="676"></div>
@@ -134,20 +134,20 @@ Console                             23 s</pre><p>Both command-line runs showed 5
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>A request that is turned down</h2>
-  <p class="lead">Northgate writes the restore as a command-line request. The first try is rejected with this message.</p>
+  <h2>A command-line request that&apos;s rejected</h2>
+  <p class="lead">Northgate&apos;s backup admin writes the restore as a command-line request. The first try is rejected with this message.</p>
   <pre class="def" aria-label="The rejected request">recoveryAction: RecoverFilesAndFolders
 rejected: recoveryAction in body should be one of
   [RecoverPhysicalVolumes InstantVolumeMount RecoverFiles RecoverSystem RecoverSnapshotToView]</pre>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>What does Northgate change?</p>
+      <p>What should the admin change?</p>
       <div class="opts">
-        <button class="opt">It adds the snapshot ID</button>
-        <button class="opt" data-ok>It uses RecoverFiles</button>
-        <button class="opt">It changes the target environment</button>
+        <button class="opt">Add the snapshot ID</button>
+        <button class="opt" data-ok>Use RecoverFiles</button>
+        <button class="opt">Change the target environment</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The message lists the allowed values, and <code>RecoverFiles</code> is one. The command-line body in our lab run uses it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Use <code>RecoverFiles</code>. The message lists the allowed values, and <code>RecoverFiles</code> is one of them. The command-line body in our lab run uses it.</p></details>
     </div>
     <div class="q">
       <p>In the console, Overwrite Existing File/Folder says No. Does the restore of the deleted folder still work?</p>
@@ -156,10 +156,10 @@ rejected: recoveryAction in body should be one of
         <button class="opt" data-ok>Yes: the folder was gone, so nothing needed overwriting</button>
         <button class="opt">Only after you click Recover twice</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the console restore succeeded in 23 s with the default No. The folder was gone, so nothing needed overwriting.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Yes. In our lab the console restore succeeded in 23 s with the default No, because the folder was gone and nothing needed overwriting.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Not covered.</b> We did not test a restore of a single file or a restore to a different path. A restore to a different server is unit 4.4.</p>
+  <p class="watch"><b>Not covered.</b> We didn&apos;t test a restore of a single file or a restore to a different path. A restore to a different server is in unit 4.4.</p>
 </section>
 
 <section class="screen">
@@ -167,13 +167,13 @@ rejected: recoveryAction in body should be one of
   <h2>Three questions</h2>
   <div>
     <div class="q" data-check>
-      <p>What is the proof that a restore worked?</p>
+      <p>How do you know a restore worked?</p>
       <div class="opts">
         <button class="opt">The recovery says Succeeded</button>
         <button class="opt" data-ok>Every file is checked against the checksum list: 503 of 503 match</button>
         <button class="opt">The folder opens on the server</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Delete a folder, restore it, and check every file against the checksum list. This is the proof that the backup works.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Checking every file. Delete a folder, restore it, and check every file against the checksum list. That&apos;s how you know the backup works.</p></details>
     </div>
     <div class="q" data-check>
       <p>The command-line restore is rejected with &quot;recoveryAction in body should be one of [...]&quot;. What do you change?</p>
@@ -182,7 +182,7 @@ rejected: recoveryAction in body should be one of
         <button class="opt">The snapshot ID</button>
         <button class="opt">The folder path</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The message lists the allowed values. The first try used <code>RecoverFilesAndFolders</code>, which is not one of them.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The recoveryAction value. The message lists the allowed values, and the first try used <code>RecoverFilesAndFolders</code>, which isn&apos;t one of them.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 3.2.</b> Two runs in the console both say Incremental. How do you tell which was the full backup?</p>
@@ -191,14 +191,14 @@ rejected: recoveryAction in body should be one of
         <button class="opt" data-ok>By Data Read: the full one read the whole folder</button>
         <button class="opt">You cannot tell</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The console labels the first run Incremental too. 92.6 MiB against 3 MiB tells them apart.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>By Data Read. The console labels the first run Incremental too, so 92.6 MiB against 3 MiB is what tells them apart.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Unit complete</span>
-  <h2>You can restore and prove it</h2>
+  <h2>You can restore files and check every one</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
     <div><span class="label">Remember</span><p>Delete, restore, then check every file against the checksum list: 503 of 503 matched in our lab. The restore took 12 s on the command line and 23 s in the console.</p></div>

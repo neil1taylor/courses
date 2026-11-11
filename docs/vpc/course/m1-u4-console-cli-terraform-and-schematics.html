@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 4 of Module 1</span>
       <h1>Console, CLI, Terraform and Schematics</h1>
-      <p class="lead">By the end you can read a VPC in the console, run the CLI and Terraform, say what Schematics adds, and choose a way for a job.</p>
+      <p class="lead">By the end of this unit you&apos;ll be able to read a VPC in the console, run the CLI and Terraform, say what Schematics adds, and choose a way for a job.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -43,40 +43,40 @@
           {"line":[260,60,220,140],"arrow":true,"tone":"muted"},
           {"line":[362,60,240,140],"arrow":true,"tone":"mark"},
           {"box":[150,146,120,54],"heavy":true,"title":"one VPC"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving its vSphere estate to IBM Cloud VPC. The company is made up; the output and screens in this unit are real. Its admins used vRealize Automation. They ask how to build and change a VPC here.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that is moving its vSphere estate to IBM Cloud VPC. The output and screens in this unit are real. Northgate&apos;s admins used vRealize Automation, and they want to know how to build and change a VPC here.</p>
     </div>
   </div>
-  <p class="small">Every screenshot and line of output in this unit comes from real runs in a lab account.</p>
+  <p class="small">Every screenshot and line of output in this unit comes from a real run in a lab account.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Click through the console</span>
   <h2>Read the VPC in the console</h2>
-  <p class="lead">The console is one way in. This is the overview page of <code>vpct-prod</code>, the VPC created with the CLI. In the console, go to Infrastructure, then Network, then VPCs. The page shows the same facts the CLI printed. Click where you would click.</p>
+  <p class="lead">The console is one way in. This is the overview page of <code>vpct-prod</code>, the VPC created with the CLI. In the console, go to Infrastructure, then Network, then VPCs. The page shows the same facts the CLI printed. Click where you&apos;d click.</p>
   <div class="tour">
     <figure class="tstep" data-hot="73.5,31.5,17,8">
       <div class="shot"><img src="../images/20/course-vpc-overview.png" alt="The console overview page of vpct-prod: status Available, resource group vpct-lab, location Washington DC (us-east), the default ACL, security group and routing table named vpct-prod-default-acl, vpct-prod-default-sg and vpct-prod-default-rt. The Address prefixes panel has column headers and a Manage address prefixes link, with no rows." width="1166" height="611"></div>
       <figcaption>
         <h3>Which resource group is this VPC in?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. vpct-lab, at the top right of the details panel.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s vpct-lab, at the top right of the details panel.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="73.5,47.5,12,8">
       <div class="shot"><img src="../images/20/course-vpc-overview.png" alt="The console overview page of vpct-prod: status Available, resource group vpct-lab, location Washington DC (us-east), the default ACL, security group and routing table named vpct-prod-default-acl, vpct-prod-default-sg and vpct-prod-default-rt. The Address prefixes panel has column headers and a Manage address prefixes link, with no rows." width="1166" height="611"></div>
       <figcaption>
         <h3>Open the default security group that IBM created with the VPC.</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. vpct-prod-default-sg. The name is the one the lab gave it. The default ACL and the default routing table are linked beside it.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s vpct-prod-default-sg, the name the lab gave it. The default ACL and the default routing table are linked beside it.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="0.7,69,49,31">
       <div class="shot"><img src="../images/20/course-vpc-overview.png" alt="The console overview page of vpct-prod: status Available, resource group vpct-lab, location Washington DC (us-east), the default ACL, security group and routing table named vpct-prod-default-acl, vpct-prod-default-sg and vpct-prod-default-rt. The Address prefixes panel has column headers and a Manage address prefixes link, with no rows." width="1166" height="611"></div>
       <figcaption>
         <h3>One panel has no rows. Which one, and why?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Address prefixes. The VPC was created with manual address prefix management, so IBM created none. You add them yourself.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the Address prefixes panel. The VPC was created with manual address prefix management, so IBM created none, and you add them yourself.</p></details>
       </figcaption>
     </figure>
   </div>
-  <p class="small">The console also shows the VPC CRN, which holds your account ID. Hide it before you share a screenshot. It is hidden here.</p>
+  <p class="small">The console also shows the VPC CRN, which holds your account ID. Hide it before you share a screenshot. We&apos;ve hidden it here.</p>
 </section>
 
 <section class="screen">
@@ -91,7 +91,7 @@
           <pre class="in">ibmcloud version</pre>
           <pre class="out">ibmcloud 2.48.1 (38ea1e00d-2026-10-21T16:03:06+00:00)
 Copyright IBM Corp. 2014, 2026</pre>
-          <p class="hand note">The version in the lab run.</p>
+          <p class="hand note">This is the version the lab run used.</p>
         </div>
         <div class="q">
           <p>The CLI has several plug-ins. Which one gives you the <code>ibmcloud is</code> commands?</p>
@@ -100,7 +100,7 @@ Copyright IBM Corp. 2014, 2026</pre>
             <button class="opt" data-ok>vpc-infrastructure</button>
             <button class="opt">tg-cli</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The <code>vpc-infrastructure</code> plug-in gives the CLI its VPC commands. Run the next command to see all nine plug-ins the lab uses.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>The <code>vpc-infrastructure</code> plug-in. It gives the CLI its VPC commands. Run the next command to see all nine plug-ins the lab uses.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud plugin list</pre>
@@ -116,7 +116,7 @@ schematics[sch]                                 1.12.32            true
 secrets-manager[sm]                             2.0.20             true
 tg-cli[tg]                                      0.8.29             true
 vpc-infrastructure[infrastructure-service/is]   17.3.1             true</pre>
-          <p class="hand note">One plug-in for each service: VPC, Transit Gateway, DNS Services, Schematics and more.</p>
+          <p class="hand note">There&apos;s one plug-in for each service, such as VPC, Transit Gateway, DNS Services and Schematics.</p>
         </div>
         <div class="q">
           <p>The lab logs in without typing a password. Where does the CLI get the key?</p>
@@ -125,7 +125,7 @@ vpc-infrastructure[infrastructure-service/is]   17.3.1             true</pre>
             <button class="opt" data-ok>From the <code>IBMCLOUD_API_KEY</code> variable, loaded from a private file</button>
             <button class="opt">From the one-time passcode</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The key goes in a private <code>.env</code> file that only you read, and never into git. The file is loaded into the session, then <code>ibmcloud login</code> reads the variable. The one-time passcode is for the first login, before the key exists.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>From the IBMCLOUD_API_KEY variable. The key goes in a private <code>.env</code> file that only you can read, and it never goes into git. The file is loaded into the session, then <code>ibmcloud login</code> reads the variable. The one-time passcode is for the first login, before the key exists.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud login -r us-east</pre>
@@ -161,7 +161,7 @@ Resource group:   No resource group targeted, use 'ibmcloud target -g RESOURCE_G
 <section class="screen">
   <span class="kicker">Step 3 · Explore the parts</span>
   <h2>A VPC written as Terraform</h2>
-  <p class="lead">This is a <code>main.tf</code>. It creates a small test VPC with every resource named and tagged. Select a part of the drawing to see what it does. You can also click a line.</p>
+  <p class="lead">This is a <code>main.tf</code>. It creates a small test VPC with every resource named and tagged. Select a part of the drawing to see what it does, or click a line.</p>
   <div class="explorer" data-start="vpc"
     data-map='{"tags":[[1,3]],"group":[[5,7],[11,11]],"vpc":[[9,10],[12,12],[16,17],[29,31]],"defaults":[[13,15]],"tagdefaults":[[19,27]]}'>
     <div class="cols">
@@ -190,7 +190,7 @@ Resource group:   No resource group targeted, use 'ibmcloud target -g RESOURCE_G
         <div class="part-info" data-part="vpc">
           <h3>The VPC</h3>
           <p><code>address_prefix_management</code> is <code>manual</code>, the same setting the CLI run used, so IBM creates no address prefixes. The last lines print the VPC ID.</p>
-          <p class="hand tilt"><b>From vSphere:</b> Terraform and Schematics are the closest words to vRealize and Aria Automation. A rough mapping.</p>
+          <p class="hand tilt"><b>From vSphere:</b> Terraform and Schematics are the closest words to vRealize and Aria Automation, though the match is rough.</p>
         </div>
         <div class="part-info" data-part="defaults">
           <h3>Default names</h3>
@@ -198,7 +198,7 @@ Resource group:   No resource group targeted, use 'ibmcloud target -g RESOURCE_G
         </div>
         <div class="part-info" data-part="tagdefaults">
           <h3>Tags on the defaults</h3>
-          <p>The VPC resource names the defaults but does not tag them, so a second resource tags each one by its CRN.</p>
+          <p>The VPC resource names the defaults but doesn&apos;t tag them, so a second resource tags each one by its CRN.</p>
         </div>
       </div>
     </div>
@@ -239,7 +239,7 @@ output "vpc_id" {
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>Run it with Terraform, then with Schematics</h2>
-  <p class="lead">First Terraform on your own computer. Then the same files in a Schematics workspace, which runs Terraform for you and keeps the state.</p>
+  <p class="lead">First you run Terraform on your own computer. Then you run the same files in a Schematics workspace, which runs Terraform for you and keeps the state.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -251,7 +251,7 @@ output "vpc_id" {
             <button class="opt">3</button>
             <button class="opt" data-ok>4</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>Four: the VPC and three tag attachments.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>Four. The plan adds the VPC and three tag attachments.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">terraform plan -out=tf.plan</pre>
@@ -290,7 +290,7 @@ Apply complete! Resources: 4 added, 0 changed, 0 destroyed.
 Outputs:
 
 vpc_id = "&lt;vpc-id&gt;"</pre>
-          <p class="hand note">The VPC took 32 seconds in this run. The tags came after it.</p>
+          <p class="hand note">The VPC took 32 seconds in this run, and the tags came after it.</p>
         </div>
         <div class="q">
           <p>You run <code>terraform plan</code> again straight after. What does it say?</p>
@@ -299,7 +299,7 @@ vpc_id = "&lt;vpc-id&gt;"</pre>
             <button class="opt" data-ok>No changes</button>
             <button class="opt">An error, because the state is locked</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The lab run printed <code>No changes. Your infrastructure matches the configuration.</code> The plan finds nothing to change.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>No changes. The lab run printed <code>No changes. Your infrastructure matches the configuration.</code> The plan finds nothing to change.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">terraform plan</pre>
@@ -327,7 +327,7 @@ File Name       tf-test.tar
 Upload Status   true
 
 OK</pre>
-          <p class="hand note">Upload Status true. Schematics now scans the files.</p>
+          <p class="hand note">Upload Status is true, and Schematics now scans the files.</p>
         </div>
         <div class="q">
           <p>You run <code>ibmcloud schematics plan --id "$WS"</code> at once. What happens?</p>
@@ -336,13 +336,13 @@ OK</pre>
             <button class="opt" data-ok>It fails: the workspace was temporarily locked</button>
             <button class="opt">It plans 0 resources</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The upload scan is still running. The lab recorded <code>statuscode: 409</code> and <code>The workspace was temporarily locked</code>. Wait until the status is <code>INACTIVE</code>, then run the plan again.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>It fails, so wait. The upload scan is still running, and the lab recorded <code>statuscode: 409</code> and <code>The workspace was temporarily locked</code>. Wait until the status is <code>INACTIVE</code>, then run the plan again.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud schematics plan --id "$WS"</pre>
           <pre class="out err">statuscode: 409
 The workspace was temporarily locked</pre>
-          <p class="hand note">These two fragments are recorded in text, not the whole output.</p>
+          <p class="hand note">We recorded only these two lines, as text.</p>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud schematics workspace get --id "$WS" --output json | jq -r .status</pre>
@@ -356,13 +356,13 @@ The workspace was temporarily locked</pre>
 Activity ID   &lt;activity-id&gt;
 
 OK</pre>
-          <p class="hand note">The plan runs as a job with its own ID. Read its log for the plan line.</p>
+          <p class="hand note">The plan runs as a job with its own ID, and you read the job&apos;s log to see the plan line.</p>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud schematics logs --id "$WS" --act-id "$ACT" | grep -E 'Installed|Plan:'</pre>
           <pre class="out"> &lt;date&gt; &lt;time&gt; Terraform init | - Installed ibm-cloud/ibm v2.8.1 (self-signed, key ID AAD3B791C49CC253)
  &lt;date&gt; &lt;time&gt; Terraform plan | Plan: 4 to add, 0 to change, 0 to destroy.</pre>
-          <p class="hand note">The same four resources, planned by Schematics.</p>
+          <p class="hand note">Schematics plans the same four resources.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -382,19 +382,19 @@ OK</pre>
       <p><span class="kicker">Review question from Unit 1.3.</span> You create a VPC and name no resource group. Where does it go, and can you move it later?</p>
       <div class="opts">
         <button class="opt">Into a group named after the VPC, and yes</button>
-        <button class="opt" data-ok>Into the Default resource group, and the choice cannot be changed afterwards</button>
+        <button class="opt" data-ok>Into the Default resource group, and the choice can&apos;t be changed afterwards</button>
         <button class="opt">The command fails until you name one</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>If you do not specify a resource group, the resource is created in the Default resource group. The choice is made when the resource is created and cannot be changed afterwards.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The Default resource group, and you can&apos;t change it afterwards. If you don&apos;t specify a resource group, the resource is created in the Default resource group. You make the choice when you create the resource.</p></details>
     </div>
     <div class="q" data-check>
-      <p>Northgate wants its estate to run without installing Terraform on each admin&apos;s computer, with IBM Cloud keeping the state. Which way fits?</p>
+      <p>Northgate&apos;s admins want to run the estate without installing Terraform on each computer, with IBM Cloud keeping the state. Which way fits?</p>
       <div class="opts">
         <button class="opt">The provider on each computer</button>
         <button class="opt" data-ok>A Schematics workspace</button>
         <button class="opt">A project</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A Schematics workspace is Terraform run for you by IBM Cloud, which keeps the state and runs the jobs. A project manages deployable architecture instances across environments, which is a different job. The lab uses the provider through Schematics so that a reader need not install Terraform.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A Schematics workspace. It&apos;s Terraform run for you by IBM Cloud, which keeps the state and runs the jobs. A project manages deployable architecture instances across environments, which is a different job. The lab uses the provider through Schematics so that a reader doesn&apos;t need to install Terraform.</p></details>
     </div>
     <div class="q" data-check>
       <p>A Schematics workspace has built a VPC. You delete the workspace first. What happens to the VPC?</p>
@@ -403,7 +403,7 @@ OK</pre>
         <button class="opt" data-ok>It stays. Destroy the resources first, then delete the workspace</button>
         <button class="opt">It becomes a Default resource group resource</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM states that deleting a workspace does not remove the resources it manages. Run a destroy first, then delete the workspace.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It stays. IBM states that deleting a workspace doesn&apos;t remove the resources it manages, so run a destroy first, then delete the workspace.</p></details>
     </div>
   </div>
 </section>
@@ -413,7 +413,7 @@ OK</pre>
   <h2>You know four ways in</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>The console, the CLI, Terraform and Schematics reach the same VPC. A second plan finds no changes. Destroy before you delete a workspace.</p></div>
+    <div><span class="label">Remember</span><p>The console, the CLI, Terraform and Schematics reach the same VPC. A second plan finds no changes. Run a destroy before you delete a workspace.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapter 14, Creating a VPC with Terraform and the IBM Cloud provider, and chapter 15, Running Terraform in an IBM Cloud Schematics workspace, run everything you just saw. Chapter 17, Choosing how to automate IBM Cloud with Terraform, compares all five ways.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

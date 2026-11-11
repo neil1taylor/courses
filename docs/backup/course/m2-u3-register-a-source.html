@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 3 of Module 2</span>
       <h1>Register a source</h1>
-      <p class="lead">By the end you can register a Linux or Windows server as a source by either route, say what to expect afterwards, and read the error that a connector still joining gives.</p>
+      <p class="lead">By the end of this unit you'll be able to register a Linux or Windows server as a source by either route, say what to expect afterwards, and recognise the error you get when a connector is still joining.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -42,10 +42,10 @@
           {"line":[298,90,326,90],"arrow":true,"tone":"mark"},
           {"box":[330,60,80,60],"heavy":true,"title":"source"},
           {"text":"then you can protect it","at":[190,180],"hand":true,"size":17,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. Its connectors are up, and now it tells BRS which servers to back up: the Linux server <code>ng-app-01</code> and the Windows server <code>ng-win-01</code>.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its connectors are up, and now it tells BRS which servers to back up: the Linux server <code>ng-app-01</code> and the Windows server <code>ng-win-01</code>.</p>
     </div>
   </div>
-  <p class="small">Every number, message and screen in this unit comes from runs in our lab. Server names, addresses and connection names were changed to made-up Northgate values; server addresses are blurred in the screenshots.</p>
+  <p class="small">Every number, message and screen in this unit comes from runs in our lab. Server names, addresses and connection names were changed to made-up Northgate values, and server addresses are blurred in the screenshots.</p>
 </section>
 
 <section class="screen">
@@ -68,7 +68,7 @@
         <button class="opt">External Data Source</button>
         <button class="opt">Either: they are the same</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Connection Type starts at Direct, which is the Connector Agent. For a connector server you choose External Data Source and pick the connection.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Direct. Connection Type starts at Direct, which means the Connector Agent. For a connector server you choose External Data Source and pick the connection.</p></details>
     </div>
     <div class="q">
       <p>The register command needs a connection ID. Which command lists it for a server with a Connector Agent?</p>
@@ -77,7 +77,7 @@
         <button class="opt" data-ok>connector-agent list</button>
         <button class="opt">protection-policy list</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The ID comes from <code>data-source-connection list</code> for a connector server, and from <code>connector-agent list</code> for a Connector Agent. In our lab, <code>data-source-connection list</code> printed <code>{}</code> for the Connector Agent&apos;s connection.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p><code>connector-agent list</code>. The ID comes from <code>data-source-connection list</code> for a connector server, and from <code>connector-agent list</code> for a Connector Agent. In our lab, <code>data-source-connection list</code> printed <code>{}</code> for the Connector Agent&apos;s connection.</p></details>
     </div>
   </div>
 </section>
@@ -85,7 +85,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>What do you see after you register?</h2>
-  <p class="lead">Northgate registers its Linux server from the command line, and its Windows server in the console through its Connector Agent.</p>
+  <p class="lead">Northgate&apos;s backup admin registers the Linux server from the command line, and the Windows server in the console through its Connector Agent. What happens next?</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>The register command returns at once. What does it show about the source?</p>
@@ -94,10 +94,10 @@
         <button class="opt" data-ok>A source ID and authenticationStatus Pending</button>
         <button class="opt">Nothing until a backup runs</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It returns the source ID and authenticationStatus &quot;Pending&quot;. In one run in our lab, the status was &quot;Finished&quot; 6 seconds later.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A source ID and authenticationStatus &quot;Pending&quot;. In one run in our lab, the status was &quot;Finished&quot; 6 seconds later.</p></details>
     </div>
     <div class="q">
-      <p>In the console, Northgate registers the Windows server and clicks Complete. What did the page show?</p>
+      <p>In the console, the admin registers the Windows server and clicks Complete. What did the page show?</p>
       <div class="opts">
         <button class="opt">An error: the agent was not ready</button>
         <button class="opt" data-ok>&quot;Registering&quot;, then 99.3 GiB after a reload about 20 seconds later</button>
@@ -110,8 +110,8 @@
 
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
-  <h2>Cannot find a valid connector</h2>
-  <p class="lead">Northgate built a new connector server, claimed it, and registered a Linux server through it straight after. This is what came back.</p>
+  <h2>The connector hasn&apos;t finished joining</h2>
+  <p class="lead">Northgate&apos;s backup admin built a new connector server, claimed it, and registered a Linux server through it straight away. This is what came back.</p>
   <pre class="def" aria-label="The failed registration">$ ibmcloud backup-recovery protection-source register --environment kPhysical ...
 FAILED: "Cannot find a valid connector for tenant ... network_realm ..."</pre>
   <div class="pair" style="margin-top:20px">
@@ -122,52 +122,52 @@ FAILED: "Cannot find a valid connector for tenant ... network_realm ..."</pre>
         <button class="opt" data-ok>The connector had not finished joining</button>
         <button class="opt">The host type must be kWindows</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Our reading: the connector had not finished joining. The registration was tried at 08:41:44 UTC.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>We think the connector hadn&apos;t finished joining when the registration was tried, at 08:41:44 UTC.</p></details>
     </div>
     <div class="q">
-      <p>What did Northgate do, and how did it end?</p>
+      <p>What did the admin do, and how did it end?</p>
       <div class="opts">
         <button class="opt">Rebuilt the connector server</button>
         <button class="opt" data-ok>Registered again about 2 minutes later, and it worked</button>
         <button class="opt">Switched to the Connector Agent route</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The same command worked at 08:43:51 UTC, about 2 minutes later. To see that a connector has joined, list it: <code>data-source-connector list</code> shows its <code>connectivityStatus</code>; <code>isConnected</code> true means it has.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>They ran it again. The same command worked at 08:43:51 UTC, about 2 minutes later. To check that a connector has joined, list it: <code>data-source-connector list</code> shows its <code>connectivityStatus</code>, and <code>isConnected</code> true means it has.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> It happened once, with a new connector server. With the Connector Agent the first registration worked at the first try (10:44:03 UTC the same day). The connector server had been joined for two hours, and registration worked at the first try.</p>
+  <p class="watch"><b>Watch for this.</b> This error came up only once, with a brand-new connector server. With the Connector Agent, the first registration worked first time (10:44:03 UTC the same day). When the connector server had been joined for two hours, registration worked first time too.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>Register a Linux and a Windows server</h2>
-  <p class="lead">These screens come from the BRS console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="2.6,66.3,47.8,10.6" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-1-register-external.png" alt="Register Physical Server, step 1: External Data Source chosen and the connection picked." width="758" height="510"></div>
       <figcaption>
         <h3>Northgate chose External Data Source, for the connector server. Where does it pick the connection?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: the Data Source Connection field. You reach this dialog with Data Protection &gt; Sources, Register Source, Physical, Start Registration. Click Continue when the connection is picked.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the Data Source Connection field. You reach this dialog with Data Protection &gt; Sources, Register Source, Physical, Start Registration. Click Continue once you&apos;ve picked the connection.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="2.6,60.1,47.8,11.9" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-2-source-address.png" alt="Register Physical Server, step 2: the server address (blurred) in Hostname or IP Address." width="758" height="436"></div>
       <figcaption>
         <h3>Step 2 of the dialog. Where do you type the server&apos;s address?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: Hostname or IP Address. Then click Complete.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s Hostname or IP Address. Then click Complete.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="2.6,67.1,47.8,8.4" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3b-1-direct-agent.png" alt="Register Physical Server: Direct, Connector Agent cohesity-lab-win-agent." width="758" height="593"></div>
       <figcaption>
         <h3>For the Windows server Northgate leaves Direct chosen. Where does it pick the agent?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: the Connector Agent field. Pick the agent, click Continue, type the server&apos;s address and click Complete.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the Connector Agent field. Pick the agent, click Continue, type the server&apos;s address and click Complete.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="33,78.3,4.1,8.1" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B3a-3-source-registered.png" alt="Sources: one physical source, not protected, 99.9 GiB." width="1227" height="470"></div>
       <figcaption>
-        <h3>The Linux source is registered. In the server&apos;s row, where does the console say it is not yet protected?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: the Protected column says No, with 0 Bytes protected. The row shows 99.9 GiB total size.</p></details>
+        <h3>The Linux source is registered. In the server&apos;s row, where does the console say it isn&apos;t protected yet?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Protected column says No, with 0 Bytes protected. The row shows 99.9 GiB total size.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -184,7 +184,7 @@ FAILED: "Cannot find a valid connector for tenant ... network_realm ..."</pre>
         <button class="opt" data-ok>kLinux and kWindows</button>
         <button class="opt">Linux and Windows</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Any other name gave HTTP 400: &quot;platform in path should be one of [kLinux kWindows]&quot;.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>kLinux and kWindows. Any other name gave HTTP 400: &quot;platform in path should be one of [kLinux kWindows]&quot;.</p></details>
     </div>
     <div class="q" data-check>
       <p>Registering a source through a new connector server fails with &quot;Cannot find a valid connector&quot;. What do you do?</p>
@@ -193,7 +193,7 @@ FAILED: "Cannot find a valid connector for tenant ... network_realm ..."</pre>
         <button class="opt" data-ok>Wait for the connector to finish joining, then register again</button>
         <button class="opt">Change the host type</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the same command worked about 2 minutes later.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Wait, then register again. In our lab the same command worked about 2 minutes later.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which host type do you give when you register the Windows server?</p>
@@ -202,7 +202,7 @@ FAILED: "Cannot find a valid connector for tenant ... network_realm ..."</pre>
         <button class="opt" data-ok>kWindows</button>
         <button class="opt">kLinux</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The host type is kWindows for Windows and kLinux for Linux. The physical type, <code>kHost</code>, is a separate setting.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>kWindows. The host type is kWindows for Windows and kLinux for Linux. The physical type, <code>kHost</code>, is a separate setting.</p></details>
     </div>
   </div>
 </section>

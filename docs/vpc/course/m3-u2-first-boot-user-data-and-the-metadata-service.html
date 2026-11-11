@@ -27,14 +27,14 @@
     <div>
       <span class="kicker">Unit 2 of Module 3</span>
       <h1>First boot: user data and the metadata service</h1>
-      <p class="lead">By the end you can read a cloud-init user data file, say what runs and when, and say what must never go in it.</p>
+      <p class="lead">By the end of this unit you'll be able to read a cloud-init user data file, say what runs and when, and say what must never go in it.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
       <svg class="sketch" role="img" aria-label="Sketch: a text file called user data goes into a new server at first boot. A metadata service lets the server read it back."
         data-drawing='{"w":420,"h":200,"shapes":[{"box":[10,20,140,70],"heavy":true,"title":"User data","detail":"a text file"},{"line":[160,55,240,80],"arrow":true,"tone":"mark"},{"box":[250,50,150,90],"fill":"hatch","tone":"mark","title":"New server"},{"text":"read once, at first boot","at":[150,34],"hand":true,"tone":"muted","size":16},{"box":[10,120,140,60],"dashed":true,"title":"Metadata service","detail":"read it back"},{"line":[160,150,250,125],"arrow":true,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the commands and output are real. A new web server sets itself up from a text file, with no one logged in.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that is moving off vSphere, though the commands and output are real. Its new web server sets itself up from a text file, with no one logged in.</p>
     </div>
   </div>
   <p class="small">Every command and line of output in this unit comes from a real run in a test account.</p>
@@ -43,7 +43,7 @@
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Read the user data</h2>
-  <p class="lead">User data is text you give to a server when you create it. Cloud-init reads it. The limit is 64 KB. Select a part to see what it does, or click a line.</p>
+  <p class="lead">User data is text you give to a server when you create it, and cloud-init reads it. The limit is 64 KB. Select a part to see what it does, or click a line.</p>
   <div class="explorer" data-start="page"
     data-map='{"header":[[1,1]],"page":[[2,5]],"start":[[6,7]]}'>
     <div class="cols">
@@ -60,13 +60,13 @@
         </div>
         <div class="part-info" data-part="page">
           <h3>write_files</h3>
-          <p>Writes a file to the server's disk. Here it writes one line of text to <code>/srv/web/index.html</code>.</p>
+          <p>This writes a file to the server's disk. Here it writes one line of text to <code>/srv/web/index.html</code>.</p>
 
         </div>
         <div class="part-info" data-part="start">
           <h3>runcmd</h3>
-          <p>Runs a command at first boot. This one starts Python's built-in web server on port 80. It needs no internet, because the web subnet has no public gateway.</p>
-          <p class="watch"><b>Watch for this.</b> Cloud-init runs this once. A rebooted server does not start the web server again. You will see that in step 2.</p>
+          <p>This runs a command at first boot. Here it starts Python's built-in web server on port 80. That needs no internet, which suits the web subnet because it has no public gateway.</p>
+          <p class="watch"><b>Watch for this.</b> Cloud-init runs this once, so a rebooted server doesn't start the web server again. You'll see that in step 2.</p>
         </div>
       </div>
     </div>
@@ -108,27 +108,27 @@ Metadata service                      Enabled   Protocol   Response hop limit
                                       true      http       1
 ...</pre>
           <p class="hand note"><code>--user-data @file</code> hands the file to cloud-init.</p>
-          <p class="hand note"><code>--metadata-service true</code> turns the metadata service on. It is off by default.</p>
+          <p class="hand note"><code>--metadata-service true</code> turns the metadata service on. It's off by default.</p>
         </div>
         <div class="cmd">
           <p class="pre"># from your machine, with no login</p>
           <pre class="in">curl -m 5 http://$FIP/</pre>
           <pre class="out">configured by cloud-init on vpct-prod-web-z1-02</pre>
-          <p class="hand note">The page text from the user data came back. No one logged in.</p>
+          <p class="hand note">The page text from the user data came back, and no one logged in.</p>
         </div>
         <div class="q">
-          <p>Before you run the next command: the server is rebooted, then you ask for the same page. What comes back?</p>
+          <p>Before you run the next command, suppose the server is rebooted and you ask for the same page. What comes back?</p>
           <div class="opts">
             <button class="opt">The same page: the web server restarts with the server</button>
             <button class="opt" data-ok>Nothing: the connection fails</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>Cloud-init runs this user data once, on the first boot. A rebooted server does not start the web server again.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>Nothing. Cloud-init runs this user data once, on the first boot, so a rebooted server doesn't start the web server again.</p></details>
         </div>
         <div class="cmd">
           <p class="pre"># after a reboot</p>
           <pre class="in">curl -m 5 http://$FIP/</pre>
           <pre class="out err">curl: (7) Failed to connect to 169.63.96.23 port 80 after 99 ms: Could not connect to server</pre>
-          <p class="hand note">First boot only. To start a service on every boot, the user data would have to do more than this.</p>
+          <p class="hand note">The web server started on first boot only. To start a service on every boot, the user data would have to do more than this.</p>
         </div>
         <div class="cmd">
           <p class="pre"># on the server, after logging in</p>
@@ -141,7 +141,7 @@ errors: []
 recoverable_errors:
 WARNING:
 	- Not unlocking password for user ubuntu. 'lock_passwd: false' present in user-data but no 'passwd'/'plain_text_passwd'/'hashed_passwd' provided in user-data</pre>
-          <p class="hand note">Status is <code>done</code>. The warning is about the default user's password, which this user data does not set.</p>
+          <p class="hand note">The status is <code>done</code>. The warning is about the default user's password, and this user data doesn't set one.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -158,30 +158,30 @@ WARNING:
   <h2>Pick an answer, then see what really happened</h2>
   <div class="pair">
     <div class="q">
-      <p>Northgate creates a server and does not pass <code>--metadata-service true</code>. Can a process on the server read its metadata?</p>
+      <p>Northgate creates a server without passing <code>--metadata-service true</code>. Can a process on the server read its metadata?</p>
       <div class="opts">
         <button class="opt">Yes, the service is on for every server</button>
         <button class="opt" data-ok>No, access is off by default</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Off unless you turn it on.</span><p>IBM says access to the metadata service is off by default. The servers created without the option show <code>Metadata service Enabled false</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Off unless you turn it on.</span><p>No. IBM says access to the metadata service is off by default, and the servers created without the option show <code>Metadata service Enabled false</code>.</p></details>
     </div>
     <div class="q">
-      <p>On the server, the token request worked while the service was on. After <code>--metadata-service false</code>, the same request is made. What does curl do?</p>
+      <p>On the server, the token request worked while the service was on. Then Northgate sets <code>--metadata-service false</code> and makes the same request. What does curl do?</p>
       <div class="opts">
         <button class="opt">It returns an error message at once</button>
         <button class="opt" data-ok>It gets no answer and gives up with exit code 28</button>
         <button class="opt">It returns an empty token</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">No answer at all.</span><p>The recorded run: with the service on, the request returned a token 1836 characters long. With it off, the request got no answer and curl gave up (<code>rc=28</code>).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">The request got no answer.</span><p>It gets no answer and gives up with exit code 28. In the recorded run, with the service on, the request returned a token 1836 characters long. With it off, the request got no answer and curl gave up (<code>rc=28</code>).</p></details>
     </div>
   </div>
-  <p class="small">The token lives 5 minutes unless you ask for longer. The recorded run asked for 3600 seconds.</p>
+  <p class="small">The token lasts 5 minutes unless you ask for longer, and the recorded run asked for 3600 seconds.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>Read it back, and read the status</h2>
-  <p class="lead">This is what the metadata service returned from inside the server, using a token. The service answers only from inside the server.</p>
+  <p class="lead">This is what the metadata service returned from inside the server when we used a token. The service answers only from inside the server.</p>
   <pre class="def" aria-label="Metadata service initialization output">$ curl -s -H "Authorization: Bearer $identity_token" \
     "http://api.metadata.cloud.ibm.com/metadata/v1/instance/initialization?version=2024-11-12" | jq .
 
@@ -197,13 +197,13 @@ WARNING:
 }</pre>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>A teammate wants to put the database password in user data, because only the server can read it. What does this output tell you?</p>
+      <p>A Northgate teammate wants to put the database password in user data, because only the server can read it. What does this output show?</p>
       <div class="opts">
         <button class="opt">It is safe: the metadata service needs a token</button>
         <button class="opt" data-ok>Any process on the server can read the user data back in clear text</button>
         <button class="opt">It is safe if the user data is under 64 KB</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Read it back, plain.</span><p>IBM says metadata is not encrypted and any process on the server can read it. Do not store passwords or customer encryption keys in user data.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Any process on the server can read it back.</span><p>The user data comes back in clear text. IBM says metadata isn't encrypted and any process on the server can read it, so don't store passwords or customer encryption keys in user data.</p></details>
     </div>
     <div class="q">
       <p><code>cloud-init status</code> said <code>extended_status: degraded done</code>, with a warning. Did the user data run?</p>
@@ -211,7 +211,7 @@ WARNING:
         <button class="opt">No: degraded means it failed</button>
         <button class="opt" data-ok>Yes: the page was served, and the warning is about the default user's password</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The status was <code>done</code> and the page text came back from the web server the user data started. The warning says <code>lock_passwd</code> is set for <code>ubuntu</code> with no password given. Cloud-init ran; the user data does not set that password.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Yes. The status was <code>done</code> and the page text came back from the web server the user data started. The warning says <code>lock_passwd</code> is set for <code>ubuntu</code> with no password given. Cloud-init ran, and the user data doesn't set that password.</p></details>
     </div>
   </div>
 </section>
@@ -227,25 +227,25 @@ WARNING:
         <button class="opt" data-ok>2 vCPUs and 8 GiB of memory</button>
         <button class="opt">Generation 2, build 8</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>After the dash, vCPUs come first, then memory in GiB: 2 vCPUs and 8 GiB.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>2 vCPUs and 8 GiB of memory. After the dash, vCPUs come first, then memory in GiB.</p></details>
     </div>
     <div class="q" data-check>
-      <p>Design it. Northgate needs the same set-up on many servers, built once. A different team only needs to change a few small things on a stock image. Which option fits each?</p>
+      <p>Northgate needs the same set-up on many servers, built once. Another Northgate team only needs to change a few small things on a stock image. Which option fits each?</p>
       <div class="opts">
         <button class="opt" data-ok>Custom image for the many servers; user data for the small changes</button>
         <button class="opt">User data for the many servers; custom image for the small changes</button>
         <button class="opt">Log in to each server over SSH in both cases</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A custom image suits the same set-up on many servers, built once. Cloud-init user data on a stock image suits small changes, with no image to maintain.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A custom image for the many servers, and user data for the small changes. A custom image suits the same set-up on many servers, built once, and cloud-init user data on a stock image suits small changes, with no image to maintain.</p></details>
     </div>
     <div class="q" data-check>
       <p>Where should a database password for a new server go?</p>
       <div class="opts">
         <button class="opt">In user data, as the first line</button>
-        <button class="opt" data-ok>Not in user data: it is not encrypted</button>
+        <button class="opt" data-ok>Not in user data, because it isn&apos;t encrypted</button>
         <button class="opt">In user data, if the file is under 64 KB</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM says metadata is not encrypted and any process on the server can read it. The 64 KB limit is about size, not safety.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Not in user data. IBM says metadata isn't encrypted and any process on the server can read it. The 64 KB limit only limits size and says nothing about safety.</p></details>
     </div>
   </div>
 </section>
@@ -255,7 +255,7 @@ WARNING:
   <h2>You can read a first boot now</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>User data runs once. The metadata service is off until you turn it on. No secrets in user data.</p></div>
+    <div><span class="label">Remember</span><p>User data runs once, at first boot. The metadata service is off until you turn it on. Don't put secrets in user data.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapter 31, Configuring a VPC server at first boot with user data, runs everything you just saw. Chapter 32, custom images, is the next step for set-ups you want built once.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

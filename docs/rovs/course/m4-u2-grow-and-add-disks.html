@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Grow and add disks · ROVS course</title>
-<meta name="description" content="Course unit 4.2: add a data disk to a VM, grow a disk while the VM runs, and know which part of the growth you must do inside the guest. No cluster needed.">
+<meta name="description" content="Course unit 4.2: add a data disk to a VM, grow a disk while the VM runs, and know which part of the growth you do inside the guest. No cluster needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 2 of Module 4</span>
       <h1>Grow and add disks</h1>
-      <p class="lead">By the end you can add a data disk to a VM, grow a disk while the VM runs, and say which part of the growth the platform does and which part you do inside the guest.</p>
+      <p class="lead">By the end of this unit you'll be able to add a data disk to a VM, grow a disk while the VM runs, and say which part of the growth the platform does and which part you do inside the guest.</p>
       <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -41,16 +41,16 @@
           {"box":[300,120,100,50],"fill":"hatch","tone":"mark"},
           {"line":[350,118,350,84],"arrow":true},
           {"text":"grow it, or add one","at":[130,190],"hand":true,"size":20,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. Its admins resize a VMDK in vCenter without thinking. Here the disk is a PVC, and the guest still has work to do. This unit shows exactly where.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that's moving off vSphere. Its admins resize a VMDK in vCenter without thinking about it. On ROVS the disk is a PVC, and the guest still has work to do. This unit shows you exactly where.</p>
     </div>
   </div>
-  <p class="small">Every command, output and fact in this unit comes from real runs on a test cluster. The review question repeats one from unit 2.2.</p>
+  <p class="small">Every command, output and fact in this unit comes from a real run on a test cluster. The review question repeats one from unit 2.2.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Add a data disk in two edits</h2>
-  <p class="lead">A new data disk is a PVC plus two entries in the VM. Select a part of the drawing to see what it does and which lines define it. You can also click a line.</p>
+  <p class="lead">A new data disk is a PVC plus two entries in the VM. Tap a part of the drawing to see what it does and which lines define it. You can also click a line.</p>
   <div class="explorer" data-start="pvc"
     data-map='{"pvc":[[1,7],[11,13]],"mode":[[8,10]],"disk":[[15,19]],"volume":[[21,24]]}'>
     <div class="cols">
@@ -70,21 +70,21 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="pvc">
           <h3>The PVC</h3>
-          <p>Create the PVC first. It names the virtualization class and a size. Then <code>oc apply -f my-vm-data-pvc.yaml</code> makes it.</p>
+          <p>Create the PVC first. It names the virtualization class and a size, and <code>oc apply -f my-vm-data-pvc.yaml</code> creates it.</p>
         </div>
         <div class="part-info" data-part="mode">
           <h3>RWX and Block</h3>
           <p>Name <code>ReadWriteMany</code> and <code>volumeMode: Block</code>.</p>
-          <p class="watch"><b>Watch for this.</b> Every disk attached to a VM must be RWX, not just the boot disk. A single RWO data disk is enough to stop the whole VM live migrating.</p>
+          <p class="watch"><b>Watch for this.</b> Every disk attached to a VM has to be RWX, not just the boot disk. A single RWO data disk is enough to stop the whole VM live migrating.</p>
         </div>
         <div class="part-info" data-part="disk">
           <h3>The disks entry</h3>
-          <p>Adds the disk on the <code>virtio</code> bus. The <code>serial</code> appears in the guest as <code>/dev/disk/by-id/virtio-&lt;serial&gt;</code>.</p>
+          <p>This adds the disk on the <code>virtio</code> bus. The <code>serial</code> appears in the guest as <code>/dev/disk/by-id/virtio-&lt;serial&gt;</code>.</p>
         </div>
         <div class="part-info" data-part="volume">
           <h3>The volumes entry</h3>
-          <p>Points the disk at the PVC by <code>claimName</code>. The name must match the disks entry.</p>
-          <p class="watch"><b>Watch for this.</b> After you apply the change, restart the VM for the new disk to appear: <code>virtctl restart my-vm -n my-project</code>.</p>
+          <p>This points the disk at the PVC by <code>claimName</code>. The name has to match the disks entry.</p>
+          <p class="watch"><b>Watch for this.</b> After you apply the change, restart the VM so that the new disk appears, with <code>virtctl restart my-vm -n my-project</code>.</p>
         </div>
       </div>
     </div>
@@ -118,14 +118,14 @@ spec:
 <section class="screen">
   <span class="kicker">Step 2 · Spot the fault</span>
   <h2>Which letter is the new disk?</h2>
-  <p class="lead">Inside the VM, find the new disk by its serial, not by its letter. Run the commands. The VM here also has a cloud-init disk.</p>
+  <p class="lead">Inside the VM, find the new disk by its serial rather than by its letter. Run the commands. The VM here also has a cloud-init disk.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
         <div class="bar"><span>bash, inside the VM</span><span data-term-count></span></div>
         <div class="cmd">
           <pre class="in">ls -l /dev/disk/by-id/ | grep virtio</pre>
-          <pre class="out">(the chapter records no output for this command)</pre>
+          <pre class="out">(no output shown)</pre>
           <p class="hand note">The serial from the disks entry shows up here as virtio-datadisk.</p>
         </div>
         <div class="q">
@@ -135,23 +135,23 @@ spec:
             <button class="opt" data-ok>It stops: that device already holds a filesystem</button>
             <button class="opt">It fails and nothing is touched, with or without -f</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>On the test VM the cloud-init disk was <code>/dev/vdb</code> and the new data disk was <code>/dev/vdc</code>. The command stopped. With <code>-f</code> it would have overwritten the cloud-init disk.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>It stops. On the test VM the cloud-init disk was <code>/dev/vdb</code> and the new data disk was <code>/dev/vdc</code>. The command stopped because it found a filesystem. With <code>-f</code> it would have overwritten the cloud-init disk.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">sudo mkfs.xfs /dev/vdb</pre>
           <pre class="out err">/dev/vdb appears to contain an existing filesystem (iso9660)</pre>
-          <p class="hand note">iso9660 is the cloud-init disk, not your data disk.</p>
+          <p class="hand note">iso9660 is the cloud-init disk. Your data disk is somewhere else.</p>
         </div>
         <div class="cmd">
           <pre class="in">sudo mkfs.xfs /dev/disk/by-id/virtio-datadisk</pre>
-          <pre class="out">(the chapter records no output for this command)</pre>
-          <p class="hand note">The serial always names the right disk. The letter depends on the other disks.</p>
+          <pre class="out">(no output shown)</pre>
+          <p class="hand note">The serial always names the right disk. The letter depends on which other disks the VM has.</p>
         </div>
         <div class="cmd">
           <pre class="in">sudo mkdir /data
 sudo mount /dev/disk/by-id/virtio-datadisk /data
 df -h /data</pre>
-          <pre class="out">(the chapter records no output for these commands; the last line of df shows the 100 GB disk mounted on /data)</pre>
+          <pre class="out">(no output shown; the last line of df shows the 100 GB disk mounted on /data)</pre>
         </div>
       </div>
       <div class="ctl js-only">
@@ -166,16 +166,16 @@ df -h /data</pre>
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>Grow a disk while the VM runs</h2>
-  <p class="lead">Ceph RBD supports online expansion, so you resize the PVC and leave the VM running. PVCs cannot be shrunk.</p>
+  <p class="lead">Ceph RBD supports online expansion, so you resize the PVC and leave the VM running. You can't shrink a PVC.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
         <div class="bar"><span>bash</span><span data-term-count></span></div>
         <div class="cmd">
-          <p class="pre"># the recorded run asked for 35Gi; the chapter's example asks for 50Gi</p>
+          <p class="pre"># our run asked for 35Gi, and the tutorial's example asks for 50Gi</p>
           <pre class="in">oc patch pvc my-first-vm -n my-project --type merge -p '{"spec":{"resources":{"requests":{"storage":"35Gi"}}}}'</pre>
-          <pre class="out">(the chapter records no output for this command)</pre>
-          <p class="hand note">The VM keeps running. Nothing restarts.</p>
+          <pre class="out">(no output shown)</pre>
+          <p class="hand note">The VM keeps running, and nothing restarts.</p>
         </div>
         <div class="cmd">
           <pre class="in">oc get pvc my-first-vm -n my-project</pre>
@@ -187,16 +187,16 @@ my-first-vm   Bound    35Gi       RWX            ocs-storagecluster-ceph-rbd-vir
           <p>Inside the guest, the disk device now reads 35G. Is the root filesystem larger too?</p>
           <div class="opts">
             <button class="opt">Yes, the platform grows it</button>
-            <button class="opt" data-ok>No, the partition and filesystem did not grow</button>
+            <button class="opt" data-ok>No, the partition and filesystem didn't grow</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The block device grew live. The partition and the filesystem did not. Run the next command to see it.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>No. The block device grew live, but the partition and the filesystem didn't. Run the next command to see it.</p></details>
         </div>
         <div class="cmd">
           <p class="pre"># inside the guest</p>
           <pre class="in">lsblk /dev/vda</pre>
           <pre class="out">vda    252:0    0   35G  0 disk
 ├─vda4 252:4    0 28.8G  0 part /</pre>
-          <p class="hand note">The disk is 35G. The root partition, vda4, is still 28.8G.</p>
+          <p class="hand note">The disk is 35G, and the root partition, vda4, is still 28.8G.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -210,25 +210,25 @@ my-first-vm   Bound    35Gi       RWX            ocs-storagecluster-ceph-rbd-vir
     <p>A lot of guidance says to watch for <code>FileSystemResizePending</code> after a resize. Will it appear on this block-mode PVC?</p>
     <div class="opts">
       <button class="opt">Yes, wait for it to clear</button>
-      <button class="opt" data-ok>No, it never appeared</button>
+      <button class="opt" data-ok>No, it doesn't appear</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><p><code>oc describe pvc</code> showed no <code>Conditions:</code> section at all. That condition belongs to Filesystem-mode PVCs, where the kubelet grows a filesystem the node owns. A block PVC has no filesystem outside the guest. Judge the resize from the PVC capacity and from <code>lsblk</code> in the guest.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><p>No, it never appeared. <code>oc describe pvc</code> showed no <code>Conditions:</code> section at all. That condition belongs to Filesystem-mode PVCs, where the kubelet grows a filesystem that the node owns. A block PVC has no filesystem outside the guest. Judge the resize from the PVC capacity and from <code>lsblk</code> in the guest.</p></details>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Predict</span>
-  <h2>Four layers, two you must grow</h2>
-  <p class="lead">The drawing shows what grew in step 3 and what did not.</p>
+  <h2>Four layers, and you grow two of them</h2>
+  <p class="lead">The drawing shows what grew in step 3 and what didn't.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram of four boxes in a column joined by arrows: the PVC, the block device, the partition and the filesystem. The first two are marked grows live. The last two are marked you grow them in the guest."
     data-drawing='{"w":560,"h":330,"shapes":[
       {"box":[10,10,250,56],"title":"1 The PVC","detail":"you patch it"},
       {"line":[135,68,135,82],"arrow":true},
       {"box":[10,84,250,56],"title":"2 The block device","detail":"grew live"},
       {"line":[135,142,135,156],"arrow":true},
-      {"box":[10,158,250,56],"dashed":true,"tone":"mark","title":"3 The partition","detail":"did not grow"},
+      {"box":[10,158,250,56],"dashed":true,"tone":"mark","title":"3 The partition","detail":"didn&apos;t grow"},
       {"line":[135,216,135,230],"arrow":true},
-      {"box":[10,232,250,56],"dashed":true,"tone":"mark","title":"4 The filesystem","detail":"did not grow"},
+      {"box":[10,232,250,56],"dashed":true,"tone":"mark","title":"4 The filesystem","detail":"didn&apos;t grow"},
       {"text":"the platform does 1 and 2","at":[290,60],"hand":true,"size":20,"tone":"muted"},
       {"text":"you do 3 and 4,","at":[290,200],"hand":true,"size":20,"tone":"mark"},
       {"text":"inside the guest","at":[290,226],"hand":true,"size":20,"tone":"mark"}]}'></svg>
@@ -240,17 +240,17 @@ my-first-vm   Bound    35Gi       RWX            ocs-storagecluster-ceph-rbd-vir
         <button class="opt" data-ok>growpart /dev/vda 1 and resize2fs /dev/vda1</button>
         <button class="opt">xfs_growfs / alone</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Find the partition first.</span><p>The number is not always 1. On the CentOS Stream 9 image the root is <code>/dev/vda4</code> (XFS), so it takes <code>growpart /dev/vda 4</code> and <code>xfs_growfs /</code>. Find yours with <code>findmnt -no SOURCE,FSTYPE /</code>. Both worked on the running VM, with no restart.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Find the partition first.</span><p>growpart /dev/vda 1 and resize2fs /dev/vda1. The number isn't always 1, though. On the CentOS Stream 9 image the root is <code>/dev/vda4</code> (XFS), so it takes <code>growpart /dev/vda 4</code> and <code>xfs_growfs /</code>. Find yours with <code>findmnt -no SOURCE,FSTYPE /</code>. Both worked on the running VM, with no restart.</p></details>
     </div>
     <div>
-      <p class="hand tilt"><b>From vSphere:</b> this is the same as editing a VM in vCenter to increase the disk size, then using diskpart (Windows) or growpart and resize2fs (Linux) inside the guest. You edit the PVC rather than the VM&apos;s hardware settings.</p>
+      <p class="hand tilt"><b>From vSphere:</b> this is the same as editing a VM in vCenter to increase the disk size, then using diskpart (Windows) or growpart and resize2fs (Linux) inside the guest. The difference is that you edit the PVC rather than the VM's hardware settings.</p>
       <div class="q">
         <p>You run <code>growpart</code> on the wrong partition. What does it print?</p>
         <div class="opts">
           <button class="opt">CHANGED, and it resizes the wrong partition</button>
           <button class="opt" data-ok>NOCHANGE, and it changes nothing</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>On the right partition it prints <code>CHANGED: partition=&lt;n&gt; ...</code> and <code>df -h /</code> then shows the larger size. On the wrong one it prints <code>NOCHANGE</code>.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>NOCHANGE. On the right partition it prints <code>CHANGED: partition=&lt;n&gt; ...</code>, and <code>df -h /</code> then shows the larger size. On the wrong one it prints <code>NOCHANGE</code> and leaves it alone.</p></details>
       </div>
     </div>
   </div>
@@ -261,22 +261,22 @@ my-first-vm   Bound    35Gi       RWX            ocs-storagecluster-ceph-rbd-vir
   <h2>Four questions</h2>
   <div>
     <div class="q" data-check>
-      <p>Your colleague wants to shrink a 50Gi VM disk to 30Gi by editing the PVC. What happens?</p>
+      <p>One of Northgate's admins wants to shrink a 50Gi VM disk to 30Gi by editing the PVC. What happens?</p>
       <div class="opts">
         <button class="opt">It shrinks while the VM runs</button>
-        <button class="opt" data-ok>It is not possible: the new size must be larger</button>
+        <button class="opt" data-ok>It isn't possible: the new size has to be larger</button>
         <button class="opt">It shrinks after a restart</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The new size must be larger than the current size. PVCs cannot be shrunk.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It isn't possible. The new size has to be larger than the current size, because a PVC can't be shrunk.</p></details>
     </div>
     <div class="q" data-check>
-      <p>You added a data disk and applied the VM edit. The disk is not in the guest. What is missing?</p>
+      <p>You added a data disk and applied the VM edit, but the disk isn't in the guest. What's missing?</p>
       <div class="opts">
         <button class="opt">A new PVC</button>
         <button class="opt" data-ok>A restart of the VM</button>
         <button class="opt">Nothing. Wait five minutes.</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Restart the VM for the new disk to appear. Then find it by its serial in <code>/dev/disk/by-id/</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A restart. Restart the VM so that the new disk appears, then find it by its serial in <code>/dev/disk/by-id/</code>.</p></details>
     </div>
     <div class="q" data-check>
       <p>After you grow a PVC, <code>df -h /</code> in the guest still shows the old size. Is the resize broken?</p>
@@ -285,16 +285,16 @@ my-first-vm   Bound    35Gi       RWX            ocs-storagecluster-ceph-rbd-vir
         <button class="opt" data-ok>No, the partition and filesystem still need growing in the guest</button>
         <button class="opt">Yes, restart the VM</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The block device grew live; the partition and filesystem did not. Use growpart, then xfs_growfs or resize2fs.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. The block device grew live, and the partition and filesystem didn't. Use growpart, then xfs_growfs or resize2fs.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 2.2.</b> A VM&apos;s disk shows RWX. What does that tell you about its storage class?</p>
       <div class="opts">
-        <button class="opt">That it is on the right class</button>
+        <button class="opt">That it's on the right class</button>
         <button class="opt" data-ok>Nothing. Both RBD classes offer RWX.</button>
-        <button class="opt">That it is on the generic class</button>
+        <button class="opt">That it's on the generic class</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both RBD classes offer RWX Block, and the storage profile lists it first, so a request for any mode gets RWX Block on either class. Check the class name.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Nothing. Both RBD classes offer RWX Block, and the storage profile lists it first, so a request for any mode gets RWX Block on either class. Check the class name instead.</p></details>
     </div>
   </div>
 </section>
@@ -304,7 +304,7 @@ my-first-vm   Bound    35Gi       RWX            ocs-storagecluster-ceph-rbd-vir
   <h2>You can grow and add disks</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Every disk RWX. Restart the VM to see a new disk. Find it by serial, not letter. Grow the PVC live, then the partition and filesystem in the guest.</p></div>
+    <div><span class="label">Remember</span><p>Make every disk RWX. Restart the VM to see a new disk, and find it by its serial rather than its letter. Grow the PVC live, then grow the partition and the filesystem in the guest.</p></div>
     <div><span class="label">When you have a cluster</span><p>Tutorial chapter 102, Add, expand and tune VM disks with ODF on ROVS, runs every step you just saw.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

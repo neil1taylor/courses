@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 4 of Module 3</span>
       <h1>Write window and network isolation</h1>
-      <p class="lead">By the end you can say what the vault answers to a valid key from outside its allowed network, and what a write window blocks outside its hours.</p>
+      <p class="lead">By the end of this unit you&apos;ll be able to say what the vault answers to a valid key from outside its allowed network, and what a write window blocks outside its hours.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -41,17 +41,17 @@
           {"text":"403","at":[170,50],"hand":true,"size":20,"tone":"mark"},
           {"text":"200","at":[170,150],"hand":true,"size":20,"tone":"mark"},
           {"box":[230,60,170,80],"heavy":true,"title":"Vault"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier. Its board asks what happens if an attacker gets the backup admin&apos;s keys. Can the attacker use them from the attacker&apos;s own network? And can the vault be shut outside office hours?</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its directors want to know what happens if an attacker gets the backup admin&apos;s keys. Can the attacker use them from their own network? And can the vault be shut outside office hours?</p>
     </div>
   </div>
-  <p class="small">Every result comes from real tests in our lab. The vault is a Beta in us-south, with no SLA. Hosts, IP addresses, vault names and keys are made-up or placeholders: the values were changed.</p>
+  <p class="small">Every result comes from real tests in our lab. The vault is a Beta in us-south, and it has no SLA. Hosts, IP addresses, vault names and keys are made-up or placeholders, because we changed the real values.</p>
   <p class="small"><b>Terms used.</b> <b>Private IP range (RFC 1918)</b>: addresses reserved for use inside private networks, not on the internet. <b>Vhost style and path style</b>: two ways to write a bucket address. Vhost style puts the bucket name in the host name, and path style puts it in the path. <b>ROVS</b>: Red Hat OpenShift Virtualization Service on IBM Cloud.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Two gates in front of the keys</h2>
-  <p class="lead">A key is not enough. The vault also checks where the call comes from, and, if a window is set, when.</p>
+  <p class="lead">A key on its own isn&apos;t enough. The vault also checks where the call comes from and, if a window is set, when it arrives.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A call passes the network list, then the write window, then the key, and reaches the locked vault."
     data-drawing='{"w":560,"h":130,"shapes":[
       {"box":[10,30,120,64],"title":"Network list","detail":"VPC or range"},
@@ -69,7 +69,7 @@
         <button class="opt" data-ok>At least one allowed VPC or one allowed private IP range</button>
         <button class="opt">A public IP address</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>At least one of the allowed VPCs and the allowed IP ranges is required. IP ranges must be private (RFC 1918) (the lab&apos;s own list was its VPC and one private range).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>At least one VPC or one private IP range. IP ranges must be private (RFC 1918). Our lab&apos;s own list was its VPC and one private range.</p></details>
     </div>
     <div class="q">
       <p>The console form for a new vault has &quot;Time-based write restrictions&quot;. In our console run, what was its state by default?</p>
@@ -78,7 +78,7 @@
         <button class="opt">Enabled, 24 hours</button>
         <button class="opt">Not on the form</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The form showed it as Disabled, and the lab left it off. The window is optional.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Disabled. The form showed it that way, and we left it off in the lab. The window is optional.</p></details>
     </div>
   </div>
 </section>
@@ -86,7 +86,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>A valid key from the wrong place</h2>
-  <p class="lead">The lab vault allows only the lab VPC and its private range. The lab sent calls with a valid key from outside. Here are the places. The answers are hidden.</p>
+  <p class="lead">The lab vault allows only the lab VPC and its private range. We sent calls with a valid key from outside it, from the places below. The Mac is a laptop outside the allowed network. What do you think the vault answered?</p>
   <pre class="def" aria-label="Calls from outside">place                                    call                  answer
 Mac on the VPN, direct and private name  list                  ?
 Mac, public name, valid write key        list, get, put        ?
@@ -107,7 +107,7 @@ Mac, public name, valid write key        list, get, put        403 Access Denied
 Pod in a second VPC, direct name         list                  403 Access Denied
 Pod in a second VPC, private name        list                  no answer within 30 s
 Pod in a second VPC, public name         list                  403 Access Denied
-Lab VSI (the allowed network), control   list                  200</pre><p>The Mac tests and the pod tests were run in our lab. The pod ran on a ROVS cluster in another VPC.</p></details>
+Lab VSI (the allowed network), control   list                  200</pre><p>We ran the Mac tests and the pod tests in our lab. The pod ran on a ROVS cluster in another VPC.</p></details>
     </div>
     <div class="q">
       <p>Did the Mac get in with the vhost style or the path style of the public name?</p>
@@ -116,16 +116,16 @@ Lab VSI (the allowed network), control   list                  200</pre><p>The M
         <button class="opt">Only with vhost style</button>
         <button class="opt" data-ok>Neither: both got 403</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both styles got 403 &quot;Access Denied&quot; for list, get and put.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Neither. Both styles got 403 &quot;Access Denied&quot; for list, get and put.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> One check was not run in the first round: a machine in a second VPC. The pod test closed that gap. A valid write key from a VPC that is not on the list got nothing from the vault.</p>
+  <p class="watch"><b>Watch for this.</b> We didn&apos;t try a machine in a second VPC in the first test. We added the pod test to cover it, and a valid write key from a VPC that isn&apos;t on the list got nothing from the vault.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>Inside and outside the window</h2>
-  <p class="lead">A second lab vault had a write window of 02:00 to 03:00 UTC. The lab ran the same calls at 17:56 UTC (outside) and at 02:05 UTC (inside), from the lab VSI, inside the allowed network.</p>
+  <p class="lead">A second lab vault had a write window of 02:00 to 03:00 UTC. We ran the same calls at 17:56 UTC, outside the window, and at 02:05 UTC, inside it, from the lab VSI inside the allowed network.</p>
   <pre class="def" aria-label="Calls outside the window">outside the window, 17:56 UTC
 list, write key                         ?
 list, read key                          ?
@@ -139,21 +139,21 @@ get and head, both keys                 ?</pre>
         <button class="opt" data-ok>Reads and writes, with both keys</button>
         <button class="opt">Only the write key</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Reads were blocked too.</span><pre class="def" aria-label="Calls inside and outside the window">request                              outside      inside
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Reads and writes, with both keys.</span><pre class="def" aria-label="Calls inside and outside the window">request                              outside      inside
 list, write key                      403          200
 list, read key                       403          200
 put with a 1-day lock, write key     403          200
 get and head, both keys              403          200
-put, read key                        -            403 (the read key never writes)</pre><p>The window gates reads and writes together. Inside it, the vault works as normal. One object written inside the window is locked.</p></details>
+put, read key                        -            403 (the read key never writes)</pre><p>The window blocks reads and writes together. Inside it, the vault works as normal, and one object we wrote inside the window was locked.</p></details>
     </div>
     <div class="q">
-      <p>IBM&apos;s own page was unclear whether the window blocks reads. What does the lab result say?</p>
+      <p>IBM&apos;s own page wasn&apos;t clear about whether the window blocks reads. What did the lab result show?</p>
       <div class="opts">
         <button class="opt">It blocks writes only</button>
         <button class="opt" data-ok>It blocks reads as well</button>
         <button class="opt">It blocks the read key only</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Most Beta text said reads are not windowed, but one field table said the window covers write and read. In our lab it blocked both.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It blocks reads as well. Most of the Beta text said reads aren&apos;t windowed, but one field table said the window covers write and read. In our lab it blocked both.</p></details>
     </div>
   </div>
 </section>
@@ -161,7 +161,7 @@ put, read key                        -            403 (the read key never writes
 <section class="screen">
   <span class="kicker">Step 4 · Design it</span>
   <h2>A recovery at 14:00</h2>
-  <p class="lead">Northgate sets the window 02:00 to 03:00 UTC. At 14:00 UTC a ransomware attack starts and the admin wants to read the archive.</p>
+  <p class="lead">Northgate&apos;s backup admin sets the window to 02:00 to 03:00 UTC. At 14:00 UTC a ransomware attack starts and she wants to read the archive.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>What will the vault answer to the read key at 14:00?</p>
@@ -170,7 +170,7 @@ put, read key                        -            403 (the read key never writes
         <button class="opt" data-ok>403, as in our lab: reads are blocked outside the window too</button>
         <button class="opt">200, but slowly</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the read key got 403 on list, get and head outside the window. A write window therefore blocks recovery outside the window too. Northgate has to weigh that when it picks the hours.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>403. In our lab the read key got 403 on list, get and head outside the window, so a write window blocks recovery outside its hours too. Pick the hours with that in mind.</p></details>
     </div>
     <div class="q">
       <p>The attacker at 14:00 holds a valid write key and sits on a home network. What stops writes?</p>
@@ -179,7 +179,7 @@ put, read key                        -            403 (the read key never writes
         <button class="opt">Only the network list</button>
         <button class="opt" data-ok>Both: the network list and the window each answer 403</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Every valid-key call from outside the allowed network got 403 or no answer in our lab. The window refused calls outside its hours even from inside the network.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Both. Every valid-key call from outside the allowed network got 403 or no answer in our lab, and the window refused calls outside its hours even from inside the network.</p></details>
     </div>
   </div>
 </section>
@@ -195,7 +195,7 @@ put, read key                        -            403 (the read key never writes
         <button class="opt" data-ok>403 Access Denied, or no answer</button>
         <button class="opt">It asks for the read key</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>403 on the public and direct names from the Mac and from the second VPC. The private name did not answer.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>403 or no answer. We got 403 on the public and direct names from the Mac and from the second VPC, and the private name didn&apos;t answer.</p></details>
     </div>
     <div class="q" data-check>
       <p>The same list call from the lab VSI, inside the allowed network, gets which answer?</p>
@@ -204,7 +204,7 @@ put, read key                        -            403 (the read key never writes
         <button class="opt">403</button>
         <button class="opt">No answer</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>200 (control call).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>200. That was our control call.</p></details>
     </div>
     <div class="q" data-check>
       <p>What does a write window block outside its hours?</p>
@@ -213,7 +213,7 @@ put, read key                        -            403 (the read key never writes
         <button class="opt" data-ok>Reads and writes, so it blocks recovery too</button>
         <button class="opt">Nothing: it is advice</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Outside the window both keys got 403 on list, get, head and put.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Reads and writes. Outside the window both keys got 403 on list, get, head and put.</p></details>
     </div>
   </div>
 </section>
@@ -223,7 +223,7 @@ put, read key                        -            403 (the read key never writes
   <h2>You know what the two gates do</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>From outside the allowed network a valid key got 403 or no answer. From inside, 200. A write window blocked reads and writes outside its hours, so it blocks recovery too.</p></div>
+    <div><span class="label">Remember</span><p>From outside the allowed network, a valid key got 403 or no answer. From inside, it got 200. A write window blocked reads and writes outside its hours, so set the hours to cover when you might need to recover.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

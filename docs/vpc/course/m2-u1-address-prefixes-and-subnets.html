@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 1 of Module 2</span>
       <h1>Address prefixes and subnets</h1>
-      <p class="lead">By the end you can read the address prefixes and subnets of a VPC, say how many addresses a subnet gives you, and say what you create first.</p>
+      <p class="lead">By the end of this unit you’ll be able to read the address prefixes and subnets of a VPC, work out how many addresses a subnet gives you, and know what to create first.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -42,16 +42,16 @@
           {"grid":[34,66,1,3,94,30,0,38],"tone":"mark"},
           {"grid":[163,66,1,3,94,30,0,38],"tone":"mark"},
           {"grid":[292,66,1,3,94,30,0,38],"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output in this unit is real. Its first job is to lay out the address space, before any server exists.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that is moving off vSphere. The output in this unit is real. Northgate’s network admin has to lay out the address space first, before any server exists.</p>
     </div>
   </div>
-  <p class="small">Every statement and output in this unit comes from real runs in a lab account. The vSphere comparison is a rough mapping. Some columns and blank lines are left out of the output, and IDs are shortened.</p>
+  <p class="small">Every statement and output in this unit comes from real runs in a lab account. The vSphere comparison is only a rough mapping. We left out some columns and blank lines from the output and shortened the IDs.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>One VPC, three zones, nine subnets</h2>
-  <p class="lead">Select a part of the drawing to see what it does and which lines of real output show it. You can also click a line.</p>
+  <p class="lead">Select a part of the drawing to see what it does and which lines of real output show it. You can also click a line of output.</p>
   <div class="explorer" data-start="prefix"
     data-map='{"prefix":[[1,6]],"subnet":[[8,13],[16,16],[23,32]],"count":[[14,15]],"acl":[[17,20]]}'>
     <div class="cols">
@@ -81,21 +81,21 @@
         <div class="part-info" data-part="prefix">
           <h3>Address prefix</h3>
           <p>An address range that a VPC owns in one zone. Subnets in that zone are created inside it. The lab plan gives each VPC one <code>/16</code>, each zone one <code>/18</code> and each subnet a <code>/24</code>.</p>
-          <p class="watch"><b>Watch for this.</b> This VPC was made with manual prefix management, so it had no prefixes at all until you created them. A prefix takes no resource group option: it belongs to the VPC.</p>
+          <p class="watch"><b>Watch for this.</b> This VPC was made with manual prefix management, so it had no prefixes at all until you created them. A prefix has no resource group option, because it belongs to the VPC.</p>
         </div>
         <div class="part-info" data-part="subnet">
           <h3>Subnet</h3>
           <p>A range of addresses in a VPC, bound to one zone. Servers take their addresses from it. Each of the nine subnets sits inside the prefix of its own zone.</p>
           <p class="hand tilt"><b>From vSphere:</b> a subnet is roughly a port group or VLAN. Unlike one, it lives in a single zone.</p>
-          <p class="watch"><b>Watch for this.</b> Name the resource group when you create a subnet. Without it the subnet goes to the targeted group or the Default group.</p>
+          <p class="watch"><b>Watch for this.</b> Name the resource group when you create a subnet. If you don’t, the subnet goes to the targeted group or the Default group.</p>
         </div>
         <div class="part-info" data-part="count">
           <h3>Address count</h3>
-          <p>IBM reserves five addresses in every subnet: the first four and the last. A <code>/24</code> has 256 addresses, and 251 are left for your resources. The output reads <code>Address available 251</code> and <code>Address total 256</code>.</p>
+          <p>IBM reserves five addresses in every subnet, which are the first four and the last. A <code>/24</code> has 256 addresses, so 251 are left for your resources. The output reads <code>Address available 251</code> and <code>Address total 256</code>.</p>
         </div>
         <div class="part-info" data-part="acl">
           <h3>Defaults</h3>
-          <p>Each new subnet takes the VPC’s default network ACL and default route table, named <code>vpct-prod-default-acl</code> and <code>vpct-prod-default-rt</code> here. Unit 2.2 gives subnets their own ACLs.</p>
+          <p>Each new subnet takes the VPC’s default network ACL and default route table, named <code>vpct-prod-default-acl</code> and <code>vpct-prod-default-rt</code> here. In Unit 2.2 you give subnets their own ACLs.</p>
         </div>
       </div>
     </div>
@@ -136,7 +136,7 @@ vpct-prod-web-z3    us-east-3   10.20.128.0/24   251   vpct-lab   vpct-prod-defa
 
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
-  <h2>Pick an answer, then see what was recorded</h2>
+  <h2>Pick an answer, then see what we recorded</h2>
   <div class="pair">
     <div class="q">
       <p>A subnet is a <code>/24</code>. The output says <code>Address total 256</code>. How many addresses can your servers use?</p>
@@ -145,16 +145,16 @@ vpct-prod-web-z3    us-east-3   10.20.128.0/24   251   vpct-lab   vpct-prod-defa
         <button class="opt">254</button>
         <button class="opt" data-ok>251</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Five are IBM’s.</span><p>The same output reads <code>Address available 251</code>. IBM reserves the first four addresses and the last one in every subnet.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">251 can be used, because IBM keeps five.</span><p>The same output reads <code>Address available 251</code>. IBM reserves the first four addresses and the last one in every subnet.</p></details>
     </div>
     <div class="q">
-      <p>The block <code>10.20.65.0/24</code> sits inside the zone 2 prefix, <code>10.20.64.0/18</code>. Someone creates the subnet and names the zone <code>us-east-1</code>. What happens?</p>
+      <p>The block <code>10.20.65.0/24</code> sits inside the zone 2 prefix, <code>10.20.64.0/18</code>. Northgate&apos;s network admin creates the subnet and names the zone <code>us-east-1</code>. What happens?</p>
       <div class="opts">
         <button class="opt">It is created in us-east-1</button>
         <button class="opt" data-ok>It is refused</button>
         <button class="opt">It is created in us-east-2 anyway</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The zone must be the zone of the prefix that holds the block. A different zone is refused with <code>address prefix not associated with provided zone</code>. The lab leaves the zone out, because the block’s prefix already sets it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It’s refused. The zone has to be the zone of the prefix that holds the block, and a different zone gets <code>address prefix not associated with provided zone</code>. The lab leaves the zone out, because the block’s prefix already sets it.</p></details>
     </div>
   </div>
 </section>
@@ -162,7 +162,7 @@ vpct-prod-web-z3    us-east-3   10.20.128.0/24   251   vpct-lab   vpct-prod-defa
 <section class="screen">
   <span class="kicker">Step 3 · Click through the console</span>
   <h2>The VPC overview page</h2>
-  <p class="lead">This is a real screen of the VPC, cut off below the name and ID. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">This is a real screen of the VPC, cut off below the name and ID. Click where you’d click. After two misses, the page marks the right place.</p>
   <div class="tour">
     <figure class="tstep" data-hot="1.5,78.5,13.5,7.5" data-width="720px">
       <div class="shot"><img src="../images/20/course-vpc-overview-details.png" alt="Part of the console overview page of the VPC vpct-prod. Top row: created date, location Washington DC (us-east), default ACL vpct-prod-default-acl, default security group vpct-prod-default-sg, and default routing table vpct-prod-default-rt. Below, an Address prefixes panel with the columns IP range and Location, no rows, and a Manage address prefixes link. Beside it, a Public address ranges panel that says the table is empty." width="1166" height="331"></div>
@@ -174,8 +174,8 @@ vpct-prod-web-z3    us-east-3   10.20.128.0/24   251   vpct-lab   vpct-prod-defa
     <figure class="tstep" data-hot="49.5,8.5,12,7" data-width="720px">
       <div class="shot"><img src="../images/20/course-vpc-overview-details.png" alt="The same console overview page, with the default ACL link vpct-prod-default-acl in the top row." width="1166" height="331"></div>
       <figcaption>
-        <h3>A new subnet takes a network ACL until you give it its own. Which link names it?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Default ACL, <code>vpct-prod-default-acl</code>. The lab’s subnets all show it until their own ACLs are attached.</p></details>
+        <h3>A new subnet uses the default network ACL until you give it its own. Which link names it?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It’s the default ACL, <code>vpct-prod-default-acl</code>. All of the lab’s subnets show it until their own ACLs are attached.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="25.5,8.5,14,7" data-width="720px">
@@ -191,31 +191,31 @@ vpct-prod-web-z3    us-east-3   10.20.128.0/24   251   vpct-lab   vpct-prod-defa
 <section class="screen">
   <span class="kicker">Step 4 · Design it</span>
   <h2>Choose how to give the ranges</h2>
-  <p class="lead">Choose one, then open the worked answer.</p>
+  <p class="lead">Choose an answer for each need, then open the worked answer.</p>
   <div class="pair">
     <div class="q">
-      <p><b>Need A.</b> Northgate has an address plan. Each subnet must take the range the plan gives it. Which way of creating a subnet?</p>
+      <p><b>Need A.</b> Northgate’s network admin has an address plan, and each subnet must take the range the plan gives it. Which way of creating a subnet would you pick?</p>
       <div class="opts">
         <button class="opt" data-ok>Name the CIDR block</button>
         <button class="opt">Name the zone and an address count</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Name the block with <code>--ipv4-cidr-block</code>. It fits when you follow an address plan. The block must sit inside an address prefix of the zone.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Name the block with <code>--ipv4-cidr-block</code>. That suits an address plan. The block must sit inside an address prefix of the zone.</p></details>
     </div>
     <div class="q">
-      <p><b>Need B.</b> A throwaway test needs a subnet. The range does not matter. Which way?</p>
+      <p><b>Need B.</b> A throwaway test needs a subnet, and the range doesn’t matter. Which way would you pick?</p>
       <div class="opts">
         <button class="opt">Name the CIDR block</button>
         <button class="opt" data-ok>Name the zone and an address count</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p><code>--zone</code> with <code>--ipv4-address-count</code> lets IBM choose the range. It works with default prefixes. <b>The cost:</b> the range is not under your control.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p><code>--zone</code> with <code>--ipv4-address-count</code> lets IBM choose the range, and it works with default prefixes. <b>The cost:</b> you don’t control the range.</p></details>
     </div>
     <div class="q">
-      <p><b>Need C.</b> The VPC will later be joined to other VPCs by a Transit Gateway. Which prefix management?</p>
+      <p><b>Need C.</b> Northgate will later join the VPC to other VPCs with a Transit Gateway. Which prefix management would you pick?</p>
       <div class="opts">
         <button class="opt" data-ok>Manual</button>
         <button class="opt">Auto</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>Manual. IBM’s addressing guide says to avoid default address prefixes for VPCs you will interconnect, and to create non-overlapping prefixes instead. With <code>auto</code> IBM creates a default prefix in each zone. With <code>manual</code> it creates none, and you add them yourself.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Manual. IBM’s addressing guide tells you to avoid default address prefixes for VPCs you will interconnect and to create non-overlapping prefixes instead. With <code>auto</code> IBM creates a default prefix in each zone. With <code>manual</code> it creates none, and you add them yourself.</p></details>
     </div>
   </div>
 </section>
@@ -240,7 +240,7 @@ vpct-prod-web-z3    us-east-3   10.20.128.0/24   251   vpct-lab   vpct-prod-defa
         <button class="opt" data-ok>An address prefix in each zone</button>
         <button class="opt">A network ACL</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The prefixes. A subnet’s block must sit inside an address prefix of its zone, and this VPC has no prefixes until you create them.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The prefixes. A subnet’s block must sit inside an address prefix of its zone, and this VPC has none until you create them.</p></details>
     </div>
     <div class="q" data-check>
       <p>Can one subnet span two zones?</p>
@@ -249,7 +249,7 @@ vpct-prod-web-z3    us-east-3   10.20.128.0/24   251   vpct-lab   vpct-prod-defa
         <button class="opt" data-ok>No. A subnet is bound to one zone</button>
         <button class="opt">Yes, in a multizone region</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A subnet cannot span zones or regions. Every subnet in a VPC can still reach every other subnet through the implicit router, across zones.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A subnet can’t span zones or regions. Every subnet in a VPC can still reach every other subnet across zones through the implicit router.</p></details>
     </div>
   </div>
 </section>
@@ -259,7 +259,7 @@ vpct-prod-web-z3    us-east-3   10.20.128.0/24   251   vpct-lab   vpct-prod-defa
   <h2>You can read a VPC’s address plan</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>A prefix per zone, then subnets inside it. A <code>/24</code> gives 251 addresses. A subnet lives in one zone. Manual prefixes for VPCs you will join.</p></div>
+    <div><span class="label">Remember</span><p>Create a prefix in each zone, then create the subnets inside it. A <code>/24</code> gives you 251 addresses, and a subnet lives in one zone. Use manual prefixes for VPCs you will join.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapter 21, Creating address prefixes and subnets in an IBM Cloud VPC, runs everything you just saw.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

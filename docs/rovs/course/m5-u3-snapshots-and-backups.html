@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 3 of Module 5</span>
       <h1>Snapshots and backups</h1>
-      <p class="lead">By the end you can say what a VM snapshot is for and what it is not, spot a backup that looks fine and holds nothing, and choose between the four ways to protect a VM.</p>
+      <p class="lead">By the end of this unit you'll be able to say what a VM snapshot is for and what it isn't, spot a backup that looks fine and holds nothing, and choose between the four ways to protect a VM.</p>
       <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -42,16 +42,16 @@
           {"line":[250,90,290,90],"arrow":true,"tone":"mark"},
           {"box":[296,60,114,60],"heavy":true,"tone":"mark","title":"backup"},
           {"text":"leaves the cluster and the region","at":[24,186],"hand":true,"size":17,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. Its admins snapshot VMs before a change and back them up with a product. On ROVS there are four ways to protect a VM, and they are not interchangeable.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that's moving off vSphere. Its admins snapshot VMs before a change and back them up with a product. On ROVS there are four ways to protect a VM, and they aren't interchangeable.</p>
     </div>
   </div>
-  <p class="small">Every command, output and screen in this unit comes from real runs on lab clusters. The review question repeats one from unit 1.2.</p>
+  <p class="small">Every command, output and screen in this unit comes from a real run on a lab cluster. The review question repeats one from unit 1.2.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Predict</span>
   <h2>What a VM snapshot is for</h2>
-  <p class="lead">A snapshot captures the state of a VM&apos;s disks at a point in time. It is for a quick rollback before a change, such as a patch. It lives on the same Ceph cluster as the VM, so it is not a backup.</p>
+  <p class="lead">A snapshot captures the state of a VM's disks at a point in time. It's for a quick rollback before a change, such as a patch. It lives on the same Ceph cluster as the VM, so it isn't a backup.</p>
   <div class="pair">
     <div class="q">
       <p>A widely copied snippet says <code>virtctl snapshot create</code>. Does it work?</p>
@@ -60,7 +60,7 @@
         <button class="opt" data-ok>No: virtctl has no snapshot subcommand. You apply a VirtualMachineSnapshot object.</button>
         <button class="opt">Only for stopped VMs</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>This was checked on virtctl 1.9.0. Red Hat&apos;s 4.21 procedure is object-based too: you create a <code>VirtualMachineSnapshot</code>. It is crash-consistent by default. For an application-consistent snapshot the QEMU guest agent must run inside the VM, and KubeVirt freezes the guest filesystems first.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. We checked this on virtctl 1.9.0. Red Hat's 4.21 procedure is object-based too, so you create a <code>VirtualMachineSnapshot</code>. It's crash-consistent by default. For an application-consistent snapshot the QEMU guest agent has to be running inside the VM, and KubeVirt freezes the guest filesystems first.</p></details>
     </div>
     <div class="q">
       <p>A backup routine snapshots VMs only while they run. Can you restore from those snapshots?</p>
@@ -69,7 +69,7 @@
         <button class="opt" data-ok>No: Red Hat says you can only restore from an offline snapshot</button>
         <button class="opt">Yes, after a restart</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Nothing tells you until you try.</span><p>An online snapshot is not a restore source. The run in the chapter restored from a snapshot taken while the VM was stopped. A restore from an online snapshot was not attempted.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Take the snapshot while the VM is stopped.</span><p>No. Red Hat says you can only restore from an offline snapshot, so take the snapshot while the VM is stopped if you may need to restore from it. Our run restored from a snapshot taken while the VM was stopped. We didn't try a restore from an online snapshot.</p></details>
     </div>
     <div class="q">
       <p>A file is written in the guest. The VM is stopped and snapshotted. The file is deleted. The VM is stopped again and restored. What does the guest show?</p>
@@ -78,16 +78,16 @@
         <button class="opt" data-ok>The file is back, with the checksum recorded before</button>
         <button class="opt">The restore fails</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The restore replaced the whole disk contents, not only the parts that changed. On one small test disk the snapshot was ready in 3.5 seconds and the restore completed in 2.4, polled once a second. Do not extrapolate to a large or busy disk: time your own. The chapter also notes that the digest it recorded is one hex character short of a valid SHA-256, so read this as a recorded match, not an exact value.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The file is back. The restore replaced the whole disk contents rather than only the parts that changed. On one small test disk the snapshot was ready in 3.5 seconds and the restore completed in 2.4, polled once a second. Don't extrapolate to a large or busy disk. Time your own. The digest we recorded is one hex character short of a valid SHA-256, so read this as a recorded match rather than an exact value.</p></details>
     </div>
   </div>
-  <p class="hand tilt" style="margin-top:16px"><b>From vSphere:</b> roughly like a VMware snapshot, with differences. VMware keeps a chain of delta disks and can include memory state, and the VM can run during a restore. Here each snapshot is an independent point in time, disk only, and the VM must be stopped to restore. A rough mapping, not an IBM statement.</p>
+  <p class="hand tilt" style="margin-top:16px"><b>From vSphere:</b> it's roughly like a VMware snapshot, with some differences. VMware keeps a chain of delta disks and can include memory state, and the VM can run during a restore. Here each snapshot is an independent point in time, disk only, and the VM has to be stopped to restore. That's a rough match of our own, and IBM doesn't describe it this way.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 2 · Spot the fault</span>
   <h2>A green backup with an empty disk</h2>
-  <p class="lead">Northgate backs up a running VM with OADP and <code>defaultVolumesToFsBackup: true</code>, the setting most OADP guides use. The namespace is deleted, restored, and the VM comes back <code>Running</code>. This is what the backup said.</p>
+  <p class="lead">Northgate backs up a running VM with OADP and <code>defaultVolumesToFsBackup: true</code>, which is the setting most OADP guides use. The namespace is deleted and restored, and the VM comes back <code>Running</code>. This is what the backup said.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A block VM disk has two paths. The CSI snapshot path reaches the object storage bucket. The file-system backup path is dashed and skips the disk."
     data-drawing='{"w":560,"h":175,"shapes":[
       {"box":[10,55,120,60],"title":"VM disk","detail":"Block"},
@@ -111,7 +111,7 @@ Completed   60/60    0        2</pre>
         <button class="opt" data-ok>No: the disk is blank, and the warning is the only signal</button>
         <button class="opt">Only the boot disk</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A ROVS VM&apos;s root volume is <code>volumeMode: Block</code> on ODF RBD, and file-system backup cannot read a block volume. In the run, <code>guestfish</code> on the restored volume said &quot;no operating system was found on this disk&quot;. The volumes that were backed up were the launcher pod&apos;s ephemeral ones. None of them is the VM.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No, the disk is blank. A ROVS VM's root volume is <code>volumeMode: Block</code> on ODF RBD, and file-system backup can't read a block volume. In our run, <code>guestfish</code> on the restored volume said &quot;no operating system was found on this disk&quot;. The volumes that were backed up were the launcher pod's ephemeral ones, and none of them is the VM.</p></details>
     </div>
     <div class="q">
       <p>Which setting backs the disk up?</p>
@@ -120,16 +120,16 @@ Completed   60/60    0        2</pre>
         <button class="opt">A longer <code>ttl</code></button>
         <button class="opt">A second backup location</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Let the CSI plugin take a snapshot. Velero only uses a snapshot class that carries its label, and without it the CSI path silently does nothing too: <code>oc label volumesnapshotclass ocs-storagecluster-rbdplugin-snapclass velero.io/csi-volumesnapshot-class=true</code>. A running Fedora VM with a 30 GiB disk then backed up in 22 seconds with 0 warnings and 0 errors, and restored in 23 seconds. A token written into the guest matched.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p><code>defaultVolumesToFsBackup: false</code>, so that the CSI plugin takes a snapshot. Velero only uses a snapshot class that carries its label, and without the label the CSI path silently does nothing too: <code>oc label volumesnapshotclass ocs-storagecluster-rbdplugin-snapclass velero.io/csi-volumesnapshot-class=true</code>. A running Fedora VM with a 30 GiB disk then backed up in 22 seconds with 0 warnings and 0 errors, and restored in 23 seconds. A token written into the guest matched.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> Kasten is different here. When a disk cannot be exported, it refuses and says why. OADP completed and restored a blank disk. And spell out <code>oc get backups.velero.io -n openshift-adp</code>: three resource types are called backups, and <code>oc get backup</code> may pick another.</p>
+  <p class="watch"><b>Watch for this.</b> Kasten behaves differently here. When a disk can't be exported, it refuses and says why. OADP completed and restored a blank disk. Also, spell out <code>oc get backups.velero.io -n openshift-adp</code>, because three resource types are called backups and <code>oc get backup</code> may pick another one.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Design it</span>
   <h2>Which protection does Northgate pick?</h2>
-  <p class="lead">Four needs. Pick an approach for each, then read what the chapters say.</p>
+  <p class="lead">Northgate needs four things. Pick an approach for each one, then read why.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram of four boxes in a row: Snapshot, OADP, Kasten and IBM service. Beneath each is its job: rollback, DR metadata, scheduled backup and preview only."
     data-drawing='{"w":560,"h":120,"shapes":[
       {"box":[10,10,125,70],"title":"Snapshot","detail":"rollback"},
@@ -145,7 +145,7 @@ Completed   60/60    0        2</pre>
         <button class="opt">Kasten</button>
         <button class="opt">OADP</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Snapshots are for quick rollback before changes: short term, same cluster, and not a backup. Take the snapshot while the VM is stopped if you may need to restore from it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A VM snapshot. Snapshots are for a quick rollback before a change. They're short term, on the same cluster, and they aren't a backup. Take the snapshot while the VM is stopped if you may need to restore from it.</p></details>
     </div>
     <div class="q">
       <p>Northgate wants scheduled VM backups with retention, application-consistent, with a copy off the cluster. It wants the path IBM documents.</p>
@@ -154,7 +154,7 @@ Completed   60/60    0        2</pre>
         <button class="opt" data-ok>Veeam Kasten</button>
         <button class="opt">OADP on its own</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Kasten is IBM&apos;s documented path for production VM protection: scheduled backups, retention policies, application-consistent freeze and export off the cluster. It needs an enterprise licence beyond five worker nodes. The sources disagree on whether the free licence may be used in production, so get the position in writing.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Veeam Kasten. It's IBM's documented path for production VM protection, with scheduled backups, retention policies, an application-consistent freeze and export off the cluster. It needs an enterprise licence beyond five worker nodes. The sources disagree on whether the free licence may be used in production, so get the position in writing.</p></details>
     </div>
     <div class="q">
       <p>Northgate is building Regional DR with ODF and RHACM and needs the resource definitions captured.</p>
@@ -163,45 +163,45 @@ Completed   60/60    0        2</pre>
         <button class="opt" data-ok>OADP</button>
         <button class="opt">Kasten</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM&apos;s design material positions OADP as the Kubernetes-metadata half of a DR pairing: ODF Regional DR replicates the volumes, RHACM orchestrates failover and OADP captures the definitions. It does not present OADP as a standalone VM backup product, and in IBM&apos;s Regional DR runbook it is optional and yours to update.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>OADP. IBM's design material positions it as the Kubernetes-metadata half of a DR pairing. ODF Regional DR replicates the volumes, RHACM orchestrates the failover and OADP captures the definitions. IBM doesn't present OADP as a standalone VM backup product, and in IBM's Regional DR runbook it's optional and yours to update.</p></details>
     </div>
     <div class="q">
-      <p>Northgate wants IBM&apos;s managed service, IBM Cloud Backup and Recovery, for its ROVS VMs. What is the honest answer?</p>
+      <p>Northgate wants IBM's managed service, IBM Cloud Backup and Recovery, for its ROVS VMs. What do you tell them?</p>
       <div class="opts">
-        <button class="opt">Use it: it is IBM&apos;s own service</button>
-        <button class="opt" data-ok>It worked as a proof of concept in eu-de, but IBM does not support it for ROVS yet</button>
-        <button class="opt">It cannot back up a ROVS VM at all</button>
+        <button class="opt">Use it: it's IBM's own service</button>
+        <button class="opt" data-ok>It worked as a proof of concept in eu-de, but IBM doesn't support it for ROVS</button>
+        <button class="opt">It can't back up a ROVS VM at all</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM offers VM backup only as a preview in <code>au-syd</code>, says it is not recommended for production, and does not name ROVS. <code>au-syd</code> has no VPC bare metal, so no ROVS cluster can run there. On a ROVS cluster in <code>eu-de</code> it backed up and restored a Linux VM and a Windows Server 2022 VM, and restored to a second cluster in the same region. It cannot restore one file: you restore the whole disk. Treat it as a proof of concept.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It works as a proof of concept, and IBM doesn't support it for ROVS. IBM offers VM backup only as a preview in <code>au-syd</code>, says it isn't recommended for production, and doesn't name ROVS. <code>au-syd</code> has no VPC bare metal, so no ROVS cluster can run there. On a ROVS cluster in <code>eu-de</code> it backed up and restored a Linux VM and a Windows Server 2022 VM, and restored to a second cluster in the same region. It can't restore one file, so you restore the whole disk.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> ODF runs on local NVMe in your workers, so the storage fails with the workers. A backup in the same region does not survive the event most DR plans are written for. Rehearse a restore and time it: the measured time is your actual RTO.</p>
-  <p class="hand tilt" style="margin-top:12px"><b>From vSphere:</b> OADP is closest to vSphere Replication, and Kasten to Veeam Backup &amp; Replication. VSS quiescing maps to the QEMU guest agent freeze. Changed Block Tracking is not available. Rough mappings, not IBM statements.</p>
+  <p class="watch"><b>Watch for this.</b> ODF runs on local NVMe in your workers, so the storage fails with the workers. A backup in the same region doesn't survive the event that most DR plans are written for. Rehearse a restore and time it, because the measured time is your real RTO.</p>
+  <p class="hand tilt" style="margin-top:12px"><b>From vSphere:</b> OADP is closest to vSphere Replication, and Kasten is closest to Veeam Backup &amp; Replication. The QEMU guest agent freeze does the job of VSS quiescing. Changed Block Tracking isn't available. These are rough matches of our own, and IBM doesn't describe the products this way.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>Open the Kasten dashboard</h2>
-  <p class="lead">These screens come from a lab cluster. The install, policy, backup and restore steps ran from the command line and never showed a licence agreement. The dashboard does. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from a lab cluster. The install, policy, backup and restore steps ran from the command line and never showed a licence agreement. The dashboard does. Click where you'd click on the live console. After two misses, the page marks the right place.</p>
   <div class="tour">
     <figure class="tstep" data-hot="24.5,77.1,50.1,20.6" data-width="760px">
       <div class="shot"><img src="../images/43/kasten-eula-gate.jpg" alt="Veeam Kasten's first-run screen: Welcome to Veeam Kasten. Please review and accept the end user license agreement before continuing. It shows the EULA text and required Email Address and Company fields." width="1568" height="655"></div>
       <figcaption>
-        <h3>You open the Kasten dashboard for the first time. What must you fill in before it lets you in?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Email Address and Company, both required. &quot;No registration needed&quot; is true of the API and false of the UI. Someone has to accept a licence agreement for the organisation, which is a decision rather than a click.</p></details>
+        <h3>You open the Kasten dashboard for the first time. What do you have to fill in before it lets you in?</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Email Address and Company, and both are required. Kasten's &quot;No registration needed&quot; holds for the API, but the dashboard asks. Someone has to accept a licence agreement for the organisation, and that's a decision rather than a click.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="33,62.4,34.1,6.8" data-width="760px">
       <div class="shot"><img src="../images/43/kasten-signin-token.jpg" alt="Kasten's Sign In page asking for a Kubernetes bearer token, noting the token must map to a user or Service Account bound to cluster-admin." width="1568" height="710"></div>
       <figcaption>
         <h3>Next it asks for a bearer token. Where do you paste it?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Kasten already creates a service account with the binding it needs, so you grant nothing new. Make a token with <code>oc create token dashboardbff-svc -n kasten-io --duration=2h</code>.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Kasten already creates a service account with the binding it needs, so you grant nothing new. Create a token with <code>oc create token dashboardbff-svc -n kasten-io --duration=2h</code>.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="1,33.3,15.1,4.9" data-width="760px">
       <div class="shot"><img src="../images/43/kasten-dashboard.jpg" alt="The Kasten cluster dashboard showing 72 applications discovered, 0 policies, 60.7 GiB of backup data, and Virtual Machines in the left-hand navigation." width="1568" height="655"></div>
       <figcaption>
-        <h3>You are in. Which entry in the left menu takes you to your VMs?</h3>
+        <h3>You're in. Which entry in the left menu takes you to your VMs?</h3>
         <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Virtual Machines is a first-class item in the navigation. This dashboard showed 72 applications discovered, 0 policies and 60.7 GiB of backup data.</p></details>
       </figcaption>
     </figure>
@@ -209,7 +209,7 @@ Completed   60/60    0        2</pre>
       <div class="shot"><img src="../images/43/course-kasten-node-count.jpg" alt="Kasten's Licenses page. Nodes on this cluster: 3, with 3 nodes requiring a licence and 0 excluded. Locally installed licenses: 5, with 3 consumed and 2 available. Violations: 0." width="1568" height="270"></div>
       <figcaption>
         <h3>Which box shows the number the licence is counted in?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Nodes on this cluster. Kasten counts worker nodes, not VMs, so the number of VMs you protect is irrelevant. The starter licence allows 5 nodes. The trial licence allowed 500 for 59 more days when the page was captured. The licence secret said 10 while the product said 5, and the dashboard is what enforces.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Nodes on this cluster. Kasten counts worker nodes rather than VMs, so the number of VMs you protect makes no difference. The starter licence allows 5 nodes. The trial licence allowed 500 for 59 more days when the page was captured. The licence secret said 10 while the product said 5, and the dashboard is what enforces the limit.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -223,28 +223,28 @@ Completed   60/60    0        2</pre>
       <p>An OADP backup of a ROVS VM shows <code>Completed</code> with 0 errors and 2 warnings. What do you suspect?</p>
       <div class="opts">
         <button class="opt">Nothing: warnings are normal</button>
-        <button class="opt" data-ok>The disk was skipped, because file-system backup cannot read a block volume</button>
+        <button class="opt" data-ok>The disk was skipped, because file-system backup can't read a block volume</button>
         <button class="opt">The bucket is full</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Read the warnings in the logs. Use <code>defaultVolumesToFsBackup: false</code> and label the snapshot class.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The disk was skipped. Read the warnings in the logs. Use <code>defaultVolumesToFsBackup: false</code> and label the snapshot class.</p></details>
     </div>
     <div class="q" data-check>
       <p>Why is a VM snapshot not a backup?</p>
       <div class="opts">
         <button class="opt">It takes too long</button>
-        <button class="opt" data-ok>It lives on the same Ceph cluster as the VM, so it does not survive what a backup must survive</button>
-        <button class="opt">It cannot be restored</button>
+        <button class="opt" data-ok>It lives on the same Ceph cluster as the VM, so it doesn't survive what a backup has to survive</button>
+        <button class="opt">It can't be restored</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A snapshot is a rollback mechanism. Whatever you choose for backup, at least one copy must leave the cluster, and the region.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It lives on the same Ceph cluster. A snapshot is a rollback mechanism. Whatever you choose for backup, at least one copy has to leave the cluster, and the region.</p></details>
     </div>
     <div class="q" data-check>
-      <p>A Kasten backup goes green, then the export to object storage fails on a VM disk. What is the fix?</p>
+      <p>A Kasten backup goes green, then the export to object storage fails on a VM disk. What's the fix?</p>
       <div class="opts">
         <button class="opt">Annotate the policy</button>
         <button class="opt" data-ok>Annotate the StorageClass with <code>k10.kasten.io/sc-supports-block-mode-exports=true</code></button>
         <button class="opt">Switch the disk to RWO</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The VM disk is <code>volumeMode: Block</code>, and the export fails with &quot;volume&apos;s storage class does not support block mode export&quot;. The same policy re-run after the annotation exported, and 69 objects appeared in the bucket.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Annotate the StorageClass. The VM disk is <code>volumeMode: Block</code>, and the export fails with &quot;volume's storage class does not support block mode export&quot;. The same policy, re-run after the annotation, exported, and 69 objects appeared in the bucket.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 1.2.</b> What backs a VM disk on ROVS, in the place of a VMDK?</p>
@@ -253,7 +253,7 @@ Completed   60/60    0        2</pre>
         <button class="opt" data-ok>A PersistentVolumeClaim, which requests storage from a StorageClass</button>
         <button class="opt">A container image</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Each VM disk is backed by a PVC. A StorageClass is the type of storage the PVC asks for, so it is closer to a datastore.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A PVC. Each VM disk is backed by one. A StorageClass is the type of storage the PVC asks for, so it's closer to a datastore.</p></details>
     </div>
   </div>
 </section>
@@ -263,7 +263,7 @@ Completed   60/60    0        2</pre>
   <h2>You can choose how to protect a VM</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>A snapshot is a rollback, taken offline if you will restore from it. A green backup can hold an empty disk. Kasten is IBM&apos;s documented path for scheduled VM backup, OADP is the metadata half of a DR design, and IBM&apos;s managed service is a proof of concept on ROVS.</p></div>
+    <div><span class="label">Remember</span><p>A snapshot is a rollback, and you take it offline if you'll restore from it. A green backup can hold an empty disk. Kasten is IBM's documented path for scheduled VM backup, OADP is the metadata half of a DR design, and IBM's managed service is a proof of concept on ROVS.</p></div>
     <div><span class="label">When you have a cluster</span><p>Tutorial chapter 43, Protect ROVS VMs with snapshots and pick a backup tool, runs the snapshot steps. Chapters 105, 106 and 107 cover OADP, Kasten and IBM Cloud Backup and Recovery.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 4 of Module 2</span>
       <h1>Private endpoints and security groups</h1>
-      <p class="lead">By the end you can say what a private endpoint gateway gives your servers, see why the VPC default security group blocks them, and know which port the Connector Agent needs once a private endpoint exists.</p>
+      <p class="lead">By the end of this unit you'll know what a private endpoint gateway gives your servers, why the VPC default security group blocks them, and which port the Connector Agent needs once a private endpoint exists.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -40,10 +40,10 @@
           {"line":[288,75,318,75],"arrow":true,"tone":"mark"},
           {"box":[322,45,90,60],"heavy":true,"title":"service"},
           {"text":"a private address in the VPC","at":[60,150],"hand":true,"size":17,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It wants its servers to reach BRS at a private address inside its VPC, and it wants the gateway to let them in.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It wants its servers to reach BRS at a private address inside its VPC, through a private endpoint gateway, and it needs that gateway to let the servers in.</p>
     </div>
   </div>
-  <p class="small">Every number and message in this unit comes from runs in our lab. Names, addresses and the group names were changed to made-up Northgate values; the screenshots show the lab&apos;s own names, with the service endpoint blurred.</p>
+  <p class="small">Every number and message in this unit comes from runs in our lab. Names, addresses and the group names were changed to made-up Northgate values, and the screenshots show the lab&apos;s own names, with the service endpoint blurred.</p>
 </section>
 
 <section class="screen">
@@ -67,7 +67,7 @@
         <button class="opt" data-ok>A private address inside the VPC for the BRS API</button>
         <button class="opt">A faster disk</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The gateway lets servers reach the BRS API at a private address inside the VPC. In our lab the private name resolved to the gateway&apos;s address six seconds after the gateway was stable, and the gateway was ready in 22 seconds.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A private address for the BRS API. The gateway lets servers reach the API at a private address inside the VPC. In our lab the private name resolved to the gateway&apos;s address six seconds after the gateway was stable, and the gateway was ready in 22 seconds.</p></details>
     </div>
     <div class="q">
       <p>What did the gateway cost, as the console showed it?</p>
@@ -76,7 +76,7 @@
         <button class="opt" data-ok>USD 7.30 a month before data</button>
         <button class="opt">USD 730 a month before data</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The form&apos;s summary showed USD 0.010 an hour for the gateway and USD 0.01 a GB transferred: USD 7.30 a month before data.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>USD 7.30 a month. The form&apos;s summary showed USD 0.010 an hour for the gateway and USD 0.01 a GB transferred, which is USD 7.30 a month before data.</p></details>
     </div>
   </div>
 </section>
@@ -84,7 +84,7 @@
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
   <h2>What happens when the agent restarts?</h2>
-  <p class="lead">Northgate has a Connector Agent on a Linux server, and a VPE gateway for the BRS instance. The gateway&apos;s own group allows only TCP 443 from the servers. A 20 MiB backup succeeded, and the agent&apos;s only connection stayed on IBM&apos;s private service endpoint. Then Northgate restarts the Connector Agent: stop, then start.</p>
+  <p class="lead">Northgate has a Connector Agent on a Linux server, and a VPE gateway for the BRS instance. The gateway&apos;s own group allows only TCP 443 from the servers. A 20 MiB backup succeeded, and the agent&apos;s only connection stayed on IBM&apos;s private service endpoint. Then Northgate&apos;s backup admin restarts the Connector Agent: stop, then start.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>What happens to the agent?</p>
@@ -93,7 +93,7 @@
         <button class="opt" data-ok>It tries the gateway on port 29991, cannot connect, and shows no message</button>
         <button class="opt">It connects through the gateway on port 443</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the restart made the agent connect to the gateway&apos;s address on port <b>29991</b>. The gateway&apos;s group allowed only 443, so the connection stayed at <code>SYN-SENT</code> and <code>connector-agent list</code> showed <code>isConnected: false</code>, with no message. Any reboot does the same, because the agent is started again.</p><pre class="def" aria-label="The timeline">Time (UTC)  What happened
+      <details class="reveal"><summary>Show the answer</summary><p>It tries the gateway on 29991 and can&apos;t connect. In our lab the restart made the agent connect to the gateway&apos;s address on port <b>29991</b>. The gateway&apos;s group allowed only 443, so the connection stayed at <code>SYN-SENT</code>, and <code>connector-agent list</code> showed <code>isConnected: false</code> with no message. A reboot does the same, because the agent is started again.</p><pre class="def" aria-label="The timeline">Time (UTC)  What happened
 14:41:24    agent stopped, then started
             gateway address, port 29991, SYN-SENT
 14:43:15    inbound TCP 29991 added to the gateway group
@@ -106,7 +106,7 @@
         <button class="opt" data-ok>Inbound TCP 29991 from the servers&apos; group, on the gateway&apos;s group</button>
         <button class="opt">Outbound TCP 443 on the servers&apos; group</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The agent connected through the gateway within 15 seconds of the rule. A 20 MiB backup then succeeded, with the agent&apos;s only connection on the gateway.</p><pre class="def" aria-label="The rule">ibmcloud is security-group-rule-add ng-vpe-sg inbound tcp --port-min 29991 --port-max 29991 --remote ng-servers-sg</pre><p>The instance&apos;s own record lists three ports that a VPE serves: 443, 29991 and 11117. What uses 11117 was not tested.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Inbound TCP 29991 on the gateway&apos;s group. The agent connected through the gateway within 15 seconds of the rule, and a 20 MiB backup then succeeded, with the agent&apos;s only connection on the gateway.</p><pre class="def" aria-label="The rule">ibmcloud is security-group-rule-add ng-vpe-sg inbound tcp --port-min 29991 --port-max 29991 --remote ng-servers-sg</pre><p>The instance&apos;s own record lists three ports that a VPE serves: 443, 29991 and 11117. We didn&apos;t test what uses 11117.</p></details>
     </div>
   </div>
 </section>
@@ -114,7 +114,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
   <h2>The call times out</h2>
-  <p class="lead">Northgate makes the gateway and leaves its security group as it is. From a server, it calls the BRS API at the private name. In our lab this came back.</p>
+  <p class="lead">Northgate&apos;s backup admin makes the gateway and leaves its security group as it is. From a server, they call the BRS API at the private name. This is what came back in our lab.</p>
   <pre class="def" aria-label="The failed call">$ curl https://&lt;GUID&gt;.private.eu-de.backup-recovery.cloud.ibm.com/...
 (no answer: timed out after 15 s)</pre>
   <div class="pair" style="margin-top:20px">
@@ -125,7 +125,7 @@
         <button class="opt" data-ok>The gateway got the VPC default security group, which accepts traffic only from its own members</button>
         <button class="opt">The private name does not resolve</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The default security group blocks the servers. In our lab the console form ticked that group by itself.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The gateway got the VPC default security group, which blocks the servers. In our lab the console form ticked that group by itself.</p></details>
     </div>
     <div class="q">
       <p>What fixed it?</p>
@@ -134,36 +134,36 @@
         <button class="opt" data-ok>A group of its own that accepts 443 from the servers&apos; group, put on the gateway in place of the default</button>
         <button class="opt">Moving the servers to the default group</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>With the new group in place, the call without a token gave HTTP 401 and with a token HTTP 200, both at the gateway&apos;s address. On the command line, <code>security-group-target-add</code> takes the gateway&apos;s ID: the gateway&apos;s name is refused.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A group of its own. With the new group in place, the call without a token gave HTTP 401, and with a token HTTP 200, both at the gateway&apos;s address. On the command line, <code>security-group-target-add</code> takes the gateway&apos;s ID, and refuses the gateway&apos;s name.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> The connector server form had the same trap: in our lab it started with a VPC&apos;s default security group. In our lab we ticked our own group and unticked the VPC default.</p>
+  <p class="watch"><b>Watch for this.</b> The connector server form does the same thing. In our lab it started with a VPC&apos;s default security group, so we ticked our own group and unticked the VPC default.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Click through the console</span>
   <h2>Make the gateway in the console</h2>
-  <p class="lead">These screens come from the IBM Cloud console in our lab. Click where you would click. After two misses the right place is marked.</p>
+  <p class="lead">These screens come from the IBM Cloud console in our lab. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="1.7,80,28.1,6" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7f-1-security-group.png" alt="Create VPE: resource group cohesity-lab-rg, VPC cohesity-lab-vpc, the VPC default group unticked and cohesity-lab-brs-vpe-sg ticked; the summary shows USD 7.30 a month." width="1440" height="762"></div>
       <figcaption>
         <h3>The form ticks one security group by itself. Click it.</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: the VPC default group. That is the group that blocked the servers. Tick your own group first, then untick the default; the form needs at least one.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the VPC default group, the one that blocked the servers. Tick your own group first, then untick the default, because the form needs at least one.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="1,48.2,49.7,6.1" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7f-2-service.png" alt="Request connection to a service: Backup and Recovery, Frankfurt (eu-de), cohesity-lab-brs chosen (endpoint blurred)." width="990" height="685"></div>
       <figcaption>
         <h3>Under Request connection to a service, you keep IBM Cloud service and Select a service. Where do you choose Backup and Recovery?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: the Cloud services field. Cloud service regions then becomes Frankfurt (eu-de), and the instance is listed and chosen.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s the Cloud services field. Cloud service regions then becomes Frankfurt (eu-de), and the instance is listed, so you choose it.</p></details>
       </figcaption>
     </figure>
     <figure class="tstep" data-hot="1,18.6,10.5,5.6" data-width="760px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B7f-3-dns-ip.png" alt="Share DNS: Primary; Reserved IP: Select for me." width="880" height="622"></div>
       <figcaption>
-        <h3>Our lab keeps the DNS resolution binding mode at one setting. Click it.</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right: Primary. Reserved IP stays at Select for me. Then click Create virtual private endpoint gateway. In our lab it was created at 14:38:34 UTC and stable at 14:38:48 UTC.</p></details>
+        <h3>Which DNS resolution binding mode did we keep in our lab? Click it.</h3>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. It&apos;s Primary. Reserved IP stays at Select for me. Then click Create virtual private endpoint gateway. In our lab it was created at 14:38:34 UTC and stable at 14:38:48 UTC.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -180,7 +180,7 @@
         <button class="opt" data-ok>Wait for the connector to finish joining, then register again</button>
         <button class="opt">Change the host type</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the same command worked about 2 minutes later.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Wait, then register again. In our lab the same command worked about 2 minutes later.</p></details>
     </div>
     <div class="q" data-check>
       <p>A VPE gateway now exists for the instance, and a Connector Agent restarts. Which port must the gateway&apos;s security group allow?</p>
@@ -189,7 +189,7 @@
         <button class="opt">8080</button>
         <button class="opt" data-ok>29991, as well as 443</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The agent connects to the gateway on 29991. With only 443 open it stays at SYN-SENT and shows isConnected false, with no message.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>29991. The agent connects to the gateway on 29991. With only 443 open, it stays at SYN-SENT and shows isConnected false, with no message.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which security group does the console&apos;s VPE form tick by itself?</p>
@@ -198,7 +198,7 @@
         <button class="opt">A new group made for BRS</button>
         <button class="opt">None: you must tick one</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>That group accepts traffic only from its own members, so the servers cannot reach the gateway.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The VPC default group. It accepts traffic only from its own members, so the servers can&apos;t reach the gateway.</p></details>
     </div>
   </div>
 </section>
@@ -208,7 +208,7 @@
   <h2>You can open the way to a private endpoint</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>The VPE form ticks the VPC default group, which blocks your servers: use a group of your own. Once a private endpoint exists, a restarted Connector Agent needs port 29991 open on the gateway&apos;s group, and shows no message if it is closed.</p></div>
+    <div><span class="label">Remember</span><p>The VPE form ticks the VPC default group, which blocks your servers, so use a group of your own. Once a private endpoint exists, a restarted Connector Agent needs port 29991 open on the gateway&apos;s group, and shows no message if it&apos;s closed.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 2 of Module 2</span>
       <h1>Where a VM's disk really lives</h1>
-      <p class="lead">By the end you can follow a disk write from the guest down to the drive, say which storage class every VM disk uses, and say what happens when copies of a disk are lost.</p>
+      <p class="lead">By the end of this unit you'll be able to follow a disk write from the guest down to the drive, say which storage class every VM disk uses, and say what happens when copies of a disk are lost.</p>
       <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -44,7 +44,7 @@
           {"box":[180,130,60,30],"fill":"hatch","tone":"mark"},
           {"box":[315,130,60,30],"fill":"hatch","tone":"mark"},
           {"text":"three workers, one copy each","at":[70,208],"hand":true,"size":18,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. Its admins keep asking one thing: when a VM writes to its disk, where does the data go? This unit answers it with real output.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that's moving off vSphere. Its admins keep asking the same thing: when a VM writes to its disk, where does the data go? This unit answers that with real output.</p>
     </div>
   </div>
   <p class="small">Every command, output and fact in this unit comes from a real run on a test cluster.</p>
@@ -53,7 +53,7 @@
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Follow one write down to the drive</h2>
-  <p class="lead">A VM's disk is a volume held by ODF, the Ceph-based storage that runs on your bare metal workers. Seven things sit between an application and the drive.</p>
+  <p class="lead">A VM's disk is a volume held by ODF, which is the Ceph-based storage that runs on your bare metal workers. Seven things sit between an application and the drive.</p>
   <div class="pair">
     <div>
       <svg class="sketch" role="img" aria-label="Hand-drawn diagram of seven boxes in order: 1 VM guest, 2 VirtIO driver, 3 QEMU, 4 RBD client, 5 Ceph CSI driver, 6 Ceph OSD, 7 NVMe drive. Arrows join them in order."
@@ -75,8 +75,8 @@
           {"text":"virt-launcher pod","at":[310,284],"hand":true,"size":18,"tone":"mark"}]}'></svg>
     </div>
     <div>
-      <p class="hand tilt"><b>From vSphere:</b> the path is VM guest, PVSCSI driver, VMkernel, vSAN or VMFS, then the physical disk. The number of layers is similar. Ceph copies the data at the OSD, not in the VMkernel.</p>
-      <p class="hand tilt"><b>From vSphere:</b> ODF is the equivalent of vSAN. A PVC, the request for a disk, is the equivalent of a VMDK file. As with vSAN, the storage and the compute fail together.</p>
+      <p class="hand tilt"><b>From vSphere:</b> the path there is VM guest, PVSCSI driver, VMkernel, vSAN or VMFS, then the physical disk. The number of layers is similar. The difference is that Ceph copies the data at the OSD, whereas vSAN does it in the VMkernel.</p>
+      <p class="hand tilt"><b>From vSphere:</b> ODF does the job of vSAN. A PVC, which is the request for a disk, does the job of a VMDK file. As with vSAN, the storage and the compute fail together.</p>
       <div class="q">
         <p>Which layer turns the guest's disk I/O into I/O against the host's block device?</p>
         <div class="opts">
@@ -84,7 +84,7 @@
           <button class="opt" data-ok>QEMU, in the virt-launcher pod</button>
           <button class="opt">The Ceph OSD</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>QEMU runs in the virt-launcher pod and translates guest I/O into host-level I/O against the RBD block device. The VirtIO driver only passes the requests to QEMU.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>QEMU. It runs in the virt-launcher pod and translates guest I/O into host-level I/O against the RBD block device. The VirtIO driver only passes the requests on to QEMU.</p></details>
       </div>
     </div>
   </div>
@@ -99,25 +99,25 @@
       <div class="term">
         <div class="bar"><span>bash</span><span data-term-count></span></div>
         <div class="cmd">
-          <p class="pre"># the chapter records the counts, not the pod lists</p>
+          <p class="pre"># we recorded the counts rather than the pod lists</p>
           <pre class="in">oc get pods -n openshift-storage -l app=rook-ceph-mon
 oc get pods -n openshift-storage -l app=rook-ceph-osd
 oc get pods -n openshift-storage -l app=rook-ceph-mgr</pre>
           <pre class="out">3 MON pods, 12 OSD pods and 2 MGR pods</pre>
-          <p class="hand note">Three workers. Each holds local NVMe drives with OSD pods.</p>
+          <p class="hand note">There are three workers, and each one holds local NVMe drives with OSD pods.</p>
         </div>
         <div class="q">
           <p>Most Ceph guides start with a toolbox pod and the <code>ceph</code> command. Will that pod exist on ROVS?</p>
           <div class="opts">
             <button class="opt">Yes, ODF always creates it</button>
-            <button class="opt" data-ok>No, it was not there</button>
+            <button class="opt" data-ok>No, it isn't there</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>On the cluster checked, the pod did not exist. The toolbox is created by a field on the <code>OCSInitialization</code> object. On ROVS that object is part of the IBM-managed storage deployment and the field was unset. Do not plan a runbook around <code>ceph</code> commands.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>No. On the cluster we checked, the pod didn't exist. The toolbox is created by a field on the <code>OCSInitialization</code> object. On ROVS that object is part of the IBM-managed storage deployment, and the field was unset. So don't plan a runbook around <code>ceph</code> commands.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">oc get pods -n openshift-storage -l app=rook-ceph-tools</pre>
           <pre class="out">No resources found in openshift-storage namespace.</pre>
-          <p class="hand note">No toolbox pod, so no ceph CLI.</p>
+          <p class="hand note">There's no toolbox pod, so there's no ceph CLI.</p>
         </div>
         <div class="cmd">
           <pre class="in">oc get cephblockpool -n openshift-storage \
@@ -125,15 +125,15 @@ oc get pods -n openshift-storage -l app=rook-ceph-mgr</pre>
           <pre class="out">NAME                               FD     SIZE
 builtin-mgr                        host   3
 ocs-storagecluster-cephblockpool   host   3</pre>
-          <p class="hand note">SIZE 3: every block is stored three times.</p>
-          <p class="hand note">FD host: the three copies sit on three different workers.</p>
+          <p class="hand note">SIZE 3 means every block is stored three times.</p>
+          <p class="hand note">FD host means the three copies sit on three different workers.</p>
         </div>
         <div class="cmd">
           <p class="pre"># the disk of the VM from unit 2.1</p>
           <pre class="in">oc get pvc my-first-vm -n my-project</pre>
           <pre class="out">NAME          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS
 my-first-vm   Bound    pvc-505bcbe5-d6d5-4248-bfdd-dbb30bafba9b   30Gi       RWX            ocs-storagecluster-ceph-rbd-virtualization</pre>
-          <p class="hand note">The disk is a PVC. Ceph provisioned it on demand.</p>
+          <p class="hand note">The disk is a PVC, and Ceph provisioned it on demand.</p>
           <p class="hand note">The class name ends in -virtualization.</p>
         </div>
       </div>
@@ -148,8 +148,8 @@ my-first-vm   Bound    pvc-505bcbe5-d6d5-4248-bfdd-dbb30bafba9b   30Gi       RWX
 
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
-  <h2>The audit that finds nothing</h2>
-  <p class="lead">An admin audits a cluster for VMs on the wrong storage class by looking for RWO disks. This is a real listing from a test cluster. Two of its lines:</p>
+  <h2>An audit that misses the disks it's looking for</h2>
+  <p class="lead">One of Northgate's admins audits a cluster for VMs on the wrong storage class by looking for RWO disks. Two lines from a real listing on a test cluster are shown below.</p>
   <pre class="def" aria-label="Two lines from oc get pvc -A">$ oc get pvc -A -o custom-columns='NAME:.metadata.name,SC:.spec.storageClassName,\
 AM:.spec.accessModes,MODE:.spec.volumeMode'
 
@@ -161,9 +161,9 @@ wave-0-pilot-rhel9-vm-02-plan-vm-1060-vw4ww   ocs-storagecluster-ceph-rbd   [Rea
       <div class="opts">
         <button class="opt">Yes. RWX disks are on the right class.</button>
         <button class="opt" data-ok>No. Both disks are on the generic class.</button>
-        <button class="opt">No. RWX disks cannot live migrate.</button>
+        <button class="opt">No. RWX disks can't live migrate.</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Read the class name.</span><p>Both RBD classes offer the same access modes, so a filter on access mode clears these disks. On the cluster checked, fourteen VMs sat on the generic class and every one of their disks was ReadWriteMany with Block mode. The class name is the test. The generic class lacks <code>krbd:rxbounce</code>, and IBM has not validated it for VM operations.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Read the class name.</span><p>No, both disks are on the generic class. Both RBD classes offer the same access modes, so a filter on access mode lets these disks through. On the cluster we checked, fourteen VMs sat on the generic class, and every one of their disks was ReadWriteMany with Block mode. The class name is the test to use. The generic class lacks <code>krbd:rxbounce</code>, and IBM hasn't validated it for VM operations.</p></details>
     </div>
     <div class="q">
       <p>The shipped alert <code>VMStorageClassWarning</code> is built on a metric that counts these disks. Will it fire for a Linux VM on the generic class?</p>
@@ -171,16 +171,16 @@ wave-0-pilot-rhel9-vm-02-plan-vm-1060-vw4ww   ocs-storagecluster-ceph-rbd   [Rea
         <button class="opt">Yes, for every guest</button>
         <button class="opt" data-ok>No, only for Windows VMs</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The alert multiplies the metric by a filter for Microsoft Windows guests, so a Linux VM on the generic class raises no alert. Query the metric <code>kubevirt_ssp_vm_rbd_block_volume_without_rxbounce == 1</code> instead. On the cluster checked it returned 14 VMs, and each matched a disk the class-name query also flagged.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No, only for Windows VMs. The alert multiplies the metric by a filter for Microsoft Windows guests, so a Linux VM on the generic class raises no alert. Query the metric <code>kubevirt_ssp_vm_rbd_block_volume_without_rxbounce == 1</code> instead. On the cluster we checked it returned 14 VMs, and each one matched a disk that the class-name query also flagged.</p></details>
     </div>
   </div>
-  <p class="hand tilt"><b>Watch for this.</b> The platform gives no signal. A VM on the generic class reported <code>LiveMigratable=True</code> and live migrated between two workers in the test. Use <code>ocs-storagecluster-ceph-rbd-virtualization</code> for every VM disk.</p>
+  <p class="hand tilt"><b>Watch for this.</b> The platform won't warn you. In our test, a VM on the generic class reported <code>LiveMigratable=True</code> and live migrated between two workers. Use <code>ocs-storagecluster-ceph-rbd-virtualization</code> for every VM disk.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Predict</span>
   <h2>What happens when copies are lost?</h2>
-  <p class="lead">The pool keeps three copies and needs at least two to serve I/O. The drawing shows each case.</p>
+  <p class="lead">The pool keeps three copies and needs at least two of them to serve I/O. The drawing shows each case.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram of four cases. 3 of 3 copies: normal. 2 of 3 copies: I/O continues and Ceph re-replicates. 1 of 3 copies, dashed: I/O blocked. 0 of 3 copies, dashed: data lost."
     data-drawing='{"w":560,"h":120,"shapes":[
       {"box":[8,20,124,90],"title":"3 of 3","detail":"normal"},
@@ -195,16 +195,16 @@ wave-0-pilot-rhel9-vm-02-plan-vm-1060-vw4ww   ocs-storagecluster-ceph-rbd   [Rea
         <button class="opt" data-ok>One copy. Ceph blocks I/O and the VM hangs.</button>
         <button class="opt">One copy. The VM restarts on the third worker.</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Three nodes is a lab.</span><p>One node in maintenance plus one failure leaves a single copy. Ceph blocks all I/O to the affected placement groups, and VMs with data there hang. They do not fail over. IBM's guidance for production clusters running three copies is to start with six nodes.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Three nodes suits a lab, not production.</span><p>One copy, and the VM hangs. One node in maintenance plus one failure leaves a single copy. Ceph blocks all I/O to the affected placement groups, and VMs with data there hang rather than fail over. IBM's guidance for production clusters running three copies is to start with six nodes.</p></details>
     </div>
     <div class="q">
-      <p>Keep cluster utilisation under about what figure in normal operation?</p>
+      <p>In normal operation, what figure should you keep cluster utilisation under?</p>
       <div class="opts">
         <button class="opt">50%</button>
         <button class="opt" data-ok>70%</button>
         <button class="opt">95%</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>About 70%. ODF raises an alert at 75% on any OSD. At 95% Ceph marks the OSD full and blocks all writes. The headroom is not spare capacity: it is what recovery uses when a node goes away.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>About 70%. ODF raises an alert at 75% on any OSD. At 95% Ceph marks the OSD full and blocks all writes. The headroom isn't spare capacity. It's what recovery uses when a node goes away.</p></details>
     </div>
   </div>
 </section>
@@ -220,25 +220,25 @@ wave-0-pilot-rhel9-vm-02-plan-vm-1060-vw4ww   ocs-storagecluster-ceph-rbd   [Rea
         <button class="opt" data-ok>ocs-storagecluster-ceph-rbd-virtualization</button>
         <button class="opt">ocs-storagecluster-cephfs</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The virtualization class is tuned for VM disk I/O and validated for start, stop, live migration and snapshots. The generic class is supported but not recommended for VM disks.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The virtualization class. It's tuned for VM disk I/O and validated for start, stop, live migration and snapshots. The generic class is supported, but it isn't recommended for VM disks.</p></details>
     </div>
     <div class="q" data-check>
       <p>A VM's disk shows RWX. What does that tell you about its storage class?</p>
       <div class="opts">
-        <button class="opt">That it is on the right class</button>
+        <button class="opt">That it's on the right class</button>
         <button class="opt" data-ok>Nothing. Both RBD classes offer RWX.</button>
-        <button class="opt">That it is on the generic class</button>
+        <button class="opt">That it's on the generic class</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both RBD classes offer RWX Block, and the storage profile lists it first, so a request for any mode gets RWX Block on either class. Check the class name.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Nothing. Both RBD classes offer RWX Block, and the storage profile lists it first, so a request for any mode gets RWX Block on either class. Check the class name instead.</p></details>
     </div>
     <div class="q" data-check>
       <p>Why is a three-node cluster a lab configuration?</p>
       <div class="opts">
         <button class="opt">ODF needs six nodes to start</button>
         <button class="opt" data-ok>One node in maintenance plus one failure leaves one copy, and I/O blocks</button>
-        <button class="opt">Three nodes cannot hold three copies</button>
+        <button class="opt">Three nodes can't hold three copies</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Three nodes can hold three copies. The risk is losing two at once. IBM's guidance for production clusters running three copies is to start with six nodes.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Because one node in maintenance plus one failure leaves one copy, and I/O blocks. Three nodes can hold three copies. The risk is losing two of them at once. IBM's guidance for production clusters running three copies is to start with six nodes.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 2.1.</b> The VM got the address <code>172.17.1.200</code>. Where does that address come from?</p>
@@ -247,7 +247,7 @@ wave-0-pilot-rhel9-vm-02-plan-vm-1060-vw4ww   ocs-storagecluster-ceph-rbd   [Rea
         <button class="opt" data-ok>The cluster's internal pod network</button>
         <button class="opt">The Guest setup disk</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The network card is on the pod network, so the VM gets a cluster-internal address. Connecting a VM directly to a VPC subnet takes a localnet or Layer 2 network, which Module 3 covers.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The pod network. The network card is on the pod network, so the VM gets a cluster-internal address. Connecting a VM directly to a VPC subnet takes a localnet or Layer 2 network, which Module 3 covers.</p></details>
     </div>
   </div>
 </section>
@@ -257,7 +257,7 @@ wave-0-pilot-rhel9-vm-02-plan-vm-1060-vw4ww   ocs-storagecluster-ceph-rbd   [Rea
   <h2>You know where the disk lives</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Seven layers from guest to drive. The virtualization class for every VM disk. Check the class name, not the access mode. Three nodes is a lab.</p></div>
+    <div><span class="label">Remember</span><p>There are seven layers from the guest to the drive. Use the virtualization class for every VM disk. Check the class name rather than the access mode. A three-node cluster is for a lab.</p></div>
     <div><span class="label">When you have a cluster</span><p>Tutorial chapter 35, Choose ODF storage classes for VM disks on ROVS, has every command and the full audit.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

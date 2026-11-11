@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 4 of Module 2</span>
       <h1>Reserved IPs and virtual network interfaces</h1>
-      <p class="lead">By the end you can read a server’s network interface and its addresses, say which addresses IBM owns, and say what the IP spoofing check drops.</p>
+      <p class="lead">By the end of this unit you’ll be able to read a server’s network interface and its addresses, tell which addresses IBM owns, and know what the IP spoofing check drops.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -40,16 +40,16 @@
           {"line":[270,110,300,110],"arrow":true,"tone":"mark"},
           {"box":[304,30,100,160],"heavy":true,"title":"Subnet"},
           {"grid":[316,80,1,4,76,20,0,26],"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is moving off vSphere. The company is made up; the output in this unit is real. Its admins want to know where a server’s address lives, and whether they can keep it.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that is moving off vSphere. The output in this unit is real. Northgate’s network admin wants to know where a server’s address lives and whether the admin can keep it.</p>
     </div>
   </div>
-  <p class="small">Every statement and output in this unit comes from real runs in a lab account, apart from the review question. The vSphere comparison is a rough mapping. Some rows and blank lines are left out of the output, and IDs are shortened.</p>
+  <p class="small">Every statement and output in this unit comes from real runs in a lab account, apart from the review question. The vSphere comparison is only a rough mapping. We left out some rows and blank lines from the output and shortened the IDs.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>One interface, its addresses and its settings</h2>
-  <p class="lead">Select a part of the drawing to see what it does and which lines of real output show it. You can also click a line.</p>
+  <p class="lead">Select a part of the drawing to see what it does and which lines of real output show it. You can also click a line of output.</p>
   <div class="explorer" data-start="vni"
     data-map='{"vni":[[2,3],[10,15]],"settings":[[4,6],[9,9]],"reserved":[[7,8],[23,23]],"five":[[19,22],[24,24]]}'>
     <div class="cols">
@@ -71,22 +71,22 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="vni">
           <h3>Virtual network interface</h3>
-          <p>A network interface that is its own resource. A server joins it through a network attachment, here <code>nic0</code>. It holds a primary address, security groups and an optional floating IP, and it can outlive the server.</p>
-          <p class="watch"><b>Watch for this.</b> Each interface of a server is on a different subnet in the same zone. IBM says new features are added only to virtual network interfaces, and a server cannot mix them with the older instance network interfaces.</p>
+          <p>A virtual network interface is a network interface that is its own resource. A server joins it through a network attachment, here <code>nic0</code>. It holds a primary address, security groups and an optional floating IP, and it can outlive the server.</p>
+          <p class="watch"><b>Watch for this.</b> Each interface of a server is on a different subnet in the same zone. IBM says it adds new features only to virtual network interfaces, and a server can’t mix them with the older instance network interfaces.</p>
         </div>
         <div class="part-info" data-part="reserved">
           <h3>Reserved IP</h3>
-          <p>A private address in a subnet that is a resource of its own, with a name. The server’s primary address, <code>10.20.0.4</code>, is one: <code>vpct-prod-web-z1-01-ip0</code>. IBM picked it when the server was created, and the line shows <code>true</code> for auto delete.</p>
-          <p class="hand tilt"><b>From vSphere:</b> the closest term misleads. A server’s primary address is a reserved IP, and you can fix it.</p>
+          <p>A reserved IP is a private address in a subnet that is a resource of its own, with a name. The server’s primary address, <code>10.20.0.4</code>, is one: <code>vpct-prod-web-z1-01-ip0</code>. IBM picked it when the server was created, and the line shows <code>true</code> for auto delete.</p>
+          <p class="hand tilt"><b>From vSphere:</b> the closest term can mislead you. A server’s primary address is a reserved IP, and you can fix it.</p>
         </div>
         <div class="part-info" data-part="settings">
           <h3>Two settings</h3>
-          <p>The IP spoofing check drops an outbound packet whose source address is not the interface’s own. The output reads <code>Allow source IP spoofing false</code>, so the check is on. <code>Enable Infrastructure NAT true</code> means the VPC does the NAT for the interface’s floating IP.</p>
+          <p>The IP spoofing check drops an outbound packet whose source address isn’t the interface’s own. The output reads <code>Allow source IP spoofing false</code>, so the check is on. <code>Enable Infrastructure NAT true</code> means the VPC does the NAT for the interface’s floating IP.</p>
           <p class="watch"><b>Watch for this.</b> To attach a virtual network interface to a virtual server, infrastructure NAT must be on.</p>
         </div>
         <div class="part-info" data-part="five">
           <h3>IBM’s five addresses</h3>
-          <p>The first four addresses and the last belong to IBM: the network address <code>.0</code>, the default gateway <code>.1</code>, the DNS address <code>.2</code>, a reserved address <code>.3</code> and the broadcast address <code>.255</code>. Their owner is <code>provider</code> and they have no target. That is why a <code>/24</code> leaves 251.</p>
+          <p>The first four addresses and the last belong to IBM. They are the network address <code>.0</code>, the default gateway <code>.1</code>, the DNS address <code>.2</code>, a reserved address <code>.3</code> and the broadcast address <code>.255</code>. Their owner is <code>provider</code> and they have no target, so a <code>/24</code> leaves 251.</p>
         </div>
       </div>
     </div>
@@ -128,25 +128,25 @@ ID            Name                      Address       Auto delete   Owner      T
         <button class="opt" data-ok>It is deleted with the server</button>
         <button class="opt">It moves to the subnet’s pool</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>When IBM picks the address, the reserved IP is created for the server and deleted with it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It is deleted with the server. When IBM picks the address, the reserved IP is created for the server and deleted with it.</p></details>
     </div>
     <div class="q">
-      <p>Northgate needs a server address that is known before the server exists, and kept after the server is gone. What do you do?</p>
+      <p>Northgate’s network admin needs a server address that is known before the server exists, and kept after the server is gone. What should the admin do?</p>
       <div class="opts">
         <button class="opt">Nothing. Every address is kept</button>
         <button class="opt" data-ok>Reserve the address first, with auto-delete set to false</button>
         <button class="opt">Add a second interface</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>You reserve an address first when it must be known before the server exists, or must outlive it. Set auto-delete to false to keep it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Reserve the address first. Do this when the address must be known before the server exists or must outlive it, and set auto-delete to false to keep it.</p></details>
     </div>
     <div class="q">
-      <p>An older script uses an instance network interface. Can the same server also take a virtual network interface?</p>
+      <p>An older script gives a server an instance network interface. Can that server also take a virtual network interface?</p>
       <div class="opts">
         <button class="opt">Yes, one of each</button>
-        <button class="opt" data-ok>No. A server cannot mix the two</button>
+        <button class="opt" data-ok>No. A server can&apos;t mix the two</button>
         <button class="opt">Yes, after you convert the older one</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The style is fixed when the server is created, and an older instance network interface cannot be changed into a virtual network interface.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. The style is fixed when the server is created, and you can’t change an older instance network interface into a virtual network interface.</p></details>
     </div>
   </div>
 </section>
@@ -154,7 +154,7 @@ ID            Name                      Address       Auto delete   Owner      T
 <section class="screen">
   <span class="kicker">Step 3 · Run it</span>
   <h2>Add an address and a second interface</h2>
-  <p class="lead">Run each command in turn. The output is what the lab returned. The server has one interface in the web subnet.</p>
+  <p class="lead">The server starts with one interface in the web subnet. Run each command in turn. The output is what the lab returned.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -171,8 +171,8 @@ Owner             user
 Created           2026-10-29T15:48:53+00:00
 Lifecycle state   pending
 Target            -</pre>
-          <p class="hand note">10.20.0.50 is inside 10.20.0.0/24 and is not one of the five.</p>
-          <p class="hand note">It has no target yet.</p>
+          <p class="hand note">10.20.0.50 is inside 10.20.0.0/24 and isn’t one of the five.</p>
+          <p class="hand note">The reserved IP has no target yet.</p>
         </div>
         <div class="cmd">
           <pre class="in">ibmcloud is virtual-network-interface-reserved-ip-bind vpct-prod-web-z1-01-vni0 vpct-prod-web-z1-01-ip-sec</pre>
@@ -221,7 +221,7 @@ Resource type               instance_network_attachment</pre>
             <button class="opt">Yes, on the second interface</button>
             <button class="opt" data-ok>No, on neither</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>Reserving an address and binding it to the interface does not configure it in the guest. The next command shows it.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>It shows on neither. Reserving an address and binding it to the interface doesn’t configure it in the guest. The next command shows this.</p></details>
         </div>
         <div class="cmd">
           <pre class="pre"># inside the server, after ssh -i ~/.ssh/id_ed25519 ubuntu@$FIP</pre>
@@ -229,17 +229,17 @@ Resource type               instance_network_attachment</pre>
           <pre class="out">lo               UNKNOWN        127.0.0.1/8 ::1/128 
 ens3             UP             10.20.0.4/24 fe80::1ff:fef5:521b/64 
 ens9             UP             10.20.1.4/24 metric 1024 fe80::1ff:fef5:521c/64 </pre>
-          <p class="hand note">Named ens3 and ens9, not eth0 and eth1.</p>
-          <p class="hand note">10.20.0.50 is on no interface. The second interface came up with its address by itself on this Ubuntu image.</p>
+          <p class="hand note">On this image the interfaces are named ens3 and ens9, not eth0 and eth1.</p>
+          <p class="hand note">10.20.0.50 is on no interface. On this Ubuntu image, the second interface came up with its address by itself.</p>
         </div>
         <div class="q">
-          <p>The second interface, <code>ens9</code>, is up. Why can traffic that leaves by it fail?</p>
+          <p>The second interface, <code>ens9</code>, is up. Why might traffic that leaves by it fail?</p>
           <div class="opts">
             <button class="opt">Its security group blocks everything</button>
             <button class="opt" data-ok>The server has one default route, and it is on the first interface</button>
             <button class="opt">A server can send on one interface only</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The next command shows one default route, on <code>ens3</code>. Traffic that leaves by <code>ens9</code> can fail until you add a static route or a separate routing table.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>The server has one default route, and it&apos;s on the first interface. The next command shows it on <code>ens3</code>. Add a static route or a separate routing table for the second interface, because until you do, traffic that leaves by <code>ens9</code> can fail.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">ip route</pre>
@@ -251,7 +251,7 @@ default via 10.20.0.1 dev ens3 proto dhcp src 10.20.0.4 metric 100
 161.26.0.6 via 10.20.0.1 dev ens3 proto dhcp src 10.20.0.4 metric 100 
 161.26.0.10 via 10.20.0.1 dev ens3 proto dhcp src 10.20.0.4 metric 100 
 161.26.0.11 via 10.20.0.1 dev ens3 proto dhcp src 10.20.0.4 metric 100 </pre>
-          <p class="hand note">Both default routes go via ens3.</p>
+          <p class="hand note">Both default routes go through ens3.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -266,33 +266,33 @@ default via 10.20.0.1 dev ens3 proto dhcp src 10.20.0.4 metric 100
 <section class="screen">
   <span class="kicker">Step 4 · Design it</span>
   <h2>Pick a setting for each need</h2>
-  <p class="lead">Choose one, then open the worked answer.</p>
+  <p class="lead">Choose an answer for each need, then open the worked answer.</p>
   <div class="pair">
     <div class="q">
-      <p><b>Need A.</b> A server will forward traffic for other addresses, as a firewall does when it is a route’s next hop. What must change?</p>
+      <p><b>Need A.</b> Northgate wants a server to forward traffic for other addresses, as a firewall does when it is a route’s next hop. What must change?</p>
       <div class="opts">
         <button class="opt" data-ok>Turn on allow source IP spoofing</button>
         <button class="opt">Add a secondary reserved IP</button>
         <button class="opt">Add a second interface</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>The check drops outbound packets whose source address is not the interface’s own, so a forwarding server needs it turned on. <b>The cost:</b> only a user with the IAM role IP Spoofing Operator can change it, and the role is off for all users by default.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Turn on allow source IP spoofing. The check drops outbound packets whose source address isn’t the interface’s own, so a forwarding server needs it turned on. <b>The cost:</b> only a user with the IAM role IP Spoofing Operator can change it, and the role is off for all users by default.</p></details>
     </div>
     <div class="q">
-      <p><b>Need B.</b> One virtual server’s interface must hold two floating IPs.</p>
+      <p><b>Need B.</b> Northgate wants one virtual server’s interface to hold two floating IPs. What can it do?</p>
       <div class="opts">
         <button class="opt">Bind a second floating IP to the same interface</button>
-        <button class="opt" data-ok>It cannot be done on a virtual server</button>
+        <button class="opt" data-ok>It can&apos;t be done on a virtual server</button>
         <button class="opt">Turn infrastructure NAT off on the interface</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>To attach an interface to a virtual server, infrastructure NAT must be on. With it on, an interface can have one floating IP. Several floating IPs need infrastructure NAT off and IP spoofing on, and such an interface can be used only by a bare metal server.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>You can’t do it on a virtual server. To attach an interface to a virtual server, infrastructure NAT must be on, and with it on an interface can have one floating IP. Several floating IPs need infrastructure NAT off and IP spoofing on, and only a bare metal server can use such an interface.</p></details>
     </div>
     <div class="q">
-      <p><b>Need C.</b> A server address must be fixed before the server exists, and must survive the server.</p>
+      <p><b>Need C.</b> A server address must be fixed before the server exists, and it must survive the server. What would you do?</p>
       <div class="opts">
         <button class="opt" data-ok>Reserve the address first, with auto-delete set to false</button>
         <button class="opt">Let IBM pick it when the server is created</button>
       </div>
-      <details class="reveal"><summary>Show the worked answer</summary><p>An address IBM picks is created for the server and deleted with it. Reserve it yourself when it must be known first or must outlive the server.</p></details>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Reserve the address first. An address that IBM picks is created for the server and deleted with it, so reserve it yourself when it must be known first or must outlive the server.</p></details>
     </div>
   </div>
 </section>
@@ -308,16 +308,16 @@ default via 10.20.0.1 dev ens3 proto dhcp src 10.20.0.4 metric 100
         <button class="opt" data-ok>A floating IP</button>
         <button class="opt">Both do</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A floating IP gives both directions. A public gateway gives outbound connectivity only.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A floating IP. It gives both directions, and a public gateway gives outbound connectivity only.</p></details>
     </div>
     <div class="q" data-check>
       <p>Who can change the IP spoofing setting on an interface?</p>
       <div class="opts">
         <button class="opt">Any user who can edit the server</button>
         <button class="opt" data-ok>Only a user with the IAM role IP Spoofing Operator</button>
-        <button class="opt">Nobody. It cannot be changed</button>
+        <button class="opt">Nobody. It can&apos;t be changed</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The role is off for all users by default. MAC address spoofing is different: it is always dropped, and that check cannot be turned off.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Only a user with that role. The role is off for all users by default. MAC address spoofing is different, because it is always dropped and that check can’t be turned off.</p></details>
     </div>
     <div class="q" data-check>
       <p>In the subnet <code>10.20.0.0/24</code>, whose address is <code>10.20.0.1</code>?</p>
@@ -326,7 +326,7 @@ default via 10.20.0.1 dev ens3 proto dhcp src 10.20.0.4 metric 100
         <button class="opt" data-ok>IBM’s default gateway</button>
         <button class="opt">The DNS server’s</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It is <code>ibm-default-gateway</code>, owned by the provider. The DNS address is <code>10.20.0.2</code>, and the server’s own address starts at <code>10.20.0.4</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It’s IBM’s default gateway. The reserved IP is named <code>ibm-default-gateway</code> and the provider owns it. The DNS address is <code>10.20.0.2</code>, and the server’s own address starts at <code>10.20.0.4</code>.</p></details>
     </div>
   </div>
 </section>
@@ -336,7 +336,7 @@ default via 10.20.0.1 dev ens3 proto dhcp src 10.20.0.4 metric 100
   <h2>You can read a server’s addresses</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>A virtual network interface holds the address, security groups and floating IP. The primary address is a reserved IP. IBM owns five addresses in each subnet. Binding an address does not configure it in the guest.</p></div>
+    <div><span class="label">Remember</span><p>A virtual network interface holds the address, security groups and floating IP. The primary address is a reserved IP, and IBM owns five addresses in each subnet. Binding an address doesn’t configure it in the guest.</p></div>
     <div><span class="label">When you have an account</span><p>Tutorial chapter 26, Adding reserved IPs and a second interface to a VPC server, runs everything you just saw.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

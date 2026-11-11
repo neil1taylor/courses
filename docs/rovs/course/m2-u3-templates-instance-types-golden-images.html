@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Templates, instance types and golden images · ROVS course</title>
-<meta name="description" content="Course unit 2.3: say what a template, an instance type, a preference and a golden image each do, and how to keep golden images sealed. No cluster needed.">
+<meta name="description" content="Course unit 2.3: what a template, an instance type, a preference and a golden image each do, and how to keep golden images sealed. No cluster needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 3 of Module 2</span>
       <h1>Templates, instance types and golden images</h1>
-      <p class="lead">By the end you can say what a template, an instance type, a preference and a DataSource each hold, and how a golden image is built, sealed and cloned.</p>
+      <p class="lead">By the end of this unit you'll be able to say what a template, an instance type, a preference and a DataSource each hold, and how a golden image is built, sealed and cloned.</p>
       <div class="facts"><span>About 10 minutes</span><span>No cluster needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -43,16 +43,16 @@
           {"box":[160,145,100,50],"heavy":true},
           {"box":[290,145,100,50],"heavy":true},
           {"text":"a private copy each","at":[130,214],"hand":true,"size":18,"tone":"muted"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up company. It wants every new VM to start the same way, without anyone rebuilding the same disk by hand. This unit shows how, with real output.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier that's moving off vSphere. It wants every new VM to start the same way, without anyone rebuilding the same disk by hand. This unit shows you how, with real output.</p>
     </div>
   </div>
-  <p class="small">Every definition, command and output in this unit comes from real runs on test clusters.</p>
+  <p class="small">Every definition, command and output in this unit comes from a real run on a test cluster.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>One VM, built from shared pieces</h2>
-  <p class="lead">VMware bundles hardware, disk image and customisation into one template. OpenShift Virtualization separates them. Select a part of the drawing to see what it is and which lines define it. You can also click a line.</p>
+  <p class="lead">VMware bundles the hardware, the disk image and the customisation into one template. OpenShift Virtualization keeps them separate. Tap a part of the drawing to see what it is and which lines define it. You can also click a line.</p>
   <div class="explorer" data-start="compute"
     data-map='{"compute":[[7,9]],"defaults":[[10,12]],"image":[[14,21]],"disk":[[22,29]],"own":[[30,51]]}'>
     <div class="cols">
@@ -78,29 +78,29 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="compute">
           <h3>Compute: the instance type</h3>
-          <p>A reusable compute profile. The VM names it instead of writing CPU and memory. Here <code>custom.db-large</code> is 8 vCPUs and 32Gi.</p>
-          <p class="hand tilt"><b>From vSphere:</b> the CPU and memory settings you keep in a template.</p>
-          <p class="watch"><b>Watch for this.</b> <code>u1.medium</code> is one vCPU with 4Gi, not two.</p>
+          <p>This is a reusable compute profile. The VM names it instead of writing out CPU and memory. Here <code>custom.db-large</code> is 8 vCPUs and 32Gi.</p>
+          <p class="hand tilt"><b>From vSphere:</b> it's the CPU and memory settings you'd keep in a template.</p>
+          <p class="watch"><b>Watch for this.</b> <code>u1.medium</code> gives you one vCPU with 4Gi, and only one vCPU.</p>
         </div>
         <div class="part-info" data-part="defaults">
           <h3>OS defaults: the preference</h3>
-          <p>OS-specific defaults such as disk bus, NIC model, boot order and machine type. <code>centos.stream9</code> is one the cluster ships.</p>
-          <p class="hand tilt"><b>From vSphere:</b> roughly the disk bus and tools settings of Guest OS Customization.</p>
-          <p class="watch"><b>Watch for this.</b> A preference sets device defaults, not a network. In one test a Windows VM with no network entries started with no network interface at all.</p>
+          <p>These are OS-specific defaults such as the disk bus, the NIC model, the boot order and the machine type. <code>centos.stream9</code> is one that the cluster ships.</p>
+          <p class="hand tilt"><b>From vSphere:</b> it's roughly the disk bus and tools settings in Guest OS Customization.</p>
+          <p class="watch"><b>Watch for this.</b> A preference sets device defaults, and it doesn't add a network. In one test a Windows VM with no network entries started with no network interface at all.</p>
         </div>
         <div class="part-info" data-part="image">
           <h3>Image: the DataSource</h3>
-          <p>A pointer to the golden image. A DataSource holds no data. The built-in ones live in the <code>openshift-virtualization-os-images</code> namespace.</p>
-          <p class="hand tilt"><b>From vSphere:</b> a template in a content library. That namespace plays the content library.</p>
+          <p>This is a pointer to the golden image. A DataSource holds no data of its own. The built-in ones live in the <code>openshift-virtualization-os-images</code> namespace.</p>
+          <p class="hand tilt"><b>From vSphere:</b> it's a template in a content library, and that namespace is the content library.</p>
         </div>
         <div class="part-info" data-part="disk">
           <h3>Boot disk</h3>
-          <p>The VM's own volume, cloned from the image. This definition names the virtualization storage class, ReadWriteMany and Block.</p>
-          <p class="watch"><b>Watch for this.</b> Name the class in every definition you standardise. The shipped templates name none and still landed on the right class, but your manifests are the ones that get copied and inherited.</p>
+          <p>This is the VM's own volume, cloned from the image. This definition names the virtualization storage class, ReadWriteMany and Block.</p>
+          <p class="watch"><b>Watch for this.</b> Name the class in every definition you standardise. The shipped templates don't name one and still landed on the right class, but your manifests are the ones that get copied and inherited.</p>
         </div>
         <div class="part-info" data-part="own">
           <h3>Own settings</h3>
-          <p>Disks, network card and guest setup stay in the VM, because they belong to this VM and not to a compute profile.</p>
+          <p>The disks, the network card and the guest setup stay in the VM, because they belong to this VM rather than to a compute profile.</p>
         </div>
       </div>
     </div>
@@ -170,16 +170,16 @@ spec:
         <div class="cmd">
           <pre class="in">oc process centos-stream9-server-small -n openshift \
   -p NAME=my-centos-vm | oc apply -f - -n my-project</pre>
-          <pre class="out">(the chapter records no output for this command)</pre>
+          <pre class="out">(no output shown)</pre>
           <p class="hand note">oc process fills in the template's parameters and prints a VM definition.</p>
         </div>
         <div class="q">
-          <p>Forty seconds after that command: is the VM running?</p>
+          <p>Forty seconds after that command, is the VM running?</p>
           <div class="opts">
             <button class="opt">Yes, the console and the command line both start it</button>
-            <button class="opt" data-ok>No, it is stopped</button>
+            <button class="opt" data-ok>No, it's stopped</button>
           </div>
-          <details class="reveal"><summary>Show the answer</summary><p>The Red Hat templates ship <code>runStrategy: Halted</code>. The console wizard flips it for you. On the command line nothing flips it, so you start the VM yourself.</p></details>
+          <details class="reveal"><summary>Show the answer</summary><p>No, it's stopped. The Red Hat templates ship with <code>runStrategy: Halted</code>. The console wizard flips it for you, but on the command line nothing does, so you start the VM yourself.</p></details>
         </div>
         <div class="cmd">
           <pre class="in">oc get vm,dv,pvc -n my-project</pre>
@@ -188,7 +188,7 @@ virtualmachine.kubevirt.io/my-centos-vm   40s   Stopped   False
 
 NAME                                      PHASE       PROGRESS
 datavolume.cdi.kubevirt.io/my-centos-vm   Succeeded   100.0%</pre>
-          <p class="hand note">The disk is fully provisioned. The VM is not running.</p>
+          <p class="hand note">The disk is fully provisioned, but the VM isn't running.</p>
         </div>
         <div class="cmd">
           <pre class="in">oc get vm my-centos-vm -n my-project -o jsonpath='{.spec.runStrategy}'</pre>
@@ -202,7 +202,7 @@ datavolume.cdi.kubevirt.io/my-centos-vm   Succeeded   100.0%</pre>
 DATA_SOURCE_NAME
 DATA_SOURCE_NAMESPACE
 CLOUD_USER_PASSWORD</pre>
-          <p class="hand note">Four parameters. There is no NAMESPACE. Choose the project with -n on oc apply.</p>
+          <p class="hand note">There are four parameters, and NAMESPACE isn't one of them. You choose the project with -n on oc apply.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -219,14 +219,14 @@ CLOUD_USER_PASSWORD</pre>
       <button class="opt" data-ok>1 vCPU, 4Gi</button>
       <button class="opt">4 vCPUs, 16Gi</button>
     </div>
-    <details class="reveal"><summary>Show the answer</summary><span class="hand">Memory grows faster than CPU.</span><p>On the cluster checked: <code>u1.nano</code> 1 vCPU 512Mi, <code>u1.micro</code> 1 vCPU 1Gi, <code>u1.small</code> 1 vCPU 2Gi, <code>u1.medium</code> 1 vCPU 4Gi, <code>u1.large</code> 2 vCPUs 8Gi, <code>u1.xlarge</code> 4 vCPUs 16Gi, <code>u1.2xlarge</code> 8 vCPUs 32Gi. Up to <code>u1.large</code> the series scales memory faster than CPU.</p></details>
+    <details class="reveal"><summary>Show the answer</summary><span class="hand">Memory grows faster than CPU.</span><p>1 vCPU and 4Gi. On the cluster we checked: <code>u1.nano</code> 1 vCPU 512Mi, <code>u1.micro</code> 1 vCPU 1Gi, <code>u1.small</code> 1 vCPU 2Gi, <code>u1.medium</code> 1 vCPU 4Gi, <code>u1.large</code> 2 vCPUs 8Gi, <code>u1.xlarge</code> 4 vCPUs 16Gi, <code>u1.2xlarge</code> 8 vCPUs 32Gi. Up to <code>u1.large</code> the series scales memory faster than CPU.</p></details>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Explore the parts</span>
   <h2>How a golden image reaches a VM</h2>
-  <p class="lead">A golden image is a pre-configured, sealed OS disk. Every VM built from it gets a private clone, so changes in one VM never touch another.</p>
+  <p class="lead">A golden image is a pre-configured, sealed OS disk. Every VM built from it gets its own private clone, so changes in one VM never touch another.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram of the golden image pipeline. A DataImportCron imports on a schedule into a DataVolume, which fills the golden disk. A DataSource points at the golden disk and holds no data. The VM definition refers to the DataSource through sourceRef. CDI clones the golden disk into a per-VM DataVolume, which creates a per-VM PVC that the VM uses."
     data-drawing='{"w":560,"h":300,"shapes":[
       {"box":[10,10,160,64],"title":"DataImportCron","detail":"runs on a schedule"},
@@ -245,7 +245,7 @@ CLOUD_USER_PASSWORD</pre>
       {"box":[200,218,150,64],"title":"Per-VM PVC","detail":"the VM&apos;s own disk"},
       {"line":[198,250,172,250],"arrow":true},
       {"box":[10,218,160,64],"heavy":true,"title":"VirtualMachine","detail":"uses its own PVC"}]}'></svg>
-  <p class="hand tilt"><b>From vSphere:</b> a DataImportCron is a subscribed content library with automatic sync. The golden image is a content library item. Deploying from it is deploy from template.</p>
+  <p class="hand tilt"><b>From vSphere:</b> a DataImportCron is like a subscribed content library with automatic sync. The golden image is like a content library item, and deploying from it is like deploying from a template.</p>
   <div class="term-block termgrid">
     <div class="termcol">
       <div class="term">
@@ -254,13 +254,13 @@ CLOUD_USER_PASSWORD</pre>
           <pre class="in">oc get storageprofile ocs-storagecluster-ceph-rbd-virtualization \
   -o jsonpath='{.status.cloneStrategy}{"  "}{.status.dataImportCronSourceFormat}{"\n"}'</pre>
           <pre class="out">csi-clone  snapshot</pre>
-          <p class="hand note">csi-clone: the storage layer makes the copy. On this class it is close to instant.</p>
-          <p class="hand note">snapshot: golden disks made by a DataImportCron are stored as snapshots.</p>
+          <p class="hand note">csi-clone means the storage layer makes the copy. On this class it's close to instant.</p>
+          <p class="hand note">snapshot means golden disks made by a DataImportCron are stored as snapshots.</p>
         </div>
         <div class="cmd">
           <pre class="in">oc get datasource centos-stream9 -n openshift-virtualization-os-images -o jsonpath='{.spec.source}'</pre>
           <pre class="out">{"snapshot":{"name":"centos-stream9-80f964c34dc8","namespace":"openshift-virtualization-os-images"}}</pre>
-          <p class="hand note">The shipped DataSource points at a snapshot. It holds no data itself.</p>
+          <p class="hand note">The shipped DataSource points at a snapshot, and holds no data itself.</p>
         </div>
       </div>
       <div class="ctl js-only">
@@ -270,13 +270,13 @@ CLOUD_USER_PASSWORD</pre>
     </div>
     <div class="notes js-only" aria-live="polite"></div>
   </div>
-  <p class="watch"><b>Watch for this.</b> A running VM is unaffected when its golden image updates, because it has its own clone. Only VMs created after the update get the new image.</p>
+  <p class="watch"><b>Watch for this.</b> A running VM isn't affected when its golden image updates, because it has its own clone. Only VMs created after the update get the new image.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>The seal that undid itself</h2>
-  <p class="lead">Sealing strips a disk's machine identity, so clones do not share an SSH host key or machine ID. The builder ended the seal with <code>poweroff</code> in the guest, on a VM with <code>runStrategy: Always</code>. This is the real output.</p>
+  <h2>A seal that came undone on the next boot</h2>
+  <p class="lead">Sealing strips a disk's machine identity, so that clones don't share an SSH host key or a machine ID. One of Northgate's admins built the image and ended the seal with <code>poweroff</code> in the guest, on a VM with <code>runStrategy: Always</code>. This is the real output.</p>
   <pre class="def" aria-label="Output after poweroff on an Always VM">$ oc get vmi my-vm -o jsonpath='{.metadata.uid}'
 1474340b-6138-4285-b1ac-39b32e293825
 
@@ -295,7 +295,7 @@ aef84207-8abd-493c-8b7a-1cacb0f36ea7      &lt;-- a different VMI</pre>
         <button class="opt" data-ok>Always started a new VMI, and the fresh boot regenerated the identity the seal removed</button>
         <button class="opt">The DataSource was updated</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>With <code>runStrategy: Always</code>, a guest <code>poweroff</code> deletes the VMI and the controller creates a new one at once. That boot regenerates the SSH host keys and the machine ID that were just deleted. The VM looks fine and the image is not sealed.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Always started a new VMI. With <code>runStrategy: Always</code>, a guest <code>poweroff</code> deletes the VMI and the controller creates a new one at once. That boot regenerates the SSH host keys and the machine ID that had just been deleted. The VM looks fine, but the image isn't sealed.</p></details>
     </div>
     <div class="q">
       <p>How do you make the seal stick?</p>
@@ -304,7 +304,7 @@ aef84207-8abd-493c-8b7a-1cacb0f36ea7      &lt;-- a different VMI</pre>
         <button class="opt" data-ok>Build with runStrategy Manual and end with virtctl stop</button>
         <button class="opt">Set runStrategy to Always before you start</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Build the golden image with <code>runStrategy: Manual</code>, so a guest <code>poweroff</code> sticks. End the seal with <code>virtctl stop</code> from outside, which sets <code>runStrategy: Halted</code> first. A reboot regenerates exactly the identity you just removed.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Build with Manual and end with <code>virtctl stop</code>. With <code>runStrategy: Manual</code>, a guest <code>poweroff</code> sticks. Ending the seal with <code>virtctl stop</code> from outside sets <code>runStrategy: Halted</code> first. A reboot would regenerate exactly the identity you'd just removed.</p></details>
     </div>
   </div>
 </section>
@@ -320,7 +320,7 @@ aef84207-8abd-493c-8b7a-1cacb0f36ea7      &lt;-- a different VMI</pre>
         <button class="opt" data-ok>The instance type</button>
         <button class="opt">The DataSource</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The instance type is the reusable compute profile. The preference holds OS-specific defaults. The DataSource points at the disk image.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The instance type. It's the reusable compute profile. The preference holds OS-specific defaults, and the DataSource points at the disk image.</p></details>
     </div>
     <div class="q" data-check>
       <p>Where does Northgate create its own golden images?</p>
@@ -329,7 +329,7 @@ aef84207-8abd-493c-8b7a-1cacb0f36ea7      &lt;-- a different VMI</pre>
         <button class="opt" data-ok>In its own namespace, and VMs reference it with sourceRef.namespace</button>
         <button class="opt">In the openshift namespace</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p><code>openshift-virtualization-os-images</code> is managed content. The operator reconciles it, and resources added there may be reverted or replaced on an update with no warning. Reading from it is fine. Writing into it is what gets reverted.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In its own namespace. <code>openshift-virtualization-os-images</code> is managed content. The operator reconciles it, and resources added there can be reverted or replaced on an update with no warning. Reading from it is fine, but anything you write into it can be reverted.</p></details>
     </div>
     <div class="q" data-check>
       <p>You run <code>oc process</code> on a shipped template and apply the result. What state is the VM in?</p>
@@ -338,7 +338,7 @@ aef84207-8abd-493c-8b7a-1cacb0f36ea7      &lt;-- a different VMI</pre>
         <button class="opt" data-ok>Stopped</button>
         <button class="opt">Not created until you start it</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The VM is created with <code>runStrategy: Halted</code>, and its disk is provisioned. Start it with <code>virtctl start</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Stopped. The VM is created with <code>runStrategy: Halted</code>, and its disk is provisioned. You start it with <code>virtctl start</code>.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 2.2.</b> Which storage class does every VM disk use?</p>
@@ -347,7 +347,7 @@ aef84207-8abd-493c-8b7a-1cacb0f36ea7      &lt;-- a different VMI</pre>
         <button class="opt" data-ok>ocs-storagecluster-ceph-rbd-virtualization</button>
         <button class="opt">ocs-storagecluster-cephfs</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The virtualization class. Name it, with ReadWriteMany and Block, in every definition you standardise, so every VM built from a template or golden image carries it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The virtualization class. Name it, with ReadWriteMany and Block, in every definition you standardise, so that every VM built from a template or golden image carries it.</p></details>
     </div>
   </div>
 </section>
@@ -357,7 +357,7 @@ aef84207-8abd-493c-8b7a-1cacb0f36ea7      &lt;-- a different VMI</pre>
   <h2>You can build VMs from shared pieces</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Instance type for compute, preference for OS defaults, DataSource for the image. A DataSource holds no data. Seal with Manual and virtctl stop.</p></div>
+    <div><span class="label">Remember</span><p>The instance type holds the compute, the preference holds the OS defaults, and the DataSource points at the image. A DataSource holds no data. Seal an image with Manual and virtctl stop.</p></div>
     <div><span class="label">When you have a cluster</span><p>Tutorial chapter 34, Create VM templates and instance types on ROVS, and chapter 39, Build a golden image on ROVS and publish it as a DataSource, run everything you just saw.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>

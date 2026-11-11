@@ -27,7 +27,7 @@
     <div>
       <span class="kicker">Unit 3 of Module 2</span>
       <h1>Defender Data Protect in ten minutes</h1>
-      <p class="lead">By the end you can say what a cluster, a source, a policy and a protection group are, and where a one-node cluster runs on IBM Cloud VPC.</p>
+      <p class="lead">By the end of this unit you&apos;ll be able to say what a cluster, a source, a policy and a protection group are, and where a one-node cluster runs on IBM Cloud VPC.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -39,18 +39,18 @@
           {"box":[170,30,120,60],"heavy":true,"title":"Group","detail":"has a policy"},
           {"line":[294,60,326,60],"arrow":true,"tone":"mark"},
           {"box":[290,30,120,60],"title":"Cluster","detail":"holds backups"},
-          {"text":"four words, one picture","at":[100,150],"hand":true,"size":20,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect. Before it adds a vault, its team learns the four words the console uses.</p>
+          {"text":"the four words the console uses","at":[70,150],"hand":true,"size":20,"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect. Before Northgate&apos;s backup team adds a vault, it&apos;s worth being clear about the four words the console uses.</p>
     </div>
   </div>
-  <p class="small">Everything here comes from the Data Protect builds and runs in our lab. Product: IBM Storage Defender 2.2.1 Data Protect, version 7.4.1.</p>
+  <p class="small">Everything here comes from the Data Protect builds and runs in our lab. The product is IBM Storage Defender 2.2.1 Data Protect, version 7.4.1.</p>
   <p class="small"><b>Terms used.</b> <b>Agent</b>: a small program on a server that lets the cluster back it up. <b>KVM</b>: a Linux feature for running virtual machines. <b>Bare metal server</b>: a physical server that one customer rents whole. <b>Image</b>: a ready-made disk file used to start a machine. <b>Node</b>: one machine in a cluster. <b>OpenShift</b>: Red Hat&apos;s platform for running software, and virtual machines, in clusters.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Four words</h2>
-  <p class="lead">The cluster is Data Protect itself, managed from its own console and API. It backs up sources. A policy says when and how long. A protection group joins what you protect to a policy.</p>
+  <p class="lead">The cluster is Data Protect itself, and you manage it from its own console and API. It backs up sources. A policy says when to back up and how long to keep each backup. A protection group joins what you protect to a policy.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A source, a server with an agent, is protected by a protection group. The group uses a policy that says when to back up, how long to keep, and where to archive. The cluster holds the backups, and an external target holds the archive copy."
     data-drawing='{"w":640,"h":200,"shapes":[
       {"box":[5,20,140,64],"title":"Source","detail":"server + agent"},
@@ -69,7 +69,7 @@
         <button class="opt" data-ok>The policy</button>
         <button class="opt">The cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The policy is a daily backup, 1 day on the cluster, and every run archived to the vault for 1 day.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The policy. In our lab the policy was a daily backup, kept 1 day on the cluster, with every run archived to the vault for 1 day.</p></details>
     </div>
     <div class="q">
       <p>You click Run Now. On which of the four do you click it?</p>
@@ -78,10 +78,10 @@
         <button class="opt" data-ok>A protection group</button>
         <button class="opt">A source</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab each of three groups was run with Run Now. The dialog carried the policy&apos;s archive line, so no archive target had to be chosen. On the Policies page the console counts the groups that use each policy.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A protection group. In our lab we ran each of the three groups with Run Now. The dialog already carried the policy&apos;s archive line, so we didn&apos;t have to choose an archive target. On the Policies page the console counts the groups that use each policy.</p></details>
     </div>
   </div>
-  <p class="small">In our lab a source was a VPC virtual server with an agent and 19 GiB of test data. The cluster serves its own Linux agent, so no separate download was needed.</p>
+  <p class="small">In our lab, one source was a VPC virtual server with an agent and 19 GiB of test data. The cluster serves its own Linux agent, so there was no separate download.</p>
 </section>
 
 <section class="screen">
@@ -103,16 +103,16 @@
         <button class="opt" data-ok>On a bare metal server, with the KVM image</button>
         <button class="opt">On an OpenShift cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM ships no image for VPC virtual servers, OpenShift or OCI, and Cohesity does not support a cluster on VPC virtual servers.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On a bare metal server. IBM ships no image for VPC virtual servers, OpenShift or OCI, and Cohesity doesn&apos;t support a cluster on VPC virtual servers.</p></details>
     </div>
     <div class="q">
-      <p>Which software version did the lab install?</p>
+      <p>Which software version did we install in the lab?</p>
       <div class="opts">
         <button class="opt">7.2.x</button>
         <button class="opt" data-ok>7.4.1, inside IBM Storage Defender 2.2.1</button>
         <button class="opt">Any version, they are all supported</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Only 7.3.x and 7.4.x are supported. Support for 7.2.x has ended.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>7.4.1. Only 7.3.x and 7.4.x are supported, and support for 7.2.x has ended.</p></details>
     </div>
   </div>
 </section>
@@ -120,7 +120,7 @@
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
   <h2>How long does the build take?</h2>
-  <p class="lead">The lab built the whole cluster again. These are the steps.</p>
+  <p class="lead">We built the whole cluster again in the lab and timed each step. How long do you think each one took?</p>
   <pre class="def" aria-label="Build steps">Step                      Time
 Bare metal server         ordered to running: ?
 Image pull                45 GB: ?
@@ -138,7 +138,7 @@ Cluster create            call to cluster: ?</pre>
 Bare metal server         18 min
 Image pull                8 min 16 s
 Guest created             15 min
-Cluster create            6 min</pre><p>The guest took about 15 minutes. The bare metal server costs about $4.26 an hour. The source server costs about $0.20 an hour.</p></details>
+Cluster create            6 min</pre><p>The bare metal server, at 18 minutes. The guest took about 15 minutes. The bare metal server costs about $4.26 an hour, and the source server about $0.20 an hour.</p></details>
     </div>
     <div class="q">
       <p>Is a licence needed to run backups?</p>
@@ -147,15 +147,15 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
         <button class="opt" data-ok>In our lab, none was needed to run backups and archives</button>
         <button class="opt">Only for the first backup</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Defender is licensed in Resource Units. The lab applied no licence and the cluster ran backups and archives. It did not check what the console says about an unlicensed cluster.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In our lab, none. Defender is licensed in Resource Units. We applied no licence, and the cluster still ran backups and archives. We didn&apos;t check what the console says about an unlicensed cluster.</p></details>
     </div>
   </div>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
-  <h2>Two traps in the build</h2>
-  <p class="lead">Northgate&apos;s team follows the earlier steps. Two things have changed.</p>
+  <h2>Two things to check in the build</h2>
+  <p class="lead">Northgate&apos;s backup team follows the steps from the first build. Two things are different this time.</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>The first run of the install script stops at once with &quot;Permission denied&quot;, exit code 126. Why?</p>
@@ -164,7 +164,7 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
         <button class="opt" data-ok>The script downloaded without its execute bit; run chmod +x on the copy first</button>
         <button class="opt">The bare metal server has no KVM</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>In our lab the download had no execute bit. After <code>chmod +x</code> on the copy it ran.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The execute bit. In our lab the download had no execute bit, and after <code>chmod +x</code> on the copy it ran.</p></details>
     </div>
     <div class="q">
       <p>In the first build the boot disk was nvme3n1. What do you do this time?</p>
@@ -173,10 +173,10 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
         <button class="opt" data-ok>Check with findmnt every time: this time it was nvme0n1</button>
         <button class="opt">Format every disk</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The boot disk changed between builds. The lab checked first, then formatted the other two disks.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Check with findmnt. The boot disk changed between builds. We checked first, then formatted the other two disks.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> Set the cluster&apos;s host name when you create it. A cluster built without one cannot back up OpenShift VMs, and the name cannot be changed later.</p>
+  <p class="watch"><b>Watch for this.</b> Set the cluster&apos;s host name when you create it. A cluster built without one can&apos;t back up OpenShift VMs, and the name can&apos;t be changed later.</p>
 </section>
 
 <section class="screen">
@@ -190,7 +190,7 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
         <button class="opt" data-ok>A protection group</button>
         <button class="opt">A cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The group has one policy, and you run the group.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A protection group. It has one policy, and you run the group.</p></details>
     </div>
     <div class="q" data-check>
       <p>Where does a Data Protect cluster run on IBM Cloud VPC?</p>
@@ -199,7 +199,7 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
         <button class="opt" data-ok>On a bare metal server, as a KVM guest</button>
         <button class="opt">On OCI</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Cohesity does not support a cluster on VPC virtual servers.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>On a bare metal server. Cohesity doesn&apos;t support a cluster on VPC virtual servers.</p></details>
     </div>
     <div class="q" data-check>
       <p>The boot disk name was different from the last build. What do you do?</p>
@@ -208,7 +208,7 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
         <button class="opt" data-ok>Check it with findmnt every time</button>
         <button class="opt">Delete the host and start again</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It was nvme3n1 and nvme0n1.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Check it every time. In our two builds it was nvme3n1, then nvme0n1.</p></details>
     </div>
   </div>
 </section>
@@ -218,7 +218,7 @@ Cluster create            6 min</pre><p>The guest took about 15 minutes. The bar
   <h2>You know the four words</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>A cluster backs up sources. A policy says when, how long and where to archive. A protection group joins what you protect to a policy. A cluster on IBM Cloud VPC is a KVM guest on a bare metal server.</p></div>
+    <div><span class="label">Remember</span><p>A cluster backs up sources. A policy says when to back up, how long to keep it and where to archive. A protection group joins what you protect to a policy. On IBM Cloud VPC, the cluster runs as a KVM guest on a bare metal server.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>
