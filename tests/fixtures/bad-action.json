@@ -1,0 +1,216 @@
+{
+  "course": "Cyber Vault",
+  "section": "Start here",
+  "title": "Why backups need a vault",
+  "unit": "m0-u1-why-backups-need-a-vault.html",
+  "sketches": {
+    "parts": {
+      "w": 660,
+      "h": 230,
+      "shapes": [
+        {
+          "box": [
+            10,
+            40,
+            160,
+            56
+          ],
+          "title": "Source"
+        },
+        {
+          "line": [
+            174,
+            68,
+            226,
+            68
+          ],
+          "arrow": true
+        },
+        {
+          "box": [
+            230,
+            40,
+            160,
+            56
+          ],
+          "heavy": true,
+          "title": "Cluster"
+        }
+      ]
+    }
+  },
+  "steps": [
+    {
+      "title": "Welcome",
+      "cues": [
+        {
+          "slide": {
+            "type": "diagram",
+            "head": "A second copy goes into a locked vault",
+            "sketch": "parts"
+          },
+          "say": "Here's how the pieces fit together.",
+          "do": [
+            [
+              "show",
+              "head"
+            ]
+          ]
+        },
+        {
+          "say": "It starts with the source, a server you back up.",
+          "do": [
+            [
+              "wobble",
+              1
+            ]
+          ],
+          "hold": 0.6
+        },
+        {
+          "say": "The cluster runs the backups.",
+          "do": [
+            [
+              "build",
+              [
+                1,
+                2
+              ]
+            ]
+          ],
+          "hold": 1.0
+        },
+        {
+          "say": "Everything in this course was tested on a real vault."
+        }
+      ]
+    },
+    {
+      "title": "Words",
+      "cues": [
+        {
+          "slide": {
+            "type": "words",
+            "head": "Locks and keys",
+            "items": [
+              [
+                "object lock",
+                "a date before which nothing can be deleted"
+              ],
+              [
+                "write key",
+                "lets the cluster write to the vault"
+              ]
+            ]
+          },
+          "say": "The object lock stops deletion.",
+          "do": [
+            [
+              "show",
+              "head"
+            ],
+            [
+              "items",
+              [
+                0
+              ]
+            ]
+          ]
+        },
+        {
+          "say": "The write key lets the cluster write.",
+          "do": [
+            [
+              "items",
+              [
+                1
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Where each key goes",
+      "cues": [
+        {
+          "slide": {
+            "type": "q",
+            "head": "Where should Northgate keep the read key?",
+            "opts": [
+              "On the cluster",
+              "Apart from backups",
+              "With the admin"
+            ],
+            "ok": 1,
+            "why": "Whoever takes backups should not get the recovery key.",
+            "check": true
+          },
+          "say": "Where should Northgate keep the read key?",
+          "do": [
+            [
+              "ask"
+            ]
+          ]
+        },
+        {
+          "say": "Apart from the backup system, so one attacker cannot reach both.",
+          "do": [
+            [
+              "why"
+            ]
+          ],
+          "hold": 1.5
+        }
+      ]
+    },
+    {
+      "title": "Screen and terminal",
+      "cues": [
+        {
+          "slide": {
+            "type": "screen",
+            "head": "The console",
+            "img": "assets/shot-console.png",
+            "boxes": [
+              [
+                10,
+                10,
+                100,
+                50
+              ]
+            ]
+          },
+          "say": "Here is the console.",
+          "do": [
+            [
+              "show",
+              "head"
+            ],
+            [
+              "box",
+              0
+            ]
+          ]
+        },
+        {
+          "slide": {
+            "type": "terminal",
+            "cmd": "ibmcloud ks clusters",
+            "out": [
+              "Name  State",
+              "demo  normal"
+            ]
+          },
+          "say": "Then list the clusters.",
+          "do": [
+            [
+              "line",
+              1
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}
