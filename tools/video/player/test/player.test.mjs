@@ -166,3 +166,15 @@ test("resumeAt points at the first module not yet done", () => {
 test("resumeAt goes back to the first module when every module is done", () => {
   assert.deepEqual(P.resumeAt([1, 2, 3], 3), { module: 1, started: true, all: true });
 });
+
+test("verdict says right when the pick is the answer", () => {
+  assert.deepEqual(P.verdict(1, 1), { kind: "right", text: "Right." });
+});
+
+test("verdict says wrong and names the right letter", () => {
+  assert.deepEqual(P.verdict(0, 2), { kind: "wrong", text: "Not quite. The answer is C." });
+});
+
+test("verdict is empty when the learner didn't answer", () => {
+  assert.deepEqual(P.verdict(-1, 0), { kind: null, text: "" });
+});

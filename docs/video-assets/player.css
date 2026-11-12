@@ -105,6 +105,15 @@ svg.sk text.hw{font-family:var(--hand)}
 .auto{display:flex;align-items:center;gap:8px;padding:12px 22px;border-top:1px solid #2f303b;color:#c9cad4;font-size:14px}
 .t-title svg.sk,.t-summary svg.sk{flex:1 1 0;min-width:0;width:100%;height:auto;max-height:640px}
 .opt:disabled{color:var(--ink)}
+/* ---- after an answer: the right option gets a tick, a wrong pick a cross, and the verdict leads the explanation ---- */
+.opt.right{border-color:#1a7f4b;background:#e6f4ec}
+.opt.right .l{background:#1a7f4b;border-color:#1a7f4b;color:#fff}
+.opt.right::after{content:"\2713";margin-left:auto;font-size:60px;font-weight:800;color:#1a7f4b}
+.answered .opt.wrong{opacity:1;border-color:#b3261e;border-width:5px;background:#fbeaea}
+.opt.wrong .l{background:#b3261e;border-color:#b3261e;color:#fff}
+.opt.wrong::after{content:"\2717";margin-left:auto;font-size:60px;font-weight:800;color:#b3261e}
+.verdict.right{color:#1a7f4b}
+.verdict.wrong{color:#b3261e}
 [data-k="hint"].off{display:none}
 .grid{align-content:center;margin-top:20px}
 
