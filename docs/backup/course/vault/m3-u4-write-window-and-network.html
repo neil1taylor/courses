@@ -45,7 +45,7 @@
     </div>
   </div>
   <p class="small">Every result comes from real tests in our lab. Hosts, IP addresses, vault names and keys are made-up or placeholders, because we changed the real values.</p>
-  <p class="small"><b>Terms used.</b> <b>Private IP range (RFC 1918)</b>: addresses reserved for use inside private networks, not on the internet. <b>Vhost style and path style</b>: two ways to write a bucket address. Vhost style puts the bucket name in the host name, and path style puts it in the path. <b>ROVS</b>: Red Hat OpenShift Virtualization Service on IBM Cloud.</p>
+  <p class="small"><b>Terms used.</b> <b>VPC</b>: a private network an account builds inside IBM Cloud. <b>Pod</b>: one running piece of software on an OpenShift cluster. <b>Private IP range (RFC 1918)</b>: addresses reserved for use inside private networks, not on the internet. <b>Vhost style and path style</b>: two ways to write a bucket address. Vhost style puts the bucket name in the host name, and path style puts it in the path. <b>ROVS</b>: Red Hat OpenShift Virtualization Service on IBM Cloud.</p>
 </section>
 
 <section class="screen">
@@ -195,7 +195,7 @@ put, read key                        -            403 (the read key never writes
         <button class="opt" data-ok>403 Access Denied, or no answer</button>
         <button class="opt">It asks for the read key</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>403 or no answer. We got 403 on the public and direct names from the Mac and from the second VPC, and the private name didn&apos;t answer.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>403 or no answer. The public name gave 403 from the Mac, the direct and public names gave 403 from the second VPC, and the private name didn&apos;t answer from either.</p></details>
     </div>
     <div class="q" data-check>
       <p>The same list call from the lab VSI, inside the allowed network, gets which answer?</p>

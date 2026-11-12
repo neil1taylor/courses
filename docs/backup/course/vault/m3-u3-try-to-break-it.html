@@ -150,10 +150,9 @@ PUT /probe/p1.txt        other content              write key</pre>
       <details class="reveal"><summary>Show the answer</summary><span class="hand">Accepted as a new version.</span><pre class="def" aria-label="The overwrite result">PUT probe/p1.txt other content   -> 200, new version id
 list                             -> two versions
 GET ?versionId=&lt;FIRST&gt;           -> the original content (SHA-256 prefix 44e743c48cb20203)
-latest version                   -> the new content</pre><p><b>One thing to note:</b> the latest version is now the new content, so someone with the write key can write a new latest version that hides the data. The old version stays. We never overwrote a real archive object, because Data Protect would read the newest version.</p></details>
+latest version                   -> the new content</pre><p>That&apos;s how a versioned bucket works: each write, including each backup, adds a version, and the lock keeps every earlier one. So someone with the write key could add a version on top, but couldn&apos;t remove or change what was already there. We tried this on a test object, not on a real archive object.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> The lock protects each version, and it doesn&apos;t stop a write key adding a new version on top. Give the write key only to the backup cluster, and keep the read key apart.</p>
 </section>
 
 <section class="screen">
@@ -205,13 +204,13 @@ latest version                   -> the new content</pre><p><b>One thing to note
       <details class="reveal"><summary>Show the answer</summary><p>403 &quot;Access Denied because object protected by object lock&quot;. The read key, the instance HMAC key and the owner token also got 403.</p></details>
     </div>
     <div class="q" data-check>
-      <p>What can a holder of the write key still do to hide the data?</p>
+      <p>The write key writes to an object that already holds locked content. What does the vault do?</p>
       <div class="opts">
-        <button class="opt">Shorten its lock</button>
-        <button class="opt" data-ok>Write a new latest version; the old version stays</button>
-        <button class="opt">Nothing at all</button>
+        <button class="opt">Replaces the locked content for good</button>
+        <button class="opt" data-ok>Adds a new version; the old version stays</button>
+        <button class="opt">Shortens the lock</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Write a new latest version. The PUT on the probe object gave 200 and a new latest version, and the first version still returned the original content.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It adds a new version. The PUT on the probe object gave 200 and a new latest version, and the first version still returned the original content.</p></details>
     </div>
     <div class="q" data-check>
       <p>Which key could read an object&apos;s lock?</p>
@@ -230,7 +229,7 @@ latest version                   -> the new content</pre><p><b>One thing to note
   <h2>You know what the keys can and can&apos;t do</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>In our lab, none of the keys, and not the account owner either, could delete a locked version or shorten its lock. A write key could add a new latest version over an old key, and the old version stayed. The owner couldn&apos;t see audit events for the vault, so check that in your own account.</p></div>
+    <div><span class="label">Remember</span><p>In our lab, none of the keys, and not the account owner either, could delete a locked version or shorten its lock. A write to an existing object added a new version, and the old version stayed. The owner couldn&apos;t see audit events for the vault, so check that in your own account.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>
