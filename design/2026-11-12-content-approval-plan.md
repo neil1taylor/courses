@@ -182,3 +182,7 @@ The outline page shows each module's outcomes, facts with sources, and checks wi
 - [ ] Write the outline. Each module's three checks are its "Check yourself" questions. Each fact's source is the unit page, or the test record in `cyber-vault/` for test results.
 - [ ] `check_outline` gives `[]`; `python3 tools/review.py vault` serves both pages with no problems.
 - [ ] Leave the server running in the background and give the owner the link, so they can try the page itself.
+
+## Rulings during the build
+
+- The "question asked before it is taught" check is not automated. In the pre-fix Cyber Vault module the owner flagged, the answer had already been stated in passing two sentences before the question. The fault was a question opening a step with the teaching only in passing, which word matching can't tell apart from scenario questions in today's approved scripts. Instead, the review page shows each question beside the sentence that teaches it (`teaching_cue`), and the cold reader checks it. Cost if wrong: the owner may still see a badly placed question, but on the review page, before any audio.
