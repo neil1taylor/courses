@@ -9,6 +9,7 @@ this site's home page instead.
 Run from the repo root:  python3 tools/build.py [--no-voice]
 --no-voice makes no Watson calls; it stops if any cue has no cached audio.
 """
+import hashlib
 import math
 import re
 import shutil
@@ -119,6 +120,51 @@ def blur(path, boxes):
     img.save(path)
 
 
+def screen_slides(script):
+    """Yield (step number, step title, slide) for each screen slide in a module script."""
+    for n, step in enumerate(script["steps"], 1):
+        for cue in step["cues"]:
+            slide = cue.get("slide")
+            if slide and slide.get("type") == "screen":
+                yield n, step.get("title", ""), slide
+
+
+def screen_source(unit, img):
+    return (unit.parent / unit_img_path(img)).resolve()
+
+
+def unit_img_path(img):
+    return unquote(img.split("#")[0].split("?")[0])
+
+
+def blur_boxes(src):
+    """The BLUR boxes for a source image, found by the path it has inside docs/ in the interactive course."""
+    for slug, (base, _) in SOURCES.items():
+        base = base.resolve()
+        if src.is_relative_to(base):
+            return BLUR.get(f"{slug}/{src.relative_to(base).as_posix()}")
+    return None
+
+
+def copy_screens(out, unit_dir, timelines):
+    """Copy each screen slide's image into out/images and point the timeline at the copy."""
+    images = out / "images"
+    if images.exists():
+        shutil.rmtree(images)
+    for _, t in timelines:
+        for _, _, slide in screen_slides(t):
+            src = screen_source(unit_dir / t["unit"], slide["img"])
+            name = hashlib.sha1(str(src).encode()).hexdigest()[:8] + "-" + src.name
+            dest = images / name
+            if not dest.exists():
+                images.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src, dest)
+                boxes = blur_boxes(src)
+                if boxes:
+                    blur(dest, boxes)
+            slide["img"] = "images/" + name
+
+
 def minutes(timeline):
     seconds = sum((c["dur"] + GAP + c.get("hold", 0)) / RATE for s in timeline["steps"] for c in s["cues"])
     return max(1, math.ceil(seconds / 60))
@@ -140,6 +186,10 @@ def load_video(slug, cfg):
             continue
         found = scripts.check_script(s, unit.read_text(encoding="utf-8"), n == 0)
         problems += [f"{slug}: {f.name}: {p}" for p in found]
+        for step_no, title, slide in screen_slides(s):
+            src = screen_source(unit, slide["img"])
+            if not src.is_file():
+                problems.append(f"{slug}: {f.name}: step {step_no} ({title}): screen image not found: {src}")
         loaded.append((f.stem, s))
     return loaded, problems
 
@@ -169,6 +219,7 @@ def write_video(site, slug, cfg, loaded, speaker, shared):
     except voice.MissingAudio as e:
         sys.exit(f"{slug}: {e}\nRun the build without --no-voice on the workstation that has the Watson key.")
     voice.prune_audio(audio, [t for _, t in timelines])
+    copy_screens(out, Path(cfg["source"]).parent, timelines)
     assets = "../../video-assets/"
     page.copy_assets(site / "video-assets")
     course = {"slug": slug, "title": cfg["title"]}

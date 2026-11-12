@@ -56,6 +56,10 @@ def make_source(tmp_path, scripts):
     video.mkdir(parents=True)
     for stem, s in scripts.items():
         (course / (stem + ".html")).write_text(UNIT)
+        shot = course / "assets" / "shot-console.png"
+        if not shot.exists():
+            shot.parent.mkdir(exist_ok=True)
+            shot.write_bytes(b"png-of-" + stem.encode())
         (video / (stem + ".json")).write_text(json.dumps(s))
     return video
 
@@ -243,3 +247,61 @@ def test_module_pages_list_the_whole_course(tmp_path):
     video = make_source(tmp_path, {"a": dict(GOOD, unit="a.html"), "b": second()})
     html = (run(tmp_path, video) / "demo" / "video" / "a.html").read_text()
     assert 'data-tab="course"' in html and 'href="b.html"' in html.split('id="course"')[1]
+
+
+def timeline_of(page_html):
+    start = page_html.index("window.TIMELINE = ") + len("window.TIMELINE = ")
+    return json.JSONDecoder().raw_decode(page_html[start:])[0]
+
+
+def screen_imgs(timeline):
+    return [c["slide"]["img"] for st in timeline["steps"] for c in st["cues"]
+            if c.get("slide", {}).get("type") == "screen"]
+
+
+def test_screen_image_is_copied_and_the_page_points_at_the_copy(tmp_path):
+    video = make_source(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    out = run(tmp_path, video) / "demo" / "video"
+    [img] = screen_imgs(timeline_of((out / "a.html").read_text()))
+    assert img.startswith("images/") and img.endswith("shot-console.png")
+    assert (out / img).read_bytes() == b"png-of-a"
+
+
+def test_same_basename_from_different_sources_both_survive(tmp_path):
+    video = make_source(tmp_path, {"a": dict(GOOD, unit="a.html"), "b": second()})
+    other = video.parent / "other"
+    other.mkdir()
+    (other / "shot-console.png").write_bytes(b"different")
+    s = json.loads((video / "b.json").read_text())
+    s["steps"][3]["cues"][0]["slide"]["img"] = "other/shot-console.png"
+    (video / "b.json").write_text(json.dumps(s))
+    (video.parent / "b.html").write_text(UNIT.replace("assets/shot-console.png", "other/shot-console.png"))
+    out = run(tmp_path, video) / "demo" / "video"
+    ia = screen_imgs(timeline_of((out / "a.html").read_text()))[0]
+    ib = screen_imgs(timeline_of((out / "b.html").read_text()))[0]
+    assert ia != ib
+    assert (out / ia).read_bytes() == b"png-of-a" and (out / ib).read_bytes() == b"different"
+
+
+def test_stale_screen_images_are_removed_on_rebuild(tmp_path):
+    video = make_source(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    site = run(tmp_path, video)
+    stale = site / "demo" / "video" / "images" / "old.png"
+    stale.write_bytes(b"x")
+    run(tmp_path, video)
+    assert not stale.exists()
+
+
+def test_missing_screen_image_stops_the_build_before_docs_is_touched(tmp_path, monkeypatch):
+    video = make_source(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    (video.parent / "assets" / "shot-console.png").unlink()
+    site = tmp_path / "site"
+    site.mkdir()
+    (site / "sentinel.txt").write_text("x")
+    monkeypatch.setattr(build, "SITE", site)
+    monkeypatch.setattr(build, "VIDEO", {"demo": {"title": "D", "source": video, "live": False}})
+    with pytest.raises(SystemExit) as e:
+        build.build()
+    msg = str(e.value)
+    assert "a.json" in msg and "step 4" in msg and "shot-console.png" in msg
+    assert (site / "sentinel.txt").read_text() == "x"
