@@ -123,6 +123,19 @@ def voice_script(script: dict, audio_dir: Path, speaker, shared: dict = None) ->
     return timeline
 
 
+def estimate_script(script: dict, words_per_second: float = 2.5) -> dict:
+    """The timeline for script with no audio: each cue lasts as long as its words take to say.
+
+    For the review page, which shows scripts that have not been voiced.
+    """
+    timeline = copy.deepcopy(script)
+    for step in timeline["steps"]:
+        for cue in step["cues"]:
+            cue["dur"] = round(max(1.0, len(str(cue.get("say", "")).split()) / words_per_second), 2)
+            cue["audio"] = ""
+    return timeline
+
+
 def prune_audio(audio_dir: Path, timelines: list) -> list:
     """Delete the mp3s (and their duration entries) in audio_dir that no timeline names; return the paths deleted.
 

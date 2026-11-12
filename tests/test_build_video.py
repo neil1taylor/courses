@@ -305,3 +305,23 @@ def test_missing_screen_image_stops_the_build_before_docs_is_touched(tmp_path, m
     msg = str(e.value)
     assert "a.json" in msg and "step 4" in msg and "shot-console.png" in msg
     assert (site / "sentinel.txt").read_text() == "x"
+
+
+def test_write_video_estimated_needs_no_audio_or_speaker(tmp_path):
+    video = make_source(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    site = tmp_path / "site"
+    site.mkdir()
+    cfg = {"title": "Demo course", "source": video, "live": False}
+    loaded = build.check_videos({"demo": cfg})["demo"]
+    build.write_video(site, "demo", cfg, loaded, NoCalls(), {}, estimate=True)
+    out = site / "demo" / "video"
+    page = (out / "a.html").read_text()
+    assert '"dur"' in page and '"audio": ""' in page
+    assert not list((out / "audio").glob("*.mp3")) if (out / "audio").exists() else True
+
+
+def test_load_video_skips_the_outline(tmp_path):
+    video = make_source(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    (video / "outline.json").write_text(json.dumps({"course": "Demo", "modules": []}))
+    loaded, problems = build.load_video("demo", {"title": "Demo", "source": video, "live": False})
+    assert [stem for stem, _ in loaded] == ["a"] and problems == []

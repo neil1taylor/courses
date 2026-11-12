@@ -1,0 +1,209 @@
+"""Review a course's scripts before any audio is made.
+
+  python3 tools/review.py <slug>                  build without voice and serve the review page
+  python3 tools/review.py <slug> --comments       print the open comments
+  python3 tools/review.py <slug> --close <id>...  close comments
+
+The comments and approvals are saved to review/<slug>.json, which is the record of what was approved.
+The server listens on 127.0.0.1 only.
+"""
+import argparse
+import json
+import mimetypes
+import sys
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from urllib.parse import unquote, urlparse
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import build  # noqa: E402
+import outline as outlines  # noqa: E402
+import review_page  # noqa: E402
+import review_state as rs  # noqa: E402
+import script as scripts  # noqa: E402
+
+ROOT = Path(__file__).resolve().parent.parent
+PORT = 8770
+LETTERS = {"vault": "V", "backup": "B", "vpc": "N", "rovs": "R"}
+SCRATCH = Path("/private/tmp/claude-501/-Users-neiltaylor-Projects-rovs-tutorials/"
+               "f3aa05c3-29fa-491b-8f00-433add9e3834/scratchpad")
+
+
+class Review:
+    """One course under review: its scripts, its build folder and its saved record."""
+
+    def __init__(self, slug, cfg, out, state_path, letter=None):
+        self.slug, self.cfg, self.out, self.state_path = slug, cfg, Path(out), Path(state_path)
+        self.letter = letter or LETTERS.get(slug, slug[:1].upper())
+        self.lock = threading.RLock()
+        self.loaded, self.problems, self.build_error, self._signature = [], [], None, None
+
+    @property
+    def source(self) -> Path:
+        return Path(self.cfg["source"])
+
+    def _sig(self):
+        files = list(self.source.glob("*.json")) + list(self.source.parent.glob("*.html"))
+        return sorted((str(f), f.stat().st_mtime_ns) for f in files)
+
+    def refresh(self):
+        """Load and check the scripts and rebuild the pages when a script or unit page has changed."""
+        with self.lock:
+            sig = self._sig() if self.source.is_dir() else []
+            if sig == self._signature:
+                return
+            self.loaded, self.problems = build.load_video(self.slug, self.cfg)
+            self.build_error = None
+            try:
+                build.write_video(self.out, self.slug, self.cfg, self.loaded, None, {}, estimate=True)
+            except Exception as e:  # a malformed script must not stop the page from opening
+                self.build_error = "The slide pictures could not be built: %s" % e
+            self._signature = sig
+
+    def number(self, stem) -> int:
+        return [s for s, _ in self.loaded].index(stem) + 1
+
+    def module_problems(self, stem) -> list:
+        prefix = "%s: %s.json: " % (self.slug, stem)
+        return [p[len(prefix):] for p in self.problems if p.startswith(prefix)]
+
+    def general_problems(self) -> list:
+        stems = {s for s, _ in self.loaded}
+        out = [p for p in self.problems if not any(p.startswith("%s: %s.json: " % (self.slug, s)) for s in stems)]
+        return out + ([self.build_error] if self.build_error else [])
+
+    def outline(self):
+        path = self.source / "outline.json"
+        if not path.is_file():
+            return None, []
+        data = outlines.load_outline(path)
+        return data, outlines.check_outline(data, [s for s, _ in self.loaded])
+
+    def state(self) -> dict:
+        return rs.load_state(self.state_path)
+
+    def course_page(self) -> str:
+        st = self.state()
+        rows = [(stem, n, s.get("title", stem), rs.module_status(st, stem, s, self.letter, n))
+                for n, (stem, s) in enumerate(self.loaded, 1)]
+        return review_page.render_course(self.slug, self.cfg["title"], self.letter, rows, self.general_problems())
+
+    def module_page(self, stem):
+        script = dict(self.loaded).get(stem)
+        if script is None:
+            return None
+        return review_page.render_module(self.slug, self.letter, self.number(stem), stem, script,
+                                         self.module_problems(stem), scripts.notes(script), self.state())
+
+    def outline_page(self) -> str:
+        data, problems = self.outline()
+        numbers = {stem: n for n, (stem, _) in enumerate(self.loaded, 1)}
+        return review_page.render_outline(self.slug, self.letter, data, numbers, problems, self.state())
+
+    def post(self, route, body):
+        """Apply a POST. Returns (status, json). Every change is saved before it is answered."""
+        with self.lock:
+            st = self.state()
+            if route == "/api/comment":
+                ref, text = str(body.get("ref", "")).strip(), str(body.get("text", "")).strip()
+                if not ref or not text:
+                    return 400, {"error": "A comment needs a reference and some text."}
+                new = rs.add_comment(st, ref, str(body.get("say", "")), text)
+                rs.save_state(self.state_path, st)
+                return 200, {"id": new}
+            stem = str(body.get("stem", ""))
+            if route == "/api/approve-outline":
+                data, problems = self.outline()
+                mod = next((m for m in (data or {}).get("modules", []) if m.get("unit") == stem), None)
+                if mod is None or problems:
+                    return 400, {"error": "The outline has problems or has no such module."}
+                st["outline"][stem] = {"approved": rs.outline_hash(mod)}
+            elif route in ("/api/approve", "/api/seen"):
+                script = dict(self.loaded).get(stem)
+                if script is None:
+                    return 404, {"error": "No such module."}
+                n = self.number(stem)
+                if route == "/api/approve":
+                    if self.module_problems(stem):
+                        return 400, {"error": "This script has problems. Fix them before approving."}
+                    rs.approve(st, stem, script, self.letter, n)
+                else:
+                    rs.mark_seen(st, stem, script, self.letter, n)
+            else:
+                return 404, {"error": "No such route."}
+            rs.save_state(self.state_path, st)
+            return 200, {"ok": True}
+
+
+def make_handler(review):
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+
+        def _send(self, status, body, ctype):
+            data = body if isinstance(body, bytes) else body.encode("utf-8")
+            self.send_response(status)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+
+        def do_GET(self):
+            path = unquote(urlparse(self.path).path)
+            html = "text/html; charset=utf-8"
+            review.refresh()
+            if path == "/":
+                return self._send(200, review.course_page(), html)
+            if path == "/outline":
+                return self._send(200, review.outline_page(), html)
+            if path.startswith("/m/"):
+                page = review.module_page(path[3:])
+                return self._send(200, page, html) if page else self._send(404, "No such module", "text/plain")
+            target = (review.out / path.lstrip("/")).resolve()
+            if target.is_file() and target.is_relative_to(review.out.resolve()):
+                ctype = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
+                return self._send(200, target.read_bytes(), ctype)
+            self._send(404, "Not found", "text/plain")
+
+        def do_POST(self):
+            try:
+                body = json.loads(self.rfile.read(int(self.headers.get("Content-Length") or 0)) or b"{}")
+                status, answer = review.post(urlparse(self.path).path, body)
+            except (ValueError, TypeError):
+                status, answer = 400, {"error": "The request was not JSON."}
+            self._send(status, json.dumps(answer), "application/json")
+
+    return Handler
+
+
+def serve(review, port=PORT):
+    review.refresh()
+    server = ThreadingHTTPServer(("127.0.0.1", port), make_handler(review))
+    print("Review page for %s: http://127.0.0.1:%d/" % (review.slug, server.server_address[1]), flush=True)
+    server.serve_forever()
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("slug", choices=sorted(build.VIDEO))
+    ap.add_argument("--comments", action="store_true", help="print the open comments")
+    ap.add_argument("--close", nargs="+", type=int, metavar="ID", help="close these comments")
+    ap.add_argument("--out", help="build folder (default: a scratch folder)")
+    ap.add_argument("--port", type=int, default=PORT)
+    args = ap.parse_args(argv)
+    state_path = ROOT / "review" / (args.slug + ".json")
+    if args.comments or args.close:
+        st = rs.load_state(state_path)
+        if args.close:
+            rs.close_comments(st, args.close)
+            rs.save_state(state_path, st)
+        if args.comments:
+            print("\n".join(rs.comments_report(st)))
+        return
+    out = args.out or SCRATCH / ("review-" + args.slug)
+    serve(Review(args.slug, build.VIDEO[args.slug], out, state_path), args.port)
+
+
+if __name__ == "__main__":
+    main()

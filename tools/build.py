@@ -178,7 +178,7 @@ def load_video(slug, cfg):
     if not source.is_dir():
         return [], []
     problems, loaded = [], []
-    for n, f in enumerate(sorted(source.glob("*.json"))):
+    for n, f in enumerate(sorted(f for f in source.glob("*.json") if f.name != "outline.json")):
         s = scripts.load_script(f)
         unit = source.parent / (f.stem + ".html")
         if not unit.is_file():
@@ -205,8 +205,12 @@ def check_videos(video):
     return loaded
 
 
-def write_video(site, slug, cfg, loaded, speaker, shared):
-    """Write docs/<slug>/video/: a contents page, a page and the audio for each module."""
+def write_video(site, slug, cfg, loaded, speaker, shared, estimate=False):
+    """Write docs/<slug>/video/: a contents page, a page and the audio for each module.
+
+    estimate=True is for the review page: durations are guessed from the word count and no audio is made,
+    so a script that was never voiced can be shown.
+    """
     import page
     import voice
 
@@ -214,11 +218,14 @@ def write_video(site, slug, cfg, loaded, speaker, shared):
         return
     out = site / slug / "video"
     audio = out / "audio"
-    try:
-        timelines = [(stem, voice.voice_script(s, audio, speaker, shared)) for stem, s in loaded]
-    except voice.MissingAudio as e:
-        sys.exit(f"{slug}: {e}\nRun the build without --no-voice on the workstation that has the Watson key.")
-    voice.prune_audio(audio, [t for _, t in timelines])
+    if estimate:
+        timelines = [(stem, voice.estimate_script(s)) for stem, s in loaded]
+    else:
+        try:
+            timelines = [(stem, voice.voice_script(s, audio, speaker, shared)) for stem, s in loaded]
+        except voice.MissingAudio as e:
+            sys.exit(f"{slug}: {e}\nRun the build without --no-voice on the workstation that has the Watson key.")
+        voice.prune_audio(audio, [t for _, t in timelines])
     copy_screens(out, Path(cfg["source"]).parent, timelines)
     assets = "../../video-assets/"
     page.copy_assets(site / "video-assets")
