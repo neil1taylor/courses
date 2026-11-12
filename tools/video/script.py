@@ -91,10 +91,18 @@ def lines_of(out) -> list:
     return out.splitlines() if isinstance(out, str) else list(out)
 
 
+def listed(value) -> list:
+    """value if it is a list, else an empty list: a wrong kind is reported elsewhere."""
+    return value if isinstance(value, list) else []
+
+
+def shapes_of(spec) -> list:
+    return listed(spec.get("shapes")) if isinstance(spec, dict) else []
+
+
 def sketch_text(spec) -> list:
     out = []
-    shapes = spec.get("shapes", []) if isinstance(spec, dict) else []
-    for shape in shapes if isinstance(shapes, list) else []:
+    for shape in shapes_of(spec):
         if isinstance(shape, dict):
             out += [shape[k] for k in ("title", "detail", "text") if isinstance(shape.get(k), str)]
     return out
@@ -104,9 +112,9 @@ def slide_strings(slide) -> list:
     """Every string a learner sees on a slide, for the rules about what may be said.
     Terminal output and screenshots are left out: dates and names there are allowed."""
     out = [slide[k] for k in ("head", "sub", "tip", "text", "why", "next") if isinstance(slide.get(k), str)]
-    out += [o for o in slide.get("opts", []) if isinstance(o, str)]
-    for term in slide.get("items", []):
-        out += [t for t in term if isinstance(t, str)]
+    out += [o for o in listed(slide.get("opts")) if isinstance(o, str)]
+    for term in listed(slide.get("items")):
+        out += [t for t in listed(term) if isinstance(t, str)]
     return out
 
 
@@ -114,7 +122,7 @@ def slide_words(slide, sketches) -> int:
     """Words counted against the limit of 20: head, sub, tip, text, answer options, sketch labels.
     The why line and the next line have their own limits."""
     parts = [slide[k] for k in ("head", "sub", "tip", "text") if isinstance(slide.get(k), str)]
-    parts += slide.get("opts", [])
+    parts += [o for o in listed(slide.get("opts")) if isinstance(o, str)]
     if slide.get("sketch"):
         parts += sketch_text(sketches.get(slide["sketch"]))
     return sum(len(words(p)) for p in parts)
@@ -152,11 +160,16 @@ def check_slide(slide, sketches, unit_html, at) -> list:
     if bad:
         return bad
     problems = []
+    for key in ("opts", "items"):
+        if slide.get(key) is not None and not isinstance(slide[key], list):
+            problems.append("%s: %s must be a list" % (at, key))
     name = slide.get("sketch")
     if name:
         spec = sketches.get(name)
         if spec is None:
             problems.append("%s: slide uses sketch %r, which is defined nowhere in sketches" % (at, name))
+        elif spec.get("shapes") is not None and not isinstance(spec["shapes"], list):
+            problems.append("%s: shapes of sketch %r must be a list" % (at, name))
         elif kind in SKETCH_LIMITS and isinstance(spec.get("w"), (int, float)) and isinstance(spec.get("h"), (int, float)):
             mw, mh = SKETCH_LIMITS[kind]
             if spec["w"] > mw or spec["h"] > mh:
@@ -237,7 +250,7 @@ def check_action(action, st, sketches, at) -> list:
         spec = sketches.get(slide.get("sketch"))
         if spec is None:
             return ["%s: build on a slide with no sketch" % at]
-        n = len(spec.get("shapes", []))
+        n = len(shapes_of(spec))
         return indices(value, n, at, "sketch part", st.built)
     elif name == "items":
         n = len(slide["items"]) if kind == "words" else 0
@@ -280,7 +293,7 @@ def finish_slide(st, sketches) -> list:
             out.append("%s: question slide has no cue with why after the ask" % at)
     spec = sketches.get(slide.get("sketch"))
     if spec:
-        for i in range(len(spec.get("shapes", []))):
+        for i in range(len(shapes_of(spec))):
             if i not in st.built:
                 out.append("%s: sketch part %d is never built" % (at, i))
     if kind == "words":
@@ -366,7 +379,8 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
                 problems.append("%s: cue has no say" % at)
                 say = ""
             narration += len(say)
-            if isinstance(cue.get("slide"), dict) or (cue.get("slide") is not None):
+            missing_slide = False
+            if cue.get("slide") is not None:
                 problems += finish_slide(state, sketches)
                 sl = cue["slide"]
                 if not isinstance(sl, dict):
@@ -386,8 +400,9 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
             elif ci == 1:
                 problems += finish_slide(state, sketches)
                 state = None
+                missing_slide = True
                 problems.append("%s: first cue of a step needs a slide" % at)
-            if "?" in say and not (state and state.slide.get("type") == "q"):
+            if "?" in say and not missing_slide and not (state and state.slide.get("type") == "q"):
                 problems.append("%s: narration asks a question outside a question slide" % at)
             problems += check_narration(say, at, "read" in pronounce)
             if TESTED.search(say):

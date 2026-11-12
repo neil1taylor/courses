@@ -8,7 +8,6 @@ new file. prune_audio removes the mp3s no timeline uses any more.
 import copy
 import hashlib
 import json
-import os
 import subprocess
 import sys
 import wave
@@ -22,23 +21,17 @@ def _demo_videos():
     """Import demo_videos' narration modules; settings.env resolves from its root."""
     scripts = str(DEMO_VIDEOS / "scripts")
     if scripts not in sys.path:
-        sys.path.insert(0, scripts)
-    here = os.getcwd()
-    os.chdir(DEMO_VIDEOS)
-    try:
-        import narrate
-        import pronunciation
-        import settings
-    finally:
-        os.chdir(here)
+        sys.path.append(scripts)
+    import narrate
+    import pronunciation
+    import settings
     return narrate, pronunciation, settings
 
 
 def shared_pronunciation() -> dict:
     """The owner's shared pronunciation file: {word: spoken form}."""
     _, pronunciation, _ = _demo_videos()
-    entries = pronunciation.load(pronunciation.file_path())
-    return dict(entries[0] if isinstance(entries, tuple) else entries)
+    return dict(pronunciation.load(pronunciation.file_path()))
 
 
 class MissingAudio(Exception):
@@ -131,7 +124,10 @@ def voice_script(script: dict, audio_dir: Path, speaker, shared: dict = None) ->
 
 
 def prune_audio(audio_dir: Path, timelines: list) -> list:
-    """Delete the mp3s (and their duration entries) in audio_dir that no timeline names; return the paths deleted."""
+    """Delete the mp3s (and their duration entries) in audio_dir that no timeline names; return the paths deleted.
+
+    An empty timelines list deletes every mp3 in the folder.
+    """
     used = {Path(c["audio"]).name for t in timelines for s in t["steps"] for c in s["cues"]}
     gone = []
     for mp3 in sorted(Path(audio_dir).glob("*.mp3")):
