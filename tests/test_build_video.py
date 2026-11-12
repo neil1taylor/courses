@@ -176,6 +176,28 @@ def test_reset_site_keeps_each_courses_audio(tmp_path):
     assert not (site / "demo" / "video" / "a.html").exists()
 
 
+def test_failure_during_the_wipe_leaves_audio_intact(tmp_path, monkeypatch):
+    site = tmp_path / "site"
+    for slug in ("demo", "other"):
+        (site / slug / "video" / "audio").mkdir(parents=True)
+        (site / slug / "video" / "audio" / "x.mp3").write_bytes(b"keep")
+        (site / slug / "video" / "a.html").write_text("old")
+    (site / "demo" / "junk").mkdir()
+    (site / "other" / "junk").mkdir()
+    real = build.shutil.rmtree
+
+    def failing(path, *a, **k):
+        if Path(path).name in ("site", "junk"):
+            raise OSError("disk error")
+        return real(path, *a, **k)
+
+    monkeypatch.setattr(build.shutil, "rmtree", failing)
+    with pytest.raises(OSError):
+        build.reset_site(site, ["demo", "other"])
+    for slug in ("demo", "other"):
+        assert (site / slug / "video" / "audio" / "x.mp3").read_bytes() == b"keep"
+
+
 def test_failing_check_leaves_docs_untouched_and_reports_every_course(tmp_path, monkeypatch):
     bad = second()
     bad["steps"][0]["cues"][0]["say"] = "This runs in unit 1.1."

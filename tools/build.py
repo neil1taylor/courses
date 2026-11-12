@@ -13,7 +13,6 @@ import math
 import re
 import shutil
 import sys
-import tempfile
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -193,24 +192,27 @@ def build_video(site, slug, cfg, speaker, shared):
 
 
 def reset_site(site, slugs):
-    """Empty the site folder, keeping each course's audio: the committed mp3s are the persistent audio."""
+    """Empty the site folder except each course's audio folder: the committed mp3s are the persistent audio.
+
+    Nothing is moved, so a failure part way leaves every audio folder where it was.
+    """
     site = Path(site)
-    keep = Path(tempfile.mkdtemp(prefix="video-audio-"))
-    try:
-        for slug in slugs:
-            audio = site / slug / "video" / "audio"
-            if audio.is_dir():
-                shutil.move(str(audio), str(keep / slug))
-        if site.exists():
-            shutil.rmtree(site)
-        site.mkdir()
-        for slug in slugs:
-            if (keep / slug).is_dir():
-                dest = site / slug / "video" / "audio"
-                dest.parent.mkdir(parents=True)
-                shutil.move(str(keep / slug), str(dest))
-    finally:
-        shutil.rmtree(keep, ignore_errors=True)
+    keep = {(site / slug / "video" / "audio").resolve() for slug in slugs}
+    site.mkdir(exist_ok=True)
+
+    def wipe(folder):
+        for child in sorted(folder.iterdir()):
+            real = child.resolve()
+            if real in keep:
+                continue
+            if child.is_dir() and not child.is_symlink() and any(k.is_relative_to(real) for k in keep):
+                wipe(child)
+            elif child.is_dir() and not child.is_symlink():
+                shutil.rmtree(child)
+            else:
+                child.unlink()
+
+    wipe(site.resolve())
 
 
 def home_html(html, video):
