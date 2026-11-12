@@ -50,7 +50,7 @@
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Two ways to store a VM disk</h2>
-  <p class="lead">On ROVS you pick the storage option when you order the cluster, and you need at least one of ODF or File Storage for VPC (Beta). VPC Block Storage isn't deployed or used on ROVS at all.</p>
+  <p class="lead">On ROVS you pick the storage option when you order the cluster, and you need at least one of ODF or File Storage for VPC. VPC Block Storage isn't deployed or used on ROVS at all.</p>
   <div class="pair">
     <div>
       <svg class="sketch" role="img" aria-label="Hand-drawn comparison in two columns. ODF: backing is local NVMe on the workers, performance is high, best for production workloads. File Storage for VPC: backing is network-attached file storage, performance is moderate, best for non-production, dev and test."
@@ -73,7 +73,7 @@
           <button class="opt" data-ok>It's network-attached file storage, and live migration works once the storage profile is configured correctly</button>
           <button class="opt">It can't live migrate</button>
         </div>
-        <details class="reveal"><summary>Show the answer</summary><p>It's network-attached file storage in place of local NVMe. IBM labels it Beta and says it suits non-production, development, test and lower-I/O workloads. Live migration is supported once the CDI storage profile is set up, and step 4 shows you how.</p></details>
+        <details class="reveal"><summary>Show the answer</summary><p>It's network-attached file storage in place of local NVMe. IBM says it suits non-production, development, test and lower-I/O workloads. Live migration is supported once the CDI storage profile is set up, and step 4 shows you how.</p></details>
       </div>
     </div>
   </div>
@@ -107,7 +107,7 @@
         <button class="opt">Assume they work, because snapshot classes exist</button>
         <button class="opt" data-ok>Check your own cluster, then get the support position in writing</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">A class that exists isn't the same as support.</span><p>Check your own cluster, then get the support position in writing. One IBM page says snapshots and cloning aren't supported. Another says only that support differs from ODF. On a cluster with both storage options and the right IAM role, a VM snapshot, a restore and a CDI clone all booted. For one disk the snapshot of the running VM was ready in 53 s, the restore of the stopped VM took 85 s and the clone took 202 s. IBM labels snapshots on this storage Beta. Check with <code>oc get volumesnapshotclass</code>.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">A class that exists isn't the same as support.</span><p>Check your own cluster, then get the support position in writing. One IBM page says snapshots and cloning aren't supported. Another says only that support differs from ODF. On a cluster with both storage options and the right IAM role, a VM snapshot, a restore and a CDI clone all booted. For one disk the snapshot of the running VM was ready in 53 s, the restore of the stopped VM took 85 s and the clone took 202 s. Check with <code>oc get volumesnapshotclass</code>.</p></details>
     </div>
     <div class="q">
       <p>Can one cluster carry both ODF and File Storage for VPC?</p>
@@ -242,7 +242,7 @@ oc get storageprofile.cdi.kubevirt.io -o yaml | grep -A4 claimPropertySets</pre>
   <h2>You can weigh the two options</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the four questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>ODF is local and fast. File Storage for VPC is network storage for lighter work, and it's Beta. Prove it works with a throwaway PVC. Set up the links first, then the roles, then the CDI profile.</p></div>
+    <div><span class="label">Remember</span><p>ODF is local and fast. File Storage for VPC is network storage for lighter work. Prove it works with a throwaway PVC. Set up the links first, then the roles, then the CDI profile.</p></div>
     <div><span class="label">When you have a cluster</span><p>Tutorial chapter 103, Use File Storage for VPC for VM disks on ROVS, has every command, the IAM setup and the snapshot and clone tests.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
