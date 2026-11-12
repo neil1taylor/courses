@@ -136,3 +136,7 @@ def test_copy_assets_puts_player_rough_and_fonts_together(tmp_path):
     out = tmp_path / "video-assets"
     assert (out / "player.js").exists() and (out / "player.css").exists()
     assert (out / "rough.js").exists() and any((out / "fonts").glob("*.woff2"))
+
+
+def test_caption_button_reports_its_state():
+    assert 'id="ccbtn" aria-label="Captions" aria-pressed="false"' in module_page()

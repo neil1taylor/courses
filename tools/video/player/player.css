@@ -115,7 +115,7 @@ svg.sk text.hw{font-family:var(--hand)}
 .t-screen .bx.off{opacity:0}
 .t-screen .bx.past{border-color:#9a9a9a;box-shadow:none}
 .t-terminal{justify-content:center}
-.term{margin:0;background:#16171d;color:#e9e9ef;border-radius:12px;padding:56px 64px;font-family:"Red Hat Mono",ui-monospace,Menlo,monospace;font-size:44px;line-height:1.5;overflow:hidden}
+.term{white-space:pre-wrap;margin:0;background:#16171d;color:#e9e9ef;border-radius:12px;padding:56px 64px;font-family:"Red Hat Mono",ui-monospace,Menlo,monospace;font-size:44px;line-height:1.5;overflow:hidden}
 .term .cmd{color:#fff;font-weight:700;margin-bottom:24px;white-space:pre-wrap}
 .term .ol{white-space:pre-wrap;color:#c9cad4}
 .term .ol.cur{color:#8FB4FF;font-weight:700}

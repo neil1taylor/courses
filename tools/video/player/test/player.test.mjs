@@ -75,3 +75,57 @@ test("doneModules survives stored text that is not a list", () => {
   assert.doesNotThrow(() => P.markDone(s, "x", 2));
   assert.deepEqual(P.doneModules(s, "x"), [2]);
 });
+
+test("summary text is escaped, only <em> stays", () => {
+  assert.equal(P.summaryHtml("a <img onerror=x> b"), "a &lt;img onerror=x&gt; b");
+  assert.equal(P.summaryHtml("the <em>key</em> words"), "the <em>key</em> words");
+  assert.ok(!P.summaryHtml("<em onclick=x>k</em>").includes("<em onclick"));
+});
+
+test("esc is safe inside a quoted attribute", () => {
+  const html = '<img src="' + P.esc("a\"b'c>d<e&f") + '">';
+  assert.equal(html, '<img src="a&quot;b&#39;c&gt;d&lt;e&amp;f">');
+  assert.equal(html.split('"').length, 3);
+});
+
+test("reaching an ask cue clears the earlier answer, and the score uses the new one once", () => {
+  let answers = new Map([["1:0", { pick: 1 }], ["1:1", { pick: 1 }]]);
+  assert.deepEqual(P.scoreOf(answers, timeline), { right: 2, total: 2, answered: 2 });
+  // seek back before the question: nothing is cleared yet
+  answers = P.answersAfterReaching(answers, timeline, 0, 0);
+  assert.equal(answers.size, 2);
+  // seek to or play forward to a cue after the ask (the why cue) would not be an ask cue; reaching the ask cue clears it
+  answers = P.answersAfterReaching(answers, timeline, 1, 0);
+  assert.deepEqual(P.scoreOf(answers, timeline), { right: 1, total: 2, answered: 1 });
+  answers.set("1:0", { pick: 0 });
+  assert.deepEqual(P.scoreOf(answers, timeline), { right: 1, total: 2, answered: 2 });
+  answers.set("1:0", { pick: 1 });
+  answers.set("1:0", { pick: 0 });
+  assert.deepEqual(P.scoreOf(answers, timeline), { right: 1, total: 2, answered: 2 });
+});
+
+test("reaching a cue with no ask leaves answers alone, and the input is not changed", () => {
+  const answers = new Map([["1:0", { pick: 1 }]]);
+  const out = P.answersAfterReaching(answers, timeline, 1, 3);
+  assert.equal(out.size, 1);
+  P.answersAfterReaching(answers, timeline, 1, 0);
+  assert.equal(answers.size, 1);
+});
+
+test("a small box at scale below 1 grows so floored labels fit", () => {
+  const scale = 0.5;
+  const L = P.boxLayout([10, 10, 100, 40], "vault", null, scale);
+  assert.equal(L.tf, 72);
+  assert.ok(L.h >= L.tf * 1.3, "single line box tall enough");
+  assert.ok(L.w >= "vault".length * L.tf * 0.55, "wide enough for the title");
+  const two = P.boxLayout([10, 10, 100, 60], "vault", "locked", scale);
+  assert.ok(two.two);
+  assert.ok(two.detailY + two.df * 0.3 <= two.y + two.h, "detail line inside the box");
+});
+
+test("at scale 2 nothing changes: sizes stay at the unit sizes and the box keeps its size", () => {
+  const L = P.boxLayout([0, 0, 190, 64], "backup", "x", 2);
+  assert.equal(L.tf, 21);
+  assert.equal(L.h, 64);
+  assert.equal(L.w, 190);
+});

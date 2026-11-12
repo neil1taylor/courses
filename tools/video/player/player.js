@@ -37,6 +37,34 @@ function scoreOf(answers, timeline) {
   return { right, total, answered };
 }
 
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+
+/* The summary sentence is escaped whole; only <em> and </em> (the blue key words) are let back in. */
+const summaryHtml = text => esc(text).replace(/&lt;em&gt;/g, "<em>").replace(/&lt;\/em&gt;/g, "</em>");
+
+/* Reaching a question's ask cue, by playing or by seeking, clears the earlier answer to that question. */
+function answersAfterReaching(answers, timeline, step, cue) {
+  const out = new Map(answers instanceof Map ? answers : Object.entries(answers));
+  const cues = timeline.steps[step].cues;
+  if (!(cues[cue].do || []).some(a => a[0] === "ask")) return out;
+  let first = cue;
+  while (first > 0 && !cues[first].slide) first--;
+  out.delete(step + ":" + first);
+  return out;
+}
+
+/* Label size in sketch units so the label shows at 36px or more on the canvas at this scale. */
+const labelSize = (scale, units) => Math.max(units, LABEL_FLOOR / scale);
+
+/* Where a box and its text go at this scale. The box grows when the floored text would not fit. */
+function boxLayout([x, y, w, h], title, detail, scale) {
+  const tf = labelSize(scale, 21), df = labelSize(scale, 20), two = !!detail && h > 44;
+  const need = two ? tf + df + 9 + df * 0.3 + 6 : tf * 1.35;
+  const nh = Math.max(h, need), nw = Math.max(w, title ? title.length * tf * 0.55 + 24 : w);
+  return {x, y, w: nw, h: nh, tf, df, two,
+    titleY: y + (two ? tf + 4 : nh / 2 + tf * 0.35), detailY: y + tf + df + 9};
+}
+
 const progressKey = slug => "courses-video:" + slug;
 
 function doneModules(storage, slug) {
@@ -58,7 +86,7 @@ function browserStorage() {
 }
 
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { cueAt, cueLen, scoreOf, progressKey, markDone, doneModules };
+  module.exports = { cueAt, cueLen, scoreOf, esc, summaryHtml, answersAfterReaching, labelSize, boxLayout, progressKey, markDone, doneModules };
 }
 
 /* ---- the contents page: show which modules are done ---- */
@@ -88,7 +116,6 @@ const gapOf = q => GAP + (q.hold || 0);
 steps.forEach(c => { c.total = c.cues.reduce((t, q) => t + cueLen(q), 0); });
 const moduleTotal = steps.reduce((t, c) => t + c.total, 0);
 const fmt = s => Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0");
-const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
 
 /* ---- stage ---- */
 const stage = $("#stage"), canvas = $("#canvas");
@@ -106,11 +133,9 @@ function makeSketch(name) {
 }
 /* Size a label in sketch units so that it shows at 36px or more on the 1920x1080 canvas.
    The svg's layout size is in canvas pixels, so the scale does not depend on the window. */
-function labelSize(svg, units) {
+function sketchScale(svg) {
   const w = svg.clientWidth, h = svg.clientHeight;
-  if (!w || !h) return units;
-  const scale = Math.min(w / svg.spec.w, h / svg.spec.h);
-  return Math.max(units, LABEL_FLOOR / scale);
+  return w && h ? Math.min(w / svg.spec.w, h / svg.spec.h) : 1;
 }
 function paintShape(svg, i, animate) {
   const s = svg.spec.shapes[i], g = svg.querySelector('g[data-i="' + i + '"]'), st = svg.state[i];
@@ -122,13 +147,13 @@ function paintShape(svg, i, animate) {
     g.appendChild(rc.line(x1, y1, x2, y2, o));
     if (s.arrow) { const a = Math.atan2(y2 - y1, x2 - x1), L = 13; g.appendChild(rc.line(x2, y2, x2 - L * Math.cos(a - .5), y2 - L * Math.sin(a - .5), o)); g.appendChild(rc.line(x2, y2, x2 - L * Math.cos(a + .5), y2 - L * Math.sin(a + .5), o)); }
   } else if (s.text) {
-    el("text", {x: s.at[0], y: s.at[1], "font-size": labelSize(svg, 22), class: s.hand ? "hw" : "", fill: c}, g).textContent = s.text;
+    el("text", {x: s.at[0], y: s.at[1], "font-size": labelSize(sketchScale(svg), 22), class: s.hand ? "hw" : "", fill: c}, g).textContent = s.text;
   } else if (s.box) {
-    const [x, y, bw, bh] = s.box, tf = labelSize(svg, 21), df = labelSize(svg, 20);
-    g.appendChild(rc.rectangle(x, y, bw, bh, {stroke: c, strokeWidth: s.heavy || st === "cur" ? w + .6 : w, roughness: 1.3, seed,
+    const L = boxLayout(s.box, s.title, s.detail, sketchScale(svg));
+    g.appendChild(rc.rectangle(L.x, L.y, L.w, L.h, {stroke: c, strokeWidth: s.heavy || st === "cur" ? w + .6 : w, roughness: 1.3, seed,
       fill: st === "cur" ? "#E8EEF9" : "#fff", fillStyle: "solid", strokeLineDash: s.dashed ? [6, 5] : undefined}));
-    if (s.title) el("text", {x: x + 12, y: y + (bh > 44 ? tf + 4 : 30), "font-size": tf, "font-weight": 700, fill: c === COL.past ? COL.past : COL.ink}, g).textContent = s.title;
-    if (s.detail && bh > 44) el("text", {x: x + 12, y: y + tf + df + 9, "font-size": df, class: "hw", fill: c === COL.past ? COL.past : "#444"}, g).textContent = s.detail;
+    if (s.title) el("text", {x: L.x + 12, y: L.titleY, "font-size": L.tf, "font-weight": 700, fill: c === COL.past ? COL.past : COL.ink}, g).textContent = s.title;
+    if (s.detail && L.two) el("text", {x: L.x + 12, y: L.detailY, "font-size": L.df, class: "hw", fill: c === COL.past ? COL.past : "#444"}, g).textContent = s.detail;
   }
   if (animate) {
     const paths = [...g.querySelectorAll("path")], texts = [...g.querySelectorAll("text")];
@@ -161,7 +186,7 @@ function renderSlide(spec, id) {
   }
   if (spec.type === "tip") d.innerHTML = k('<p class="tag">Watch for this</p>' + head, "head") + k('<p class="tip">' + esc(spec.tip) + "</p>", "tip");
   if (spec.type === "words") d.innerHTML = k(head, "head") + '<div class="grid">' + spec.items.map((it, j) => '<div class="cell k off" data-k="i' + j + '"><b>' + esc(it[0]) + "</b><span>" + esc(it[1]) + "</span></div>").join("") + "</div>";
-  if (spec.type === "summary") d.innerHTML = '<div class="left">' + k('<p class="big">' + spec.text + "</p>", "head") + k('<p class="next">' + esc(spec.next) + "</p>", "next") + "</div>";
+  if (spec.type === "summary") d.innerHTML = '<div class="left">' + k('<p class="big">' + summaryHtml(spec.text) + "</p>", "head") + k('<p class="next">' + esc(spec.next) + "</p>", "next") + "</div>";
   if (spec.type === "screen") {
     d.innerHTML = k(head, "head") + k('<div class="shot"><img alt="" src="' + esc(spec.img) + '">' + spec.boxes.map((_, j) => '<i class="bx off" data-b="' + j + '"></i>').join("") + "</div>", "img");
     const img = d.querySelector("img"), place = () => {
@@ -173,7 +198,7 @@ function renderSlide(spec, id) {
   }
   if (spec.type === "terminal") {
     const out = Array.isArray(spec.out) ? spec.out : String(spec.out).split("\n");
-    d.innerHTML = '<pre class="term"><div class="cmd">$ ' + esc(spec.cmd) + "</div>" + out.map((l, j) => '<div class="ol" data-l="' + j + '">' + esc(l) + "</div>").join("") + "</pre>";
+    d.innerHTML = '<div class="term"><div class="cmd">$ ' + esc(spec.cmd) + "</div>" + out.map((l, j) => '<div class="ol" data-l="' + j + '">' + esc(l) + "</div>").join("") + "</div>";
   }
   if (spec.type === "score") {
     const sc = scoreOf(answers, TL), known = sc.answered === sc.total && sc.total > 0;
@@ -227,8 +252,7 @@ function goto(s, q, keep) {
   audio.pause(); clearTimeout(timer); waiting = null;
   si = s; qi = q;
   const first = slideStart(si, qi), spec = cuesOf(si)[first].slide, id = si + ":" + first;
-  /* a question that has not been asked yet at this point starts fresh, so it can be answered again */
-  if (spec.type === "q" && !cuesOf(si).slice(first, qi).some(c => (c.do || []).some(a => a[0] === "ask"))) answers.delete(id);
+  reach(si, qi);
   renderSlide(spec, id);
   for (let x = first; x < qi; x++) (cuesOf(si)[x].do || []).forEach(a => act(a, false));
   if (!(keep && playing)) (cuesOf(si)[qi].do || []).forEach(a => act(a, false));
@@ -236,8 +260,15 @@ function goto(s, q, keep) {
   render();
   if (keep && playing) playCue();
 }
+function reach(s, q) { const next = answersAfterReaching(answers, TL, s, q); answers.clear(); next.forEach((v, key) => answers.set(key, v)); }
 function playCue() {
   const cue = cuesOf(si)[qi];
+  reach(si, qi);
+  if ((cue.do || []).some(a => a[0] === "ask") && slide && slide.querySelector(".opts.answered")) {
+    const first = slideStart(si, qi);
+    renderSlide(cuesOf(si)[first].slide, si + ":" + first);
+    for (let x = first; x < qi; x++) (cuesOf(si)[x].do || []).forEach(a => act(a, false));
+  }
   if (cue.slide && slideId !== si + ":" + qi) renderSlide(cue.slide, si + ":" + qi);
   (cue.do || []).forEach(a => act(a, true));
   $("#cc").textContent = cue.say;
@@ -293,7 +324,7 @@ $("#nextstep").onclick = () => stepBy(1);
 $("#backline").onclick = () => cueBy(-1);
 $("#fwdline").onclick = () => cueBy(1);
 $("#speed").onclick = () => { rate = rate < 1 ? 1.25 : rate >= 1.5 ? BASE : rate + 0.25; audio.playbackRate = rate; $("#speed").textContent = (rate < 1 ? 1 : rate / BASE).toFixed(2).replace(/\.?0+$/, "") + "x"; };
-$("#ccbtn").onclick = () => { $("#ccbtn").classList.toggle("on"); $("#cc").classList.toggle("off"); };
+$("#ccbtn").onclick = () => { const on = $("#ccbtn").classList.toggle("on"); $("#cc").classList.toggle("off", !on); $("#ccbtn").setAttribute("aria-pressed", on); };
 $("#seek").onclick = e => {
   const r = e.currentTarget.getBoundingClientRect(), p = cueAt(TL, (e.clientX - r.left) / r.width * moduleTotal);
   go(p.step, p.cue);

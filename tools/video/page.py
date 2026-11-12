@@ -67,7 +67,7 @@ def render_module(timeline: dict, course: dict, index: int, total: int,
         <span class="time" id="time">0:00 / 0:00</span>
         <span class="grow"></span>
         <button id="speed" aria-label="Speed">1x</button>
-        <button id="ccbtn" aria-label="Captions">CC</button>
+        <button id="ccbtn" aria-label="Captions" aria-pressed="false">CC</button>
       </div>
     </div>
   </div>
