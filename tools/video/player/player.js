@@ -93,27 +93,46 @@ function fitSize(img, frame) {
   return { w: Math.round(img.w * s), h: Math.round(img.h * s) };
 }
 
+/* Where the Start button goes: the first module not yet done, or the first module once all are done. */
+function resumeAt(done, total) {
+  for (let n = 1; n <= total; n++) if (!done.includes(n)) return { module: n, started: done.length > 0 };
+  return { module: 1, started: true, all: true };
+}
+
 function browserStorage() {
   try { return window.localStorage; } catch (e) { return { getItem() { throw e; }, setItem() { throw e; } }; }
 }
 
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { cueAt, cueLen, scoreOf, esc, summaryHtml, answersAfterReaching, labelSize, boxLayout, boxPercent, fitSize, progressKey, markDone, doneModules };
+  module.exports = { cueAt, cueLen, scoreOf, esc, summaryHtml, answersAfterReaching, labelSize, boxLayout, boxPercent, fitSize, progressKey, markDone, doneModules, resumeAt };
 }
 
-/* ---- the contents page: show which modules are done ---- */
+/* Tick the modules a learner has finished, in the course page and in the player's Course tab. */
+function tickModules(root, done) {
+  root.querySelectorAll("[data-module]").forEach(a => {
+    const d = done.includes(+a.dataset.module);
+    a.classList.toggle("done", d);
+    const n = a.querySelector(".n, .ic");
+    if (n) n.textContent = d ? "\u2713" : a.dataset.module;
+  });
+}
+
+/* ---- the course page: ticks, progress and where the Start button goes ---- */
 function markContents() {
   const root = document.querySelector("[data-contents]");
   if (!root) return;
   const done = doneModules(browserStorage(), root.dataset.course);
-  root.querySelectorAll("[data-module]").forEach(a => {
-    const d = done.includes(+a.dataset.module);
-    a.classList.toggle("done", d);
-    const mark = a.querySelector(".tick");
-    if (mark) mark.textContent = d ? "Done" : "";
-  });
-  const n = root.querySelector("[data-count]");
-  if (n) n.textContent = done.length + " of " + root.querySelectorAll("[data-module]").length + " modules done";
+  tickModules(root, done);
+  const links = root.querySelectorAll("[data-module]"), total = links.length;
+  const n = document.querySelector("[data-count]");
+  if (n) n.textContent = done.length + " of " + total + " modules done";
+  const fill = document.querySelector("[data-fill]");
+  if (fill) fill.style.width = (total ? done.length / total * 100 : 0) + "%";
+  const start = document.querySelector("[data-start]"), r = resumeAt(done, total);
+  if (start && total) {
+    start.href = links[r.module - 1].getAttribute("href");
+    start.textContent = r.all ? "Watch again" : r.started ? "Resume course" : "Start course";
+  }
 }
 
 function startPlayer() {
@@ -353,7 +372,7 @@ document.addEventListener("keydown", e => {
 });
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
-  $("#toc").hidden = b.dataset.tab !== "toc"; $("#tr").hidden = b.dataset.tab !== "tr";
+  ["toc", "tr", "course"].forEach(t => { const p = $("#" + t); if (p) p.hidden = b.dataset.tab !== t; });
 });
 
 /* ---- side panel ---- */
@@ -371,6 +390,7 @@ function render() {
   $("#cfill").style.width = pct + "%"; $("#cpct").textContent = pct + "%";
   $("#modsdone").textContent = earlier.length + " of " + TL.moduleTotal + " modules done";
   $("#donebadge").hidden = !earlier.includes(TL.moduleIndex);
+  if ($("#course")) tickModules($("#course"), earlier);
 }
 setInterval(() => {
   const t = Math.min(elapsed(), moduleTotal), f = t / moduleTotal * 100;

@@ -145,22 +145,48 @@ svg.sk text.hw{font-family:var(--hand)}
   .ctrls button{width:44px;height:44px}
 }
 
-/* ---- the contents page ---- */
-body.contents{overflow:auto;background:#fff;color:var(--ink)}
-.contents main{max-width:760px;margin:0 auto;padding:48px 20px 80px}
-.contents h1{font-family:var(--disp);font-size:44px;margin:0 0 6px}
-.contents .count{color:var(--muted);margin:0 0 32px}
-.contents h2{font-family:var(--disp);font-size:24px;margin:36px 0 8px;border-bottom:2px solid var(--ink);padding-bottom:6px}
-.contents ul{list-style:none;margin:0;padding:0}
-.contents li a{display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;min-height:52px;padding:10px 4px;border-bottom:1px solid #e4e4e4;color:var(--ink);text-decoration:none;font-size:18px}
-.contents li a:hover{background:var(--marksoft)}
-.contents .min{color:var(--muted);font-size:15px}
-.contents .tick{min-width:3em;color:#1a7f4b;font-weight:700;font-size:15px;text-align:right}
-.contents a.done .t{color:var(--muted)}
+/* ---- the Course tab in the player ---- */
+#course h4{margin:16px 22px 4px;font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:#a7a8b5}
+.mod{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:10px 22px;border-left:3px solid transparent;text-decoration:none}
+.mod:hover{background:#23242d}
+.mod.cur{background:#262734;border-left-color:#8FB4FF}
+.mod .ic{width:24px;height:24px;border-radius:50%;border:1.6px solid #a7a8b5;display:grid;place-items:center;font-size:11px;color:#a7a8b5}
+.mod.done .ic{border-color:#59d38c;background:#59d38c;color:#111}
+.mod b{display:block;font-weight:600;color:#f1f1f5}
+.mod small{color:#a7a8b5}
+
+/* ---- the course page, in the player's colours ---- */
+body.contents{overflow:auto;background:#111216;color:#e9e9ef;height:auto;min-height:100%}
+.contents .wrap,.contents main{max-width:880px;margin:0 auto;padding-inline:20px}
+.contents .hero{background:linear-gradient(#1b1c23,#15161c);border-bottom:1px solid #2a2b35;padding-block:36px 40px}
+.contents .kind{margin:0;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#a7a8b5}
+.contents h1{font-family:var(--disp);font-size:clamp(32px,5vw,48px);line-height:1.1;margin:8px 0 10px;color:#fff}
+.contents .facts{margin:0;color:#c9cad4;font-size:16px}
+.contents .comp{max-width:420px;margin:22px 0 26px}
+.contents .comp span{grid-column:1/-1}
+.contents .start{display:inline-block;padding:12px 26px;border-radius:6px;background:#1F4FA8;color:#fff;font-weight:700;font-size:17px;text-decoration:none}
+.contents .start:hover{background:#2a5fc4}
+.contents main{padding-block:28px 80px}
+.contents .toc{margin:0 0 10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#a7a8b5}
+.contents details{background:#1b1c23;border:1px solid #2a2b35;border-radius:8px;margin:0 0 14px;overflow:hidden}
+.contents summary{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 20px;cursor:pointer;list-style:none}
+.contents summary::-webkit-details-marker{display:none}
+.contents summary h2{font-family:var(--disp);font-size:20px;margin:0;color:#fff}
+.contents summary h2::before{content:"\25B8";display:inline-block;margin-right:10px;color:#8FB4FF;transition:transform .2s}
+.contents details[open] summary h2::before{transform:rotate(90deg)}
+.contents .meta{color:#a7a8b5;font-size:14px;white-space:nowrap}
+.contents ul{list-style:none;margin:0;padding:0;border-top:1px solid #2a2b35}
+.contents li a{display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:center;min-height:52px;padding:10px 20px;color:#f1f1f5;text-decoration:none;font-size:17px}
+.contents li + li a{border-top:1px solid #23242d}
+.contents li a:hover{background:#262734}
+.contents .n{width:24px;height:24px;border-radius:50%;border:1.6px solid #a7a8b5;display:grid;place-items:center;font-size:11px;color:#a7a8b5}
+.contents a.done .n{border-color:#59d38c;background:#59d38c;color:#111}
+.contents .min{color:#a7a8b5;font-size:14px}
 
 /* ---- links back to the course ---- */
 .backlink{margin:0;font-size:15px}
 .backlink a{color:var(--mark);text-decoration:underline;text-underline-offset:3px}
 .contents .backlink{margin:0 0 18px}
+.contents .backlink a{color:#8FB4FF}
 .side .backlink{padding:10px 22px 14px;border-top:1px solid #2f303b;font-size:14px}
 .side .backlink a{color:#8FB4FF}

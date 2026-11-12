@@ -237,3 +237,9 @@ def test_home_links_interactive_course_while_not_live():
     assert build.home_html(html, {"rovs": {"live": False}}) == html
     live = build.home_html(html, {"rovs": {"live": True}})
     assert 'href="rovs/video/"' in live and 'href="rovs/course/"' not in live
+
+
+def test_module_pages_list_the_whole_course(tmp_path):
+    video = make_source(tmp_path, {"a": dict(GOOD, unit="a.html"), "b": second()})
+    html = (run(tmp_path, video) / "demo" / "video" / "a.html").read_text()
+    assert 'data-tab="course"' in html and 'href="b.html"' in html.split('id="course"')[1]

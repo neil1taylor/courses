@@ -156,3 +156,13 @@ test("fitSize gives a zero size for an image that has no size yet", () => {
 test("fitSize enlarges a small image at most twice", () => {
   assert.deepEqual(P.fitSize({ w: 400, h: 300 }, { w: 1600, h: 800 }), { w: 800, h: 600 });
 });
+
+test("resumeAt points at the first module not yet done", () => {
+  assert.deepEqual(P.resumeAt([], 5), { module: 1, started: false });
+  assert.deepEqual(P.resumeAt([1, 2], 5), { module: 3, started: true });
+  assert.deepEqual(P.resumeAt([1, 3], 5), { module: 2, started: true });
+});
+
+test("resumeAt goes back to the first module when every module is done", () => {
+  assert.deepEqual(P.resumeAt([1, 2, 3], 3), { module: 1, started: true, all: true });
+});
