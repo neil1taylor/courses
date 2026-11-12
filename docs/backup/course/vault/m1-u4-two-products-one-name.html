@@ -82,49 +82,52 @@
 
 <section class="screen">
   <span class="kicker">Step 2 · Predict</span>
-  <h2>Match the facts to the product</h2>
-  <p class="lead">Each fact below comes from IBM&apos;s own docs or catalog code. Which product does each one describe?</p>
-  <pre class="def" aria-label="Facts to match">Fact                                         Which product?
-Built by Terraform in your account          ?
-Lock default of 1 to 1000 years              ?
-Lock default of 0 to 3,650 days              ?</pre>
+  <h2>Whose account it&apos;s in</h2>
+  <p class="lead">The biggest difference is where each product lives. Each fact below comes from IBM&apos;s own docs or catalog code. Which product does each one describe?</p>
+  <pre class="def" aria-label="Facts to match">Fact                                                   Which product?
+Sits in an account IBM manages                         ?
+Builds a bucket and its services in your account       ?
+Made by one create request                             ?
+Made by a Terraform deployment                         ?</pre>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>Which product has a lock of 0 to 3,650 days, where 0 means &quot;the backup software locks each object&quot;?</p>
+      <p>Which product sits in an account that IBM manages, and can&apos;t be changed after it&apos;s created?</p>
       <div class="opts">
         <button class="opt" data-ok>IBM Cloud Cyber Vault</button>
         <button class="opt">The Deployable Architecture</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">IBM Cloud Cyber Vault. Its lock is set in days, and the architecture&apos;s in years.</span><pre class="def" aria-label="Facts matched">Fact                                         Which product?
-Built by Terraform in your account          Deployable Architecture
-Lock default of 1 to 1000 years              Deployable Architecture (when lock is on)
-Lock default of 0 to 3,650 days              Cyber Vault</pre></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">IBM Cloud Cyber Vault. The architecture builds everything in your own account.</span><pre class="def" aria-label="Facts matched">Fact                                                   Which product?
+Sits in an account IBM manages                         Cyber Vault
+Builds a bucket and its services in your account       Deployable Architecture
+Made by one create request                             Cyber Vault
+Made by a Terraform deployment                         Deployable Architecture</pre></details>
     </div>
     <div class="q">
-      <p>Which product builds its resources in the customer&apos;s own account, from a Terraform architecture in the IBM Cloud catalog?</p>
+      <p>Which product builds a bucket, network rules, a key service, Secrets Manager and logging in the customer&apos;s own account?</p>
       <div class="opts">
         <button class="opt">IBM Cloud Cyber Vault</button>
         <button class="opt" data-ok>The Deployable Architecture</button>
         <button class="opt">Both</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The Deployable Architecture. IBM describes it as a Terraform architecture that builds ordinary resources in the customer&apos;s account. IBM Cloud Cyber Vault is made by one call to COS, and its vault sits in an account that IBM manages. We read the architecture&apos;s code and didn&apos;t run it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The Deployable Architecture. It&apos;s a Terraform architecture from the IBM Cloud catalog, and the customer&apos;s team looks after everything it builds. IBM Cloud Cyber Vault comes from one create request, and its bucket sits in an account that IBM manages. We read the architecture&apos;s code and didn&apos;t run it.</p></details>
     </div>
   </div>
+  <p class="small">They also fit Data Protect differently. Data Protect locks each backup object itself. The vault can leave that to Data Protect. With its lock on, the architecture also sets a lock on the whole bucket, and Data Protect&apos;s archives don&apos;t allow that.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 3 · Spot the fault</span>
-  <h2>A result that belongs to the other product</h2>
-  <p class="lead">A colleague at Northgate writes in a summary: &quot;We tested the cyber vault, so we know the lock default is at least one year.&quot; What&apos;s wrong with that?</p>
+  <h2>A plan that belongs to the other product</h2>
+  <p class="lead">A colleague at Northgate writes in a plan: &quot;Once the cyber vault is set up, our admins can tighten its network rules whenever we need to.&quot; What&apos;s wrong with that?</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>What&apos;s wrong with the sentence?</p>
       <div class="opts">
-        <button class="opt">Nothing: it is the same product</button>
-        <button class="opt" data-ok>The one-year minimum belongs to the Deployable Architecture, which we did not test; Cyber Vault was tested</button>
-        <button class="opt">Cyber Vault also has a one-year minimum</button>
+        <button class="opt">Nothing: both products work that way</button>
+        <button class="opt" data-ok>That fits the Deployable Architecture, which is in your account; IBM Cloud Cyber Vault can&apos;t be changed after it&apos;s created</button>
+        <button class="opt">Only IBM support can change the rules</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It mixes the two products. In the code we read, the architecture&apos;s lock is at least 1 year when the lock is on. Cyber Vault takes 0 to 3,650 days, and our tests used a 3-day maximum.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It mixes the two products. The architecture builds its network rules in your account, so your admins can change them. IBM&apos;s overview says nothing about IBM Cloud Cyber Vault can be changed after it&apos;s created, so its allow-list has to be right on the day you create it.</p></details>
     </div>
     <div class="q">
       <p>When Northgate writes about these results, which name should it use?</p>
@@ -162,13 +165,13 @@ Lock default of 0 to 3,650 days              Cyber Vault</pre></details>
       <details class="reveal"><summary>Show the answer</summary><p>The Deployable Architecture. IBM Cloud Cyber Vault is a managed COS feature made by one API call, not a Terraform architecture.</p></details>
     </div>
     <div class="q" data-check>
-      <p>How does the Deployable Architecture get made?</p>
+      <p>Where does the Deployable Architecture build its bucket?</p>
       <div class="opts">
-        <button class="opt">By one API call to a managed COS feature</button>
-        <button class="opt" data-ok>By Terraform from the IBM Cloud catalog, building ordinary resources in your account</button>
-        <button class="opt">By a support case</button>
+        <button class="opt">In an account IBM manages</button>
+        <button class="opt" data-ok>In your own account, along with the services it needs</button>
+        <button class="opt">Inside Data Protect</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>By Terraform. That&apos;s how IBM describes it. We read the code, but we didn&apos;t run it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>In your own account. That&apos;s how IBM describes it. The vault is the one that sits in an account IBM manages. We read the architecture&apos;s code, but we didn&apos;t run it.</p></details>
     </div>
   </div>
 </section>
