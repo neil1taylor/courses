@@ -34,6 +34,7 @@ REQUIRED = {
     "summary": {"text": str, "next": str},
     "screen": {"head": str, "img": str, "boxes": list},
     "terminal": {"cmd": str, "out": (list, str)},
+    "table": {"head": str, "cols": list, "rows": list},
     "score": {},
 }
 # The keys a `show` action can reveal, by slide type: the data-k values the player renders.
@@ -47,14 +48,18 @@ SHOW_KEYS = {
     "summary": {"head", "next"},
     "screen": {"head", "img"},
     "terminal": set(),
+    "table": {"head", "table"},
     "score": {"head"},
 }
 # Keys that must be shown by the end of the slide (a question is shown by `ask`).
 MUST_SHOW = {
     "title": {"head", "sub"}, "diagram": {"head"}, "statement": {"head"}, "tip": {"head", "tip"},
     "words": {"head"}, "summary": {"head", "next"}, "screen": {"head"},
+    "table": {"head", "table"},
 }
-ACTIONS = {"show", "build", "items", "ask", "why", "box", "line"}
+ACTIONS = {"show", "build", "items", "ask", "why", "box", "line", "row"}
+MIN_TABLE_COLS, MAX_TABLE_COLS = 2, 4
+MIN_TABLE_ROWS, MAX_TABLE_ROWS = 2, 6
 
 MONTHS = ("January|February|March|April|May|June|July|August|September|October|November|December|"
           "Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept|Sep|Oct|Nov|Dec")
@@ -147,6 +152,15 @@ def fields_ok(slide, at) -> list:
         problems.append("%s: opts must be strings" % at)
     if kind == "terminal" and not all(isinstance(o, str) for o in lines_of(slide["out"])):
         problems.append("%s: out must be strings" % at)
+    if kind == "table":
+        cols, rows = slide["cols"], slide["rows"]
+        if not all(isinstance(c, str) for c in cols):
+            problems.append("%s: cols must be strings" % at)
+        for i, row in enumerate(rows):
+            if not isinstance(row, list) or not all(isinstance(c, str) for c in row):
+                problems.append("%s: row %d must be a list of strings" % (at, i))
+            elif len(row) != len(cols):
+                problems.append("%s: row %d has %d cells, the table has %d columns" % (at, i, len(row), len(cols)))
     if slide.get("sketch") is not None and not isinstance(slide["sketch"], str):
         problems.append("%s: sketch must be a name" % at)
     return problems
@@ -210,6 +224,14 @@ def check_slide(slide, sketches, unit_html, at) -> list:
         n = len(lines_of(slide["out"]))
         if n > MAX_TERMINAL_LINES:
             problems.append("%s: terminal slide has %d lines, at most %d" % (at, n, MAX_TERMINAL_LINES))
+    if kind == "table":
+        nc, nr = len(slide["cols"]), len(slide["rows"])
+        if not MIN_TABLE_COLS <= nc <= MAX_TABLE_COLS:
+            problems.append("%s: table has %d column%s, needs %d to %d"
+                            % (at, nc, "" if nc == 1 else "s", MIN_TABLE_COLS, MAX_TABLE_COLS))
+        if not MIN_TABLE_ROWS <= nr <= MAX_TABLE_ROWS:
+            problems.append("%s: table has %d row%s, needs %d to %d"
+                            % (at, nr, "" if nr == 1 else "s", MIN_TABLE_ROWS, MAX_TABLE_ROWS))
     return problems
 
 
@@ -266,9 +288,11 @@ def check_action(action, st, sketches, at) -> list:
             return ["%s: why on a slide that is not a question" % at]
         if st.asked:
             st.answered = True
-    elif name in ("box", "line"):
+    elif name in ("box", "line", "row"):
         if name == "box":
             n, ok_kind = (len(slide["boxes"]) if kind == "screen" else 0), "screen"
+        elif name == "row":
+            n, ok_kind = (len(slide["rows"]) if kind == "table" else 0), "table"
         else:
             n, ok_kind = (len(lines_of(slide["out"])) if kind == "terminal" else 0), "terminal"
         if kind != ok_kind:

@@ -264,6 +264,72 @@ def test_unknown_action():
     has(run(lambda s: cue(s, 2, 2).update({"do": [["wobble", 1]]})), "step 2 cue 2", "action", "wobble")
 
 
+# ---- table slide ----
+def as_table(s, rows=None, cols=None, do=None):
+    slide(s, 4, 2).clear()
+    slide(s, 4, 2).update(type="table", head="What each key got",
+                          cols=cols or ["request", "outside", "inside"],
+                          rows=rows or [["list, write key", "403", "200"], ["list, read key", "403", "200"]])
+    cue(s, 4, 2)["do"] = do if do is not None else [["show", "head"], ["show", "table"], ["row", 1]]
+
+
+def test_good_table_is_clean():
+    assert run(as_table) == []
+
+
+def test_table_needs_cols_and_rows():
+    for key in ("cols", "rows", "head"):
+        def f(s, k=key):
+            as_table(s)
+            slide(s, 4, 2).pop(k)
+        has(run(f), "step 4 cue 2", key)
+
+
+def test_table_row_of_wrong_length():
+    has(run(lambda s: as_table(s, rows=[["a", "b", "c"], ["a", "b"]])), "step 4 cue 2", "row 1", "3 columns")
+
+
+def test_table_with_5_columns():
+    has(run(lambda s: as_table(s, cols=list("abcde"), rows=[list("abcde"), list("abcde")])), "step 4 cue 2", "5 columns")
+
+
+def test_table_with_1_column():
+    has(run(lambda s: as_table(s, cols=["a"], rows=[["x"], ["y"]])), "step 4 cue 2", "1 column")
+
+
+def test_table_with_7_rows():
+    has(run(lambda s: as_table(s, rows=[["a", "b", "c"]] * 7)), "step 4 cue 2", "7 rows")
+
+
+def test_table_with_1_row():
+    has(run(lambda s: as_table(s, rows=[["a", "b", "c"]])), "step 4 cue 2", "1 row")
+
+
+def test_table_cells_must_be_strings():
+    has(run(lambda s: as_table(s, rows=[["a", "b", 3], ["a", "b", "c"]])), "step 4 cue 2", "strings")
+
+
+def test_table_row_out_of_range():
+    has(run(lambda s: as_table(s, do=[["show", "head"], ["show", "table"], ["row", 2]])), "step 4 cue 2", "row 2")
+
+
+def test_row_on_a_slide_that_is_not_a_table():
+    has(run(lambda s: cue(s, 4, 2).update(do=[["row", 0]])), "step 4 cue 2", "not a table")
+
+
+def test_table_never_shown():
+    has(run(lambda s: as_table(s, do=[["show", "head"]])), "step 4 cue 2", "table", "never shown")
+
+
+def test_table_head_never_shown():
+    has(run(lambda s: as_table(s, do=[["show", "table"]])), "step 4 cue 2", "head", "never shown")
+
+
+def test_table_head_counts_toward_20_words_cells_do_not():
+    has(run(lambda s: (as_table(s), slide(s, 4, 2).update(head=" ".join(["w"] * 21)))), "step 4 cue 2", "21 words")
+    assert run(lambda s: as_table(s, rows=[["word " * 15, "b", "c"], ["a", "b", "c"]])) == []
+
+
 # ---- content never shown ----
 def test_head_never_shown():
     only(run(lambda s: cue(s, 2, 1).update({"do": []})), "step 2 cue 1", "head", "never shown")

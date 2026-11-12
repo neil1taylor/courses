@@ -123,6 +123,14 @@ svg.sk text.hw{font-family:var(--hand)}
 .term .ol.cur{color:#8FB4FF;font-weight:700}
 .term .ol.past{color:#8a8a96}
 
+/* ---- table slide: 6 rows of 3 columns with 2-line cells fit in the 884px under the head ---- */
+.t-table .k[data-k="table"]{margin-top:32px}
+.tbl{width:100%;table-layout:fixed;border-collapse:collapse;font-size:44px;line-height:1.15;text-align:left}
+.tbl th{font-family:var(--disp);font-weight:800;font-size:36px;color:var(--muted);padding:6px 24px 10px 0;border-bottom:3px solid var(--ink);overflow-wrap:anywhere}
+.tbl td{padding:6px 24px 6px 0;border-bottom:2px solid #ddd;overflow-wrap:anywhere}
+.tbl tr.cur td{color:var(--mark);font-weight:700;background:var(--marksoft)}
+.tbl tr.past td{color:var(--grey)}
+
 /* ---- side panel extras ---- */
 .donebadge{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:10px;background:#59d38c;color:#111;font-size:12px;font-weight:700}
 .modsdone{margin-top:6px;color:#a7a8b5;font-size:13px}
