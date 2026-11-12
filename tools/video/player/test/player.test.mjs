@@ -178,3 +178,16 @@ test("verdict says wrong and names the right letter", () => {
 test("verdict is empty when the learner didn't answer", () => {
   assert.deepEqual(P.verdict(-1, 0), { kind: null, text: "" });
 });
+
+test("stillAt reads ?still=step.cue as zero-based numbers", () => {
+  assert.deepEqual(P.stillAt("?still=3.2"), [2, 1]);
+  assert.deepEqual(P.stillAt("?x=1&still=1.1"), [0, 0]);
+});
+
+test("stillAt gives null when the value is absent or malformed", () => {
+  assert.equal(P.stillAt(""), null);
+  assert.equal(P.stillAt("?still=x"), null);
+  assert.equal(P.stillAt("?still=0.1"), null);
+  assert.equal(P.stillAt("?still=2.0"), null);
+  assert.equal(P.stillAt("?still=2"), null);
+});

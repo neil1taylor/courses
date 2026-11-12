@@ -105,12 +105,19 @@ function resumeAt(done, total) {
   return { module: 1, started: true, all: true };
 }
 
+/* The cue named by ?still=<step>.<cue> (both counted from 1) as zero-based [step, cue], or null when absent or malformed. */
+function stillAt(search) {
+  const m = /[?&]still=(\d+)\.(\d+)(?:&|$)/.exec(search || "");
+  if (!m || +m[1] < 1 || +m[2] < 1) return null;
+  return [+m[1] - 1, +m[2] - 1];
+}
+
 function browserStorage() {
   try { return window.localStorage; } catch (e) { return { getItem() { throw e; }, setItem() { throw e; } }; }
 }
 
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { cueAt, cueLen, scoreOf, esc, summaryHtml, answersAfterReaching, labelSize, boxLayout, boxPercent, fitSize, progressKey, markDone, doneModules, resumeAt, verdict };
+  module.exports = { cueAt, cueLen, scoreOf, esc, summaryHtml, answersAfterReaching, labelSize, boxLayout, boxPercent, fitSize, progressKey, markDone, doneModules, resumeAt, verdict, stillAt };
 }
 
 /* Tick the modules a learner has finished, in the course page and in the player's Course tab. */
@@ -414,7 +421,24 @@ setInterval(() => {
 
 /* poster: the title slide, complete */
 fit();
+const stillCue = () => {
+  const at = stillAt(location.search);
+  return at && steps[at[0]] && steps[at[0]].cues[at[1]] ? at : null;
+};
+/* ?still=: the finished state of one cue, silent, with only the canvas on the page. */
+const bootStill = ([s, q]) => {
+  document.body.classList.add("still");
+  fit();
+  goto(s, q, false);
+  if (slide.spec.type === "q") {
+    ["head", "opts", "why"].forEach(key => act(["show", key], false));
+    answer(slide, -1, false);
+  }
+  $("#cc").textContent = "";
+};
 const boot = () => {
+  const still = stillCue();
+  if (still) return bootStill(still);
   goto(0, 0, false); cuesOf(0).forEach(c => (c.do || []).forEach(a => act(a, false))); qi = 0;
   if (slide.svg) { slide.svg.state = slide.svg.state.map(() => "on"); slide.svg.spec.shapes.forEach((_, i) => paintShape(slide.svg, i, false)); }
   $("#cc").textContent = "";
