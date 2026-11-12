@@ -149,7 +149,7 @@
         <button class="opt" data-ok>A new latest version, and the old version still readable</button>
         <button class="opt">The write is refused</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A new version, with the old one still readable. On a test object in our lab, the write returned 200 and made a new version. The first version could still be read, with its original content. The latest version was now the new content, so someone with the write key can hide the latest data. That&apos;s one reason the plan picks a run by its time and checks the result.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>A new version, with the old one still readable. On a test object in our lab, the write returned 200 and made a new version. The first version could still be read, with its original content. The latest version was now the new content. Each write, including each backup, adds a version, and the lock keeps every earlier one.</p></details>
     </div>
   </div>
 </section>
