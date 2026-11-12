@@ -81,12 +81,24 @@ function markDone(storage, slug, module) {
   try { storage.setItem(progressKey(slug), JSON.stringify(list)); } catch (e) { /* storage blocked: progress is not kept */ }
 }
 
+/* A box in image pixels, as percentages of the image. The player puts the boxes inside a wrapper the exact size of the image. */
+function boxPercent([x, y, w, h], img) {
+  return { left: x / img.w * 100, top: y / img.h * 100, width: w / img.w * 100, height: h / img.h * 100 };
+}
+
+/* The largest size that fits the frame with the image's shape kept. */
+function fitSize(img, frame) {
+  if (!img.w || !img.h) return { w: 0, h: 0 };
+  const s = Math.min(frame.w / img.w, frame.h / img.h);
+  return { w: Math.round(img.w * s), h: Math.round(img.h * s) };
+}
+
 function browserStorage() {
   try { return window.localStorage; } catch (e) { return { getItem() { throw e; }, setItem() { throw e; } }; }
 }
 
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { cueAt, cueLen, scoreOf, esc, summaryHtml, answersAfterReaching, labelSize, boxLayout, progressKey, markDone, doneModules };
+  module.exports = { cueAt, cueLen, scoreOf, esc, summaryHtml, answersAfterReaching, labelSize, boxLayout, boxPercent, fitSize, progressKey, markDone, doneModules };
 }
 
 /* ---- the contents page: show which modules are done ---- */
@@ -188,12 +200,15 @@ function renderSlide(spec, id) {
   if (spec.type === "words") d.innerHTML = k(head, "head") + '<div class="grid">' + spec.items.map((it, j) => '<div class="cell k off" data-k="i' + j + '"><b>' + esc(it[0]) + "</b><span>" + esc(it[1]) + "</span></div>").join("") + "</div>";
   if (spec.type === "summary") d.innerHTML = '<div class="left">' + k('<p class="big">' + summaryHtml(spec.text) + "</p>", "head") + k('<p class="next">' + esc(spec.next) + "</p>", "next") + "</div>";
   if (spec.type === "screen") {
-    d.innerHTML = k(head, "head") + k('<div class="shot"><img alt="" src="' + esc(spec.img) + '">' + spec.boxes.map((_, j) => '<i class="bx off" data-b="' + j + '"></i>').join("") + "</div>", "img");
-    const img = d.querySelector("img"), place = () => {
-      d.querySelectorAll(".bx").forEach((b, j) => { const [x, y, w, h] = spec.boxes[j];
-        b.style.left = x / img.naturalWidth * 100 + "%"; b.style.top = y / img.naturalHeight * 100 + "%";
-        b.style.width = w / img.naturalWidth * 100 + "%"; b.style.height = h / img.naturalHeight * 100 + "%"; });
+    d.innerHTML = k(head, "head") + k('<div class="shot"><div class="pic"><img alt="" src="' + esc(spec.img) + '">' + spec.boxes.map((_, j) => '<i class="bx off" data-b="' + j + '"></i>').join("") + "</div></div>", "img");
+    const img = d.querySelector("img"), shot = d.querySelector(".shot"), pic = d.querySelector(".pic");
+    const place = () => {
+      const size = { w: img.naturalWidth, h: img.naturalHeight }, fit = fitSize(size, { w: shot.clientWidth, h: shot.clientHeight });
+      pic.style.width = fit.w + "px"; pic.style.height = fit.h + "px";
+      d.querySelectorAll(".bx").forEach((b, j) => { const r = boxPercent(spec.boxes[j], size);
+        b.style.left = r.left + "%"; b.style.top = r.top + "%"; b.style.width = r.width + "%"; b.style.height = r.height + "%"; });
     };
+    d.place = place;
     if (img.complete && img.naturalWidth) place(); else img.addEventListener("load", place);
   }
   if (spec.type === "terminal") {
@@ -207,6 +222,7 @@ function renderSlide(spec, id) {
   }
   if (spec.sketch) { const svg = makeSketch(spec.sketch); d.svg = svg; d.appendChild(svg); }
   canvas.appendChild(d);
+  if (d.place) d.place();
   const prev = answers.get(id);
   if (prev && spec.type === "q") answer(d, prev.pick, false);
 }

@@ -407,3 +407,12 @@ def test_malformed_input_gives_problems_not_exceptions():
     ]
     for fn in cases:
         assert run(fn), fn
+
+
+def test_terminal_with_8_lines_and_last_box_are_allowed():
+    def f(s):
+        slide(s, 4, 2)["out"] = ["l%d" % i for i in range(8)]
+        cue(s, 4, 2)["do"] = [["line", 7]]
+        n = len(slide(s, 4, 1)["boxes"])
+        cue(s, 4, 1)["do"] = [["show", "head"], ["box", n - 1]]
+    assert run(f) == []
