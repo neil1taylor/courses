@@ -1,0 +1,30 @@
+{
+  "course": "Cyber Vault",
+  "modules": [
+    {
+      "unit": "m1-u1-first",
+      "title": "The first module",
+      "outcomes": ["Name the two products", "Say which one the course teaches"],
+      "facts": [
+        {"text": "The vault sits in an account IBM manages.", "source": "m1-u1-first.html"},
+        {"text": "The read key cannot read outside the write window.", "source": "cyber-vault/test-record.md"}
+      ],
+      "checks": [
+        {"head": "Which product does this course teach?", "opts": ["The vault", "The architecture"], "ok": 0, "why": "The architecture is a different product."},
+        {"head": "Where does the vault sit?", "opts": ["In your account", "In IBM's account"], "ok": 1, "why": "IBM manages that account."},
+        {"head": "How many create calls does it take?", "opts": ["One", "Two", "Three"], "ok": 0, "why": "One call creates the vault."}
+      ]
+    },
+    {
+      "unit": "m1-u2-second",
+      "title": "The second module",
+      "outcomes": ["Name the four parts", "Find each setting on the form"],
+      "facts": [{"text": "The form has a write window.", "source": "m1-u2-second.html"}],
+      "checks": [
+        {"head": "Which part is optional?", "opts": ["The write window", "The allow-list"], "ok": 0, "why": "The allow-list is mandatory."},
+        {"head": "Can you change a vault later?", "opts": ["Yes", "No"], "ok": 1, "why": "There is no update call."},
+        {"head": "Which key goes to the backup software?", "opts": ["The write key", "The read key"], "ok": 0, "why": "The read key is kept for recovery."}
+      ]
+    }
+  ]
+}

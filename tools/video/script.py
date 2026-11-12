@@ -341,6 +341,105 @@ def check_text(text, at, what) -> list:
     return problems
 
 
+REJECTED_FILE = Path(__file__).with_name("rejected.txt")
+_rejected = None
+
+
+def rejected_patterns() -> list:
+    """The compiled patterns in rejected.txt: one case-insensitive regex per line, # starts a comment."""
+    global _rejected
+    if _rejected is None:
+        lines = [l.strip() for l in REJECTED_FILE.read_text().splitlines()] if REJECTED_FILE.is_file() else []
+        _rejected = [re.compile(l, re.I) for l in lines if l and not l.startswith("#")]
+    return _rejected
+
+
+def sentences(text) -> list:
+    return [x for x in re.split(r"(?<=[.!?])\s+", TAG.sub(" ", str(text)).strip()) if x]
+
+
+def check_rejected(text, at, what) -> list:
+    """A problem for each sentence of the text that starts with wording the owner has rejected."""
+    problems = []
+    for sentence in sentences(text):
+        for pattern in rejected_patterns():
+            m = pattern.search(sentence)
+            if m:
+                problems.append("%s: rejected wording: %r in %s" % (at, sentence, what))
+                break
+    return problems
+
+
+STOP_WORDS = frozenset("this that with from have they their there what which when where your yours will would should "
+                       "could about into than then them also each only just more most such these those been being "
+                       "were does done make made like over some very".split())
+
+
+def _stem(word):
+    for suffix in ("ing", "ed", "es", "s"):
+        if word.endswith(suffix) and len(word) - len(suffix) >= 4:
+            return word[:-len(suffix)]
+    return word
+
+
+def content_words(text) -> set:
+    """Lower-case words of 4 or more letters, minus a small stop list, with a plural or tense ending cut off."""
+    return {_stem(w) for w in re.findall(r"[a-z]{4,}", TAG.sub(" ", str(text)).lower()) if w not in STOP_WORDS}
+
+
+def _cues(script):
+    for si, step in enumerate(script.get("steps") or [], 1):
+        for ci, cue in enumerate((step or {}).get("cues") or [], 1):
+            if isinstance(cue, dict):
+                yield si, ci, cue
+
+
+def teaching_cue(script, step, cue):
+    """The earlier cue (step, cue), counting from 1, whose narration shares the most content words with the
+    question at step, cue: the right option plus the why line. None when no earlier cue shares any.
+    Ties go to the earliest cue. A question after the opening step never points into it. This only finds the likeliest teaching sentence for the reviewer to read;
+    it is not a check, because word overlap alone cannot tell teaching from a related remark."""
+    question = None
+    earlier = []
+    for si, ci, c in _cues(script):
+        if (si, ci) == (step, cue):
+            question = c.get("slide")
+            break
+        earlier.append((si, ci, c))
+    if not isinstance(question, dict) or question.get("type") != "q":
+        return None
+    try:
+        target = content_words(question["opts"][question["ok"]]) | content_words(question.get("why", ""))
+    except (KeyError, IndexError, TypeError):
+        return None
+    best, found = 0, None
+    if step > 1:  # the opening step lists outcomes: it names topics without teaching them
+        earlier = [e for e in earlier if e[0] > 1]
+    for si, ci, c in earlier:
+        n = len(target & content_words(c.get("say", "")))
+        if n > best:
+            best, found = n, (si, ci)
+    return found
+
+
+FIRST_MENTION = re.compile(r"\bthe (\w+) (key|file|setting|list|window|board|bucket|endpoint)\b", re.I)
+
+
+def notes(script) -> list:
+    """Advice for a reader, not failures: "step n cue m: first mention of 'the X'" the first time the module
+    says "the <word> (key|file|setting|list|window|board|bucket|endpoint)" when no earlier sentence names <word>."""
+    seen = set()
+    out = []
+    for si, ci, cue in _cues(script):
+        for sentence in sentences(cue.get("say", "")):
+            for m in FIRST_MENTION.finditer(sentence):
+                if m.group(1).lower() not in seen:
+                    out.append("step %d cue %d: first mention of %r" % (si, ci, m.group(0).lower()))
+                    seen.add(m.group(1).lower())
+            seen |= set(re.findall(r"[a-z]+", sentence.lower()))
+    return out
+
+
 def check_narration(say, at, pronounce_read) -> list:
     problems = check_text(say, at, "narration")
     m = UNIT_NUMBER.search(say)
@@ -421,6 +520,7 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
                     if state.usable:
                         for s in slide_strings(sl) + sketch_text(sketches.get(sl.get("sketch"))):
                             problems += check_text(s, at, "slide text")
+                            problems += check_rejected(s, at, "slide text")
             elif ci == 1:
                 problems += finish_slide(state, sketches)
                 state = None
@@ -429,6 +529,7 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
             if "?" in say and not missing_slide and not (state and state.slide.get("type") == "q"):
                 problems.append("%s: narration asks a question outside a question slide" % at)
             problems += check_narration(say, at, "read" in pronounce)
+            problems += check_rejected(say, at, "narration")
             if TESTED.search(say):
                 tested = True
             if not first_module and TESTED_SENTENCE in norm(say):

@@ -207,3 +207,8 @@ body.contents{overflow:auto;background:#111216;color:#e9e9ef;height:auto;min-hei
 .contents .backlink a{color:#8FB4FF}
 .side .backlink{padding:10px 22px 14px;border-top:1px solid #2f303b;font-size:14px}
 .side .backlink a{color:#8FB4FF}
+
+/* ?still=: only the slide, filling the window, for the review page */
+body.still .side,body.still .bar,body.still .answerbar,body.still .cc,body.still .bigplay{display:none!important}
+body.still .app{display:block;height:100vh}
+body.still .stage-col,body.still .stage{height:100vh}

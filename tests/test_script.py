@@ -502,3 +502,96 @@ def test_question_mark_after_missing_first_slide_adds_no_second_problem():
     problems = run(f)
     assert not any("question" in p for p in problems if "outside a question slide" in p), problems
     has(problems, "first cue of a step needs a slide")
+
+
+# ---- review checks: rejected wording, first mentions, the teaching cue ----
+
+PREFIX = FIX / "prefix"
+VAULT = Path.home() / "Projects" / "cohesity" / "course" / "vault"
+
+
+def prefix_problems(stem):
+    s = json.loads((PREFIX / (stem + ".json")).read_text())
+    return script.check_script(s, (PREFIX / (stem + ".html")).read_text(), False)
+
+
+def test_rejected_wording_is_reported_in_slide_text():
+    found = [p for p in prefix_problems("m4-u4-final-scenario") if "rejected wording" in p]
+    assert found and "Four items stay out of the plan" in found[0]
+
+
+def test_rejected_wording_is_reported_in_narration():
+    def f(s):
+        cue(s, 2, 1)["say"] = "Here is the idea. Three things are true about keys."
+    only(run(f), "step 2 cue 1", "rejected wording")
+
+
+def test_rejected_wording_only_matches_at_sentence_start():
+    def f(s):
+        cue(s, 2, 1)["say"] = "We note that three things are true about keys."
+    assert not [p for p in run(f, first_module=False) if "rejected wording" in p]
+
+
+def test_no_current_vault_script_gains_a_problem():
+    folder = VAULT / "video"
+    if not folder.is_dir():
+        import pytest
+        pytest.skip("cohesity course folder not present")
+    for path in sorted(folder.glob("m*.json")):
+        unit = (VAULT / (path.stem + ".html")).read_text()
+        found = script.check_script(json.loads(path.read_text()), unit, path.stem.startswith("m0-u1"))
+        assert not [p for p in found if "rejected wording" in p], (path.name, found)
+
+
+def test_teaching_cue_is_earlier_than_each_question():
+    path = VAULT / "video" / "m1-u4-two-products-one-name.json"
+    if not path.is_file():
+        import pytest
+        pytest.skip("cohesity course folder not present")
+    s = json.loads(path.read_text())
+    asked = [(si, ci) for si, st in enumerate(s["steps"], 1) for ci, c in enumerate(st["cues"], 1)
+             if (c.get("slide") or {}).get("type") == "q"]
+    assert asked
+    for si, ci in asked:
+        found = script.teaching_cue(s, si, ci)
+        assert found is not None and found < (si, ci), (si, ci, found)
+
+
+def test_teaching_cue_is_none_when_nothing_earlier_matches():
+    s = {"steps": [{"cues": [
+        {"say": "Hello there."},
+        {"say": "Which colour?", "slide": {"type": "q", "head": "h", "opts": ["Purple elephants", "b"], "ok": 0, "why": "Purple elephants dance."}},
+    ]}]}
+    assert script.teaching_cue(s, 1, 2) is None
+
+
+def test_first_mention_notes_the_first_use_of_a_new_the_x_key():
+    s = {"steps": [{"cues": [
+        {"say": "Welcome. Use the write key to send data."},
+        {"say": "Keep the write key safe. Then check the log setting."},
+    ]}]}
+    got = script.notes(s)
+    assert got == ["step 1 cue 1: first mention of 'the write key'",
+                   "step 1 cue 2: first mention of 'the log setting'"]
+
+
+def test_first_mention_is_not_a_note_when_an_earlier_sentence_names_the_word():
+    s = {"steps": [{"cues": [
+        {"say": "The window is daily. Now the window ends."},
+        {"say": "Use the window setting."},
+    ]}]}
+    assert script.notes(s) == []
+
+
+def test_teaching_cue_skips_the_opening_step_for_later_questions():
+    # The opening step lists what the learner will be able to do; it names topics, it doesn't teach them.
+    path = VAULT / "video" / "m3-u4-write-window-and-network.json"
+    if not path.is_file():
+        import pytest
+        pytest.skip("cohesity course folder not present")
+    s = json.loads(path.read_text())
+    asked = [(si, ci) for si, st in enumerate(s["steps"], 1) for ci, c in enumerate(st["cues"], 1)
+             if (c.get("slide") or {}).get("type") == "q" and si > 1]
+    for si, ci in asked:
+        found = script.teaching_cue(s, si, ci)
+        assert found is None or found[0] > 1, (si, ci, found)

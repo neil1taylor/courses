@@ -1,0 +1,13 @@
+# Wording the owner has rejected. One case-insensitive regular expression per line.
+# A line that starts with # is a comment. Each pattern is tried at the start of every
+# sentence of narration and of every piece of slide text.
+^(two|three|four|five|six) (items|things|points|steps|parts) (stay|are|remain)\b
+# From the owner's rejected lines in blog-writing references/course-text.md.
+\bsomething (in it |here )?is (too strong|off|wrong)\b
+^say ["'“]
+\bthe honest answer\b
+^here are the results\b
+^answer with the\b
+\bnot a promise\b
+^find what\b
+^refused, every time\b

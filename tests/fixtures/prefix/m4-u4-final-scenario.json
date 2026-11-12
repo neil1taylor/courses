@@ -1,0 +1,800 @@
+{
+ "course": "Cyber Vault",
+ "section": "Recover from the vault alone",
+ "title": "Final scenario: Northgate's recovery plan",
+ "unit": "m4-u4-final-scenario.html",
+ "pronounce": {
+  "read": "reed"
+ },
+ "sketches": {
+  "start": {
+   "w": 490,
+   "h": 340,
+   "shapes": [
+    {
+     "box": [
+      10,
+      20,
+      210,
+      90
+     ],
+     "title": "plan"
+    },
+    {
+     "box": [
+      270,
+      20,
+      210,
+      90
+     ],
+     "title": "directors"
+    },
+    {
+     "line": [
+      245,
+      120,
+      245,
+      190
+     ],
+     "arrow": true
+    },
+    {
+     "box": [
+      60,
+      200,
+      370,
+      120
+     ],
+     "heavy": true,
+     "title": "vault",
+     "detail": "stays locked"
+    }
+   ]
+  },
+  "lock": {
+   "w": 960,
+   "h": 300,
+   "shapes": [
+    {
+     "box": [
+      10,
+      80,
+      400,
+      140
+     ],
+     "dashed": true,
+     "title": "console and policy",
+     "detail": "one day"
+    },
+    {
+     "box": [
+      550,
+      80,
+      400,
+      140
+     ],
+     "heavy": true,
+     "title": "vault",
+     "detail": "up to 15 days"
+    }
+   ]
+  },
+  "versions": {
+   "w": 960,
+   "h": 340,
+   "shapes": [
+    {
+     "box": [
+      230,
+      20,
+      500,
+      120
+     ],
+     "dashed": true,
+     "title": "new version",
+     "detail": "on top"
+    },
+    {
+     "box": [
+      230,
+      200,
+      500,
+      120
+     ],
+     "heavy": true,
+     "title": "locked version",
+     "detail": "original content"
+    }
+   ]
+  },
+  "sum": {
+   "w": 340,
+   "h": 320,
+   "shapes": [
+    {
+     "box": [
+      10,
+      20,
+      320,
+      110
+     ],
+     "title": "read key"
+    },
+    {
+     "line": [
+      170,
+      136,
+      170,
+      184
+     ],
+     "arrow": true
+    },
+    {
+     "box": [
+      10,
+      190,
+      320,
+      110
+     ],
+     "heavy": true,
+     "title": "new cluster"
+    }
+   ]
+  }
+ },
+ "steps": [
+  {
+   "title": "Welcome",
+   "cues": [
+    {
+     "slide": {
+      "type": "title",
+      "head": "Final scenario: Northgate's recovery plan",
+      "sub": "From the attack to the last lock",
+      "sketch": "start"
+     },
+     "say": "Northgate Freight is the made-up haulier we're following. It backs up Linux files, Windows files and a SQL database with Defender Data Protect, and archives them to a Cyber Vault.",
+     "do": [
+      [
+       "show",
+       "head"
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "Its directors want to know what happens if an attacker gets the backup admin's keys, and here we build the plan together.",
+     "hold": 0.4
+    },
+    {
+     "say": "By the end of this module, you'll be able to build a recovery plan from what the course showed, answer the directors' question about stolen keys, and say what stays locked after you leave.",
+     "do": [
+      [
+       "show",
+       "sub"
+      ],
+      [
+       "build",
+       [
+        0,
+        1,
+        2,
+        3
+       ]
+      ]
+     ]
+    },
+    {
+     "say": "It uses both rebuilds: the second test you've followed, and the first, an earlier run on a third cluster.",
+     "hold": 1.2
+    }
+   ]
+  },
+  {
+   "title": "What goes in the plan",
+   "cues": [
+    {
+     "slide": {
+      "type": "table",
+      "head": "Four items go in the plan",
+      "cols": [
+       "item",
+       "why"
+      ],
+      "rows": [
+       [
+        "choose the run by its time",
+        "the infected runs came after the attack"
+       ],
+       [
+        "keep a record of the clean data",
+        "every check compared against it"
+       ],
+       [
+        "replace each server's agent",
+        "an agent trusts one cluster"
+       ],
+       [
+        "add the vault with the read key",
+        "Encryption off, Archive Object Lock off"
+       ]
+      ]
+     },
+     "say": "The attack has happened, and the backup cluster is gone. Four items belong in the plan.",
+     "do": [
+      [
+       "show",
+       "head"
+      ],
+      [
+       "show",
+       "table"
+      ]
+     ],
+     "hold": 0.4
+    },
+    {
+     "say": "Choose the run to download by its time, from before the attack at 11:54.",
+     "do": [
+      [
+       "row",
+       0
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "Keep a record of the clean files and database values, because every check compared against it.",
+     "do": [
+      [
+       "row",
+       1
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "Replace the agent on each server with the new cluster's agent, because an agent trusts one cluster.",
+     "do": [
+      [
+       "row",
+       2
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "And add the vault with the read key, with Encryption off and Archive Object Lock off.",
+     "do": [
+      [
+       "row",
+       3
+      ]
+     ],
+     "hold": 1.0
+    }
+   ]
+  },
+  {
+   "title": "What stays out of the plan",
+   "cues": [
+    {
+     "slide": {
+      "type": "q",
+      "head": "A restore says Succeeded. Is that proof?",
+      "opts": [
+       "Yes, that's proof",
+       "No, check every file"
+      ],
+      "ok": 1,
+      "why": "A Linux recovery said Succeeded while hard-linked files came back empty."
+     },
+     "say": "Next item: a restore that says Succeeded. Does the plan treat that as proof?",
+     "do": [
+      [
+       "ask"
+      ]
+     ]
+    },
+    {
+     "say": "No. In an earlier test, a Linux recovery reported Succeeded while hard-linked files came back empty, and the check against a manifest is what found it.",
+     "do": [
+      [
+       "why"
+      ]
+     ],
+     "hold": 1.5
+    },
+    {
+     "slide": {
+      "type": "table",
+      "head": "Four items stay out of the plan",
+      "cols": [
+       "left out",
+       "instead"
+      ],
+      "rows": [
+       [
+        "treat Succeeded as proof",
+        "check every file and the database"
+       ],
+       [
+        "restore to the original server",
+        "restore to a new location"
+       ],
+       [
+        "promise VMs rebuild on a new cluster",
+        "restore VMs to their own cluster"
+       ],
+       [
+        "delete the vault when the exercise ends",
+        "the last lock decides when"
+       ]
+      ]
+     },
+     "say": "That's one of four items that stay out.",
+     "do": [
+      [
+       "show",
+       "head"
+      ],
+      [
+       "show",
+       "table"
+      ],
+      [
+       "row",
+       0
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "A retrieved group can't restore to the original, so the restores went to new locations.",
+     "do": [
+      [
+       "row",
+       1
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "On its own cluster, the VM backup restored from the vault. Retrieving it to a new cluster failed in the first test, and the second test didn't include the VMs.",
+     "do": [
+      [
+       "row",
+       2
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "And the vault can't be deleted until its last lock ends.",
+     "do": [
+      [
+       "row",
+       3
+      ]
+     ],
+     "hold": 1.0
+    },
+    {
+     "slide": {
+      "type": "table",
+      "head": "Northgate's recovery plan",
+      "cols": [
+       "first",
+       "then"
+      ],
+      "rows": [
+       [
+        "1 keep a record of the clean data",
+        "2 choose a run from before the attack"
+       ],
+       [
+        "3 new cluster; replace each agent",
+        "4 add the vault with the read key, both switches off"
+       ],
+       [
+        "5 search, pick the clean run, download",
+        "6 restore to a new location; check against the record"
+       ],
+       [
+        "7 restore VMs to their own cluster",
+        "8 the vault stays until its last lock ends"
+       ]
+      ]
+     },
+     "say": "Put together, here's Northgate's plan. Keep a record of the clean data, and choose a run from before the attack.",
+     "do": [
+      [
+       "show",
+       "head"
+      ],
+      [
+       "show",
+       "table"
+      ],
+      [
+       "row",
+       0
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "A new cluster, with the new agent on each server, and the vault added with the read key.",
+     "do": [
+      [
+       "row",
+       1
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "Search, pick the clean run and download, then restore to a new location and check it against the record.",
+     "do": [
+      [
+       "row",
+       2
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "VMs go back to their own cluster, and the vault stays until its last lock ends.",
+     "do": [
+      [
+       "row",
+       3
+      ]
+     ],
+     "hold": 1.2
+    }
+   ]
+  },
+  {
+   "title": "The directors' question",
+   "cues": [
+    {
+     "slide": {
+      "type": "q",
+      "head": "Can the write key delete a locked version?",
+      "opts": [
+       "Yes, it can",
+       "No, refused",
+       "With both keys"
+      ],
+      "ok": 1,
+      "why": "Access Denied because object protected by object lock."
+     },
+     "say": "Now the directors ask what an attacker can do with stolen keys. An attacker holds the write key. Can they delete a locked version of an archive object?",
+     "do": [
+      [
+       "ask"
+      ]
+     ]
+    },
+    {
+     "say": "No. The vault refused it with Access Denied, because the object is protected by object lock. The read key, another key on the same storage instance and the account owner's token were refused too.",
+     "do": [
+      [
+       "why"
+      ]
+     ],
+     "hold": 1.5
+    },
+    {
+     "slide": {
+      "type": "diagram",
+      "head": "A write adds a version; the lock keeps the old one",
+      "sketch": "versions"
+     },
+     "say": "If the same attacker writes to an existing object, the vault adds a new latest version, and the first version still holds its original content.",
+     "do": [
+      [
+       "show",
+       "head"
+      ],
+      [
+       "build",
+       [
+        0,
+        1
+       ]
+      ]
+     ],
+     "hold": 0.8
+    },
+    {
+     "say": "Each write, including each backup, adds a version, and the lock keeps every earlier one.",
+     "hold": 1.2
+    }
+   ]
+  },
+  {
+   "title": "The draft note to the directors",
+   "cues": [
+    {
+     "slide": {
+      "type": "table",
+      "head": "Two parts of the note need changing",
+      "cols": [
+       "the note says",
+       "what the tests showed"
+      ],
+      "rows": [
+       [
+        "everything was recovered",
+        "true of the second test"
+       ],
+       [
+        "the vault can go after the test",
+        "not before the last lock ends"
+       ]
+      ]
+     },
+     "say": "Northgate's backup admin writes to the directors: everything was recovered from the vault alone, and we can remove the vault once the test is over.",
+     "do": [
+      [
+       "show",
+       "head"
+      ],
+      [
+       "show",
+       "table"
+      ]
+     ],
+     "hold": 0.4
+    },
+    {
+     "say": "In the second test, Linux, Windows and SQL were recovered exactly as they were before the attack. In the first, 167,639 of 181,552 Linux files matched, and the VM retrieve to a new cluster failed.",
+     "do": [
+      [
+       "row",
+       0
+      ]
+     ],
+     "hold": 0.8
+    },
+    {
+     "say": "And the vault stays until its last lock ends.",
+     "do": [
+      [
+       "row",
+       1
+      ]
+     ],
+     "hold": 1.0
+    }
+   ]
+  },
+  {
+   "title": "What stays locked after you leave",
+   "cues": [
+    {
+     "slide": {
+      "type": "diagram",
+      "head": "The vault's lock dates decide when it can go",
+      "sketch": "lock"
+     },
+     "say": "The test is over, and the servers and clusters can go. The vault stays.",
+     "do": [
+      [
+       "show",
+       "head"
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "The console and the policy said one day.",
+     "do": [
+      [
+       "build",
+       [
+        0
+       ]
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "But the vault held data chunks locked for up to 15 days, with the last lock ending 15 days after the run. A vault that holds locked data can't be deleted before then.",
+     "do": [
+      [
+       "build",
+       [
+        1
+       ]
+      ]
+     ],
+     "hold": 1.0
+    },
+    {
+     "say": "So the auditor who checks Northgate's security controls needs the lock dates from the vault, taken with the read key, because the vault enforces the lock.",
+     "hold": 1.2
+    },
+    {
+     "slide": {
+      "type": "tip",
+      "head": "The console shows a shorter lock than the vault",
+      "tip": "Take the lock dates from the vault."
+     },
+     "say": "Watch for this. The vault can hold data for longer than the console says, so take the dates from the vault itself.",
+     "do": [
+      [
+       "show",
+       "head"
+      ],
+      [
+       "show",
+       "tip"
+      ]
+     ],
+     "hold": 2.0
+    }
+   ]
+  },
+  {
+   "title": "Check yourself",
+   "cues": [
+    {
+     "slide": {
+      "type": "statement",
+      "head": "Three quick questions"
+     },
+     "say": "Now three quick questions to check what you've learned.",
+     "do": [
+      [
+       "show",
+       "head"
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "slide": {
+      "type": "q",
+      "head": "After an attack, which run do you download?",
+      "opts": [
+       "The newest run",
+       "One from before the attack",
+       "The smallest run"
+      ],
+      "ok": 1,
+      "why": "The newest run came after the attack and holds the attacked data.",
+      "check": true
+     },
+     "say": "First, after an attack, which run do you download?",
+     "do": [
+      [
+       "ask"
+      ]
+     ]
+    },
+    {
+     "say": "A run from before the attack. The newest run was made after the attack, and holds the attacked data.",
+     "do": [
+      [
+       "why"
+      ]
+     ],
+     "hold": 1.5
+    },
+    {
+     "slide": {
+      "type": "q",
+      "head": "Why restore to a new location?",
+      "opts": [
+       "The read key is refused",
+       "The original isn't allowed",
+       "The agent was removed"
+      ],
+      "ok": 1,
+      "why": "The console refused a restore to the original.",
+      "check": true
+     },
+     "say": "Second, why do you restore a retrieved group to a new location, and not the original server?",
+     "do": [
+      [
+       "ask"
+      ]
+     ]
+    },
+    {
+     "say": "Because a retrieved group can't restore to the original. The console refused it.",
+     "do": [
+      [
+       "why"
+      ]
+     ],
+     "hold": 1.5
+    },
+    {
+     "slide": {
+      "type": "q",
+      "head": "How soon after the run could the vault be deleted?",
+      "opts": [
+       "One day",
+       "9 days",
+       "15 days"
+      ],
+      "ok": 2,
+      "why": "That's when the lock on the newest data ends.",
+      "check": true
+     },
+     "say": "And third, how soon after the run could the vault be deleted?",
+     "do": [
+      [
+       "ask"
+      ]
+     ]
+    },
+    {
+     "say": "15 days after the run. That's when the lock on the newest data ends.",
+     "do": [
+      [
+       "why"
+      ]
+     ],
+     "hold": 1.5
+    }
+   ]
+  },
+  {
+   "title": "Summary",
+   "cues": [
+    {
+     "slide": {
+      "type": "score"
+     },
+     "say": "That's the module done. Here's your score.",
+     "do": [
+      [
+       "show",
+       "head"
+      ]
+     ],
+     "hold": 1.5
+    },
+    {
+     "slide": {
+      "type": "summary",
+      "text": "With only the <em>read key</em>, a new cluster recovered <em>Linux, Windows, SQL</em>.",
+      "next": "That's the end of the course.",
+      "sketch": "sum"
+     },
+     "say": "In this module, you've built Northgate's recovery plan, item by item. You've answered the directors: no key could delete a locked version. And you've seen that the vault stays until its last lock ends. If you remember one thing, make it the sentence on the screen.",
+     "do": [
+      [
+       "show",
+       "head"
+      ],
+      [
+       "build",
+       [
+        0,
+        1,
+        2
+       ]
+      ]
+     ],
+     "hold": 1.5
+    },
+    {
+     "say": "And that's the Cyber Vault course done. You can now rebuild from the vault with only the read key, and check what came back. Thanks for following Northgate to the end.",
+     "do": [
+      [
+       "show",
+       "next"
+      ]
+     ],
+     "hold": 1.0
+    }
+   ]
+  }
+ ]
+}
