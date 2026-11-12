@@ -581,3 +581,17 @@ def test_first_mention_is_not_a_note_when_an_earlier_sentence_names_the_word():
         {"say": "Use the window setting."},
     ]}]}
     assert script.notes(s) == []
+
+
+def test_teaching_cue_skips_the_opening_step_for_later_questions():
+    # The opening step lists what the learner will be able to do; it names topics, it doesn't teach them.
+    path = VAULT / "video" / "m3-u4-write-window-and-network.json"
+    if not path.is_file():
+        import pytest
+        pytest.skip("cohesity course folder not present")
+    s = json.loads(path.read_text())
+    asked = [(si, ci) for si, st in enumerate(s["steps"], 1) for ci, c in enumerate(st["cues"], 1)
+             if (c.get("slide") or {}).get("type") == "q" and si > 1]
+    for si, ci in asked:
+        found = script.teaching_cue(s, si, ci)
+        assert found is None or found[0] > 1, (si, ci, found)

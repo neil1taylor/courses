@@ -5,7 +5,7 @@
 **Goal:** The owner reviews and approves a course's outline, a sample module and every script, with its slides, on a local review page before any audio is made. Checks catch each fault the owner has already reported.
 
 **Architecture:**
-- **Review server.** `tools/review.py` builds a course's module pages without voice into a scratch folder and serves a review page from it at `http://127.0.0.1:8770/`.
+- **Review server.** `tools/review.py` builds a course's module pages without voice into a scratch folder and serves a review page from it at `http://127.0.0.1:8780/`.
 - **Slide pictures.** The review page shows each cue's slide as a lazy-loaded iframe of the real module page in a new still mode (`?still=<step>.<cue>`), so the picture is exactly what the learner sees.
 - **Comments and approvals.** These are saved by the server to `review/<slug>.json` in the courses repo, which is the approval record. A command-line mode prints the open comments for the agent fixing them.
 - **New checks.** These go in `tools/video/script.py`.
@@ -17,7 +17,7 @@
 
 ## Global Constraints
 
-- The server binds 127.0.0.1 only, port 8770. No page loads anything from a CDN.
+- The server binds 127.0.0.1 only, port 8780 (8770 is the Workbench server). No page loads anything from a CDN.
 - References read `<course letter> <module>.<sentence>`. The letters are V Cyber Vault, B Backup and Recovery, N VPC and R ROVS. Module counts from 1 in course order. Sentence counts from 1 across the whole module, not per step. For example, "V 13.3".
 - A cue's hash is sha1 of its `say` plus the JSON of its slide and `do`, sorted keys, first 12 hex characters. "Changed since last look" compares this hash with the one stored when the owner last approved, or last marked the module read.
 - `review/<slug>.json` is committed; it is the record of what was approved. Shape: `{"modules": {"<unit stem>": {"approved": "<module hash>"|null, "seen": {"<ref>": "<cue hash>"}}}, "comments": [{"id": int, "ref": str, "text": str, "open": bool}], "outline": {"<unit stem>": {"approved": "<hash>"|null}}}`. A module hash is sha1 of its cue hashes joined, first 12.

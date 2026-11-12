@@ -24,7 +24,7 @@ import review_state as rs  # noqa: E402
 import script as scripts  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-PORT = 8770
+PORT = 8780
 LETTERS = {"vault": "V", "backup": "B", "vpc": "N", "rovs": "R"}
 SCRATCH = Path("/private/tmp/claude-501/-Users-neiltaylor-Projects-rovs-tutorials/"
                "f3aa05c3-29fa-491b-8f00-433add9e3834/scratchpad")

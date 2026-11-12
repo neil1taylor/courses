@@ -397,7 +397,7 @@ def _cues(script):
 def teaching_cue(script, step, cue):
     """The earlier cue (step, cue), counting from 1, whose narration shares the most content words with the
     question at step, cue: the right option plus the why line. None when no earlier cue shares any.
-    Ties go to the earliest cue. This only finds the likeliest teaching sentence for the reviewer to read;
+    Ties go to the earliest cue. A question after the opening step never points into it. This only finds the likeliest teaching sentence for the reviewer to read;
     it is not a check, because word overlap alone cannot tell teaching from a related remark."""
     question = None
     earlier = []
@@ -413,6 +413,8 @@ def teaching_cue(script, step, cue):
     except (KeyError, IndexError, TypeError):
         return None
     best, found = 0, None
+    if step > 1:  # the opening step lists outcomes: it names topics without teaching them
+        earlier = [e for e in earlier if e[0] > 1]
     for si, ci, c in earlier:
         n = len(target & content_words(c.get("say", "")))
         if n > best:
