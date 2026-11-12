@@ -93,6 +93,7 @@ def test_contents_groups_by_section():
         {"title": "Attacker with keys", "section": "The threat", "href": "m1-u1.html", "minutes": 9},
     ]
     html = page.render_contents(COURSE, modules)
+    html = html[html.index("<main"):]  # the Start button above also links the first module
     first, second = html.index("Start here"), html.index("The threat")
     assert first < second
     assert len(re.findall(r"<h2\b", html)) == 2
@@ -140,3 +141,55 @@ def test_copy_assets_puts_player_rough_and_fonts_together(tmp_path):
 
 def test_caption_button_reports_its_state():
     assert 'id="ccbtn" aria-label="Captions" aria-pressed="false"' in module_page()
+
+
+MODULES = [
+    {"title": "Why backups need a vault", "section": "Start here", "href": "m0-u1.html", "minutes": 6},
+    {"title": "The attacker", "section": "What the vault is", "href": "m1-u1.html", "minutes": 7},
+    {"title": "What IBM builds", "section": "What the vault is", "href": "m1-u2.html", "minutes": 6},
+]
+
+
+def test_contents_uses_the_player_look():
+    html = page.render_contents(COURSE, MODULES)
+    assert '<body class="contents">' in html
+    assert 'class="hero"' in html
+
+
+def test_contents_header_gives_module_count_and_total_length():
+    text = visible_text(page.render_contents(COURSE, MODULES))
+    assert "3 modules" in text and "19 min" in text
+
+
+def test_contents_has_a_start_button_pointing_at_the_first_module():
+    html = page.render_contents(COURSE, MODULES)
+    button = re.search(r'<a[^>]*data-start[^>]*>(.*?)</a>', html)
+    assert button and 'href="m0-u1.html"' in button.group(0)
+    assert button.group(1) == "Start course"
+
+
+def test_contents_sections_open_to_show_their_modules():
+    html = page.render_contents(COURSE, MODULES)
+    assert len(re.findall(r"<details\b[^>]*\bopen\b", html)) == 2
+    second = html.split("<details")[2].split("</summary>")[0]
+    assert "2 modules" in visible_text(second) and "13 min" in visible_text(second)
+
+
+def test_contents_numbers_modules_through_the_course():
+    html = page.render_contents(COURSE, MODULES)
+    assert re.search(r'data-module="3"[^>]*>.*?<span class="n">3</span>', html, re.S)
+
+
+def test_module_page_has_a_course_tab_listing_every_module():
+    html = page.render_module(TIMELINE, COURSE, 2, 3, "m0-u1.html", "m1-u2.html", outline=MODULES)
+    assert 'data-tab="course"' in html
+    pane = re.search(r'<div class="pane" id="course"[^>]*>(.*?)</div>\s*<label', html, re.S).group(1)
+    for m in MODULES:
+        assert f'href="{m["href"]}"' in pane
+    assert pane.index("Start here") < pane.index("What the vault is")
+    current = re.search(r'<a class="mod cur"[^>]*>', pane).group(0)
+    assert 'href="m1-u1.html"' in current and 'aria-current="page"' in current
+
+
+def test_module_page_without_outline_has_no_course_tab():
+    assert 'data-tab="course"' not in module_page()

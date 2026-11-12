@@ -24,9 +24,37 @@ def _link(label: str, href: str | None, ident: str) -> str:
     return f'<a id="{ident}" href="{escape(href, quote=True)}">{label}</a>'
 
 
+def _sections(modules: list[dict]) -> list[tuple[str, list[tuple[int, dict]]]]:
+    """Modules grouped under their section, in order, each with its number in the course."""
+    groups: list[tuple[str, list[tuple[int, dict]]]] = []
+    for n, module in enumerate(modules, start=1):
+        if not groups or groups[-1][0] != module["section"]:
+            groups.append((module["section"], []))
+        groups[-1][1].append((n, module))
+    return groups
+
+
+def _count(n: int) -> str:
+    return f"{n} module" + ("" if n == 1 else "s")
+
+
+def _course_pane(outline: list[dict], index: int) -> str:
+    """The Course tab: every module by section, the one playing marked."""
+    parts = []
+    for section, items in _sections(outline):
+        rows = "".join(
+            f'<a class="mod{" cur" if n == index else ""}" href="{escape(m["href"], quote=True)}" data-module="{n}"'
+            + (' aria-current="page"' if n == index else "")
+            + f'><span class="ic">{n}</span><span><b>{escape(m["title"])}</b><small>{m["minutes"]} min</small></span></a>'
+            for n, m in items)
+        parts.append(f'<h4>{escape(section)}</h4>{rows}')
+    return "".join(parts)
+
+
 def render_module(timeline: dict, course: dict, index: int, total: int,
                   prev_href: str | None, next_href: str | None,
-                  assets: str = DEFAULT_ASSETS, contents_href: str | None = None) -> str:
+                  assets: str = DEFAULT_ASSETS, contents_href: str | None = None,
+                  outline: list[dict] | None = None) -> str:
     data = dict(timeline)
     data.update(courseSlug=course["slug"], moduleIndex=index, moduleTotal=total, nextHref=next_href)
     title = escape(timeline["title"])
@@ -39,6 +67,10 @@ def render_module(timeline: dict, course: dict, index: int, total: int,
                + "</div>")
     if contents_href:
         nav += f'\n    <p class="backlink"><a id="contents" href="{escape(contents_href, quote=True)}">All modules in this course</a></p>'
+    course_tab = course_pane = ""
+    if outline:
+        course_tab = '\n        <button role="tab" data-tab="course">Course</button>'
+        course_pane = f'\n    <div class="pane" id="course" hidden>{_course_pane(outline, index)}</div>'
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -82,11 +114,11 @@ def render_module(timeline: dict, course: dict, index: int, total: int,
       <div class="comp"><span>Module completion</span><div class="cbar"><i id="cfill"></i></div><b id="cpct">0%</b></div>
       <div class="tabs" role="tablist">
         <button role="tab" class="on" data-tab="toc">Steps</button>
-        <button role="tab" data-tab="tr">Transcript</button>
+        <button role="tab" data-tab="tr">Transcript</button>{course_tab}
       </div>
     </div>
     <div class="pane" id="toc"></div>
-    <div class="pane" id="tr" hidden></div>
+    <div class="pane" id="tr" hidden></div>{course_pane}
     <label class="auto"><input type="checkbox" id="autoplay" checked> Autoplay the next module</label>
     {nav}
   </aside>
@@ -99,35 +131,43 @@ def render_module(timeline: dict, course: dict, index: int, total: int,
 
 def render_contents(course: dict, modules: list[dict], assets: str = DEFAULT_ASSETS,
                     home_href: str | None = None) -> str:
-    """The contents page: modules grouped under their section, in order."""
+    """The course page: a header with the length, progress and a Start button, then the modules by section."""
     course_title = escape(course["title"])
-    groups: list[tuple[str, list[tuple[int, dict]]]] = []
-    for n, module in enumerate(modules, start=1):
-        if not groups or groups[-1][0] != module["section"]:
-            groups.append((module["section"], []))
-        groups[-1][1].append((n, module))
+    total_min = sum(m["minutes"] for m in modules)
     body = []
-    for section, items in groups:
+    for section, items in _sections(modules):
         rows = "\n".join(
-            f'    <li><a href="{escape(m["href"], quote=True)}" data-module="{n}">'
-            f'<span class="t">{escape(m["title"])}</span>'
-            f'<span class="min">{m["minutes"]} min</span><span class="tick"></span></a></li>'
+            f'      <li><a href="{escape(m["href"], quote=True)}" data-module="{n}">'
+            f'<span class="n">{n}</span><span class="t">{escape(m["title"])}</span>'
+            f'<span class="min">{m["minutes"]} min</span></a></li>'
             for n, m in items)
-        body.append(f"  <h2>{escape(section)}</h2>\n  <ul>\n{rows}\n  </ul>")
-    back = f'  <p class="backlink"><a href="{escape(home_href, quote=True)}">All courses</a></p>\n' if home_href else ""
+        mins = sum(m["minutes"] for _, m in items)
+        body.append(f'  <details open>\n    <summary><h2>{escape(section)}</h2>'
+                    f'<span class="meta">{_count(len(items))} &middot; {mins} min</span></summary>\n'
+                    f'    <ul>\n{rows}\n    </ul>\n  </details>')
+    back = f'    <p class="backlink"><a href="{escape(home_href, quote=True)}">All courses</a></p>\n' if home_href else ""
+    first = escape(modules[0]["href"], quote=True) if modules else "#"
     return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{course_title} &middot; Modules</title>
+<title>{course_title} &middot; Video course</title>
 <link rel="stylesheet" href="{assets}player.css">
 <script src="{assets}player.js" defer></script>
 </head>
 <body class="contents">
+<header class="hero">
+  <div class="wrap">
+{back}    <p class="kind">Video course</p>
+    <h1>{course_title}</h1>
+    <p class="facts">{_count(len(modules))} &middot; {total_min} min</p>
+    <div class="comp"><span data-count>0 of {len(modules)} modules done</span><div class="cbar"><i data-fill></i></div></div>
+    <a class="start" data-start href="{first}">Start course</a>
+  </div>
+</header>
 <main data-contents data-course="{escape(course["slug"], quote=True)}">
-  <h1>{course_title}</h1>
-{back}  <p class="count" data-count></p>
+  <p class="toc">Table of contents</p>
 {chr(10).join(body)}
 </main>
 </body>

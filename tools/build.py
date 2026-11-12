@@ -173,14 +173,14 @@ def write_video(site, slug, cfg, loaded, speaker, shared):
     page.copy_assets(site / "video-assets")
     course = {"slug": slug, "title": cfg["title"]}
     total = len(timelines)
+    rows = [{"section": t["section"], "title": t["title"], "href": stem + ".html", "minutes": minutes(t)}
+            for stem, t in timelines]
     for i, (stem, t) in enumerate(timelines):
         prev_href = timelines[i - 1][0] + ".html" if i else None
         next_href = timelines[i + 1][0] + ".html" if i + 1 < total else None
         (out / (stem + ".html")).write_text(
             page.render_module(t, course, i + 1, total, prev_href, next_href, assets=assets,
-                               contents_href="index.html"), encoding="utf-8")
-    rows = [{"section": t["section"], "title": t["title"], "href": stem + ".html", "minutes": minutes(t)}
-            for stem, t in timelines]
+                               contents_href="index.html", outline=rows), encoding="utf-8")
     (out / "index.html").write_text(page.render_contents(course, rows, assets=assets, home_href="../../"),
                                     encoding="utf-8")
     print(f"{slug}: {total} video modules")
