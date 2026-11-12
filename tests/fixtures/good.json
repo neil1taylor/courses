@@ -3,20 +3,28 @@
   "section": "Start here",
   "title": "Why backups need a vault",
   "unit": "m0-u1-why-backups-need-a-vault.html",
+  "pronounce": {"read": "reed"},
   "sketches": {
     "parts": {"w": 660, "h": 230, "shapes": [
       {"box": [10, 40, 160, 56], "title": "Source"},
       {"line": [174, 68, 226, 68], "arrow": true},
       {"box": [230, 40, 160, 56], "heavy": true, "title": "Cluster"}
+    ]},
+    "mini": {"w": 300, "h": 200, "shapes": [
+      {"box": [10, 40, 160, 56], "title": "Vault"}
     ]}
   },
   "steps": [
     {"title": "Welcome", "cues": [
+      {"slide": {"type": "title", "head": "Why backups need a vault", "sub": "What a vault adds"},
+       "say": "Welcome. This module shows why backups need a vault.", "do": [["show", "head"], ["show", "sub"]]},
+      {"say": "Everything in this course was tested on a real vault."}
+    ]},
+    {"title": "The parts", "cues": [
       {"slide": {"type": "diagram", "head": "A second copy goes into a locked vault", "sketch": "parts"},
        "say": "Here's how the pieces fit together.", "do": [["show", "head"]]},
       {"say": "It starts with the source, a server you back up.", "do": [["build", [0]]], "hold": 0.6},
-      {"say": "The cluster runs the backups.", "do": [["build", [1, 2]]], "hold": 1.0},
-      {"say": "Everything in this course was tested on a real vault."}
+      {"say": "The cluster runs the backups, and the key can read them.", "do": [["build", [1, 2]]], "hold": 1.0}
     ]},
     {"title": "Words", "cues": [
       {"slide": {"type": "words", "head": "Locks and keys", "items": [
@@ -25,18 +33,32 @@
        "say": "The object lock stops deletion.", "do": [["show", "head"], ["items", [0]]]},
       {"say": "The write key lets the cluster write.", "do": [["items", [1]]]}
     ]},
-    {"title": "Where each key goes", "cues": [
-      {"slide": {"type": "q", "head": "Where should Northgate keep the read key?",
-         "opts": ["On the cluster", "Apart from backups", "With the admin"],
-         "ok": 1, "why": "Whoever takes backups should not get the recovery key.", "check": true},
-       "say": "Where should Northgate keep the read key?", "do": [["ask"]]},
-      {"say": "Apart from the backup system, so one attacker cannot reach both.", "do": [["why"]], "hold": 1.5}
-    ]},
     {"title": "Screen and terminal", "cues": [
       {"slide": {"type": "screen", "head": "The console", "img": "assets/shot-console.png", "boxes": [[10, 10, 100, 50]]},
        "say": "Here is the console.", "do": [["show", "head"], ["box", 0]]},
       {"slide": {"type": "terminal", "cmd": "ibmcloud ks clusters", "out": ["Name  State", "demo  normal"]},
        "say": "Then list the clusters.", "do": [["line", 1]]}
+    ]},
+    {"title": "Check yourself", "cues": [
+      {"slide": {"type": "q", "head": "Where should Northgate keep the read key?",
+         "opts": ["On the cluster", "Apart from backups", "With the admin"],
+         "ok": 1, "why": "Whoever takes backups should not get the recovery key.", "check": true},
+       "say": "Where should Northgate keep the read key?", "do": [["ask"]]},
+      {"say": "Apart from the backup system, so one attacker cannot reach both.", "do": [["why"]], "hold": 1.5},
+      {"slide": {"type": "q", "head": "What does the lock stop?",
+         "opts": ["Deletion", "Writing", "Reading"], "ok": 0, "why": "Nothing can be deleted before the date.", "check": true},
+       "say": "What does the lock stop?", "do": [["ask"]]},
+      {"say": "Deletion, before the date.", "do": [["why"]], "hold": 1.5},
+      {"slide": {"type": "q", "head": "Who holds the write key?",
+         "opts": ["The cluster", "The attacker", "Nobody"], "ok": 0, "why": "The cluster needs it to write.", "check": true},
+       "say": "Who holds the write key?", "do": [["ask"]]},
+      {"say": "The cluster does.", "do": [["why"]], "hold": 1.5}
+    ]},
+    {"title": "Summary", "cues": [
+      {"slide": {"type": "score"}, "say": "That is your score.", "do": [["show", "head"]]},
+      {"slide": {"type": "summary", "text": "A vault keeps <em>one copy</em> safe", "next": "Next: Building the vault", "sketch": "mini"},
+       "say": "Remember, one copy stays safe. Next, building the vault.",
+       "do": [["show", "head"], ["show", "next"], ["build", [0]]]}
     ]}
   ]
 }
