@@ -1,0 +1,577 @@
+{
+ "course": "Cyber Vault",
+ "section": "What the vault is",
+ "title": "The vault and the Deployable Architecture are different products",
+ "unit": "m1-u4-two-products-one-name.html",
+ "sketches": {
+  "start": {
+   "w": 490,
+   "h": 340,
+   "shapes": [
+    {
+     "box": [
+      10,
+      10,
+      360,
+      140
+     ],
+     "title": "Cyber Vault",
+     "heavy": true
+    },
+    {
+     "box": [
+      120,
+      200,
+      360,
+      130
+     ],
+     "title": "Deployable Architecture",
+     "dashed": true
+    }
+   ]
+  },
+  "side": {
+   "w": 900,
+   "h": 300,
+   "shapes": [
+    {
+     "box": [
+      20,
+      30,
+      400,
+      240
+     ],
+     "title": "IBM Cloud Cyber Vault",
+     "detail": "one create call, two keys",
+     "heavy": true
+    },
+    {
+     "box": [
+      480,
+      30,
+      400,
+      240
+     ],
+     "title": "Deployable Architecture",
+     "detail": "Terraform, one HMAC key",
+     "dashed": true
+    }
+   ]
+  },
+  "sum": {
+   "w": 340,
+   "h": 320,
+   "shapes": [
+    {
+     "box": [
+      10,
+      20,
+      320,
+      120
+     ],
+     "title": "IBM Cloud Cyber Vault",
+     "heavy": true
+    },
+    {
+     "box": [
+      10,
+      190,
+      320,
+      100
+     ],
+     "title": "Deployable Architecture",
+     "dashed": true
+    }
+   ]
+  },
+  "accounts": {
+   "w": 900,
+   "h": 300,
+   "shapes": [
+    {
+     "box": [
+      20,
+      40,
+      400,
+      200
+     ],
+     "title": "IBM's account",
+     "detail": "the vault's bucket",
+     "heavy": true
+    },
+    {
+     "box": [
+      480,
+      40,
+      400,
+      200
+     ],
+     "title": "your account",
+     "detail": "bucket, keys, rules, logs",
+     "dashed": true
+    }
+   ]
+  }
+ },
+ "steps": [
+  {
+   "title": "Welcome",
+   "cues": [
+    {
+     "slide": {
+      "type": "title",
+      "head": "The vault and the Deployable Architecture are different products",
+      "sub": "Which one this course teaches",
+      "sketch": "start"
+     },
+     "say": "Two IBM products have similar names, and this module tells them apart.",
+     "do": [
+      [
+       "show",
+       "head"
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "By the end of this module, you'll be able to name both products, say how they differ, say which one this course teaches, and use the right name in a paper for Northgate's directors.",
+     "do": [
+      [
+       "show",
+       "sub"
+      ]
+     ]
+    },
+    {
+     "say": "Northgate Freight is the made-up haulier we're following. It backs up with Defender Data Protect.",
+     "do": [
+      [
+       "build",
+       [
+        0
+       ]
+      ]
+     ]
+    },
+    {
+     "say": "A colleague sends Northgate's backup admin a link that says cyber vault. Before using anything on it, the admin needs to work out which of two IBM products the link is about.",
+     "do": [
+      [
+       "build",
+       [
+        1
+       ]
+      ]
+     ],
+     "hold": 0.8
+    },
+    {
+     "say": "Let's start with three terms.",
+     "hold": 1.0
+    }
+   ]
+  },
+  {
+   "title": "Two products side by side",
+   "cues": [
+    {
+     "slide": {
+      "type": "words",
+      "head": "Words in this module",
+      "items": [
+       [
+        "Terraform",
+        "a tool that builds cloud resources from written instructions"
+       ],
+       [
+        "HMAC key",
+        "an access key ID and secret key for object storage"
+       ],
+       [
+        "Deployable Architecture",
+        "a Terraform architecture in the IBM Cloud catalog"
+       ]
+      ]
+     },
+     "say": "You'll hear these all through this module.",
+     "do": [
+      [
+       "show",
+       "head"
+      ]
+     ],
+     "hold": 0.4
+    },
+    {
+     "say": "Terraform is a tool that builds cloud resources from written instructions.",
+     "do": [
+      [
+       "items",
+       [
+        0
+       ]
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "An HMAC key is a pair of an access key ID and a secret key that object storage accepts for requests.",
+     "do": [
+      [
+       "items",
+       [
+        1
+       ]
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "And the Deployable Architecture is a Terraform architecture in the IBM Cloud catalog.",
+     "do": [
+      [
+       "items",
+       [
+        2
+       ]
+      ]
+     ],
+     "hold": 1.0
+    },
+    {
+     "slide": {
+      "type": "diagram",
+      "head": "Built in different ways",
+      "sketch": "side"
+     },
+     "say": "Both products give you a cyber vault for backups, but they're different products, and each is put together differently.",
+     "do": [
+      [
+       "show",
+       "head"
+      ]
+     ],
+     "hold": 0.4
+    },
+    {
+     "say": "IBM's docs describe IBM Cloud Cyber Vault as a managed feature of Cloud Object Storage. One call creates a hardened bucket, with credentials and network rules.",
+     "do": [
+      [
+       "build",
+       [
+        0
+       ]
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "It comes with two keys, one for writing and one for reading, and the vault sits in an account that IBM manages.",
+     "hold": 0.6
+    },
+    {
+     "say": "The Deployable Architecture is called COS Cyber Vault for Storage Defender. It's a Terraform architecture that builds ordinary resources in the customer's own account.",
+     "do": [
+      [
+       "build",
+       [
+        1
+       ]
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "And it uses one HMAC key.",
+     "hold": 0.6
+    },
+    {
+     "say": "Everything here about the Deployable Architecture comes from reading IBM's docs and catalog code, not from running it.",
+     "hold": 1.2
+    }
+   ]
+  },
+  {
+   "title": "Whose account it's in",
+   "cues": [
+    {
+     "slide": {
+      "type": "q",
+      "head": "Which product sits in an account IBM manages?",
+      "opts": [
+       "IBM Cloud Cyber Vault",
+       "The Deployable Architecture"
+      ],
+      "ok": 0,
+      "why": "The architecture builds everything in your own account."
+     },
+     "say": "The biggest difference is where each one lives. Which product sits in an account that IBM manages?",
+     "do": [
+      [
+       "ask"
+      ]
+     ]
+    },
+    {
+     "say": "IBM Cloud Cyber Vault. The architecture builds everything in your own account.",
+     "do": [
+      [
+       "why"
+      ]
+     ],
+     "hold": 1.5
+    },
+    {
+     "slide": {
+      "type": "diagram",
+      "head": "Whose account it sits in",
+      "sketch": "accounts"
+     },
+     "say": "The vault's bucket sits in an account that IBM manages, and IBM's docs say nothing about it can be changed after it's created.",
+     "do": [
+      [
+       "show",
+       "head"
+      ],
+      [
+       "build",
+       [
+        0
+       ]
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "say": "The architecture builds a bucket, network rules, a key service, Secrets Manager and logging in your own account, and your team looks after all of them.",
+     "do": [
+      [
+       "build",
+       [
+        1
+       ]
+      ]
+     ],
+     "hold": 1.0
+    },
+    {
+     "say": "Setting up is different too. The vault comes from one create request. The architecture is a Terraform deployment from the catalog.",
+     "hold": 0.8
+    },
+    {
+     "say": "And they fit Data Protect differently. Data Protect locks each backup object itself. The vault can leave that to Data Protect, but with its lock on, the architecture also sets a lock on the whole bucket, and Data Protect's archives don't allow that.",
+     "hold": 1.5
+    }
+   ]
+  },
+  {
+   "title": "The right name",
+   "cues": [
+    {
+     "slide": {
+      "type": "q",
+      "head": "Which name should Northgate's paper use?",
+      "opts": [
+       "Just \"Cyber Vault\"",
+       "IBM Cloud Cyber Vault",
+       "The Deployable Architecture's name"
+      ],
+      "ok": 1,
+      "why": "Just \"cyber vault\" could mean either product."
+     },
+     "say": "Northgate's backup admin is writing about the vault for the directors. Which name should the paper use: just cyber vault, IBM Cloud Cyber Vault, or the Deployable Architecture's name, COS Cyber Vault for Storage Defender?",
+     "do": [
+      [
+       "ask"
+      ]
+     ]
+    },
+    {
+     "say": "IBM Cloud Cyber Vault. Just cyber vault could mean either product. You'll also see it written IBM COS Cyber Vault.",
+     "do": [
+      [
+       "why"
+      ]
+     ],
+     "hold": 1.5
+    },
+    {
+     "slide": {
+      "type": "tip",
+      "head": "Cyber vault can mean either product",
+      "tip": "Check which product a number belongs to."
+     },
+     "say": "Watch for this. When a page or a colleague says only cyber vault, they could mean either product. So ask which one before you reuse any number.",
+     "do": [
+      [
+       "show",
+       "head"
+      ],
+      [
+       "show",
+       "tip"
+      ]
+     ],
+     "hold": 2.0
+    }
+   ]
+  },
+  {
+   "title": "Check yourself",
+   "cues": [
+    {
+     "slide": {
+      "type": "statement",
+      "head": "Three quick questions"
+     },
+     "say": "Now three quick questions to check what you've learned.",
+     "do": [
+      [
+       "show",
+       "head"
+      ]
+     ],
+     "hold": 0.6
+    },
+    {
+     "slide": {
+      "type": "q",
+      "check": true,
+      "head": "Which product does this course teach?",
+      "opts": [
+       "IBM Cloud Cyber Vault",
+       "The Deployable Architecture",
+       "Both"
+      ],
+      "ok": 0,
+      "why": "The Deployable Architecture is a different product."
+     },
+     "say": "First, which product does this course teach?",
+     "do": [
+      [
+       "ask"
+      ]
+     ]
+    },
+    {
+     "say": "IBM Cloud Cyber Vault. The Deployable Architecture is a different product.",
+     "do": [
+      [
+       "why"
+      ]
+     ],
+     "hold": 1.5
+    },
+    {
+     "slide": {
+      "type": "q",
+      "check": true,
+      "head": "A link describes a Terraform architecture. Which product?",
+      "opts": [
+       "IBM Cloud Cyber Vault",
+       "The Deployable Architecture",
+       "Neither"
+      ],
+      "ok": 1,
+      "why": "Cyber Vault is made by one call, not by Terraform."
+     },
+     "say": "Second, a link says cyber vault, and describes a Terraform architecture from the IBM Cloud catalog. Which product is it about?",
+     "do": [
+      [
+       "ask"
+      ]
+     ]
+    },
+    {
+     "say": "The Deployable Architecture. IBM Cloud Cyber Vault is a managed feature made by one call, not a Terraform architecture.",
+     "do": [
+      [
+       "why"
+      ]
+     ],
+     "hold": 1.5
+    },
+    {
+     "slide": {
+      "type": "q",
+      "check": true,
+      "head": "Where does the Deployable Architecture build its bucket?",
+      "opts": [
+       "In an account IBM manages",
+       "In your own account",
+       "In Data Protect"
+      ],
+      "ok": 1,
+      "why": "It builds ordinary resources in your account."
+     },
+     "say": "And third, where does the Deployable Architecture build its bucket?",
+     "do": [
+      [
+       "ask"
+      ]
+     ]
+    },
+    {
+     "say": "In your own account, along with the services it needs. The vault is the one that sits in an account IBM manages.",
+     "do": [
+      [
+       "why"
+      ]
+     ],
+     "hold": 1.5
+    }
+   ]
+  },
+  {
+   "title": "Summary",
+   "cues": [
+    {
+     "slide": {
+      "type": "score"
+     },
+     "say": "That's the module done. Here's your score.",
+     "do": [
+      [
+       "show",
+       "head"
+      ]
+     ],
+     "hold": 1.5
+    },
+    {
+     "slide": {
+      "type": "summary",
+      "text": "<em>IBM Cloud Cyber Vault</em> is the product this course teaches.",
+      "next": "Next: Get access",
+      "sketch": "sum"
+     },
+     "say": "In this module, you've met both products. The vault sits in an account IBM manages and comes from one create request. The architecture is built with Terraform in your own account. This course teaches IBM Cloud Cyber Vault, and that's the name to use. If you remember one thing, make it the sentence on the screen. And whenever a source says only cyber vault, ask which one it means.",
+     "do": [
+      [
+       "show",
+       "head"
+      ],
+      [
+       "build",
+       [
+        0,
+        1
+       ]
+      ]
+     ],
+     "hold": 1.5
+    },
+    {
+     "say": "In the next module, you'll see how Northgate gets access: two roles and an allow list.",
+     "do": [
+      [
+       "show",
+       "next"
+      ]
+     ],
+     "hold": 1.0
+    }
+   ]
+  }
+ ]
+}

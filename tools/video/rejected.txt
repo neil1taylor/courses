@@ -1,0 +1,4 @@
+# Wording the owner has rejected. One case-insensitive regular expression per line.
+# A line that starts with # is a comment. Each pattern is tried at the start of every
+# sentence of narration and of every piece of slide text.
+^(two|three|four|five|six) (items|things|points|steps|parts) (stay|are|remain)\b
