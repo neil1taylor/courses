@@ -234,6 +234,10 @@ function renderSlide(spec, id) {
     const out = Array.isArray(spec.out) ? spec.out : String(spec.out).split("\n");
     d.innerHTML = '<div class="term"><div class="cmd">$ ' + esc(spec.cmd) + "</div>" + out.map((l, j) => '<div class="ol" data-l="' + j + '">' + esc(l) + "</div>").join("") + "</div>";
   }
+  if (spec.type === "table") {
+    d.innerHTML = k(head, "head") + k('<table class="tbl"><thead><tr>' + spec.cols.map(c => "<th>" + esc(c) + "</th>").join("") + "</tr></thead><tbody>" +
+      spec.rows.map((r, j) => '<tr data-r="' + j + '">' + r.map(c => "<td>" + esc(c) + "</td>").join("") + "</tr>").join("") + "</tbody></table>", "table");
+  }
   if (spec.type === "score") {
     const sc = scoreOf(answers, TL), known = sc.answered === sc.total && sc.total > 0;
     d.innerHTML = k('<div class="num">' + (known ? sc.right + "<small> of " + sc.total + "</small>" : "Module done") + '</div><p class="means">' +
@@ -276,6 +280,7 @@ function act([a, v], animate) {
   if (a === "items") { d.querySelectorAll(".cell.cur").forEach(c => { c.classList.remove("cur"); c.classList.add("past"); }); v.forEach(j => { show("i" + j); d.querySelector('[data-k="i' + j + '"]').classList.add("cur"); }); }
   if (a === "box") { d.querySelectorAll(".bx.cur").forEach(b => { b.classList.remove("cur"); b.classList.add("past"); }); const b = d.querySelector('.bx[data-b="' + v + '"]'); if (b) { if (!animate) b.style.transition = "none"; b.classList.remove("off"); b.classList.add("cur"); } }
   if (a === "line") { d.querySelectorAll(".ol.cur").forEach(l => { l.classList.remove("cur"); l.classList.add("past"); }); const l = d.querySelector('.ol[data-l="' + v + '"]'); if (l) l.classList.add("cur"); }
+  if (a === "row") { d.querySelectorAll(".tbl tr.cur").forEach(r => { r.classList.remove("cur"); r.classList.add("past"); }); const r = d.querySelector('.tbl tr[data-r="' + v + '"]'); if (r) r.classList.add("cur"); }
   if (a === "ask") { show("head"); show("opts"); if (!d.querySelector(".opts.answered")) setAnswerBar(d); }
   if (a === "why") { if (!d.querySelector(".opts.answered")) answer(d, -1, false); show("why"); }
 }
