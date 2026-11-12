@@ -152,3 +152,7 @@ test("fitSize scales an image to fit the frame and keeps its shape", () => {
 test("fitSize gives a zero size for an image that has no size yet", () => {
   assert.deepEqual(P.fitSize({ w: 0, h: 0 }, { w: 1680, h: 780 }), { w: 0, h: 0 });
 });
+
+test("fitSize enlarges a small image at most twice", () => {
+  assert.deepEqual(P.fitSize({ w: 400, h: 300 }, { w: 1600, h: 800 }), { w: 800, h: 600 });
+});

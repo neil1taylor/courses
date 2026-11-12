@@ -149,3 +149,19 @@ def test_offline_speaker_names_the_missing_cue(monkeypatch):
     with pytest.raises(voice.MissingAudio) as e:
         voice.offline_speaker().wav("Some words")
     assert "Some words" in str(e.value)
+
+
+def test_voice_script_leaves_the_input_script_unchanged(tmp_path):
+    speaker, audio = setup(tmp_path)
+    script = make(["One two.", "Three."], pronounce={"x": "y"})
+    script["extra"] = {"nested": [1, 2]}
+    before = copy.deepcopy(script)
+    voice.voice_script(script, audio, speaker)
+    assert script == before
+
+
+def test_ffmpeg_failure_raises(tmp_path, monkeypatch):
+    speaker, audio = setup(tmp_path)
+    monkeypatch.setattr(voice, "FFMPEG", "false")
+    with pytest.raises(subprocess.CalledProcessError):
+        voice.voice_script(make(["One."]), audio, speaker)

@@ -86,10 +86,10 @@ function boxPercent([x, y, w, h], img) {
   return { left: x / img.w * 100, top: y / img.h * 100, width: w / img.w * 100, height: h / img.h * 100 };
 }
 
-/* The largest size that fits the frame with the image's shape kept. */
+/* The largest size that fits the frame with the image's shape kept, enlarged at most twice. */
 function fitSize(img, frame) {
   if (!img.w || !img.h) return { w: 0, h: 0 };
-  const s = Math.min(frame.w / img.w, frame.h / img.h);
+  const s = Math.min(frame.w / img.w, frame.h / img.h, 2);
   return { w: Math.round(img.w * s), h: Math.round(img.h * s) };
 }
 

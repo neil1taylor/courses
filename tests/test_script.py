@@ -416,3 +416,23 @@ def test_terminal_with_8_lines_and_last_box_are_allowed():
         n = len(slide(s, 4, 1)["boxes"])
         cue(s, 4, 1)["do"] = [["show", "head"], ["box", n - 1]]
     assert run(f) == []
+
+
+def test_opts_given_as_a_number_is_a_problem_not_a_crash():
+    has(run(lambda s: slide(s, 3, 1).update(opts=5)), "opts")
+
+
+def test_shapes_given_as_a_number_is_a_problem_not_a_crash():
+    def f(s):
+        s["sketches"]["parts"]["shapes"] = 5
+    has(run(f), "shapes")
+
+
+def test_question_mark_after_missing_first_slide_adds_no_second_problem():
+    def f(s):
+        c = cue(s, 2, 1)
+        del c["slide"]
+        c["say"] = "Which one is it?"
+    problems = run(f)
+    assert not any("question" in p for p in problems if "outside a question slide" in p), problems
+    has(problems, "first cue of a step needs a slide")
