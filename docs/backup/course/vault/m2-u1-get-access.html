@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Get access: two roles and an allow list · Cyber Vault course</title>
-<meta name="description" content="Course unit 2.1: name the two roles and the allow list that a Cyber Vault Beta account needs, say what a successful list proves, and fix a create call that says the token is malformed. No account needed.">
+<meta name="description" content="Course unit 2.1: name the two roles and the allow list that a Cyber Vault account needs, say what a successful list proves, and fix a create call that says the token is malformed. No account needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -37,17 +37,17 @@
           {"box":[10,20,190,60],"heavy":true,"title":"Allow list","detail":"IBM adds the account"},
           {"box":[220,20,190,60],"heavy":true,"title":"Two roles","detail":"Reader and Manager"},
           {"text":"only a create proves it","at":[100,140],"hand":true,"size":20,"tone":"mark"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect, and its directors want to know what happens if an attacker gets the backup admin&apos;s keys. Northgate plans to use a Cyber Vault, and the first step is getting its IBM Cloud account into the Beta.</p>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect, and its directors want to know what happens if an attacker gets the backup admin&apos;s keys. Northgate plans to use a Cyber Vault, and the first step is getting its IBM Cloud account onto the allow list.</p>
     </div>
   </div>
-  <p class="small">Everything here comes from runs in our lab. The vault is a Beta in us-south, and it has no SLA, no warranty and no support.</p>
+  <p class="small">Everything here comes from runs in our lab.</p>
   <p class="small"><b>Terms used.</b> <b>IAM role</b>: IAM is IBM Cloud&apos;s system for deciding who may do what, and a role is a named set of permissions in it. <b>IAM token</b>: a short-lived string that proves who you are when you call a service. <b>Service ID</b>: an identity in IBM Cloud for a program, not a person. <b>HTTP 202</b>: the answer that means a request was accepted but is not finished. <b>HTTP 500</b>: the answer that means the service hit an error.</p>
 </section>
 
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>What an account needs</h2>
-  <p class="lead">The Beta is closed, so IBM has to put the account on an allow list first. Then the user needs two roles, granted by name, and a role on the storage instance.</p>
+  <p class="lead">IBM has to put the account on an allow list first. Then the user needs two roles, granted by name, and a role on the storage instance.</p>
   <svg class="sketch" role="img" aria-label="Hand-drawn diagram. On the left, the IBM allow list. On the right, three things the user needs: the Cyber Vault Reader role, the Cyber Vault Manager role, and Editor or Administrator on the COS instance."
     data-drawing='{"w":560,"h":240,"shapes":[
       {"box":[10,80,200,64],"dashed":true,"title":"Allow list","detail":"IBM adds the account"},
@@ -156,7 +156,7 @@ HTTP 500
     <div class="q" data-check>
       <p>A list call returns HTTP 200 and no vaults. What do you know?</p>
       <div class="opts">
-        <button class="opt">The account is allowed on the Beta</button>
+        <button class="opt">The account is on the allow list</button>
         <button class="opt" data-ok>The Reader role works; only a create proves the allow list</button>
         <button class="opt">The vault was created</button>
       </div>

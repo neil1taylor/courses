@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its directors want to know what happens if an attacker gets the backup admin&apos;s keys. Can the attacker use them from their own network? And can the vault be shut outside office hours?</p>
     </div>
   </div>
-  <p class="small">Every result comes from real tests in our lab. The vault is a Beta in us-south, and it has no SLA. Hosts, IP addresses, vault names and keys are made-up or placeholders, because we changed the real values.</p>
+  <p class="small">Every result comes from real tests in our lab. Hosts, IP addresses, vault names and keys are made-up or placeholders, because we changed the real values.</p>
   <p class="small"><b>Terms used.</b> <b>Private IP range (RFC 1918)</b>: addresses reserved for use inside private networks, not on the internet. <b>Vhost style and path style</b>: two ways to write a bucket address. Vhost style puts the bucket name in the host name, and path style puts it in the path. <b>ROVS</b>: Red Hat OpenShift Virtualization Service on IBM Cloud.</p>
 </section>
 
@@ -153,7 +153,7 @@ put, read key                        -            403 (the read key never writes
         <button class="opt" data-ok>It blocks reads as well</button>
         <button class="opt">It blocks the read key only</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It blocks reads as well. Most of the Beta text said reads aren&apos;t windowed, but one field table said the window covers write and read. In our lab it blocked both.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It blocks reads as well. Most of IBM&apos;s text said reads aren&apos;t windowed, but one field table said the window covers write and read. In our lab it blocked both.</p></details>
     </div>
   </div>
 </section>

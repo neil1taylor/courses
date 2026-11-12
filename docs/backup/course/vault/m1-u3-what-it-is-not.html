@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>What it isn't · Cyber Vault course</title>
-<meta name="description" content="Course unit 1.3: explain that the Cyber Vault is logically isolated rather than a physical air gap, and state the Beta's terms: us-south only, allow-listed, no SLA and no support. No account needed.">
+<meta name="description" content="Course unit 1.3: explain that the Cyber Vault is logically isolated rather than a physical air gap, and say what an account needs before it can create a vault. No account needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -26,8 +26,8 @@
   <div class="start">
     <div>
       <span class="kicker">Unit 3 of Module 1</span>
-      <h1>What it isn&apos;t: logical isolation, no physical air gap, and the Beta&apos;s terms</h1>
-      <p class="lead">By the end of this unit you&apos;ll be able to explain what &quot;isolated&quot; means for this vault, why it isn&apos;t a physical air gap, and which terms of the Beta Northgate has to accept.</p>
+      <h1>What it isn&apos;t: logical isolation and no physical air gap</h1>
+      <p class="lead">By the end of this unit you&apos;ll be able to explain what &quot;isolated&quot; means for this vault, why it isn&apos;t a physical air gap, and what Northgate&apos;s account needs before it can create a vault.</p>
       <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
@@ -40,7 +40,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its directors have heard the words &quot;air gap&quot;. Before Northgate&apos;s IT manager uses those words, the manager needs to know exactly what the vault does.</p>
     </div>
   </div>
-  <p class="small">The screen comes from the IBM Cloud console in our lab, and the results come from our tests. The vault is IBM Cloud Cyber Vault (Beta) in us-south, which has no SLA.</p>
+  <p class="small">The screen comes from the IBM Cloud console in our lab, and the results come from our tests.</p>
   <p class="small"><b>Terms used.</b> <b>COS</b>: short for IBM Cloud Object Storage. A COS instance is one copy of that service in an account. <b>VSI</b>: a virtual server instance, which is a virtual server in IBM Cloud. <b>eu-de</b>: the IBM Cloud region in Frankfurt. <b>Deployable Architecture</b>: a ready-made package in the IBM Cloud catalog that builds a set of cloud resources in your account. <b>Audit events</b>: records of who made which request to a service.</p>
 </section>
 
@@ -48,12 +48,12 @@
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>What keeps the vault apart</h2>
   <p class="lead">The vault is isolated by network rules and by locks. It&apos;s still a bucket in a cloud region, and the networks on its allow-list reach it in the normal way.</p>
-  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. The allowed network reaches the vault and gets HTTP 200. Everyone else, even with a valid key, gets HTTP 403. The vault is in an account that IBM manages, in us-south."
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. The allowed network reaches the vault and gets HTTP 200. Everyone else, even with a valid key, gets HTTP 403. The vault is in an account that IBM manages."
     data-drawing='{"w":560,"h":250,"shapes":[
       {"box":[10,10,200,64],"title":"Allowed network","detail":"the lab VPC"},
       {"line":[214,42,306,42],"arrow":true,"tone":"mark"},
       {"text":"200","at":[240,32],"hand":true,"size":17,"tone":"mark"},
-      {"box":[310,60,240,70],"heavy":true,"tone":"mark","title":"Cyber Vault","detail":"IBM-managed account, us-south"},
+      {"box":[310,60,240,70],"heavy":true,"tone":"mark","title":"Cyber Vault","detail":"IBM-managed account"},
       {"box":[10,150,200,64],"dashed":true,"tone":"muted","title":"Everyone else","detail":"even with a valid key"},
       {"line":[214,182,306,120],"arrow":true},
       {"text":"403","at":[250,172],"hand":true,"size":17}]}'></svg>
@@ -95,7 +95,7 @@
       <div class="shot"><img src="../../cyber-vault/tutorials/images/V2-1-cyber-vault-list.png" alt="Cyber Vaults: three vaults, all Active, us-south, Provider-managed, Retention 0 days" width="1227" height="585"></div>
       <figcaption>
         <h3>Which column shows where the vaults are?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Location says us-south for every vault. The create form offers only Dallas (us-south).</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. The Location column names the cloud region each vault is in, because a vault is a bucket in a cloud region.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -103,32 +103,23 @@
 
 <section class="screen">
   <span class="kicker">Step 3 · Predict</span>
-  <h2>The terms of the Beta</h2>
-  <p class="lead">The console banner for the vault says the Beta is offered for evaluation and testing for a limited time, with no warranties, SLAs or support. What do you think the other terms are?</p>
-  <pre class="def" aria-label="Beta terms">Term                       Beta
-Regions                    ?
-How an account gets in     ?
-SLA and support            ?
-Use in production          ?</pre>
+  <h2>Who gets in: networks and accounts</h2>
+  <p class="lead">Two lists decide who gets in. The vault&apos;s own allow-list decides which networks can reach it. IBM keeps a second list that decides which accounts can create a vault. What do you think happens to a request from outside the allow-list, even with a valid key?</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>Which row is correct?</p>
+      <p>Which answer is right?</p>
       <div class="opts">
-        <button class="opt">us-south and eu-de; open to all; 99.9% SLA; allowed in production</button>
-        <button class="opt" data-ok>us-south only; allow-listed; no SLA and no support; not for production</button>
-        <button class="opt">us-south only; open to all; no SLA; allowed in production</button>
+        <button class="opt">A valid key is enough to get in from any network</button>
+        <button class="opt" data-ok>The request is refused with HTTP 403 even with a valid key</button>
+        <button class="opt">The request is accepted and the object lock refuses the write</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">Correct. The Beta runs only in us-south, and IBM gives no SLA or support for it.</span><p>IBM&apos;s overview says there are no warranties, SLA or support, and that it isn&apos;t for production use. Creating a vault in any region other than us-south returns HTTP 400.</p><pre class="def" aria-label="Beta terms">Term                       Beta
-Regions                    us-south only
-How an account gets in     allow-listed
-SLA and support            none
-Use in production          not for production</pre></details>
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">Correct. The allowed network got HTTP 200, and everyone else got HTTP 403.</span><p>The network rules are checked before the key counts, so a stolen key from outside the allow-list gets nothing.</p></details>
     </div>
     <div class="q">
       <p>Our account could list vaults, but at first every create failed. What did that tell us?</p>
       <div class="opts">
         <button class="opt">The account was on the allow-list</button>
-        <button class="opt" data-ok>A list works with a role alone; only a create shows whether the account is allowed in</button>
+        <button class="opt" data-ok>Listing vaults needs only a role; only creating one shows whether the account is allowed in</button>
         <button class="opt">The vault service was down for a week</button>
       </div>
       <details class="reveal"><summary>Show the answer</summary><p>That a list works with a role alone, and only a create shows whether the account is on the list. Six creates went to <code>failed</code> in 17 to 40 seconds with no error text, and later a create went to <code>active</code> in about 30 seconds. IBM didn&apos;t confirm the cause, and the most likely one is that the account wasn&apos;t yet on the list. If your account is on Basic support you can&apos;t open the onboarding case yourself, so ask IBM&apos;s Cyber Vault product team, who allow-list the account when asked.</p></details>
@@ -139,16 +130,16 @@ Use in production          not for production</pre></details>
 <section class="screen">
   <span class="kicker">Step 4 · Spot the fault</span>
   <h2>What Northgate wants to tell the auditor</h2>
-  <p class="lead">Northgate&apos;s IT manager wants to tell the auditor who checks Northgate&apos;s security controls: "The vault is a physically air-gapped, production-ready service, and the owner can show who touched it." Which parts of that hold up?</p>
+  <p class="lead">Northgate&apos;s IT manager wants to tell the auditor who checks Northgate&apos;s security controls: "The vault is physically air-gapped, and the owner can show who touched it." Which parts of that hold up?</p>
   <div class="pair" style="margin-top:20px">
     <div class="q">
-      <p>Which part doesn&apos;t match what this unit showed?</p>
+      <p>What does the first part get wrong?</p>
       <div class="opts">
-        <button class="opt">Only &quot;physically air-gapped&quot;</button>
-        <button class="opt">Only &quot;production-ready&quot;</button>
-        <button class="opt" data-ok>Both: the isolation is logical, and the Beta is not for production</button>
+        <button class="opt">Nothing: the vault is disconnected from every network</button>
+        <button class="opt" data-ok>The isolation is logical, not physical</button>
+        <button class="opt">The vault isn&apos;t isolated at all</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Both. The vault is logically isolated, and its allowed network can reach it. And IBM&apos;s overview says the Beta has no SLA, no support and isn&apos;t for production use.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The isolation is logical. Network rules and locks keep the vault apart, and its allowed network can reach it.</p></details>
     </div>
     <div class="q">
       <p>The last part says the owner can show who touched the vault. What did our test show?</p>
@@ -177,22 +168,22 @@ Use in production          not for production</pre></details>
       <details class="reveal"><summary>Show the answer</summary><p>Logical isolation. The allowed network reached the vault and got HTTP 200, and everyone else was refused.</p></details>
     </div>
     <div class="q" data-check>
-      <p>Which list of Beta terms is right?</p>
+      <p>What does an account need before it can create a vault?</p>
       <div class="opts">
-        <button class="opt" data-ok>us-south only, allow-listed, no SLA, no support</button>
-        <button class="opt">Any region, open to all, no SLA</button>
-        <button class="opt">us-south only, open to all, 24-hour support</button>
+        <button class="opt">A role alone</button>
+        <button class="opt" data-ok>To be on IBM&apos;s allow-list, as well as the roles</button>
+        <button class="opt">A physical connection to IBM</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The first one. IBM&apos;s overview says there are no warranties, SLA or support, and that it isn&apos;t for production use.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The allow-list as well as the roles. Listing vaults needs only a role. Only creating one shows whether IBM has allowed the account.</p></details>
     </div>
     <div class="q" data-check>
-      <p>Is this Beta the Deployable Architecture &quot;COS Cyber Vault for Storage Defender&quot;?</p>
+      <p>Is this vault the Deployable Architecture &quot;COS Cyber Vault for Storage Defender&quot;?</p>
       <div class="opts">
         <button class="opt">Yes, the same product</button>
         <button class="opt" data-ok>No: it is a different product, covered in the next unit</button>
         <button class="opt">Yes, an older version of it</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>No. The Beta is a managed COS feature. The Deployable Architecture is a separate product, and we never deployed it in our lab. Unit 1.4 puts them side by side.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. The vault is a managed COS feature. The Deployable Architecture is a separate product, and we never deployed it in our lab. Unit 1.4 puts them side by side.</p></details>
     </div>
   </div>
 </section>
@@ -202,7 +193,7 @@ Use in production          not for production</pre></details>
   <h2>You know what the vault isn&apos;t</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>The vault is logically isolated. It isn&apos;t a physical air gap. The Beta runs only in us-south, needs the account to be allow-listed, has no SLA and no support, and isn&apos;t for production. It isn&apos;t the Deployable Architecture &quot;COS Cyber Vault for Storage Defender&quot;. In our lab the owner couldn&apos;t see audit events for it, so check that before you promise them to an auditor.</p></div>
+    <div><span class="label">Remember</span><p>The vault is logically isolated. It isn&apos;t a physical air gap. It needs the account to be allow-listed. It isn&apos;t the Deployable Architecture &quot;COS Cyber Vault for Storage Defender&quot;. In our lab the owner couldn&apos;t see audit events for it, so check that before you promise them to an auditor.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

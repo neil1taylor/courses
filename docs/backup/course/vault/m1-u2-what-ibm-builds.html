@@ -42,7 +42,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It backs up with Defender Data Protect, and its backup admin wants to know exactly what IBM puts in a Cyber Vault before trusting one.</p>
     </div>
   </div>
-  <p class="small">The screens come from the IBM Cloud console in our lab. The vault is a Beta in us-south, and it has no SLA.</p>
+  <p class="small">The screens come from the IBM Cloud console in our lab.</p>
   <p class="small"><b>Terms used.</b> <b>CBR</b>: context-based restrictions, which are IBM Cloud rules that decide which networks may reach a resource. They enforce the vault&apos;s allow-list. <b>Default retention</b>: the number of days the vault locks every new object for; 0 means the backup software sets each lock. <b>API</b>: a way for programs, not people, to send requests to a service. <b>IP range</b>: a block of network addresses, such as those of an office network, that you can put on the allow-list. <b>UTC</b>: the world time standard used for every time in this course. A Z after a time also means UTC.</p>
 </section>
 
@@ -75,7 +75,7 @@
         <button class="opt" data-ok>The write window</button>
         <button class="opt">The keys</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The write window. Network isolation is mandatory, so you have to give at least one VPC or IP range. The daily write window is optional. IBM&apos;s Beta overview also says that nothing can be changed after the vault is created.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The write window. Network isolation is mandatory, so you have to give at least one VPC or IP range. The daily write window is optional. IBM&apos;s overview also says that nothing can be changed after the vault is created.</p></details>
     </div>
   </div>
 </section>
@@ -101,7 +101,7 @@
         <button class="opt" data-ok>No: the form warns that the configuration cannot be modified</button>
         <button class="opt">Only the write window can be edited</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>No. The create form says: "Once created, the vault configuration cannot be modified." IBM&apos;s Beta overview says the same, and there&apos;s no update API in the Beta. So check every setting before you click Create.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>No. The create form says: "Once created, the vault configuration cannot be modified." IBM&apos;s overview says the same, and there&apos;s no update API. So check every setting before you click Create.</p></details>
     </div>
   </div>
 </section>
