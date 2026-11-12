@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Two products, one name · Cyber Vault course</title>
-<meta name="description" content="Course unit 1.4: tell the IBM Cloud Cyber Vault (Beta) apart from the Deployable Architecture COS Cyber Vault for Storage Defender, and use the right name in a paper for the directors. No account needed.">
+<meta name="description" content="Course unit 1.4: tell the IBM Cloud Cyber Vault apart from the Deployable Architecture COS Cyber Vault for Storage Defender, and use the right name in a paper for the directors. No account needed.">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="assets/course.css">
 <script src="assets/rough.js" defer></script>
@@ -32,15 +32,15 @@
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
-      <svg class="sketch" role="img" aria-label="Sketch: two products with similar names. IBM Cloud Cyber Vault (Beta) is tested here. The Deployable Architecture COS Cyber Vault for Storage Defender was never deployed here."
+      <svg class="sketch" role="img" aria-label="Sketch: two products with similar names. IBM Cloud Cyber Vault is tested here. The Deployable Architecture COS Cyber Vault for Storage Defender was never deployed here."
         data-drawing='{"w":420,"h":200,"shapes":[
-          {"box":[10,30,185,70],"heavy":true,"tone":"mark","title":"Cyber Vault (Beta)","detail":"tested in our lab"},
+          {"box":[10,30,185,70],"heavy":true,"tone":"mark","title":"Cyber Vault","detail":"tested in our lab"},
           {"box":[225,30,185,70],"dashed":true,"tone":"muted","title":"Deployable Arch.","detail":"never deployed here"},
           {"text":"two products, similar names","at":[60,150],"hand":true,"size":18,"tone":"mark"}]}'></svg>
       <p class="hand tilt">Northgate Freight is a made-up haulier. A colleague sends Northgate&apos;s backup admin a link that says &quot;cyber vault&quot;. Before using anything on it, the admin needs to work out which of two IBM products the link is about.</p>
     </div>
   </div>
-  <p class="small">Everything this unit says about the Deployable Architecture comes from reading IBM&apos;s catalog code and docs. We never deployed it in our lab, so none of it is tested. Everything we tested in this course is the Beta, in us-south, which has no SLA and no support.</p>
+  <p class="small">Everything this unit says about the Deployable Architecture comes from reading IBM&apos;s catalog code and docs. We never deployed it in our lab, so none of it is tested. Everything we tested in this course is IBM Cloud Cyber Vault.</p>
   <p class="small"><b>Terms used.</b> <b>Terraform</b>: a tool that builds cloud resources from written instructions. <b>HMAC key</b>: a pair of an access key ID and a secret key that object storage accepts for requests.</p>
 </section>
 
@@ -48,12 +48,12 @@
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Two products side by side</h2>
   <p class="lead">Both products give you a cyber vault for backups, but they&apos;re different products and they&apos;re built in different ways.</p>
-  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Left: IBM Cloud Cyber Vault (Beta), a managed COS feature made by one API call, us-south only, two keys. Right: COS Cyber Vault for Storage Defender, a Terraform Deployable Architecture, one key, never deployed here."
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Left: IBM Cloud Cyber Vault, a managed COS feature made by one API call, two keys. Right: COS Cyber Vault for Storage Defender, a Terraform Deployable Architecture, one key, never deployed here."
     data-drawing='{"w":560,"h":290,"shapes":[
       {"text":"the course teaches","at":[14,22],"hand":true,"size":17,"tone":"mark"},
-      {"box":[10,30,260,60],"heavy":true,"tone":"mark","title":"Cyber Vault (Beta)","detail":"a managed COS feature"},
+      {"box":[10,30,260,60],"heavy":true,"tone":"mark","title":"Cyber Vault","detail":"a managed COS feature"},
       {"box":[10,98,260,60],"title":"one API call","detail":"makes the bucket"},
-      {"box":[10,166,260,60],"title":"us-south only","detail":"two keys"},
+      {"box":[10,166,260,60],"title":"two keys","detail":"one to write, one to read"},
       {"text":"only named here","at":[304,22],"hand":true,"size":17,"tone":"muted"},
       {"box":[290,30,260,60],"dashed":true,"tone":"muted","title":"COS Cyber Vault DA","detail":"for Storage Defender"},
       {"box":[290,98,260,60],"dashed":true,"tone":"muted","title":"Terraform","detail":"builds ordinary resources"},
@@ -62,20 +62,20 @@
     <div class="q">
       <p>Which product is made by one API call and has two keys, one for writing and one for reading?</p>
       <div class="opts">
-        <button class="opt" data-ok>IBM Cloud Cyber Vault (Beta)</button>
+        <button class="opt" data-ok>IBM Cloud Cyber Vault</button>
         <button class="opt">The Deployable Architecture</button>
         <button class="opt">Both</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The Beta. IBM&apos;s docs describe it as a managed COS feature, where one call creates a hardened bucket with credentials and network rules. The Deployable Architecture is a Terraform architecture in the IBM Cloud catalog. It builds ordinary resources in the customer&apos;s account, with one HMAC key.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM Cloud Cyber Vault. IBM&apos;s docs describe it as a managed COS feature, where one call creates a hardened bucket with credentials and network rules. The Deployable Architecture is a Terraform architecture in the IBM Cloud catalog. It builds ordinary resources in the customer&apos;s account, with one HMAC key.</p></details>
     </div>
     <div class="q">
       <p>Which of the two did we deploy and test in our lab?</p>
       <div class="opts">
         <button class="opt">Both</button>
         <button class="opt">The Deployable Architecture only</button>
-        <button class="opt" data-ok>The Beta only</button>
+        <button class="opt" data-ok>IBM Cloud Cyber Vault only</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The Beta only. We never deployed the Deployable Architecture here. We decided to describe both and test the Beta.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM Cloud Cyber Vault only. We never deployed the Deployable Architecture here. We decided to describe both and test the vault.</p></details>
     </div>
   </div>
 </section>
@@ -85,29 +85,29 @@
   <h2>Match the facts to the product</h2>
   <p class="lead">Each fact below comes from IBM&apos;s own docs or catalog code. Which product does each one describe?</p>
   <pre class="def" aria-label="Facts to match">Fact                                         Which product?
-Regions: us-south only                       ?
+Built by Terraform in your account          ?
 Lock default of 1 to 1000 years              ?
 Lock default of 0 to 3,650 days              ?</pre>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>Which product has a lock of 0 to 3,650 days, where 0 means &quot;the backup software locks each object&quot;?</p>
       <div class="opts">
-        <button class="opt" data-ok>The Beta</button>
+        <button class="opt" data-ok>IBM Cloud Cyber Vault</button>
         <button class="opt">The Deployable Architecture</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><span class="hand">The Beta. Its lock is set in days, and the architecture&apos;s in years.</span><pre class="def" aria-label="Facts matched">Fact                                         Which product?
-Regions: us-south only                       Beta
+      <details class="reveal"><summary>Show the answer</summary><span class="hand">IBM Cloud Cyber Vault. Its lock is set in days, and the architecture&apos;s in years.</span><pre class="def" aria-label="Facts matched">Fact                                         Which product?
+Built by Terraform in your account          Deployable Architecture
 Lock default of 1 to 1000 years              Deployable Architecture (when lock is on)
-Lock default of 0 to 3,650 days              Beta</pre><p>The architecture&apos;s region list includes eu-de.</p></details>
+Lock default of 0 to 3,650 days              Cyber Vault</pre></details>
     </div>
     <div class="q">
-      <p>A customer in eu-de asks which product to use for a Defender vault in the same region. What do the sources say?</p>
+      <p>Which product builds its resources in the customer&apos;s own account, from a Terraform architecture in the IBM Cloud catalog?</p>
       <div class="opts">
-        <button class="opt">The Beta runs in eu-de too</button>
-        <button class="opt" data-ok>The Beta is us-south only; the architecture lists eu-de, but we did not deploy it</button>
-        <button class="opt">Neither is available in eu-de</button>
+        <button class="opt">IBM Cloud Cyber Vault</button>
+        <button class="opt" data-ok>The Deployable Architecture</button>
+        <button class="opt">Both</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The Beta is us-south only, and any other region returns 400. Our own lab is in eu-de, and it could still reach the us-south endpoint: requests from the lab VPC got a quick answer, a 403 or a 405, so the network path worked. The architecture&apos;s region list comes from its catalog code, and we didn&apos;t run it.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The Deployable Architecture. IBM describes it as a Terraform architecture that builds ordinary resources in the customer&apos;s account. IBM Cloud Cyber Vault is made by one call to COS, and its vault sits in an account that IBM manages. We read the architecture&apos;s code and didn&apos;t run it.</p></details>
     </div>
   </div>
 </section>
@@ -121,19 +121,19 @@ Lock default of 0 to 3,650 days              Beta</pre><p>The architecture&apos;
       <p>What&apos;s wrong with the sentence?</p>
       <div class="opts">
         <button class="opt">Nothing: it is the same product</button>
-        <button class="opt" data-ok>The one-year minimum belongs to the Deployable Architecture, which we did not test; the Beta was tested</button>
-        <button class="opt">The Beta also has a one-year minimum</button>
+        <button class="opt" data-ok>The one-year minimum belongs to the Deployable Architecture, which we did not test; Cyber Vault was tested</button>
+        <button class="opt">Cyber Vault also has a one-year minimum</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It mixes the two products. In the code we read, the architecture&apos;s lock is at least 1 year when the lock is on. The Beta takes 0 to 3,650 days, and our tests used a 3-day maximum.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It mixes the two products. In the code we read, the architecture&apos;s lock is at least 1 year when the lock is on. Cyber Vault takes 0 to 3,650 days, and our tests used a 3-day maximum.</p></details>
     </div>
     <div class="q">
       <p>When Northgate writes about these results, which name should it use?</p>
       <div class="opts">
         <button class="opt">&quot;Cyber Vault&quot;, with no more detail</button>
-        <button class="opt" data-ok>IBM Cloud Cyber Vault (Beta)</button>
+        <button class="opt" data-ok>IBM Cloud Cyber Vault</button>
         <button class="opt">COS Cyber Vault for Storage Defender</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>IBM Cloud Cyber Vault (Beta), which is the name in our test records. You&apos;ll also see it written &quot;IBM COS Cyber Vault (Beta)&quot;. The backup software on the other side is IBM Storage Defender Data Protect 7.4.1 (Defender 2.2.1).</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM Cloud Cyber Vault, which is the name in our test records. You&apos;ll also see it written &quot;IBM COS Cyber Vault&quot;. The backup software on the other side is IBM Storage Defender Data Protect 7.4.1 (Defender 2.2.1).</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> When a page or a colleague says only &quot;cyber vault&quot;, they could mean either product. Ask which one before you reuse any number.</p>
@@ -146,20 +146,20 @@ Lock default of 0 to 3,650 days              Beta</pre><p>The architecture&apos;
     <div class="q" data-check>
       <p>Which product was tested in this course?</p>
       <div class="opts">
-        <button class="opt" data-ok>IBM Cloud Cyber Vault (Beta)</button>
+        <button class="opt" data-ok>IBM Cloud Cyber Vault</button>
         <button class="opt">COS Cyber Vault for Storage Defender</button>
         <button class="opt">Both</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The Beta. We never deployed the Deployable Architecture here.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>IBM Cloud Cyber Vault. We never deployed the Deployable Architecture here.</p></details>
     </div>
     <div class="q" data-check>
-      <p>Which product is us-south only, allow-listed, with no SLA and no support?</p>
+      <p>A link says &quot;cyber vault&quot; and describes a Terraform architecture from the IBM Cloud catalog. Which product is it about?</p>
       <div class="opts">
-        <button class="opt">The Deployable Architecture</button>
-        <button class="opt" data-ok>The Beta</button>
+        <button class="opt">IBM Cloud Cyber Vault</button>
+        <button class="opt" data-ok>The Deployable Architecture</button>
         <button class="opt">Neither</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The Beta. IBM&apos;s overview says there are no warranties, SLA or support, and that it isn&apos;t for production use.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The Deployable Architecture. IBM Cloud Cyber Vault is a managed COS feature made by one API call, not a Terraform architecture.</p></details>
     </div>
     <div class="q" data-check>
       <p>How does the Deployable Architecture get made?</p>
@@ -178,7 +178,7 @@ Lock default of 0 to 3,650 days              Beta</pre><p>The architecture&apos;
   <h2>You know which product is which</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 4.</span></div>
-    <div><span class="label">Remember</span><p>This course teaches IBM Cloud Cyber Vault (Beta). The Deployable Architecture &quot;COS Cyber Vault for Storage Defender&quot; is a different product. We never deployed it in our lab, and nothing in this course is a test of it. Whenever a source says only &quot;cyber vault&quot;, ask which one it means.</p></div>
+    <div><span class="label">Remember</span><p>This course teaches IBM Cloud Cyber Vault. The Deployable Architecture &quot;COS Cyber Vault for Storage Defender&quot; is a different product. We never deployed it in our lab, and nothing in this course is a test of it. Whenever a source says only &quot;cyber vault&quot;, ask which one it means.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

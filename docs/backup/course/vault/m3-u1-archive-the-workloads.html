@@ -44,7 +44,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. It already backs up with Defender Data Protect, and its directors want to know what happens if an attacker gets the backup admin&apos;s keys. The first step is to send a copy of each backup to a Cyber Vault.</p>
     </div>
   </div>
-  <p class="small">The timings and the console screens come from real runs in our lab. The vault is a Beta in us-south, and it has no SLA.</p>
+  <p class="small">The timings and the console screens come from real runs in our lab.</p>
   <p class="small"><b>Terms used.</b> <b>Logical size</b>: the size of the data on the source server. <b>Manifest</b>: a list of every file and its fingerprint, made before an attack so that restored files can be checked against it. <b>SHA-256</b>: a way to calculate a short fingerprint of a file; the same content always gives the same fingerprint. <b>Namespace</b>: a named area inside an OpenShift cluster.</p>
 </section>
 
@@ -52,13 +52,13 @@
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>What an archive run adds</h2>
   <p class="lead">Each of Northgate&apos;s protection groups already has a local backup. An archive run adds a second copy of the same data in the vault, and Data Protect writes it with the write key.</p>
-  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A workload group with a local backup. Data Protect makes an archive copy with the write key. The copy lands in the Cyber Vault in us-south."
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A workload group with a local backup. Data Protect makes an archive copy with the write key. The copy lands in the Cyber Vault."
     data-drawing='{"w":560,"h":120,"shapes":[
       {"box":[10,25,150,64],"title":"Workload group","detail":"has a local backup"},
       {"line":[164,57,196,57],"arrow":true,"tone":"mark"},
       {"box":[200,25,150,64],"tone":"mark","title":"Archive copy","detail":"write key"},
       {"line":[354,57,386,57],"arrow":true,"tone":"mark"},
-      {"box":[390,25,160,64],"heavy":true,"title":"Cyber Vault","detail":"us-south, Beta"}]}'></svg>
+      {"box":[390,25,160,64],"heavy":true,"title":"Cyber Vault","detail":"holds the archive"}]}'></svg>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>Which key did Data Protect need to register the vault and to archive to it?</p>
