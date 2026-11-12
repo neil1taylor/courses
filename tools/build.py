@@ -35,7 +35,7 @@ SOURCES = {
 # it links the interactive course. A missing video folder means no modules yet.
 # Cyber Vault's interactive version is published inside the backup course; its video version is not.
 VIDEO = {
-    "vault": {"title": "IBM Cloud Cyber Vault", "source": HOME / "cohesity/course/vault/video", "live": False},
+    "vault": {"title": "IBM Cloud Cyber Vault", "source": HOME / "cohesity/course/vault/video", "live": True},
     "backup": {"title": "IBM Cloud Backup and Recovery", "source": HOME / "cohesity/course/video", "live": False},
     "vpc": {"title": "IBM Cloud VPC", "source": HOME / "vpc_tutorials/docs/course/video", "live": False},
     "rovs": {"title": "Red Hat OpenShift Virtualization Service", "source": HOME / "rovs_tutorials/docs/course/video", "live": False},
