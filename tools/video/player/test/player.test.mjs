@@ -129,3 +129,26 @@ test("at scale 2 nothing changes: sizes stay at the unit sizes and the box keeps
   assert.equal(L.h, 64);
   assert.equal(L.w, 190);
 });
+
+test("boxPercent turns an image-pixel box into percentages of the image", () => {
+  assert.deepEqual(P.boxPercent([100, 50, 200, 25], { w: 1000, h: 500 }), { left: 10, top: 10, width: 20, height: 5 });
+});
+
+test("boxPercent does not depend on how the image is letterboxed", () => {
+  // a wide image and a tall image: the same box lands on the same share of the picture
+  assert.deepEqual(P.boxPercent([0, 0, 3200, 100], { w: 3200, h: 400 }), { left: 0, top: 0, width: 100, height: 25 });
+  assert.deepEqual(P.boxPercent([200, 1000, 100, 500], { w: 800, h: 2000 }), { left: 25, top: 50, width: 12.5, height: 25 });
+});
+
+test("fitSize scales an image to fit the frame and keeps its shape", () => {
+  const frame = { w: 1680, h: 780 };
+  assert.deepEqual(P.fitSize({ w: 1680, h: 780 }, frame), { w: 1680, h: 780 });
+  // very wide: limited by the width, so it is short
+  assert.deepEqual(P.fitSize({ w: 3360, h: 420 }, frame), { w: 1680, h: 210 });
+  // tall: limited by the height, so it is narrow
+  assert.deepEqual(P.fitSize({ w: 500, h: 1560 }, frame), { w: 250, h: 780 });
+});
+
+test("fitSize gives a zero size for an image that has no size yet", () => {
+  assert.deepEqual(P.fitSize({ w: 0, h: 0 }, { w: 1680, h: 780 }), { w: 0, h: 0 });
+});

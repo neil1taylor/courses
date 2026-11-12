@@ -109,8 +109,10 @@ svg.sk text.hw{font-family:var(--hand)}
 .grid{align-content:center;margin-top:20px}
 
 /* ---- screenshot and terminal slides ---- */
-.t-screen .shot{position:relative;align-self:center;margin-top:40px;height:780px;width:fit-content;border:2px solid #ddd}
-.t-screen .shot img{display:block;height:100%;width:auto;max-width:1680px}
+.t-screen [data-k="img"]{flex:1;min-height:0;display:flex;margin-top:40px}
+.t-screen .shot{flex:1;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center}
+.t-screen .pic{position:relative;flex:none;outline:2px solid #ddd}
+.t-screen .pic img{display:block;width:100%;height:100%}
 .t-screen .bx{position:absolute;border:6px solid var(--mark);border-radius:6px;box-shadow:0 0 0 4px rgba(31,79,168,.18);transition:opacity .4s}
 .t-screen .bx.off{opacity:0}
 .t-screen .bx.past{border-color:#9a9a9a;box-shadow:none}
