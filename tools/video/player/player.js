@@ -93,6 +93,12 @@ function fitSize(img, frame) {
   return { w: Math.round(img.w * s), h: Math.round(img.h * s) };
 }
 
+/* What the slide says about the learner's pick: right, wrong (naming the right letter), or nothing if they didn't answer. */
+function verdict(pick, ok) {
+  if (pick < 0) return { kind: null, text: "" };
+  return pick === ok ? { kind: "right", text: "Right." } : { kind: "wrong", text: "Not quite. The answer is " + "ABCD"[ok] + "." };
+}
+
 /* Where the Start button goes: the first module not yet done, or the first module once all are done. */
 function resumeAt(done, total) {
   for (let n = 1; n <= total; n++) if (!done.includes(n)) return { module: n, started: done.length > 0 };
@@ -104,7 +110,7 @@ function browserStorage() {
 }
 
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { cueAt, cueLen, scoreOf, esc, summaryHtml, answersAfterReaching, labelSize, boxLayout, boxPercent, fitSize, progressKey, markDone, doneModules, resumeAt };
+  module.exports = { cueAt, cueLen, scoreOf, esc, summaryHtml, answersAfterReaching, labelSize, boxLayout, boxPercent, fitSize, progressKey, markDone, doneModules, resumeAt, verdict };
 }
 
 /* Tick the modules a learner has finished, in the course page and in the player's Course tab. */
@@ -212,7 +218,7 @@ function renderSlide(spec, id) {
   if (spec.type === "diagram" || spec.type === "statement") { d.innerHTML = k(head, "head"); if (spec.sketch) d.classList.add("has-sk"); }
   if (spec.type === "q") {
     d.innerHTML = k(head, "head") + '<div class="k off opts" data-k="opts">' + spec.opts.map((o, j) => '<button class="opt" data-j="' + j + '"><span class="l">' + "ABCD"[j] + "</span>" + esc(o) + "</button>").join("") + "</div>" +
-      k('<p class="askhint">Pick an answer to carry on</p>', "hint") + k('<p class="why">' + esc(spec.why) + "</p>", "why");
+      k('<p class="askhint">Pick an answer to carry on</p>', "hint") + k('<p class="why"><b class="verdict"></b>' + esc(spec.why) + "</p>", "why");
     d.querySelectorAll(".opt").forEach(b => b.onclick = () => answer(d, +b.dataset.j, true));
   }
   if (spec.type === "tip") d.innerHTML = k('<p class="tag">Watch for this</p>' + head, "head") + k('<p class="tip">' + esc(spec.tip) + "</p>", "tip");
@@ -264,7 +270,10 @@ function answer(d, j, user) {
   const spec = d.spec, opts = d.querySelector(".opts");
   if (opts.classList.contains("answered")) return;
   opts.classList.add("answered");
-  opts.querySelectorAll(".opt").forEach((b, x) => { b.disabled = true; if (x === spec.ok) b.classList.add("right"); if (x === j) b.classList.add("picked"); });
+  opts.querySelectorAll(".opt").forEach((b, x) => { b.disabled = true; if (x === spec.ok) b.classList.add("right"); if (x === j) b.classList.add("picked"); if (x === j && x !== spec.ok) b.classList.add("wrong"); });
+  const v = verdict(j, spec.ok), vb = d.querySelector(".verdict");
+  if (vb) { vb.textContent = v.text ? v.text + " " : ""; vb.className = "verdict" + (v.kind ? " " + v.kind : ""); }
+  if (v.kind) opts.classList.add("was-" + v.kind);
   d.querySelector('[data-k="hint"]').classList.add("off");
   setAnswerBar(null);
   if (user) {
