@@ -26,7 +26,7 @@ def _link(label: str, href: str | None, ident: str) -> str:
 
 def render_module(timeline: dict, course: dict, index: int, total: int,
                   prev_href: str | None, next_href: str | None,
-                  assets: str = DEFAULT_ASSETS) -> str:
+                  assets: str = DEFAULT_ASSETS, contents_href: str | None = None) -> str:
     data = dict(timeline)
     data.update(courseSlug=course["slug"], moduleIndex=index, moduleTotal=total, nextHref=next_href)
     title = escape(timeline["title"])
@@ -37,6 +37,8 @@ def render_module(timeline: dict, course: dict, index: int, total: int,
                + _link("&larr; Previous module", prev_href, "prevmod")
                + _link("Next module &rarr;", next_href, "nextmod")
                + "</div>")
+    if contents_href:
+        nav += f'\n    <p class="backlink"><a id="contents" href="{escape(contents_href, quote=True)}">All modules in this course</a></p>'
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -95,7 +97,8 @@ def render_module(timeline: dict, course: dict, index: int, total: int,
 """
 
 
-def render_contents(course: dict, modules: list[dict], assets: str = DEFAULT_ASSETS) -> str:
+def render_contents(course: dict, modules: list[dict], assets: str = DEFAULT_ASSETS,
+                    home_href: str | None = None) -> str:
     """The contents page: modules grouped under their section, in order."""
     course_title = escape(course["title"])
     groups: list[tuple[str, list[tuple[int, dict]]]] = []
@@ -111,6 +114,7 @@ def render_contents(course: dict, modules: list[dict], assets: str = DEFAULT_ASS
             f'<span class="min">{m["minutes"]} min</span><span class="tick"></span></a></li>'
             for n, m in items)
         body.append(f"  <h2>{escape(section)}</h2>\n  <ul>\n{rows}\n  </ul>")
+    back = f'  <p class="backlink"><a href="{escape(home_href, quote=True)}">All courses</a></p>\n' if home_href else ""
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -123,7 +127,7 @@ def render_contents(course: dict, modules: list[dict], assets: str = DEFAULT_ASS
 <body class="contents">
 <main data-contents data-course="{escape(course["slug"], quote=True)}">
   <h1>{course_title}</h1>
-  <p class="count" data-count></p>
+{back}  <p class="count" data-count></p>
 {chr(10).join(body)}
 </main>
 </body>

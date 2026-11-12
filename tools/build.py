@@ -6,13 +6,17 @@ course's links still work. Tutorial chapters are not published here, so those
 links become plain text, except the header's "Tutorials" link, which goes to
 this site's home page instead.
 
-Run from the repo root:  python3 tools/build.py
+Run from the repo root:  python3 tools/build.py [--no-voice]
+--no-voice makes no Watson calls; it stops if any cue has no cached audio.
 """
+import math
 import re
 import shutil
 import sys
 from pathlib import Path
 from urllib.parse import unquote
+
+sys.path.insert(0, str(Path(__file__).resolve().parent / "video"))
 
 HOME = Path.home() / "Projects"
 ROOT = Path(__file__).resolve().parent.parent
@@ -24,6 +28,21 @@ SOURCES = {
     "vpc": (HOME / "vpc_tutorials/docs", "course"),
     "backup": (HOME / "cohesity", "course"),
 }
+
+# Video courses: slug -> title, the source folder of the module scripts, and whether the whole
+# course is approved. The home page links the video version only when live is True; until then
+# it links the interactive course. A missing video folder means no modules yet.
+# Cyber Vault's interactive version is published inside the backup course; its video version is not.
+VIDEO = {
+    "vault": {"title": "IBM Cloud Cyber Vault", "source": HOME / "cohesity/course/vault/video", "live": False},
+    "backup": {"title": "IBM Cloud Backup and Recovery", "source": HOME / "cohesity/course/video", "live": False},
+    "vpc": {"title": "IBM Cloud VPC", "source": HOME / "vpc_tutorials/docs/course/video", "live": False},
+    "rovs": {"title": "Red Hat OpenShift Virtualization Service", "source": HOME / "rovs_tutorials/docs/course/video", "live": False},
+}
+# Where the home page links each course's interactive version.
+INTERACTIVE = {"rovs": "rovs/course/", "vpc": "vpc/course/", "backup": "backup/course/", "vault": "backup/course/vault/"}
+GAP = 0.8  # seconds of silence after each cue, as the player plays it
+RATE = 0.92  # playback rate
 
 # Screenshot areas that show resource names from outside the lab; blurred in the published copy.
 # (path inside docs/, [(left, top, right, bottom), ...])
@@ -100,10 +119,125 @@ def blur(path, boxes):
     img.save(path)
 
 
-def build():
-    if SITE.exists():
-        shutil.rmtree(SITE)
-    SITE.mkdir()
+def minutes(timeline):
+    seconds = sum((c["dur"] + GAP + c.get("hold", 0)) / RATE for s in timeline["steps"] for c in s["cues"])
+    return max(1, math.ceil(seconds / 60))
+
+
+def load_video(slug, cfg):
+    """Load and check a course's module scripts. Returns ([(unit stem, script)], [problem])."""
+    import script as scripts
+
+    source = Path(cfg["source"])
+    if not source.is_dir():
+        return [], []
+    problems, loaded = [], []
+    for n, f in enumerate(sorted(source.glob("*.json"))):
+        s = scripts.load_script(f)
+        unit = source.parent / (f.stem + ".html")
+        if not unit.is_file():
+            problems.append(f"{slug}: {f.name}: no unit page {unit.name} beside the video folder")
+            continue
+        found = scripts.check_script(s, unit.read_text(encoding="utf-8"), n == 0)
+        problems += [f"{slug}: {f.name}: {p}" for p in found]
+        loaded.append((f.stem, s))
+    return loaded, problems
+
+
+def check_videos(video):
+    """Check every course's scripts; stop with all the problems together."""
+    loaded, problems = {}, []
+    for slug, cfg in video.items():
+        loaded[slug], found = load_video(slug, cfg)
+        problems += found
+    if problems:
+        sys.exit("The video scripts have problems:\n" + "\n".join(problems))
+    return loaded
+
+
+def write_video(site, slug, cfg, loaded, speaker, shared):
+    """Write docs/<slug>/video/: a contents page, a page and the audio for each module."""
+    import page
+    import voice
+
+    if not loaded:
+        return
+    out = site / slug / "video"
+    audio = out / "audio"
+    try:
+        timelines = [(stem, voice.voice_script(s, audio, speaker, shared)) for stem, s in loaded]
+    except voice.MissingAudio as e:
+        sys.exit(f"{slug}: {e}\nRun the build without --no-voice on the workstation that has the Watson key.")
+    voice.prune_audio(audio, [t for _, t in timelines])
+    assets = "../../video-assets/"
+    page.copy_assets(site / "video-assets")
+    course = {"slug": slug, "title": cfg["title"]}
+    total = len(timelines)
+    for i, (stem, t) in enumerate(timelines):
+        prev_href = timelines[i - 1][0] + ".html" if i else None
+        next_href = timelines[i + 1][0] + ".html" if i + 1 < total else None
+        (out / (stem + ".html")).write_text(
+            page.render_module(t, course, i + 1, total, prev_href, next_href, assets=assets,
+                               contents_href="index.html"), encoding="utf-8")
+    rows = [{"section": t["section"], "title": t["title"], "href": stem + ".html", "minutes": minutes(t)}
+            for stem, t in timelines]
+    (out / "index.html").write_text(page.render_contents(course, rows, assets=assets, home_href="../../"),
+                                    encoding="utf-8")
+    print(f"{slug}: {total} video modules")
+
+
+def build_video(site, slug, cfg, speaker, shared):
+    loaded = check_videos({slug: cfg})[slug]
+    write_video(site, slug, cfg, loaded, speaker, shared)
+
+
+def reset_site(site, slugs):
+    """Empty the site folder except each course's audio folder: the committed mp3s are the persistent audio.
+
+    Nothing is moved, so a failure part way leaves every audio folder where it was.
+    """
+    site = Path(site)
+    keep = {(site / slug / "video" / "audio").resolve() for slug in slugs}
+    site.mkdir(exist_ok=True)
+
+    def wipe(folder):
+        for child in sorted(folder.iterdir()):
+            real = child.resolve()
+            if real in keep:
+                continue
+            if child.is_dir() and not child.is_symlink() and any(k.is_relative_to(real) for k in keep):
+                wipe(child)
+            elif child.is_dir() and not child.is_symlink():
+                shutil.rmtree(child)
+            else:
+                child.unlink()
+
+    wipe(site.resolve())
+
+
+def home_html(html, video):
+    """The home page, linking a course's video version once that course is live."""
+    for slug, cfg in video.items():
+        if cfg["live"]:
+            html = html.replace(f'href="{INTERACTIVE[slug]}"', f'href="{slug}/video/"')
+    return html
+
+
+def build_videos(no_voice, loaded=None):
+    loaded = loaded if loaded is not None else check_videos(VIDEO)
+    if not any(loaded.values()):
+        return
+    import voice
+
+    shared = voice.shared_pronunciation()
+    speaker = voice.offline_speaker() if no_voice else voice.new_speaker()
+    for slug, cfg in VIDEO.items():
+        write_video(SITE, slug, cfg, loaded[slug], speaker, shared)
+
+
+def build(no_voice=False):
+    loaded = check_videos(VIDEO)  # before docs/ is touched
+    reset_site(SITE, list(VIDEO))
     for slug, (base, course) in SOURCES.items():
         base = base.resolve()
         course_dir = base / course
@@ -111,6 +245,8 @@ def build():
         copied, dropped = set(), set()
         for f in sorted(course_dir.rglob("*")):
             if f.is_dir() or f.name.endswith(".md"):
+                continue
+            if "video" in f.relative_to(course_dir).parts[:-1]:  # module scripts are not published
                 continue
             if f.suffix == ".html":
                 depth = len(f.relative_to(base).parts)  # slug folder + path inside it
@@ -123,9 +259,11 @@ def build():
     for rel, boxes in BLUR.items():
         blur(SITE / rel, boxes)
     shutil.copytree(SITE / "rovs/course/assets", SITE / "assets")
-    shutil.copy2(ROOT / "home/index.html", SITE / "index.html")
+    build_videos(no_voice, loaded)
+    html = (ROOT / "home/index.html").read_text(encoding="utf-8")
+    (SITE / "index.html").write_text(home_html(html, VIDEO), encoding="utf-8")
     (SITE / ".nojekyll").write_text("")
 
 
 if __name__ == "__main__":
-    build()
+    build(no_voice="--no-voice" in sys.argv[1:])
