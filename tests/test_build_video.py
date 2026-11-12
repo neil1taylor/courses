@@ -18,6 +18,13 @@ UNIT = (FIX / "unit.html").read_text()
 GOOD = json.loads((FIX / "good.json").read_text())
 
 
+class NoCalls:
+    voice = ""
+
+    def wav(self, text):
+        raise AssertionError("the speaker was called")
+
+
 class FakeSpeaker:
     def __init__(self, folder):
         self.folder = Path(folder)
@@ -125,12 +132,81 @@ def test_prune_keeps_audio_of_every_module(tmp_path):
     assert after == before and not stale.exists()
 
 
-def test_no_voice_stops_when_audio_is_not_cached(tmp_path):
+def test_rebuild_keeps_mp3_bytes_and_skips_the_speaker(tmp_path):
     video = make_source(tmp_path, {"a": dict(GOOD, unit="a.html")})
-    speaker = build.CachedOnly("en-GB_GeorgeNatural", tmp_path / "empty-cache")
+    site = run(tmp_path, video)
+    audio = site / "demo" / "video" / "audio"
+    mp3 = sorted(audio.glob("*.mp3"))[0]
+    mp3.write_bytes(b"changed")
+    run(tmp_path, video, NoCalls())
+    assert mp3.read_bytes() == b"changed"
+
+
+def test_no_voice_works_with_mp3s_and_no_wav_cache(tmp_path, monkeypatch):
+    video = make_source(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    site = run(tmp_path, video)
+    import voice
+    monkeypatch.setattr(voice, "shared_pronunciation", lambda: {})
+    monkeypatch.setattr(voice, "voice_name", lambda: "")
+    monkeypatch.setattr(build, "SITE", site)
+    monkeypatch.setattr(build, "VIDEO", {"demo": {"title": "Demo course", "source": video, "live": False}})
+    build.build_videos(no_voice=True)
+    assert (site / "demo" / "video" / "a.html").is_file()
+
+
+def test_no_voice_stops_for_a_cue_without_an_mp3(tmp_path, monkeypatch):
+    video = make_source(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    import voice
+    monkeypatch.setattr(voice, "shared_pronunciation", lambda: {})
+    monkeypatch.setattr(voice, "voice_name", lambda: "")
+    monkeypatch.setattr(build, "SITE", tmp_path / "site")
+    monkeypatch.setattr(build, "VIDEO", {"demo": {"title": "Demo course", "source": video, "live": False}})
     with pytest.raises(SystemExit) as e:
-        run(tmp_path, video, speaker)
+        build.build_videos(no_voice=True)
     assert "no cached audio" in str(e.value) and "--no-voice" in str(e.value)
+
+
+def test_reset_site_keeps_each_courses_audio(tmp_path):
+    site = tmp_path / "site"
+    (site / "demo" / "video" / "audio").mkdir(parents=True)
+    (site / "demo" / "video" / "audio" / "x.mp3").write_bytes(b"keep")
+    (site / "demo" / "video" / "a.html").write_text("old")
+    build.reset_site(site, ["demo", "other"])
+    assert (site / "demo" / "video" / "audio" / "x.mp3").read_bytes() == b"keep"
+    assert not (site / "demo" / "video" / "a.html").exists()
+
+
+def test_failing_check_leaves_docs_untouched_and_reports_every_course(tmp_path, monkeypatch):
+    bad = second()
+    bad["steps"][0]["cues"][0]["say"] = "This runs in unit 1.1."
+    v1 = make_source(tmp_path / "one", {"a": dict(bad, unit="a.html")})
+    v2 = make_source(tmp_path / "two", {"a": dict(bad, unit="a.html")})
+    site = tmp_path / "site"
+    site.mkdir()
+    (site / "sentinel.txt").write_text("x")
+    monkeypatch.setattr(build, "SITE", site)
+    monkeypatch.setattr(build, "VIDEO", {"c1": {"title": "One", "source": v1, "live": False},
+                                         "c2": {"title": "Two", "source": v2, "live": False}})
+    with pytest.raises(SystemExit) as e:
+        build.build()
+    assert "c1" in str(e.value) and "c2" in str(e.value)
+    assert (site / "sentinel.txt").read_text() == "x"
+
+
+def test_back_links_on_built_pages(tmp_path):
+    video = make_source(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    out = run(tmp_path, video) / "demo" / "video"
+    assert 'id="contents" href="index.html"' in (out / "a.html").read_text()
+    index = (out / "index.html").read_text()
+    assert 'class="backlink"' in index and 'href="../../"' in index
+
+
+def test_page_default_has_no_back_link():
+    import page
+    tl = {"title": "T", "steps": []}
+    course = {"slug": "s", "title": "C"}
+    assert "backlink" not in page.render_module(tl, course, 1, 1, None, None)
+    assert "backlink" not in page.render_contents(course, [{"section": "S", "title": "T", "href": "t.html", "minutes": 1}])
 
 
 def test_home_links_interactive_course_while_not_live():

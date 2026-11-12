@@ -157,3 +157,10 @@ body.contents{overflow:auto;background:#fff;color:var(--ink)}
 .contents .min{color:var(--muted);font-size:15px}
 .contents .tick{min-width:3em;color:#1a7f4b;font-weight:700;font-size:15px;text-align:right}
 .contents a.done .t{color:var(--muted)}
+
+/* ---- links back to the course ---- */
+.backlink{margin:0;font-size:15px}
+.backlink a{color:var(--mark);text-decoration:underline;text-underline-offset:3px}
+.contents .backlink{margin:0 0 18px}
+.side .backlink{padding:10px 22px 14px;border-top:1px solid #2f303b;font-size:14px}
+.side .backlink a{color:#8FB4FF}

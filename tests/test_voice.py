@@ -1,5 +1,6 @@
 import copy
 import hashlib
+import pytest
 import subprocess
 import sys
 import wave
@@ -101,3 +102,50 @@ def test_prune_deletes_unused_only(tmp_path):
     dropped = cues(tl)[1]["audio"]
     assert [p.name for p in gone] == [Path(dropped).name]
     assert sorted(p.name for p in audio.glob("*.mp3")) == [Path(kept).name]
+
+
+def test_mp3_name_is_the_speakers_wav_key(tmp_path, monkeypatch):
+    import os
+    narrate, _, _ = voice._demo_videos()
+    monkeypatch.setattr(narrate, "CACHE", str(tmp_path / "cache"))
+    os.makedirs(narrate.CACHE)
+    text = "Hello there."
+    key = hashlib.sha256(f"en-GB_Test|{text}".encode()).hexdigest()
+    Path(narrate.CACHE, key + ".wav").write_bytes(b"")
+    real_wav = narrate.Speaker("en-GB_Test").wav(text)
+    assert voice.mp3_name("en-GB_Test", text) == Path(real_wav).name[:16] + ".mp3"
+
+
+class NoCalls:
+    voice = ""
+
+    def wav(self, text):
+        raise AssertionError("the speaker was called")
+
+
+def test_existing_mp3_and_duration_are_never_redone(tmp_path):
+    sp, audio = setup(tmp_path)
+    tl = voice.voice_script(make(["Keep."]), audio, sp, {})
+    mp3 = audio / Path(cues(tl)[0]["audio"]).name
+    mp3.write_bytes(b"changed")
+    again = voice.voice_script(make(["Keep."]), audio, NoCalls(), {})
+    assert mp3.read_bytes() == b"changed"
+    assert cues(again)[0]["dur"] == 1.0
+    assert (audio / "durations.json").is_file()
+
+
+def test_prune_drops_stale_duration_entries(tmp_path):
+    import json
+    sp, audio = setup(tmp_path)
+    tl = voice.voice_script(make(["Keep me.", "Drop me."]), audio, sp, {})
+    tl2 = voice.voice_script(make(["Keep me."]), audio, NoCalls(), {})
+    voice.prune_audio(audio, [tl2])
+    kept = Path(cues(tl2)[0]["audio"]).name
+    assert list(json.loads((audio / "durations.json").read_text())) == [kept]
+
+
+def test_offline_speaker_names_the_missing_cue(monkeypatch):
+    monkeypatch.setattr(voice, "voice_name", lambda: "v")
+    with pytest.raises(voice.MissingAudio) as e:
+        voice.offline_speaker().wav("Some words")
+    assert "Some words" in str(e.value)

@@ -9,11 +9,11 @@ this site's home page instead.
 Run from the repo root:  python3 tools/build.py [--no-voice]
 --no-voice makes no Watson calls; it stops if any cue has no cached audio.
 """
-import hashlib
 import math
 import re
 import shutil
 import sys
+import tempfile
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -120,56 +120,54 @@ def blur(path, boxes):
     img.save(path)
 
 
-class MissingAudio(Exception):
-    pass
-
-
-class CachedOnly:
-    """A speaker that never calls Watson: it returns the cached wav or says what is missing."""
-
-    def __init__(self, voice, cache):
-        self.voice, self.cache = voice, Path(cache)
-
-    def wav(self, text):
-        key = hashlib.sha256(f"{self.voice}|{text}".encode()).hexdigest()
-        path = self.cache / (key + ".wav")
-        if not path.exists():
-            raise MissingAudio(f'no cached audio for: "{text[:70]}"')
-        return str(path)
-
-
 def minutes(timeline):
     seconds = sum((c["dur"] + GAP + c.get("hold", 0)) / RATE for s in timeline["steps"] for c in s["cues"])
     return max(1, math.ceil(seconds / 60))
 
 
-def build_video(site, slug, cfg, speaker, shared):
-    """Write docs/<slug>/video/: a contents page, a page and the audio for each module script."""
-    import page
+def load_video(slug, cfg):
+    """Load and check a course's module scripts. Returns ([(unit stem, script)], [problem])."""
     import script as scripts
-    import voice
 
     source = Path(cfg["source"])
     if not source.is_dir():
-        return
-    files = sorted(source.glob("*.json"))
-    problems = []
-    loaded = []
-    for n, f in enumerate(files):
+        return [], []
+    problems, loaded = [], []
+    for n, f in enumerate(sorted(source.glob("*.json"))):
         s = scripts.load_script(f)
         unit = source.parent / (f.stem + ".html")
         if not unit.is_file():
-            problems.append(f"{f.name}: no unit page {unit.name} beside the video folder")
+            problems.append(f"{slug}: {f.name}: no unit page {unit.name} beside the video folder")
             continue
-        problems += [f"{f.name}: {p}" for p in scripts.check_script(s, unit.read_text(encoding="utf-8"), n == 0)]
+        found = scripts.check_script(s, unit.read_text(encoding="utf-8"), n == 0)
+        problems += [f"{slug}: {f.name}: {p}" for p in found]
         loaded.append((f.stem, s))
+    return loaded, problems
+
+
+def check_videos(video):
+    """Check every course's scripts; stop with all the problems together."""
+    loaded, problems = {}, []
+    for slug, cfg in video.items():
+        loaded[slug], found = load_video(slug, cfg)
+        problems += found
     if problems:
-        sys.exit(f"{slug}: the scripts have problems:\n" + "\n".join(problems))
+        sys.exit("The video scripts have problems:\n" + "\n".join(problems))
+    return loaded
+
+
+def write_video(site, slug, cfg, loaded, speaker, shared):
+    """Write docs/<slug>/video/: a contents page, a page and the audio for each module."""
+    import page
+    import voice
+
+    if not loaded:
+        return
     out = site / slug / "video"
     audio = out / "audio"
     try:
         timelines = [(stem, voice.voice_script(s, audio, speaker, shared)) for stem, s in loaded]
-    except MissingAudio as e:
+    except voice.MissingAudio as e:
         sys.exit(f"{slug}: {e}\nRun the build without --no-voice on the workstation that has the Watson key.")
     voice.prune_audio(audio, [t for _, t in timelines])
     assets = "../../video-assets/"
@@ -189,6 +187,32 @@ def build_video(site, slug, cfg, speaker, shared):
     print(f"{slug}: {total} video modules")
 
 
+def build_video(site, slug, cfg, speaker, shared):
+    loaded = check_videos({slug: cfg})[slug]
+    write_video(site, slug, cfg, loaded, speaker, shared)
+
+
+def reset_site(site, slugs):
+    """Empty the site folder, keeping each course's audio: the committed mp3s are the persistent audio."""
+    site = Path(site)
+    keep = Path(tempfile.mkdtemp(prefix="video-audio-"))
+    try:
+        for slug in slugs:
+            audio = site / slug / "video" / "audio"
+            if audio.is_dir():
+                shutil.move(str(audio), str(keep / slug))
+        if site.exists():
+            shutil.rmtree(site)
+        site.mkdir()
+        for slug in slugs:
+            if (keep / slug).is_dir():
+                dest = site / slug / "video" / "audio"
+                dest.parent.mkdir(parents=True)
+                shutil.move(str(keep / slug), str(dest))
+    finally:
+        shutil.rmtree(keep, ignore_errors=True)
+
+
 def home_html(html, video):
     """The home page, linking a course's video version once that course is live."""
     for slug, cfg in video.items():
@@ -197,26 +221,21 @@ def home_html(html, video):
     return html
 
 
-def build_videos(no_voice):
-    if not any(Path(c["source"]).is_dir() for c in VIDEO.values()):
+def build_videos(no_voice, loaded=None):
+    loaded = loaded if loaded is not None else check_videos(VIDEO)
+    if not any(loaded.values()):
         return
     import voice
 
     shared = voice.shared_pronunciation()
-    if no_voice:
-        _, _, settings = voice._demo_videos()
-        import narrate
-        speaker = CachedOnly(settings.get("DEMO_VOICE", required=True), narrate.CACHE)
-    else:
-        speaker = voice.new_speaker()
+    speaker = voice.offline_speaker() if no_voice else voice.new_speaker()
     for slug, cfg in VIDEO.items():
-        build_video(SITE, slug, cfg, speaker, shared)
+        write_video(SITE, slug, cfg, loaded[slug], speaker, shared)
 
 
 def build(no_voice=False):
-    if SITE.exists():
-        shutil.rmtree(SITE)
-    SITE.mkdir()
+    loaded = check_videos(VIDEO)  # before docs/ is touched
+    reset_site(SITE, list(VIDEO))
     for slug, (base, course) in SOURCES.items():
         base = base.resolve()
         course_dir = base / course
@@ -238,7 +257,7 @@ def build(no_voice=False):
     for rel, boxes in BLUR.items():
         blur(SITE / rel, boxes)
     shutil.copytree(SITE / "rovs/course/assets", SITE / "assets")
-    build_videos(no_voice)
+    build_videos(no_voice, loaded)
     html = (ROOT / "home/index.html").read_text(encoding="utf-8")
     (SITE / "index.html").write_text(home_html(html, VIDEO), encoding="utf-8")
     (SITE / ".nojekyll").write_text("")
