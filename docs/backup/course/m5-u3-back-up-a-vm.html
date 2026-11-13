@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its ROVS cluster, ng-cluster-01, is registered. Now it backs up VMs in a namespace, first by hand.</p>
     </div>
   </div>
-  <p class="small">OpenShift Virtualization VM backup wasn&apos;t generally available when we tested it. IBM lists it for the AU-SYD region only. Its pages call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them. Names were changed. Every number and screen comes from real runs in our lab. Some screens show lab object names, such as the group b-rovs-vms, and cluster names are blurred.</p>
+  <p class="small">Names were changed. Every number and screen comes from real runs in our lab. Some screens show lab object names, such as the group b-rovs-vms, and cluster names are blurred.</p>
 </section>
 
 <section class="screen">
@@ -126,7 +126,7 @@ Second   ?           ?          ?</pre>
       </div>
       <details class="reveal"><summary>Show the answer</summary><span class="hand">128.86 GB, the same.</span><p>The incremental doesn&apos;t read only the changes. It read every disk in full again.</p><pre class="def">Run      Read        Sent       Time
 First    128.86 GB   45.13 GB   2,443 s
-Second   128.86 GB   5.50 GB    1,357 s</pre><p>In the console, with one VM in the same region, the same thing happened: the first run read 64.43 GB and so did the second, in 439 s and 407 s. The VMs differ, so the two tests aren&apos;t like for like.</p></details>
+Second   128.86 GB   5.50 GB    1,357 s</pre><p>In the console, with one VM, the same thing happened: the first run read 64.43 GB and so did the second, in 439 s and 407 s. The VMs differ, so the two tests aren&apos;t like for like.</p></details>
     </div>
     <div class="q">
       <p>What did the second run save?</p>
@@ -206,7 +206,7 @@ after run 2:         zero=0 nonzero=1734</pre></details>
   <h2>You can back up a VM</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Refresh the source so a new namespace is listed, then pick the VM with VM Inclusion/Exclusion. The VMs keep running during the backup. The second run read every disk in full again: 128.86 GB both times in one test, and 64.43 GB both times in the other. What fell was the data sent. After a backup, check the VM. Once, a VM's program files read as zeros after a backup, and restarting the VM cured it. VM backup wasn&apos;t generally available when we tested it, and IBM lists it for au-syd only.</p></div>
+    <div><span class="label">Remember</span><p>Refresh the source so a new namespace is listed, then pick the VM with VM Inclusion/Exclusion. The VMs keep running during the backup. The second run read every disk in full again: 128.86 GB both times in one test, and 64.43 GB both times in the other. What fell was the data sent. After a backup, check the VM. Once, a VM's program files read as zeros after a backup, and restarting the VM cured it.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

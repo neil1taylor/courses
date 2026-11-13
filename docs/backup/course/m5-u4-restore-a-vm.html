@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its VMs on ng-cluster-01 are backed up. Now it has to restore them, and plan around how long that takes.</p>
     </div>
   </div>
-  <p class="small">OpenShift Virtualization VM backup wasn&apos;t generally available when we tested it. IBM lists it for the AU-SYD region only. Its pages call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them. Names were changed. Every number and screen comes from real runs in our lab. Some screens show lab object names, such as the namespace brs-c1, and cluster and location names are blurred.</p>
+  <p class="small">Names were changed. Every number and screen comes from real runs in our lab. Some screens show lab object names, such as the namespace brs-c1, and cluster and location names are blurred.</p>
 </section>
 
 <section class="screen">
@@ -61,21 +61,21 @@ Our lab:  two VMs, four disks, 128.85 GB (120 GiB)  ->  ?</pre>
       <p>What limited the restore speed in the first run?</p>
       <div class="opts">
         <button class="opt">The VMs were too big for Velero</button>
-        <button class="opt" data-ok>The distance: the cluster was in eu-de and the BRS service in au-syd</button>
+        <button class="opt" data-ok>The distance: the cluster and the BRS service were on different continents</button>
         <button class="opt">The disks on the cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>The distance. Our network check, from a worker, timed a 2 GiB transfer:</p><pre class="def">From a ROVS worker, 2 GiB      au-syd      eu-de
-Round trip (TCP connect)      0.30 s      0.002-0.008 s
-Download, 1 stream            32.2 MB/s   83.0 MB/s
-Download, 10 streams          30.8 MB/s   368.0 MB/s</pre><p>The restore sat at the au-syd download ceiling, about 31 MB/s.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>The distance. Our network check, from a worker, timed a 2 GiB transfer:</p><pre class="def">From a ROVS worker, 2 GiB      other continent   same region
+Round trip (TCP connect)      0.30 s            0.002-0.008 s
+Download, 1 stream            32.2 MB/s         83.0 MB/s
+Download, 10 streams          30.8 MB/s         368.0 MB/s</pre><p>The restore sat at the download ceiling of the service on another continent, about 31 MB/s.</p></details>
     </div>
   </div>
-  <p class="watch"><b>Watch for this.</b> Each restore time comes from a single run in our lab. In the first run, the distance between the two regions set the speed. With the BRS instance and the cluster both in eu-de, the restores in step 2 ran about six times faster, but IBM lists VM protection for au-syd only.</p>
+  <p class="watch"><b>Watch for this.</b> Each restore time comes from a single run in our lab. In the first run, the distance between the cluster and the BRS service set the speed. With the BRS instance and the cluster both in the same region, the restores in step 2 ran about six times faster.</p>
 </section>
 <section class="screen">
   <span class="kicker">Step 2 · Click through the console</span>
   <h2>Restore, and where it goes</h2>
-  <p class="lead">These screens come from the BRS console in our lab, with the instance and the cluster both in eu-de. Click where you&apos;d click. After two misses, the right place is marked.</p>
+  <p class="lead">These screens come from the BRS console in our lab, with the instance and the cluster both in the same region. Click where you&apos;d click. After two misses, the right place is marked.</p>
   <div class="tour">
     <figure class="tstep" data-hot="1.8,39,3.9,7.6" data-width="900px">
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5e-1-select-ns.png" alt="Recover Kubernetes Namespaces: brs-c1 ticked; the recovery point 9:05am (cluster and location blurred)." width="1136" height="629"></div>
@@ -109,7 +109,7 @@ Download, 10 streams          30.8 MB/s   368.0 MB/s</pre><p>The restore sat at 
       <div class="shot"><img src="../ibm-brs/tutorials/images/B5e-5-both-succeeded.png" alt="Recoveries: both namespace recoveries Succeeded, 5m 30s and 5m 43s." width="1164" height="495"></div>
       <figcaption>
         <h3>The newest recovery is at the top. Where do you read how long it took?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Duration</b>, 5m 30s. The other namespace recovery took 5m 43s. That&apos;s about six times faster than the first run: two disks of 30 GiB (64.4 GB) in 343 s and 330 s, about 190 MB/s, against 28.7 to 33.9 MB/s with the service in au-syd.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. <b>Duration</b>, 5m 30s. The other namespace recovery took 5m 43s. That&apos;s about six times faster than the first run: two disks of 30 GiB (64.4 GB) in 343 s and 330 s, about 190 MB/s, against 28.7 to 33.9 MB/s with the service on another continent.</p></details>
       </figcaption>
     </figure>
   </div>
@@ -177,7 +177,7 @@ zero=0 nonzero=1734</pre></details>
         <button class="opt" data-ok>About 63 minutes</button>
         <button class="opt">About 6 hours</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>About 63 minutes: 3,803 s (63.4 min), with the BRS service in au-syd and the cluster in eu-de.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>About 63 minutes: 3,803 s (63.4 min), with the BRS service and the cluster in regions on different continents.</p></details>
     </div>
     <div class="q" data-check>
       <p><b>Review from unit 5.3.</b> What did the second backup of a VM read, against the first?</p>
@@ -204,7 +204,7 @@ zero=0 nonzero=1734</pre></details>
   <h2>You can restore a VM and plan the time</h2>
   <div class="done">
     <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>IBM says about six to seven minutes for a restore. In our lab, 120 GiB took 63 minutes, with the BRS service in au-syd and the cluster in eu-de, and the distance limited it. With both in eu-de, two disks of 30 GiB took about 5.5 minutes. Check the restored VM against its saved manifest, because the status alone doesn&apos;t tell you. VM backup wasn&apos;t generally available when we tested it, and IBM lists it for au-syd only.</p></div>
+    <div><span class="label">Remember</span><p>IBM says about six to seven minutes for a restore. In our lab, 120 GiB took 63 minutes, with the BRS service and the cluster in regions on different continents, and the distance limited it. With both in the same region, two disks of 30 GiB took about 5.5 minutes. Check the restored VM against its saved manifest, because the status alone doesn&apos;t tell you.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>
