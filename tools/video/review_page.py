@@ -39,8 +39,6 @@ table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px so
 .para .s{cursor:pointer;border-radius:4px;padding:1px 2px}
 .para .s:hover{background:#262935}
 .para .s.sel{outline:2px solid var(--mark)}
-.para .s.edited .t{color:var(--warn)}
-.para .t:focus{outline:none;background:#262935}
 .para sup{font-family:"Red Hat Mono",monospace;color:var(--muted);font-size:11px;margin-right:2px}
 .para .has-comment sup{color:var(--bad)}
 .picked{color:var(--muted);font-size:14px;margin:6px 0}
@@ -125,8 +123,6 @@ def render_module(slug, letter, number, stem, script, problems, note_lines, stat
                  '<div class="ref">%s</div><div><p class="say">%s</p>' % (escape(r["ref"]), escape(r["say"]))]
         if r["ref"] in changed:
             parts.append('<span class="changed">Changed</span>')
-        if r["say"] in rs.open_edits(state, stem):
-            parts.append('<div class="teach">Your edit: %s</div>' % escape(rs.open_edits(state, stem)[r["say"]]["new"]))
         if isinstance(slide, dict) and slide.get("type") == "q":
             t = scripts.teaching_cue(script, r["step"], r["cue"])
             if t and t in by_pos:
@@ -156,59 +152,44 @@ def render_module(slug, letter, number, stem, script, problems, note_lines, stat
     return _page("%s %d" % (letter, number), "".join(out))
 
 
-EDIT = """
-let target = null;
+PICK = """
 const box = document.querySelector("#box button"), picked = document.querySelector("#picked");
 document.querySelectorAll(".para .s").forEach(s => {
-  const text = () => s.querySelector(".t").textContent.trim();
-  let before = text();
-  s.querySelector(".t").addEventListener("focus", () => {
+  s.addEventListener("click", () => {
     document.querySelectorAll(".para .s").forEach(x => x.classList.remove("sel")); s.classList.add("sel");
     box.dataset.ref = s.dataset.ref; box.dataset.say = s.dataset.say; picked.textContent = "Comment on " + s.dataset.ref;
-  });
-  s.querySelector(".t").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); e.target.blur(); } });
-  s.querySelector(".t").addEventListener("blur", () => {
-    const now = text(); if (!now || now === before) return;
-    fetch("/api/edit", {method: "POST", headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({stem: document.body.dataset.stem, ref: s.dataset.ref, old: s.dataset.say, new: now})})
-      .then(r => r.json().then(j => { if (r.ok) { before = now; s.classList.add("edited"); s.title = "Was: " + s.dataset.say; }
-                                       else alert(j.error || "The edit was not saved"); }));
   });
 });
 """
 
 
 def render_narration(slug, letter, number, stem, script, state) -> str:
-    """The module's narration as continuous text, one paragraph per step. Every sentence can be edited in place;
-    an edit is saved as soon as the sentence loses focus, and shows in place of the original until applied."""
+    """The module's narration as continuous text, one paragraph per step. Read only: click a sentence to comment
+    on it. The wording is changed in the module's text file."""
     cue_refs = rs.refs(script, letter, number)
     attached, _ = rs.attach_comments([c for c in state["comments"] if rs.module_number(c["ref"]) == number
                                       and c["ref"].startswith(letter + " ")], cue_refs)
-    edits = rs.open_edits(state, stem)
     title = script.get("title", stem) if isinstance(script, dict) else stem
     s = escape(stem, quote=True)
     out = ['<p class="nav"><a href="/">All modules</a><a href="/m/%s">Sentences and slides</a></p>' % s,
            '<h1>%s %d: %s</h1>' % (letter, number, escape(str(title))),
-           '<p class="picked">Click into any sentence to change its wording; it is saved when you click away. '
-           'Edited sentences are marked, and stay as edits until they are applied to the script.</p>']
+           "<p class=\"picked\">To change the wording, edit this module's text file: "
+           "review/%s/%02d-%s.txt in the courses folder.</p>" % (escape(slug), number, escape(stem))]
     steps = script.get("steps", []) if isinstance(script, dict) else []
     for si, step in enumerate(steps, 1):
         spans = []
         for r in (r for r in cue_refs if r["step"] == si):
-            edit = edits.get(r["say"])
-            cls = "s" + (" edited" if edit else "") + (" has-comment" if attached.get(r["ref"]) else "")
-            spans.append('<span class="%s" data-ref="%s" data-say="%s"%s><sup>%s</sup>'
-                         '<span class="t" contenteditable="plaintext-only" spellcheck="true">%s</span></span>'
+            cls = "s" + (" has-comment" if attached.get(r["ref"]) else "")
+            spans.append('<span class="%s" data-ref="%s" data-say="%s"><sup>%s</sup>%s</span>'
                          % (cls, escape(r["ref"], quote=True), escape(r["say"], quote=True),
-                            ' title="Was: %s"' % escape(r["say"], quote=True) if edit else "",
-                            escape(r["ref"].split(" ")[1]), escape(edit["new"] if edit else r["say"])))
+                            escape(r["ref"].split(" ")[1]), escape(r["say"])))
         out.append('<div class="card"><h2>%s</h2><p class="para">%s</p>%s</div>' % (
             escape(str(step.get("title", "Step %d" % si))), " ".join(spans),
             "".join(_comment_html(c) for r in cue_refs if r["step"] == si for c in attached.get(r["ref"], []))))
     out.append('<div class="card" id="box"><p class="picked" id="picked">Click a sentence, then comment on it here.</p>%s</div>'
                % _comment_box("", ""))
     return _page("%s %d narration" % (letter, number), "".join(out)).replace(
-        "<body>", '<body data-stem="%s">' % s).replace("</script></body>", EDIT + "</script></body>")
+        "</script></body>", PICK + "</script></body>")
 
 
 def render_outline(slug, letter, outline, numbers, problems, state) -> str:
