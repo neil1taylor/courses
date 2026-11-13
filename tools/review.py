@@ -73,8 +73,22 @@ class Review:
                 self.build_error = "The slide pictures could not be built: %s" % e
             self._signature = sig
 
+    def numbered(self) -> list:
+        """(number, stem, script) for each loaded script. A module's number is its place in the course outline,
+        so it stays the same while earlier modules have no script yet; with no outline, the scripts' order."""
+        data, _ = self.outline()
+        order = [m.get("unit") for m in (data or {}).get("modules", [])]
+        out, extra = [], len(order)
+        for stem, script in self.loaded:
+            if stem in order:
+                out.append((order.index(stem) + 1, stem, script))
+            else:
+                extra += 1
+                out.append((extra, stem, script))
+        return sorted(out, key=lambda x: x[0])
+
     def number(self, stem) -> int:
-        return [s for s, _ in self.loaded].index(stem) + 1
+        return next(n for n, s, _ in self.numbered() if s == stem)
 
     def module_problems(self, stem) -> list:
         prefix = "%s: %s.json: " % (self.slug, stem)
@@ -99,7 +113,7 @@ class Review:
     def course_page(self) -> str:
         st = self.state()
         rows = [(stem, n, s.get("title", stem), rs.module_status(st, stem, s, self.letter, n))
-                for n, (stem, s) in enumerate(self.loaded, 1)]
+                for n, stem, s in self.numbered()]
         return review_page.render_course(self.slug, self.cfg["title"], self.letter, rows, self.general_problems())
 
     def module_page(self, stem):
@@ -117,7 +131,7 @@ class Review:
 
     def outline_page(self) -> str:
         data, problems = self.outline()
-        numbers = {stem: n for n, (stem, _) in enumerate(self.loaded, 1)}
+        numbers = {stem: n for n, stem, _ in self.numbered()}
         return review_page.render_outline(self.slug, self.letter, data, numbers, problems, self.state())
 
     def post(self, route, body):
@@ -165,7 +179,7 @@ def export_texts(review, folder) -> Path:
     target = Path(folder) / review.slug
     target.mkdir(parents=True, exist_ok=True)
     files = [(target / ("%02d-%s.txt" % (n, stem)), nt.export_text(script, review.letter, n))
-             for n, (stem, script) in enumerate(review.loaded, 1)]
+             for n, stem, script in review.numbered()]
     data, _ = review.outline()
     if data is not None:
         files.insert(0, (target / OUTLINE_FILE, ot.export_outline(data, review.letter)))
@@ -197,7 +211,7 @@ def approve_texts(review, folder, kind, which) -> list:
             return []
         modules = list(enumerate(data.get("modules", []), 1))
     else:
-        modules = list(enumerate(review.loaded, 1))
+        modules = [(n, (stem, script)) for n, stem, script in review.numbered()]
     for n, item in modules:
         if which != "all" and n not in which:
             continue

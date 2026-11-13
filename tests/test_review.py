@@ -456,3 +456,17 @@ def test_approve_from_the_command_line(tmp_path, monkeypatch, capsys):
     review.main(["vault", "--approve-outline", "all"])
     review.main(["vault", "--approve", "3", "4"])
     assert calls == [("outline", "all"), ("module", [3, 4])]
+
+
+def test_a_module_keeps_its_outline_number_when_earlier_scripts_are_missing(tmp_path, capsys):
+    r, video = outline_review(tmp_path)
+    (video / "m1-u2-second.json").write_text(json.dumps(dict(GOOD, unit="m1-u2-second.html")))
+    r.refresh()
+    assert r.number("m1-u2-second") == 2
+    folder = tmp_path / "text"
+    review.export_texts(r, folder)
+    assert (folder / "demo" / "02-m1-u2-second.txt").is_file()
+    assert "[2.1]" in (folder / "demo" / "02-m1-u2-second.txt").read_text()
+    assert "B 2" in r.course_page()
+    review.approve_texts(r, folder, "module", [2])
+    assert "B 2: " in capsys.readouterr().out
