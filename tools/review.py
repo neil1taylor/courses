@@ -96,6 +96,12 @@ class Review:
         return review_page.render_module(self.slug, self.letter, self.number(stem), stem, script,
                                          self.module_problems(stem), scripts.notes(script), self.state())
 
+    def narration_page(self, stem):
+        script = dict(self.loaded).get(stem)
+        if script is None:
+            return None
+        return review_page.render_narration(self.slug, self.letter, self.number(stem), stem, script, self.state())
+
     def outline_page(self) -> str:
         data, problems = self.outline()
         numbers = {stem: n for n, (stem, _) in enumerate(self.loaded, 1)}
@@ -157,6 +163,9 @@ def make_handler(review):
                 return self._send(200, review.course_page(), html)
             if path == "/outline":
                 return self._send(200, review.outline_page(), html)
+            if path.startswith("/m/") and path.endswith("/narration"):
+                page = review.narration_page(path[3:-len("/narration")])
+                return self._send(200, page, html) if page else self._send(404, "No such module", "text/plain")
             if path.startswith("/m/"):
                 page = review.module_page(path[3:])
                 return self._send(200, page, html) if page else self._send(404, "No such module", "text/plain")

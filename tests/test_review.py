@@ -230,3 +230,44 @@ def test_server_opens_a_script_with_problems_and_refuses_to_approve_it(tmp_path)
     finally:
         server.shutdown()
         server.server_close()
+
+
+def narration(script=GOOD, state=None):
+    state = state or rs.load_state(Path("/nonexistent/x.json"))
+    return rp.render_narration("vault", "V", 13, "m3-u4", script, state)
+
+
+def test_narration_view_is_one_paragraph_per_step_with_refs():
+    html = narration()
+    for step in GOOD["steps"]:
+        assert ">%s</h2>" % step["title"] in html
+    assert html.count("<p class=\"para\"") == len(GOOD["steps"])
+    first = GOOD["steps"][0]["cues"][0]["say"]
+    assert 'data-ref="V 13.1"' in html and first in html
+    assert 'href="/m/m3-u4"' in html  # back to the sentence view
+
+
+def test_narration_view_has_listen_controls_and_a_comment_box():
+    html = narration()
+    assert 'id="listen"' in html and 'id="stop"' in html and "speechSynthesis" in html
+    assert 'data-act="comment"' in html
+
+
+def test_narration_view_escapes_script_text():
+    s = copy.deepcopy(GOOD)
+    s["steps"][0]["cues"][0]["say"] = "Use <b>bold</b> here."
+    html = narration(s)
+    assert "<b>bold</b>" not in html and "&lt;b&gt;bold&lt;/b&gt;" in html
+
+
+def test_module_page_links_to_its_narration_view():
+    assert 'href="/m/m3-u4/narration"' in page()
+
+
+def test_server_serves_the_narration_view(tmp_path):
+    r, server, base = start(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    try:
+        assert 'id="listen"' in get(base + "/m/a/narration")
+    finally:
+        server.shutdown()
+        server.server_close()

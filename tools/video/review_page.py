@@ -35,6 +35,15 @@ table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px so
 .foot{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
 .right{font-weight:700;color:var(--ok)}
 @media(max-width:900px){.cue{grid-template-columns:1fr}}
+.para{font-size:19px;line-height:1.75;margin:0}
+.para .s{cursor:pointer;border-radius:4px;padding:1px 2px}
+.para .s:hover{background:#262935}
+.para .s.sel{outline:2px solid var(--mark)}
+.para .s.now{background:#2b3d66}
+.para sup{font-family:"Red Hat Mono",monospace;color:var(--muted);font-size:11px;margin-right:2px}
+.para .has-comment sup{color:var(--bad)}
+.listen{position:sticky;top:0;z-index:2;display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--bg);padding:10px 0}
+.picked{color:var(--muted);font-size:14px;margin:6px 0}
 """
 
 SCRIPT = """
@@ -95,7 +104,8 @@ def render_module(slug, letter, number, stem, script, problems, note_lines, stat
     attached, orphans = rs.attach_comments([c for c in state["comments"] if rs.module_number(c["ref"]) == number
                                             and c["ref"].startswith(letter + " ")], cue_refs)
     title = script.get("title", stem) if isinstance(script, dict) else stem
-    out = ['<p class="nav"><a href="/">All modules</a><a href="/outline">Course outline</a></p>',
+    out = ['<p class="nav"><a href="/">All modules</a><a href="/m/%s/narration">Narration</a>'
+           '<a href="/outline">Course outline</a></p>' % escape(stem, quote=True),
            '<h1>%s %d: %s</h1>' % (letter, number, escape(str(title))),
            '<p>Status: <span class="status %s">%s</span></p>' % (STATUS_CLASS[status], status)]
     if problems:
@@ -142,6 +152,61 @@ def render_module(slug, letter, number, stem, script, problems, note_lines, stat
     out.append('<div class="foot"><button data-act="approve" data-stem="%s">Approve module</button>'
                '<button class="quiet" data-act="seen" data-stem="%s">Mark as read</button></div>' % (s, s))
     return _page("%s %d" % (letter, number), "".join(out))
+
+
+LISTEN = """
+const spans = [...document.querySelectorAll(".para .s")];
+let at = 0, on = false;
+const pick = i => {
+  spans.forEach(x => x.classList.remove("sel")); at = i; spans[i].classList.add("sel");
+  const b = document.querySelector("#box button");
+  b.dataset.ref = spans[i].dataset.ref; b.dataset.say = spans[i].dataset.say;
+  document.querySelector("#picked").textContent = spans[i].dataset.ref + ": " + spans[i].dataset.say;
+};
+spans.forEach((x, i) => x.addEventListener("click", () => pick(i)));
+const voice = () => { const v = speechSynthesis.getVoices(); return v.find(x => x.lang === "en-GB") || v.find(x => x.lang.startsWith("en")); };
+function say(i) {
+  spans.forEach(x => x.classList.remove("now"));
+  if (!on || i >= spans.length) { on = false; return; }
+  pick(i); spans[i].classList.add("now"); spans[i].scrollIntoView({block: "center", behavior: "smooth"});
+  const u = new SpeechSynthesisUtterance(spans[i].dataset.say);
+  u.voice = voice() || null; u.rate = 0.92;
+  u.onend = () => setTimeout(() => say(i + 1), 500);
+  speechSynthesis.speak(u);
+}
+document.querySelector("#listen").onclick = () => { speechSynthesis.cancel(); on = true; say(at); };
+document.querySelector("#stop").onclick = () => { on = false; speechSynthesis.cancel(); spans.forEach(x => x.classList.remove("now")); };
+if (spans.length) pick(0);
+"""
+
+
+def render_narration(slug, letter, number, stem, script, state) -> str:
+    """The module's narration as continuous text, one paragraph per step, with a Listen button that reads it
+    in the browser's own voice. Clicking a sentence picks it for a comment and as the place to listen from."""
+    cue_refs = rs.refs(script, letter, number)
+    attached, _ = rs.attach_comments([c for c in state["comments"] if rs.module_number(c["ref"]) == number
+                                      and c["ref"].startswith(letter + " ")], cue_refs)
+    title = script.get("title", stem) if isinstance(script, dict) else stem
+    s = escape(stem, quote=True)
+    out = ['<p class="nav"><a href="/">All modules</a><a href="/m/%s">Sentences and slides</a></p>' % s,
+           '<h1>%s %d: %s</h1>' % (letter, number, escape(str(title))),
+           '<div class="listen"><button id="listen">Listen</button><button class="quiet" id="stop">Stop</button>'
+           '<span class="picked">Click a sentence to comment on it or to listen from there. '
+           'The voice is your browser&rsquo;s, not the course voice.</span></div>']
+    steps = script.get("steps", []) if isinstance(script, dict) else []
+    for si, step in enumerate(steps, 1):
+        spans = []
+        for r in (r for r in cue_refs if r["step"] == si):
+            cls = "s has-comment" if attached.get(r["ref"]) else "s"
+            spans.append('<span class="%s" data-ref="%s" data-say="%s"><sup>%s</sup>%s</span>'
+                         % (cls, escape(r["ref"], quote=True), escape(r["say"], quote=True),
+                            escape(r["ref"].split(" ")[1]), escape(r["say"])))
+        out.append('<div class="card"><h2>%s</h2><p class="para">%s</p>%s</div>' % (
+            escape(str(step.get("title", "Step %d" % si))), " ".join(spans),
+            "".join(_comment_html(c) for r in cue_refs if r["step"] == si for c in attached.get(r["ref"], []))))
+    out.append('<div class="card" id="box"><p class="picked" id="picked"></p>%s</div>' % _comment_box("", ""))
+    return _page("%s %d narration" % (letter, number), "".join(out)).replace(
+        "</script></body>", LISTEN + "</script></body>")
 
 
 def render_outline(slug, letter, outline, numbers, problems, state) -> str:
