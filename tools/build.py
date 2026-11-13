@@ -37,7 +37,7 @@ SOURCES = {
 # Cyber Vault's interactive version is published inside the backup course; its video version is not.
 VIDEO = {
     "vault": {"title": "IBM Cloud Cyber Vault", "source": HOME / "cohesity/course/vault/video", "live": True},
-    "backup": {"title": "IBM Cloud Backup and Recovery", "source": HOME / "cohesity/course/video", "live": False},
+    "backup": {"title": "IBM Cloud Backup and Recovery", "source": HOME / "cohesity/course/video", "live": True},
     "vpc": {"title": "IBM Cloud VPC", "source": HOME / "vpc_tutorials/docs/course/video", "live": False},
     "rovs": {"title": "Red Hat OpenShift Virtualization Service", "source": HOME / "rovs_tutorials/docs/course/video", "live": False},
 }
