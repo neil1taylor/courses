@@ -35,7 +35,9 @@ course pages are written and tested first, then the video.
    learner will be able to do, the facts it teaches with their sources, and three check questions.
    It starts the review page (`tools/review.py <course>`, at http://127.0.0.1:8780/) and sends you
    the link.
-3. **You** review the outline, then comment or approve. Nothing else is written until you approve.
+3. **You** review the outline in its text file, `review/<course>/00-outline.txt`: change the wording, move
+   the `*` to the right answer, or leave a comment (a line starting with `>`), then say "done". Approve
+   each module on the review page. Nothing else is written until you approve.
 4. **The agent** writes one sample module, checks it, and has a second agent read it fresh. It
    sends you the module's text file (in `review/<course>/`) and its review page with the slides.
 5. **You** edit the text file or leave comments (a line starting with `>`), then say "done". The

@@ -3,7 +3,8 @@
   python3 tools/review.py <slug>                  build without voice and serve the review page
   python3 tools/review.py <slug> --comments       print the open comments
   python3 tools/review.py <slug> --close <id>...  close comments
-  python3 tools/review.py <slug> --export         write each module's narration to review/<slug>/NN-<stem>.txt
+  python3 tools/review.py <slug> --export         write the outline to review/<slug>/00-outline.txt and each
+                                                  module's narration to review/<slug>/NN-<stem>.txt
   python3 tools/review.py <slug> --import FOLDER  read those files back into the scripts in FOLDER
 
 The comments and approvals are saved to review/<slug>.json, which is the record of what was approved.
@@ -26,6 +27,7 @@ import outline as outlines  # noqa: E402
 import review_page  # noqa: E402
 import review_state as rs  # noqa: E402
 import narration_text as nt  # noqa: E402
+import outline_text as ot  # noqa: E402
 import script as scripts  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -148,15 +150,21 @@ class Review:
             return 200, {"ok": True}
 
 
+OUTLINE_FILE = "00-outline.txt"
+
+
 def export_texts(review, folder) -> Path:
-    """Write each module's narration to <folder>/<slug>/NN-<stem>.txt. A file that has changes not yet imported
-    is kept."""
+    """Write the outline to <folder>/<slug>/00-outline.txt and each module's narration to
+    <folder>/<slug>/NN-<stem>.txt. A file that has changes not yet imported is kept."""
     review.refresh()
     target = Path(folder) / review.slug
     target.mkdir(parents=True, exist_ok=True)
-    for n, (stem, script) in enumerate(review.loaded, 1):
-        path = target / ("%02d-%s.txt" % (n, stem))
-        text = nt.export_text(script, review.letter, n)
+    files = [(target / ("%02d-%s.txt" % (n, stem)), nt.export_text(script, review.letter, n))
+             for n, (stem, script) in enumerate(review.loaded, 1)]
+    data, _ = review.outline()
+    if data is not None:
+        files.insert(0, (target / OUTLINE_FILE, ot.export_outline(data, review.letter)))
+    for path, text in files:
         if path.is_file() and path.read_text(encoding="utf-8") != text:
             print("kept %s: it has changes not yet imported" % path.name)
             continue
@@ -170,7 +178,12 @@ def import_texts(review, folder, video_folder) -> None:
     video_folder = Path(video_folder)
     stems = sorted(f.stem for f in video_folder.glob("*.json") if f.name != "outline.json")
     state, changed_stems = review.state(), []
+    outline_path = Path(folder) / review.slug / OUTLINE_FILE
+    if outline_path.is_file():
+        import_outline(review, outline_path, video_folder / "outline.json", state)
     for path in sorted((Path(folder) / review.slug).glob("*.txt")):
+        if path.name == OUTLINE_FILE:
+            continue
         m = re.match(r"(\d+)-(.+)$", path.stem)
         if not m or not (video_folder / (m.group(2) + ".json")).is_file():
             print("%s: no module script in %s for this file" % (path.name, video_folder))
@@ -203,6 +216,35 @@ def import_texts(review, folder, video_folder) -> None:
         found = scripts.check_script(script, unit.read_text(encoding="utf-8"), stem == stems[0])
         for p in found:
             print("%s: %s" % (stem, p))
+
+
+def import_outline(review, path, target, state) -> None:
+    """Read the outline text file into outline.json and add its comments to the module they are about."""
+    if not target.is_file():
+        print("outline: no outline.json in %s" % target.parent)
+        return
+    values, comments, problems = ot.parse_outline(path.read_text(encoding="utf-8"))
+    if problems:
+        print("outline: not imported")
+        print("\n".join("  " + p for p in problems))
+        return
+    data = json.loads(target.read_text(encoding="utf-8"))
+    changed, apply_problems = ot.apply_outline(data, review.letter, values)
+    target.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    modules, count = data.get("modules") or [], 0
+    for (n, key), texts in sorted(comments.items()):
+        if not 1 <= n <= len(modules):
+            continue
+        said = "%s: %s" % (ot.label(modules[n - 1], key), values.get((n, key), ""))
+        for text in texts:
+            rs.add_comment(state, "%s %d.0" % (review.letter, n), said, text)
+            count += 1
+    print("outline: %d changed, %d comments" % (len(changed), count))
+    for p in apply_problems:
+        print("  " + p)
+    units = sorted(p.stem for p in target.parent.parent.glob("*.html") if p.stem != "index")
+    for p in outlines.check_outline(data, units):
+        print("outline: %s" % p)
 
 
 def make_handler(review):
