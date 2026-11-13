@@ -250,7 +250,6 @@ def _numbers(values):
 def import_texts(review, folder, video_folder) -> None:
     """Read each text file in <folder>/<slug>/ into the script of the same module in video_folder."""
     video_folder = Path(video_folder)
-    stems = sorted(f.stem for f in video_folder.glob("*.json") if f.name != "outline.json")
     state, changed_stems = review.state(), []
     outline_path = Path(folder) / review.slug / OUTLINE_FILE
     if outline_path.is_file():
@@ -287,7 +286,7 @@ def import_texts(review, folder, video_folder) -> None:
     rs.save_state(review.state_path, state)
     for stem, script in changed_stems:
         unit = video_folder.parent / (stem + ".html")
-        found = scripts.check_script(script, unit.read_text(encoding="utf-8"), stem == stems[0])
+        found = scripts.check_script(script, unit.read_text(encoding="utf-8"), stem == build.first_stem(video_folder))
         for p in found:
             print("%s: %s" % (stem, p))
 

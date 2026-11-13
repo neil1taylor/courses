@@ -10,6 +10,7 @@ Run from the repo root:  python3 tools/build.py [--no-voice]
 --no-voice makes no Watson calls; it stops if any cue has no cached audio.
 """
 import hashlib
+import json
 import math
 import re
 import shutil
@@ -170,6 +171,17 @@ def minutes(timeline):
     return max(1, math.ceil(seconds / 60))
 
 
+def first_stem(source):
+    """The course's first module: the outline's first unit, or with no outline the first script by name."""
+    outline = Path(source) / "outline.json"
+    if outline.is_file():
+        modules = json.loads(outline.read_text(encoding="utf-8")).get("modules") or []
+        if modules:
+            return modules[0].get("unit")
+    files = sorted(f.stem for f in Path(source).glob("*.json") if f.name != "outline.json")
+    return files[0] if files else None
+
+
 def load_video(slug, cfg):
     """Load and check a course's module scripts. Returns ([(unit stem, script)], [problem])."""
     import script as scripts
@@ -177,14 +189,14 @@ def load_video(slug, cfg):
     source = Path(cfg["source"])
     if not source.is_dir():
         return [], []
-    problems, loaded = [], []
-    for n, f in enumerate(sorted(f for f in source.glob("*.json") if f.name != "outline.json")):
+    problems, loaded, first = [], [], first_stem(source)
+    for f in sorted(f for f in source.glob("*.json") if f.name != "outline.json"):
         s = scripts.load_script(f)
         unit = source.parent / (f.stem + ".html")
         if not unit.is_file():
             problems.append(f"{slug}: {f.name}: no unit page {unit.name} beside the video folder")
             continue
-        found = scripts.check_script(s, unit.read_text(encoding="utf-8"), n == 0)
+        found = scripts.check_script(s, unit.read_text(encoding="utf-8"), f.stem == first)
         problems += [f"{slug}: {f.name}: {p}" for p in found]
         for step_no, title, slide in screen_slides(s):
             src = screen_source(unit, slide["img"])
