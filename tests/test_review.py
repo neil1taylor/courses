@@ -351,3 +351,34 @@ def test_outline_is_checked_against_unit_pages_before_any_script_exists(tmp_path
     assert problems == []
     assert "Course outline" in r.course_page()
     assert "B 2: " in r.outline_page()
+
+
+def outline_review(tmp_path):
+    course = tmp_path / "src" / "course"
+    video = course / "video"
+    video.mkdir(parents=True)
+    for stem in ("m1-u1-first", "m1-u2-second"):
+        (course / (stem + ".html")).write_text("<html><body><p>unit</p></body></html>")
+    (video / "outline.json").write_text((ROOT / "tests" / "fixtures" / "outline.json").read_text())
+    r = review.Review("demo", {"title": "Demo course", "source": video, "live": False},
+                      tmp_path / "out", tmp_path / "rev" / "demo.json", letter="B")
+    return r, video
+
+
+def test_export_and_import_the_outline_text(tmp_path, capsys):
+    r, video = outline_review(tmp_path)
+    folder = tmp_path / "text"
+    review.export_texts(r, folder)
+    f = folder / "demo" / "00-outline.txt"
+    text = f.read_text().replace("[1.f1] The vault", "[1.f1] Now the vault")
+    f.write_text(text.replace("[1.f1] Now the vault sits in an account IBM manages.\n",
+                              "[1.f1] Now the vault sits in an account IBM manages.\n> Which account?\n"))
+    review.import_texts(r, folder, video)
+    saved = json.loads((video / "outline.json").read_text())
+    assert saved["modules"][0]["facts"][0]["text"] == "Now the vault sits in an account IBM manages."
+    c = r.state()["comments"]
+    assert len(c) == 1 and c[0]["ref"] == "B 1.0" and c[0]["text"] == "Which account?"
+    assert c[0]["say"] == "fact 1: Now the vault sits in an account IBM manages."
+    out = capsys.readouterr().out
+    assert "outline: 1 changed, 1 comments" in out
+    assert "no module script" not in out
