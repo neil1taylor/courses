@@ -331,3 +331,23 @@ def test_import_skips_a_file_with_parse_problems(tmp_path, capsys):
     review.import_texts(r, folder, video)
     assert (video / "a.json").read_text() == before
     assert "no tag at the start" in capsys.readouterr().out
+
+
+def test_outline_is_checked_against_unit_pages_before_any_script_exists(tmp_path):
+    course = tmp_path / "src" / "course"
+    video = course / "video"
+    video.mkdir(parents=True)
+    for stem in ("m1-u1-a", "m1-u2-b"):
+        (course / (stem + ".html")).write_text("<html><body><p>unit</p></body></html>")
+    (course / "index.html").write_text("<html></html>")
+    fixture = json.loads((ROOT / "tests" / "fixtures" / "outline.json").read_text())
+    mod = fixture["modules"][0]
+    fixture["modules"] = [dict(mod, unit="m1-u1-a"), dict(mod, unit="m1-u2-b")]
+    (video / "outline.json").write_text(json.dumps(fixture))
+    r = review.Review("demo", {"title": "Demo course", "source": video, "live": False},
+                      tmp_path / "out", tmp_path / "rev" / "demo.json", letter="B")
+    r.refresh()
+    data, problems = r.outline()
+    assert problems == []
+    assert "Course outline" in r.course_page()
+    assert "B 2: " in r.outline_page()

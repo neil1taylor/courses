@@ -83,7 +83,8 @@ class Review:
         if not path.is_file():
             return None, []
         data = outlines.load_outline(path)
-        return data, outlines.check_outline(data, [s for s, _ in self.loaded])
+        units = sorted(p.stem for p in self.source.parent.glob("*.html") if p.stem != "index")
+        return data, outlines.check_outline(data, units)
 
     def state(self) -> dict:
         return rs.load_state(self.state_path)
