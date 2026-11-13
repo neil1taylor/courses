@@ -119,6 +119,16 @@ class Review:
                 rs.save_state(self.state_path, st)
                 return 200, {"id": new}
             stem = str(body.get("stem", ""))
+            if route == "/api/edit":
+                self.refresh()
+                script = dict(self.loaded).get(stem)
+                old, new = str(body.get("old", "")), str(body.get("new", "")).strip()
+                says = {str(c.get("say", "")) for _, _, c in scripts._cues(script)} if script else set()
+                if old not in says or not new:
+                    return 400, {"error": "That sentence isn't in the script any more. Reload the page."}
+                new_id = rs.add_edit(st, stem, str(body.get("ref", "")), old, new)
+                rs.save_state(self.state_path, st)
+                return 200, {"id": new_id}
             if route == "/api/approve-outline":
                 data, problems = self.outline()
                 mod = next((m for m in (data or {}).get("modules", []) if m.get("unit") == stem), None)
@@ -198,10 +208,28 @@ def main(argv=None):
     ap.add_argument("slug", choices=sorted(build.VIDEO))
     ap.add_argument("--comments", action="store_true", help="print the open comments")
     ap.add_argument("--close", nargs="+", type=int, metavar="ID", help="close these comments")
+    ap.add_argument("--edits", action="store_true", help="print the open edits")
+    ap.add_argument("--apply-edits", metavar="FOLDER",
+                    help="write the open edits into the scripts in FOLDER (a working copy of the video folder)")
     ap.add_argument("--out", help="build folder (default: a scratch folder)")
     ap.add_argument("--port", type=int, default=PORT)
     args = ap.parse_args(argv)
     state_path = ROOT / "review" / (args.slug + ".json")
+    if args.edits or args.apply_edits:
+        st = rs.load_state(state_path)
+        if args.apply_edits:
+            folder = Path(args.apply_edits)
+            stems = sorted({e["stem"] for e in st.get("edits", []) if e["open"]})
+            for stem in stems:
+                path = folder / (stem + ".json")
+                script = json.loads(path.read_text(encoding="utf-8"))
+                applied, skipped = rs.apply_edits(st, stem, script)
+                path.write_text(json.dumps(script, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+                print("%s: %d applied, %d skipped" % (stem, len(applied), len(skipped)))
+            rs.save_state(state_path, st)
+        if args.edits:
+            print("\n".join(rs.edits_report(st)))
+        return
     if args.comments or args.close:
         st = rs.load_state(state_path)
         if args.close:
