@@ -27,7 +27,7 @@ def changed(say_from="Everything in this course was tested on a real vault.", to
 
 def test_state_round_trip(tmp_path):
     path = tmp_path / "review" / "vault.json"
-    assert rs.load_state(path) == {"modules": {}, "comments": [], "outline": {}}
+    assert rs.load_state(path) == {"modules": {}, "comments": [], "outline": {}, "edits": []}
     state = rs.load_state(path)
     rs.add_comment(state, "V 1.2", "A sentence.", "Too long")
     rs.approve(state, "m0", GOOD, "V", 1)
@@ -172,6 +172,7 @@ def test_module_page_marks_changed_and_shows_comment_with_sentence():
 # ---- the server -----------------------------------------------------------------------------------
 
 import threading  # noqa: E402
+import urllib.error  # noqa: E402
 import urllib.request  # noqa: E402
 from http.server import ThreadingHTTPServer  # noqa: E402
 
@@ -247,10 +248,40 @@ def test_narration_view_is_one_paragraph_per_step_with_refs():
     assert 'href="/m/m3-u4"' in html  # back to the sentence view
 
 
-def test_narration_view_has_listen_controls_and_a_comment_box():
+def test_narration_view_is_editable_and_has_no_speech():
     html = narration()
-    assert 'id="listen"' in html and 'id="stop"' in html and "speechSynthesis" in html
-    assert 'data-act="comment"' in html
+    assert 'contenteditable="plaintext-only"' in html
+    assert "speechSynthesis" not in html and 'id="listen"' not in html
+    assert 'data-act="comment"' in html and "/api/edit" in html
+
+
+def test_narration_view_shows_a_pending_edit_in_place_of_the_sentence():
+    st = rs.load_state(Path("/nonexistent/x.json"))
+    first = GOOD["steps"][0]["cues"][0]["say"]
+    rs.add_edit(st, "m3-u4", "V 13.1", first, "A warmer opening.")
+    html = narration(state=st)
+    assert "A warmer opening." in html and 'class="s edited"' in html
+    assert 'data-say="%s"' % first in html  # the original, so a second edit still finds the cue
+
+
+def test_edits_replace_report_and_apply():
+    st = rs.empty_state()
+    first = GOOD["steps"][0]["cues"][0]["say"]
+    i = rs.add_edit(st, "m3-u4", "V 13.1", first, "Draft one.")
+    assert rs.add_edit(st, "m3-u4", "V 13.1", first, "Draft two.") == i  # one open edit per sentence
+    rs.add_edit(st, "m3-u4", "V 13.9", "Not in the script any more.", "Whatever.")
+    assert rs.edits_report(st)[0] == 'V 13.1  "%s"  ->  "Draft two."' % first
+    s = copy.deepcopy(GOOD)
+    applied, skipped = rs.apply_edits(st, "m3-u4", s)
+    assert s["steps"][0]["cues"][0]["say"] == "Draft two."
+    assert len(applied) == 1 and len(skipped) == 1
+    assert [e["open"] for e in st["edits"]] == [False, True]
+
+
+def test_open_edit_counts_as_open_work_in_the_status():
+    st = rs.empty_state()
+    rs.add_edit(st, "m3-u4", "V 13.1", GOOD["steps"][0]["cues"][0]["say"], "New.")
+    assert rs.module_status(st, "m3-u4", GOOD, "V", 13) == "Has open comments"
 
 
 def test_narration_view_escapes_script_text():
@@ -267,7 +298,20 @@ def test_module_page_links_to_its_narration_view():
 def test_server_serves_the_narration_view(tmp_path):
     r, server, base = start(tmp_path, {"a": dict(GOOD, unit="a.html")})
     try:
-        assert 'id="listen"' in get(base + "/m/a/narration")
+        assert 'contenteditable="plaintext-only"' in get(base + "/m/a/narration")
     finally:
         server.shutdown()
         server.server_close()
+
+
+def test_server_saves_an_edit_only_for_a_real_sentence(tmp_path):
+    r, server, base = start(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    first = GOOD["steps"][0]["cues"][0]["say"]
+    try:
+        assert post(base + "/api/edit", {"stem": "a", "ref": "V 1.1", "old": first, "new": "Better."})["id"] == 1
+        with pytest.raises(urllib.error.HTTPError):
+            post(base + "/api/edit", {"stem": "a", "ref": "V 1.1", "old": "No such sentence.", "new": "x"})
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert r.state()["edits"][0]["new"] == "Better."
