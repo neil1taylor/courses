@@ -27,7 +27,7 @@ def changed(say_from="Everything in this course was tested on a real vault.", to
 
 def test_state_round_trip(tmp_path):
     path = tmp_path / "review" / "vault.json"
-    assert rs.load_state(path) == {"modules": {}, "comments": [], "outline": {}, "edits": []}
+    assert rs.load_state(path) == {"modules": {}, "comments": [], "outline": {}}
     state = rs.load_state(path)
     rs.add_comment(state, "V 1.2", "A sentence.", "Too long")
     rs.approve(state, "m0", GOOD, "V", 1)
@@ -248,40 +248,18 @@ def test_narration_view_is_one_paragraph_per_step_with_refs():
     assert 'href="/m/m3-u4"' in html  # back to the sentence view
 
 
-def test_narration_view_is_editable_and_has_no_speech():
+def test_narration_view_is_read_only_and_names_its_text_file():
     html = narration()
-    assert 'contenteditable="plaintext-only"' in html
-    assert "speechSynthesis" not in html and 'id="listen"' not in html
-    assert 'data-act="comment"' in html and "/api/edit" in html
+    assert "contenteditable" not in html and "/api/edit" not in html
+    assert "speechSynthesis" not in html and 'data-act="comment"' in html
+    assert "review/vault/13-m3-u4.txt" in html
 
 
-def test_narration_view_shows_a_pending_edit_in_place_of_the_sentence():
-    st = rs.load_state(Path("/nonexistent/x.json"))
-    first = GOOD["steps"][0]["cues"][0]["say"]
-    rs.add_edit(st, "m3-u4", "V 13.1", first, "A warmer opening.")
-    html = narration(state=st)
-    assert "A warmer opening." in html and 'class="s edited"' in html
-    assert 'data-say="%s"' % first in html  # the original, so a second edit still finds the cue
-
-
-def test_edits_replace_report_and_apply():
-    st = rs.empty_state()
-    first = GOOD["steps"][0]["cues"][0]["say"]
-    i = rs.add_edit(st, "m3-u4", "V 13.1", first, "Draft one.")
-    assert rs.add_edit(st, "m3-u4", "V 13.1", first, "Draft two.") == i  # one open edit per sentence
-    rs.add_edit(st, "m3-u4", "V 13.9", "Not in the script any more.", "Whatever.")
-    assert rs.edits_report(st)[0] == 'V 13.1  "%s"  ->  "Draft two."' % first
-    s = copy.deepcopy(GOOD)
-    applied, skipped = rs.apply_edits(st, "m3-u4", s)
-    assert s["steps"][0]["cues"][0]["say"] == "Draft two."
-    assert len(applied) == 1 and len(skipped) == 1
-    assert [e["open"] for e in st["edits"]] == [False, True]
-
-
-def test_open_edit_counts_as_open_work_in_the_status():
-    st = rs.empty_state()
-    rs.add_edit(st, "m3-u4", "V 13.1", GOOD["steps"][0]["cues"][0]["say"], "New.")
-    assert rs.module_status(st, "m3-u4", GOOD, "V", 13) == "Has open comments"
+def test_old_state_file_with_edits_still_loads(tmp_path):
+    path = tmp_path / "old.json"
+    path.write_text(json.dumps({"comments": [], "edits": [{"id": 1}]}))
+    st = rs.load_state(path)
+    assert "edits" not in st and st["comments"] == []
 
 
 def test_narration_view_escapes_script_text():
@@ -298,20 +276,58 @@ def test_module_page_links_to_its_narration_view():
 def test_server_serves_the_narration_view(tmp_path):
     r, server, base = start(tmp_path, {"a": dict(GOOD, unit="a.html")})
     try:
-        assert 'contenteditable="plaintext-only"' in get(base + "/m/a/narration")
+        assert "review/demo/01-a.txt" in get(base + "/m/a/narration")
     finally:
         server.shutdown()
         server.server_close()
 
 
-def test_server_saves_an_edit_only_for_a_real_sentence(tmp_path):
-    r, server, base = start(tmp_path, {"a": dict(GOOD, unit="a.html")})
-    first = GOOD["steps"][0]["cues"][0]["say"]
-    try:
-        assert post(base + "/api/edit", {"stem": "a", "ref": "V 1.1", "old": first, "new": "Better."})["id"] == 1
-        with pytest.raises(urllib.error.HTTPError):
-            post(base + "/api/edit", {"stem": "a", "ref": "V 1.1", "old": "No such sentence.", "new": "x"})
-    finally:
-        server.shutdown()
-        server.server_close()
-    assert r.state()["edits"][0]["new"] == "Better."
+def make_review(tmp_path, scripts_by_stem):
+    video = make_source(tmp_path, scripts_by_stem)
+    return review.Review("demo", {"title": "Demo course", "source": video, "live": False},
+                         tmp_path / "out", tmp_path / "rev" / "demo.json", letter="V"), video
+
+
+def test_export_writes_one_file_per_module_and_keeps_a_changed_one(tmp_path, capsys):
+    r, _ = make_review(tmp_path, {"a": dict(GOOD, unit="a.html"), "b": dict(GOOD, unit="b.html")})
+    folder = tmp_path / "text"
+    assert review.export_texts(r, folder) == folder / "demo"
+    assert sorted(f.name for f in (folder / "demo").glob("*.txt")) == ["01-a.txt", "02-b.txt"]
+    mine = folder / "demo" / "01-a.txt"
+    mine.write_text(mine.read_text().replace("[1.1] ", "[1.1] Mine. "))
+    review.export_texts(r, folder)
+    assert "Mine. " in mine.read_text()
+    assert "kept 01-a.txt: it has changes not yet imported" in capsys.readouterr().out
+
+
+def test_import_writes_the_script_and_adds_comments(tmp_path, capsys):
+    r, video = make_review(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    folder = tmp_path / "text"
+    review.export_texts(r, folder)
+    f = folder / "demo" / "01-a.txt"
+    lines = f.read_text().splitlines()
+    i = next(k for k, l in enumerate(lines) if l.startswith("[1.2]"))
+    lines[i] = "[1.2] A brand new second sentence."
+    lines.insert(i + 1, "> Is this right?")
+    f.write_text("\n".join(lines) + "\n")
+    review.import_texts(r, folder, video)
+    saved = json.loads((video / "a.json").read_text())
+    assert saved["steps"][0]["cues"][1]["say"] == "A brand new second sentence."
+    assert saved["steps"][0]["cues"][0]["say"] == GOOD["steps"][0]["cues"][0]["say"]
+    c = r.state()["comments"]
+    assert len(c) == 1 and c[0]["ref"] == "V 1.2" and c[0]["say"] == "A brand new second sentence."
+    assert c[0]["text"] == "Is this right?"
+    assert "a: 1 sentences changed, 1 comments" in capsys.readouterr().out
+    assert f.exists()
+
+
+def test_import_skips_a_file_with_parse_problems(tmp_path, capsys):
+    r, video = make_review(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    folder = tmp_path / "text"
+    review.export_texts(r, folder)
+    f = folder / "demo" / "01-a.txt"
+    f.write_text(f.read_text() + "a stray line\n")
+    before = (video / "a.json").read_text()
+    review.import_texts(r, folder, video)
+    assert (video / "a.json").read_text() == before
+    assert "no tag at the start" in capsys.readouterr().out

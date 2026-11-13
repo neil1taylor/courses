@@ -3,13 +3,17 @@
   python3 tools/review.py <slug>                  build without voice and serve the review page
   python3 tools/review.py <slug> --comments       print the open comments
   python3 tools/review.py <slug> --close <id>...  close comments
+  python3 tools/review.py <slug> --export         write each module's narration to review/<slug>/NN-<stem>.txt
+  python3 tools/review.py <slug> --import FOLDER  read those files back into the scripts in FOLDER
 
 The comments and approvals are saved to review/<slug>.json, which is the record of what was approved.
+The text files are working copies and are not tracked; the scripts are the record of the wording.
 The server listens on 127.0.0.1 only.
 """
 import argparse
 import json
 import mimetypes
+import re
 import sys
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -21,6 +25,7 @@ import build  # noqa: E402
 import outline as outlines  # noqa: E402
 import review_page  # noqa: E402
 import review_state as rs  # noqa: E402
+import narration_text as nt  # noqa: E402
 import script as scripts  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -119,16 +124,6 @@ class Review:
                 rs.save_state(self.state_path, st)
                 return 200, {"id": new}
             stem = str(body.get("stem", ""))
-            if route == "/api/edit":
-                self.refresh()
-                script = dict(self.loaded).get(stem)
-                old, new = str(body.get("old", "")), str(body.get("new", "")).strip()
-                says = {str(c.get("say", "")) for _, _, c in scripts._cues(script)} if script else set()
-                if old not in says or not new:
-                    return 400, {"error": "That sentence isn't in the script any more. Reload the page."}
-                new_id = rs.add_edit(st, stem, str(body.get("ref", "")), old, new)
-                rs.save_state(self.state_path, st)
-                return 200, {"id": new_id}
             if route == "/api/approve-outline":
                 data, problems = self.outline()
                 mod = next((m for m in (data or {}).get("modules", []) if m.get("unit") == stem), None)
@@ -150,6 +145,63 @@ class Review:
                 return 404, {"error": "No such route."}
             rs.save_state(self.state_path, st)
             return 200, {"ok": True}
+
+
+def export_texts(review, folder) -> Path:
+    """Write each module's narration to <folder>/<slug>/NN-<stem>.txt. A file that has changes not yet imported
+    is kept."""
+    review.refresh()
+    target = Path(folder) / review.slug
+    target.mkdir(parents=True, exist_ok=True)
+    for n, (stem, script) in enumerate(review.loaded, 1):
+        path = target / ("%02d-%s.txt" % (n, stem))
+        text = nt.export_text(script, review.letter, n)
+        if path.is_file() and path.read_text(encoding="utf-8") != text:
+            print("kept %s: it has changes not yet imported" % path.name)
+            continue
+        path.write_text(text, encoding="utf-8")
+    print(target)
+    return target
+
+
+def import_texts(review, folder, video_folder) -> None:
+    """Read each text file in <folder>/<slug>/ into the script of the same module in video_folder."""
+    video_folder = Path(video_folder)
+    stems = sorted(f.stem for f in video_folder.glob("*.json") if f.name != "outline.json")
+    state, changed_stems = review.state(), []
+    for path in sorted((Path(folder) / review.slug).glob("*.txt")):
+        m = re.match(r"(\d+)-(.+)$", path.stem)
+        if not m or not (video_folder / (m.group(2) + ".json")).is_file():
+            print("%s: no module script in %s for this file" % (path.name, video_folder))
+            continue
+        number, stem = int(m.group(1)), m.group(2)
+        says, comments, problems = nt.parse_text(path.read_text(encoding="utf-8"))
+        if problems:
+            print("%s: not imported" % stem)
+            print("\n".join("  " + p for p in problems))
+            continue
+        target = video_folder / (stem + ".json")
+        script = json.loads(target.read_text(encoding="utf-8"))
+        changed, apply_problems = nt.apply_text(script, review.letter, number, says)
+        target.write_text(json.dumps(script, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+        said = {r["ref"]: r["say"] for r in rs.refs(script, review.letter, number)}
+        count = 0
+        for n, texts in sorted(comments.items()):
+            ref = "%s %d.%d" % (review.letter, number, n)
+            for text in texts:
+                rs.add_comment(state, ref, said.get(ref, ""), text)
+                count += 1
+        print("%s: %d sentences changed, %d comments" % (stem, len(changed), count))
+        for p in apply_problems:
+            print("  " + p)
+        if changed:
+            changed_stems.append((stem, script))
+    rs.save_state(review.state_path, state)
+    for stem, script in changed_stems:
+        unit = video_folder.parent / (stem + ".html")
+        found = scripts.check_script(script, unit.read_text(encoding="utf-8"), stem == stems[0])
+        for p in found:
+            print("%s: %s" % (stem, p))
 
 
 def make_handler(review):
@@ -208,27 +260,19 @@ def main(argv=None):
     ap.add_argument("slug", choices=sorted(build.VIDEO))
     ap.add_argument("--comments", action="store_true", help="print the open comments")
     ap.add_argument("--close", nargs="+", type=int, metavar="ID", help="close these comments")
-    ap.add_argument("--edits", action="store_true", help="print the open edits")
-    ap.add_argument("--apply-edits", metavar="FOLDER",
-                    help="write the open edits into the scripts in FOLDER (a working copy of the video folder)")
+    ap.add_argument("--export", action="store_true", help="write each module's narration to a text file")
+    ap.add_argument("--import", dest="import_folder", metavar="FOLDER",
+                    help="read the text files into the scripts in FOLDER (a working copy of the video folder)")
     ap.add_argument("--out", help="build folder (default: a scratch folder)")
     ap.add_argument("--port", type=int, default=PORT)
     args = ap.parse_args(argv)
     state_path = ROOT / "review" / (args.slug + ".json")
-    if args.edits or args.apply_edits:
-        st = rs.load_state(state_path)
-        if args.apply_edits:
-            folder = Path(args.apply_edits)
-            stems = sorted({e["stem"] for e in st.get("edits", []) if e["open"]})
-            for stem in stems:
-                path = folder / (stem + ".json")
-                script = json.loads(path.read_text(encoding="utf-8"))
-                applied, skipped = rs.apply_edits(st, stem, script)
-                path.write_text(json.dumps(script, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
-                print("%s: %d applied, %d skipped" % (stem, len(applied), len(skipped)))
-            rs.save_state(state_path, st)
-        if args.edits:
-            print("\n".join(rs.edits_report(st)))
+    if args.export or args.import_folder:
+        review = Review(args.slug, build.VIDEO[args.slug], args.out or SCRATCH / ("review-" + args.slug), state_path)
+        if args.export:
+            export_texts(review, ROOT / "review")
+        else:
+            import_texts(review, ROOT / "review", args.import_folder)
         return
     if args.comments or args.close:
         st = rs.load_state(state_path)
