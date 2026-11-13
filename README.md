@@ -36,18 +36,21 @@ course pages are written and tested first, then the video.
    It starts the review page (`tools/review.py <course>`, at http://127.0.0.1:8780/) and sends you
    the link.
 3. **You** review the outline in its text file, `review/<course>/00-outline.txt`: change the wording, move
-   the `*` to the right answer, or leave a comment (a line starting with `>`), then say "done". Approve
-   each module on the review page. Nothing else is written until you approve.
+   the `*` to the right answer, or leave a comment (a line starting with `>`), then say "done". When
+   you're happy, say "approved" (or "modules 1 to 5 approved"); the agent records it. Nothing else is
+   written until you approve.
 4. **The agent** writes one sample module, checks it, and has a second agent read it fresh. It
    sends you the module's text file (in `review/<course>/`) and its review page with the slides.
 5. **You** edit the text file or leave comments (a line starting with `>`), then say "done". The
-   agent applies your changes and you approve the module on the review page. The agent records
-   that one module, so you hear the voice once.
+   agent applies your changes. When you're happy, say "approved" and the agent records it. The agent
+   then voices that one module, so you hear the voice once.
 6. **The rest of the modules come in batches of about five**, repeating steps 4 and 5.
 7. **The agent** records and publishes only approved modules. The site switches to the video
    version when the whole course is approved.
 
-You say which course to make, then "done" after each review. Everything else, including the
+You say which course to make, then "done" after each review and "approved" when it's right. The
+agent can't record an approval while your text file has edits it hasn't applied, so what's approved
+is what you read. The review page still has Approve buttons if you prefer them. Everything else, including the
 review page and the pull requests, is the agent's job. The `course-video` skill has the steps.
 The approval process is specified in `design/2026-11-12-content-approval-spec.md`.
 
