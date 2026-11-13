@@ -1,0 +1,78 @@
+{
+  "comments": [],
+  "modules": {},
+  "outline": {
+    "m1-u1-what-a-vpc-is-and-who-runs-what": {
+      "approved": "94fa61451178"
+    },
+    "m1-u2-vsphere-words-vpc-words": {
+      "approved": "3a08d0ff1da5"
+    },
+    "m1-u3-accounts-resource-groups-and-access": {
+      "approved": "7bc582ef41e5"
+    },
+    "m1-u4-console-cli-terraform-and-schematics": {
+      "approved": "e297fed698dc"
+    },
+    "m2-u1-address-prefixes-and-subnets": {
+      "approved": "a44e572d6676"
+    },
+    "m2-u2-network-acls-and-security-groups": {
+      "approved": "d3ff3e39a8d5"
+    },
+    "m2-u3-in-and-out-gateways-floating-ips-bastion": {
+      "approved": "73ebd25ff3e3"
+    },
+    "m2-u4-reserved-ips-and-virtual-network-interfaces": {
+      "approved": "aca78d165fd4"
+    },
+    "m3-u1-profiles-and-images": {
+      "approved": "c199db26a959"
+    },
+    "m3-u2-first-boot-user-data-and-the-metadata-service": {
+      "approved": "9c6432404f84"
+    },
+    "m3-u3-placement-groups-dedicated-hosts-and-bare-metal": {
+      "approved": "59dd0c5fc756"
+    },
+    "m3-u4-instance-templates-instance-groups-and-autoscale": {
+      "approved": "b9f099a6f678"
+    },
+    "m4-u1-block-or-file": {
+      "approved": "a326029d0436"
+    },
+    "m4-u2-encryption-with-key-protect": {
+      "approved": "8dec9c2b243a"
+    },
+    "m4-u3-snapshots-and-vpc-backup": {
+      "approved": "f34fbb10cc46"
+    },
+    "m4-u4-which-backup-when": {
+      "approved": "518c266508c2"
+    },
+    "m5-u1-load-balancers": {
+      "approved": "759b9783122e"
+    },
+    "m5-u2-dns-in-a-vpc": {
+      "approved": "f04fa21af99a"
+    },
+    "m5-u3-private-access": {
+      "approved": "ae69e126b06d"
+    },
+    "m5-u4-watch-the-estate": {
+      "approved": "5103b38a5260"
+    },
+    "m6-u1-ways-to-connect-vpcs-and-sites": {
+      "approved": "c9d42bbd10e6"
+    },
+    "m6-u2-route-tables-and-ingress-routing": {
+      "approved": "daa67e4221b0"
+    },
+    "m6-u3-firewalls-in-a-hub-vpc": {
+      "approved": "4d9b6e500219"
+    },
+    "m6-u4-final-scenario-design-northgates-estate": {
+      "approved": "91aaaef3d792"
+    }
+  }
+}
