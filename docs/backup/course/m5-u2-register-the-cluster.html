@@ -37,7 +37,7 @@
       <p class="hand tilt">Northgate Freight is a made-up haulier. Its ROVS cluster, ng-cluster-01, now has a connector. The next job is to register the cluster as a source.</p>
     </div>
   </div>
-  <p class="small">OpenShift Virtualization VM backup wasn&apos;t generally available when we tested it. IBM lists it for the AU-SYD region only. Its pages call it &quot;intended for testing and proof-of-concept scenarios in the AU-SYD region&quot;, and they still said so when we read them. Names, endpoints and IDs in messages were changed. Every screen and result comes from our lab.</p>
+  <p class="small">Names, endpoints and IDs in messages were changed. Every screen and result comes from our lab.</p>
 </section>
 
 <section class="screen">
@@ -151,15 +151,15 @@
   <span class="kicker">Step 4 · Predict</span>
   <h2>Eight attempts, then a success</h2>
   <p class="lead">These are the eight attempts that didn&apos;t register the cluster. A later registration worked.</p>
-  <pre class="def" aria-label="The eight attempts">What was run (instance in au-syd)            Result
+  <pre class="def" aria-label="The eight attempts">What was run (instance in another region)   Result
 CLI register, no connection ID                            KInternalError: Encountered HTTP connection error
 CLI register, connection with no connectors               same error
 CLI register, VPE endpoint as the cluster endpoint        failed (command not recorded)
 curl POST to the registrations path                       same error
-eu-de instance, registration token as the cluster token   Unauthorized access. ... [kUnauthorized]
-eu-de instance, brs-sa-token, one API port                already registered to cohesity-&lt;number>
-eu-de instance, brs-sa-token, another API port            no answer in 120 s: Cloudflare error code: 524
-au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encountered HTTP timeout error</pre>
+same-region instance, registration token as cluster token Unauthorized access. ... [kUnauthorized]
+same-region instance, brs-sa-token, one API port         already registered to cohesity-&lt;number>
+same-region instance, brs-sa-token, another API port    no answer in 120 s: Cloudflare error code: 524
+other-region instance, BRS private URL as the endpoint  KTimedoutError: Encountered HTTP timeout error</pre>
   <div class="pair" style="margin-top:20px">
     <div class="q">
       <p>What did our lab find out about why it worked?</p>
@@ -168,7 +168,7 @@ au-syd, BRS private URL given as the cluster endpoint     KTimedoutError: Encoun
         <button class="opt" data-ok>Nothing for sure: one fact fits, the connection used in the failed attempts had no connectors and the one used in the working registration had two</button>
         <button class="opt">An upgrade of the cluster</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>Nothing for sure. We don&apos;t know what changed between the failed attempts and the one that worked. The instance doesn&apos;t have to be in the same region as the cluster: the au-syd instance registered the eu-de cluster, and an eu-de instance registered an eu-de cluster too. IBM&apos;s pages still say the VM feature is for testing in au-syd.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>Nothing for sure. We don&apos;t know what changed between the failed attempts and the one that worked. The instance doesn&apos;t have to be in the same region as the cluster: an instance in another region registered the cluster, and an instance in the same region as the cluster did too.</p></details>
     </div>
     <div class="q">
       <p>Which attempt failed because the cluster endpoint was not the cluster API server?</p>
