@@ -382,3 +382,77 @@ def test_export_and_import_the_outline_text(tmp_path, capsys):
     out = capsys.readouterr().out
     assert "outline: 1 changed, 1 comments" in out
     assert "no module script" not in out
+
+
+def test_approve_outline_from_the_text_file_approves_every_module(tmp_path, capsys):
+    r, _ = outline_review(tmp_path)
+    folder = tmp_path / "text"
+    review.export_texts(r, folder)
+    assert review.approve_texts(r, folder, "outline", "all") == [1, 2]
+    assert r.outline_page().count("Approved") >= 2
+    assert "outline approved: B 1, B 2" in capsys.readouterr().out
+
+
+def test_approve_outline_by_number_approves_only_that_module(tmp_path):
+    r, _ = outline_review(tmp_path)
+    folder = tmp_path / "text"
+    review.export_texts(r, folder)
+    assert review.approve_texts(r, folder, "outline", [2]) == [2]
+    st = r.state()["outline"]
+    assert "m1-u2-second" in st and "m1-u1-first" not in st
+
+
+def test_approve_outline_refuses_while_the_text_file_has_unimported_changes(tmp_path, capsys):
+    r, _ = outline_review(tmp_path)
+    folder = tmp_path / "text"
+    review.export_texts(r, folder)
+    f = folder / "demo" / "00-outline.txt"
+    f.write_text(f.read_text().replace("[1.f1] The vault", "[1.f1] Now the vault"))
+    assert review.approve_texts(r, folder, "outline", "all") == []
+    assert r.state()["outline"] == {}
+    assert "not imported" in capsys.readouterr().out
+
+
+def test_approve_outline_skips_a_module_with_open_comments(tmp_path, capsys):
+    r, _ = outline_review(tmp_path)
+    folder = tmp_path / "text"
+    review.export_texts(r, folder)
+    st = r.state()
+    rs.add_comment(st, "B 1.0", "", "Which account?")
+    rs.save_state(r.state_path, st)
+    assert review.approve_texts(r, folder, "outline", "all") == [2]
+    assert "B 1: has open comments" in capsys.readouterr().out
+
+
+def test_approve_module_from_its_narration_file(tmp_path, capsys):
+    r, _ = make_review(tmp_path, {"a": dict(GOOD, unit="a.html"), "b": dict(GOOD, unit="b.html")})
+    folder = tmp_path / "text"
+    review.export_texts(r, folder)
+    assert review.approve_texts(r, folder, "module", [1]) == [1]
+    r.refresh()
+    st = r.state()
+    assert rs.module_status(st, "a", dict(r.loaded)["a"], "V", 1) == "Approved"
+    assert rs.module_status(st, "b", dict(r.loaded)["b"], "V", 2) == "Not reviewed"
+    assert "modules approved: V 1" in capsys.readouterr().out
+
+
+def test_approve_module_refuses_while_its_narration_file_has_unimported_changes(tmp_path, capsys):
+    r, _ = make_review(tmp_path, {"a": dict(GOOD, unit="a.html")})
+    folder = tmp_path / "text"
+    review.export_texts(r, folder)
+    f = folder / "demo" / "01-a.txt"
+    f.write_text(f.read_text().replace("[1.1] ", "[1.1] Mine. "))
+    assert review.approve_texts(r, folder, "module", "all") == []
+    assert "V 1: 01-a.txt has changes not yet imported" in capsys.readouterr().out
+
+
+def test_approve_from_the_command_line(tmp_path, monkeypatch, capsys):
+    r, _ = outline_review(tmp_path)
+    folder = tmp_path / "text"
+    review.export_texts(r, folder)
+    calls = []
+    monkeypatch.setattr(review, "approve_texts", lambda rv, fo, kind, which: calls.append((kind, which)) or [])
+    monkeypatch.setattr(review, "Review", lambda *a, **k: r)
+    review.main(["vault", "--approve-outline", "all"])
+    review.main(["vault", "--approve", "3", "4"])
+    assert calls == [("outline", "all"), ("module", [3, 4])]

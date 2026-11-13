@@ -70,7 +70,7 @@ At the end, the owner watches whichever modules they choose. A fault found at th
 - Questions are shown with their answers marked, and with the sentence that teaches each answer.
 - Every sentence and slide has a short reference, for example "B 4.3" for course B, module 4, sentence 3.
 - Beside every sentence is a comment box. Comments are saved on the page and read back by the agent that fixes them. If the comment boxes can't be provided, the owner writes comments in the chat using the reference instead.
-- Each module has an Approve button. The page shows which modules are approved, which have comments still open, and which have changed since the owner last looked.
+- Each module has an Approve button. The owner may instead approve in the chat after reviewing the text files; the agent records it with `tools/review.py <course> --approve-outline` or `--approve`, which refuses while a text file has changes not yet imported. The page shows which modules are approved, which have comments still open, and which have changed since the owner last looked.
 - When a script changes, the page is updated at the same link. Changed sentences are marked, so the owner rereads only what changed.
 
 ## The checks that run before the owner sees anything

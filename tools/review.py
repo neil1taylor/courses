@@ -6,6 +6,11 @@
   python3 tools/review.py <slug> --export         write the outline to review/<slug>/00-outline.txt and each
                                                   module's narration to review/<slug>/NN-<stem>.txt
   python3 tools/review.py <slug> --import FOLDER  read those files back into the scripts in FOLDER
+  python3 tools/review.py <slug> --approve-outline all | N...
+                                                  record the owner's approval of the outline, after review
+                                                  in the text file
+  python3 tools/review.py <slug> --approve all | N...
+                                                  record the owner's approval of these modules' scripts
 
 The comments and approvals are saved to review/<slug>.json, which is the record of what was approved.
 The text files are working copies and are not tracked; the scripts are the record of the wording.
@@ -173,6 +178,61 @@ def export_texts(review, folder) -> Path:
     return target
 
 
+def approve_texts(review, folder, kind, which) -> list:
+    """Record the owner's approval of the outline ("outline") or of module scripts ("module") for the module
+    numbers in which, or "all". Only what the owner read is approved: nothing is approved while the text file
+    has changes not yet imported. A module with open comments or problems is skipped. Returns the numbers
+    approved."""
+    review.refresh()
+    target = Path(folder) / review.slug
+    st, approved = review.state(), []
+    if kind == "outline":
+        data, problems = review.outline()
+        if data is None or problems:
+            print("outline not approved: it has problems or there is no outline")
+            return []
+        path = target / OUTLINE_FILE
+        if path.is_file() and path.read_text(encoding="utf-8") != ot.export_outline(data, review.letter):
+            print("outline not approved: %s has changes not imported" % OUTLINE_FILE)
+            return []
+        modules = list(enumerate(data.get("modules", []), 1))
+    else:
+        modules = list(enumerate(review.loaded, 1))
+    for n, item in modules:
+        if which != "all" and n not in which:
+            continue
+        label = "%s %d" % (review.letter, n)
+        if rs.open_in_module(st, review.letter, n):
+            print("%s: has open comments" % label)
+            continue
+        if kind == "outline":
+            st["outline"][item["unit"]] = {"approved": rs.outline_hash(item)}
+        else:
+            stem, script = item
+            path = target / ("%02d-%s.txt" % (n, stem))
+            if path.is_file() and path.read_text(encoding="utf-8") != nt.export_text(script, review.letter, n):
+                print("%s: %s has changes not yet imported" % (label, path.name))
+                continue
+            if review.module_problems(stem):
+                print("%s: the script has problems" % label)
+                continue
+            rs.approve(st, stem, script, review.letter, n)
+        approved.append(n)
+    rs.save_state(review.state_path, st)
+    what = "outline approved" if kind == "outline" else "modules approved"
+    print("%s: %s" % (what, ", ".join("%s %d" % (review.letter, n) for n in approved) or "none"))
+    return approved
+
+
+def _numbers(values):
+    if values == ["all"]:
+        return "all"
+    try:
+        return [int(v) for v in values]
+    except ValueError:
+        raise SystemExit("give module numbers, or all")
+
+
 def import_texts(review, folder, video_folder) -> None:
     """Read each text file in <folder>/<slug>/ into the script of the same module in video_folder."""
     video_folder = Path(video_folder)
@@ -306,10 +366,19 @@ def main(argv=None):
     ap.add_argument("--export", action="store_true", help="write each module's narration to a text file")
     ap.add_argument("--import", dest="import_folder", metavar="FOLDER",
                     help="read the text files into the scripts in FOLDER (a working copy of the video folder)")
+    ap.add_argument("--approve-outline", nargs="+", metavar="N", help="approve the outline of these modules, or all")
+    ap.add_argument("--approve", nargs="+", metavar="N", help="approve these modules' scripts, or all")
     ap.add_argument("--out", help="build folder (default: a scratch folder)")
     ap.add_argument("--port", type=int, default=PORT)
     args = ap.parse_args(argv)
     state_path = ROOT / "review" / (args.slug + ".json")
+    if args.approve_outline or args.approve:
+        review = Review(args.slug, build.VIDEO[args.slug], args.out or SCRATCH / ("review-" + args.slug), state_path)
+        if args.approve_outline:
+            approve_texts(review, ROOT / "review", "outline", _numbers(args.approve_outline))
+        if args.approve:
+            approve_texts(review, ROOT / "review", "module", _numbers(args.approve))
+        return
     if args.export or args.import_folder:
         review = Review(args.slug, build.VIDEO[args.slug], args.out or SCRATCH / ("review-" + args.slug), state_path)
         if args.export:
