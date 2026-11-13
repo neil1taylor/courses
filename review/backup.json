@@ -1,0 +1,78 @@
+{
+  "comments": [],
+  "modules": {},
+  "outline": {
+    "m1-u1-what-ibm-runs-and-what-you-run": {
+      "approved": "523d6d160d1d"
+    },
+    "m1-u2-the-pieces": {
+      "approved": "0d010c69bcbe"
+    },
+    "m1-u3-cost-and-where-the-data-sits": {
+      "approved": "77cc014021e5"
+    },
+    "m1-u4-order-an-instance": {
+      "approved": "36e206e378cb"
+    },
+    "m2-u1-the-connector-server-on-vpc": {
+      "approved": "41138c2d8cd8"
+    },
+    "m2-u2-the-connector-agent": {
+      "approved": "402b7ee98309"
+    },
+    "m2-u3-register-a-source": {
+      "approved": "5a8c611594f2"
+    },
+    "m2-u4-private-endpoints-and-security-groups": {
+      "approved": "4cd984067bd6"
+    },
+    "m3-u1-policies-and-protection-groups": {
+      "approved": "3b3d106483a0"
+    },
+    "m3-u2-full-and-incremental-backups": {
+      "approved": "eeb91d14d2db"
+    },
+    "m3-u3-sql-server": {
+      "approved": "86baccbedae2"
+    },
+    "m3-u4-schedules-and-alerts": {
+      "approved": "6a7bae027c1a"
+    },
+    "m4-u1-restore-files-and-check-every-one": {
+      "approved": "8bdd15227868"
+    },
+    "m4-u2-windows-paths": {
+      "approved": "1f306d715513"
+    },
+    "m4-u3-restore-sql-server": {
+      "approved": "7132a6953633"
+    },
+    "m4-u4-restore-to-another-server-and-your-own-key": {
+      "approved": "32197bf74e21"
+    },
+    "m5-u1-connect-a-rovs-cluster": {
+      "approved": "41cf69cbecf2"
+    },
+    "m5-u2-register-the-cluster": {
+      "approved": "855496caddd1"
+    },
+    "m5-u3-back-up-a-vm": {
+      "approved": "fe9f26ef9e56"
+    },
+    "m5-u4-restore-a-vm": {
+      "approved": "70a92daa0db3"
+    },
+    "m6-u1-a-source-reboots-an-agent-stops": {
+      "approved": "242879d50420"
+    },
+    "m6-u2-agent-upgrades": {
+      "approved": "08a5a4f0f1f5"
+    },
+    "m6-u3-the-migration-tool": {
+      "approved": "c97db05b6d44"
+    },
+    "m6-u4-final-scenario": {
+      "approved": "c34ab7920636"
+    }
+  }
+}
