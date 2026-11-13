@@ -23,6 +23,32 @@ tutorials into plain text, removes each unit's note of its source files, and blu
 the screenshot areas listed in `BLUR`. Check new screenshots for names from outside
 the lab before you publish them; add any you find to `BLUR`.
 
+## Making a video course
+
+A video course is made from a course that already exists on the site. Its pages are where the
+facts come from, and every fact in them has been tested or cited. For a brand-new topic, the
+course pages are written and tested first, then the video.
+
+1. **You:** open a session in `~/Projects/courses` and ask, for example, "Make the video course for
+   Backup and Recovery."
+2. **The agent** writes the course outline from the course's pages: for each module, what the
+   learner will be able to do, the facts it teaches with their sources, and three check questions.
+   It starts the review page (`tools/review.py <course>`, at http://127.0.0.1:8780/) and sends you
+   the link.
+3. **You** review the outline, then comment or approve. Nothing else is written until you approve.
+4. **The agent** writes one sample module, checks it, and has a second agent read it fresh. It
+   sends you the module's text file (in `review/<course>/`) and its review page with the slides.
+5. **You** edit the text file or leave comments (a line starting with `>`), then say "done". The
+   agent applies your changes and you approve the module on the review page. The agent records
+   that one module, so you hear the voice once.
+6. **The rest of the modules come in batches of about five**, repeating steps 4 and 5.
+7. **The agent** records and publishes only approved modules. The site switches to the video
+   version when the whole course is approved.
+
+You say which course to make, then "done" after each review. Everything else, including the
+review page and the pull requests, is the agent's job. The `course-video` skill has the steps.
+The approval process is specified in `design/2026-11-12-content-approval-spec.md`.
+
 ## Video courses
 
 Each source repo keeps a module script for each unit in a `video/` folder beside the course
