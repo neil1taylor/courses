@@ -75,6 +75,7 @@ UNIT_NUMBER = re.compile(r"\b(unit|module)\s+(\d[\d.]*|(one|two|three|four|five|
 UNIT_WORD = re.compile(r"\b(the|this) unit\b|\bclips?\b|\blessons?\b", re.I)
 TESTED = re.compile(r"\btested\b", re.I)
 TESTED_SENTENCE = "everything in this course was tested"
+CLOSING_LINE = re.compile(r"If you remember one thing, make it the sentence on (the )?screen\.")
 READ = re.compile(r"\bread\b", re.I)
 PAST_READ = re.compile(r"\b(had|have|has|was|were|then|already|just) read\b", re.I)
 TAG = re.compile(r"<[^>]+>")
@@ -484,6 +485,7 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
 
     state = None
     tested = False
+    summary_at, closing = None, False
     narration = 0
     qs = []       # (at, slide) of each question slide, in order
     scores = []   # number of question slides before each score slide
@@ -534,6 +536,9 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
                 tested = True
             if not first_module and TESTED_SENTENCE in norm(say):
                 problems.append("%s: only the first module says everything in the course was tested" % at)
+            if state is not None and state.slide.get("type") == "summary":
+                summary_at = summary_at or at
+                closing = closing or bool(CLOSING_LINE.search(say))
             if state is None or not state.usable:
                 continue
             if state.slide["type"] not in ("q", "title"):
@@ -550,6 +555,8 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
                 problems += check_action(action, state, sketches, at)
     problems += finish_slide(state, sketches)
 
+    if summary_at and not closing:
+        problems.append("%s: the summary must say \"If you remember one thing, make it the sentence on the screen.\"" % summary_at)
     if first_module and not tested:
         problems.append("step 0 cue 0: the first module must say the course was tested; no cue says 'tested'")
     if narration > MAX_NARRATION:

@@ -57,7 +57,7 @@
     {"title": "Summary", "cues": [
       {"slide": {"type": "score"}, "say": "That is your score.", "do": [["show", "head"]]},
       {"slide": {"type": "summary", "text": "A vault keeps <em>one copy</em> safe", "next": "Next: Building the vault", "sketch": "mini"},
-       "say": "Remember, one copy stays safe. Next, building the vault.",
+       "say": "One copy stays safe. If you remember one thing, make it the sentence on the screen. Next, building the vault.",
        "do": [["show", "head"], ["show", "next"], ["build", [0]]]}
     ]}
   ]

@@ -206,6 +206,25 @@ def test_other_modules_need_not_say_tested():
     assert run(f, first_module=False) == []
 
 
+def test_summary_must_say_the_closing_line():
+    only(run(say(6, 2, "Remember, one copy stays safe. Next, building the vault.")), "step 6 cue 2", "If you remember one thing")
+
+
+def test_summary_closing_line_shortened_is_refused():
+    only(run(say(6, 2, "One copy stays safe. Remember the sentence on screen.")), "If you remember one thing")
+
+
+def test_summary_closing_line_said_on_screen_is_accepted():
+    assert run(say(6, 2, "One copy stays safe. If you remember one thing, make it the sentence on screen.")) == []
+
+
+def test_closing_line_outside_the_summary_does_not_count():
+    def f(s):
+        cue(s, 6, 2)["say"] = "One copy stays safe."
+        cue(s, 6, 1)["say"] = "That is your score. If you remember one thing, make it the sentence on the screen."
+    only(run(f), "If you remember one thing")
+
+
 def test_first_module_saying_tested_once_is_clean():
     assert run(first_module=True) == []
 
