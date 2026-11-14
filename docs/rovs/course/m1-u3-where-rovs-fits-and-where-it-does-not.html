@@ -59,7 +59,7 @@
         {"box":[22,210,190,44],"title":"MTU 8900 and 9000"},{"box":[222,210,226,44],"title":"Storage chosen once"},
         {"text":"a standard cluster can&apos;t become ROVS, or the reverse","at":[10,290],"hand":true,"size":16,"tone":"muted"}]}'></svg>
     <div style="display:grid;gap:14px">
-      <p>Storage is ODF or File Storage for VPC (Beta). You need at least one, and IBM doesn't document a way to switch. Outbound traffic protection is disabled, and you can't enable it. The licence is OVE (OpenShift Virtualization Engine), charged per instance-hour for each bare metal worker, and you can't bring your own.</p>
+      <p>Storage is ODF or File Storage for VPC. You need at least one, and IBM doesn't document a way to switch. Outbound traffic protection is disabled, and you can't enable it. The licence is OVE (OpenShift Virtualization Engine), charged per instance-hour for each bare metal worker, and you can't bring your own.</p>
       <p>You can still change the number of workers, the number of worker pools, adding zones, the cluster version, and the rules inside your security groups.</p>
       <p class="hand tilt"><b>From vSphere:</b> this is more like buying a converged appliance than building a cluster. The hardware is chosen for you, and the network settings come sealed.</p>
     </div>
@@ -91,17 +91,8 @@
 <section class="screen">
   <span class="kicker">Step 3 · Design it</span>
   <h2>Does it fit on ROVS?</h2>
-  <p class="lead">Northgate's estate has four awkward workloads. Pick an answer for each one, then read why.</p>
+  <p class="lead">Northgate's estate has three awkward workloads. Pick an answer for each one, then read why.</p>
   <div class="pair">
-    <div class="q">
-      <p>Part of Northgate's estate has to run in São Paulo.</p>
-      <div class="opts">
-        <button class="opt">ROVS, in any region IBM Cloud has</button>
-        <button class="opt" data-ok>A standard cluster, with OpenShift Virtualization installed yourself</button>
-        <button class="opt">ROVS, if you ask IBM for an exception</button>
-      </div>
-      <details class="reveal"><summary>Show the answer</summary><p>A standard cluster. ROVS runs in five regions only: Dallas, Washington DC, Toronto, Montreal and Frankfurt. When we tried to create a ROVS cluster in São Paulo, it was refused at once with "not supported in this region". Anywhere else, you install OpenShift Virtualization yourself on a standard cluster.</p></details>
-    </div>
     <div class="q">
       <p>A developer VM runs a hypervisor of its own, a nested ESXi lab.</p>
       <div class="opts">
