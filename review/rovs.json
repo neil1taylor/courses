@@ -1,0 +1,78 @@
+{
+  "comments": [],
+  "modules": {},
+  "outline": {
+    "m1-u1-what-rovs-is-and-who-runs-what": {
+      "approved": "198172b0285e"
+    },
+    "m1-u2-vsphere-words-rovs-words": {
+      "approved": "058db51a1371"
+    },
+    "m1-u3-where-rovs-fits-and-where-it-does-not": {
+      "approved": "89376d6205c0"
+    },
+    "m1-u4-find-your-way-around-a-cluster": {
+      "approved": "9acbfb2215ff"
+    },
+    "m2-u1-what-a-vm-is-made-of": {
+      "approved": "8ddf3f15b7c9"
+    },
+    "m2-u2-where-a-vms-disk-lives": {
+      "approved": "63d1e5261d07"
+    },
+    "m2-u3-templates-instance-types-golden-images": {
+      "approved": "a65c974f9de8"
+    },
+    "m2-u4-first-boot-cloud-init-sysprep": {
+      "approved": "9e4633f0c4a3"
+    },
+    "m3-u1-the-vpc-under-the-cluster": {
+      "approved": "c84b8bba6b6d"
+    },
+    "m3-u2-pod-network-localnet-or-layer-2": {
+      "approved": "ed1fa3094542"
+    },
+    "m3-u3-put-a-vm-on-a-vpc-subnet": {
+      "approved": "90315e527fc5"
+    },
+    "m3-u4-keep-vms-apart-policies-and-egress": {
+      "approved": "91f5b4e10c46"
+    },
+    "m4-u1-storage-classes-and-access-modes": {
+      "approved": "21e45382acc6"
+    },
+    "m4-u2-grow-and-add-disks": {
+      "approved": "9f1cbb2f568a"
+    },
+    "m4-u3-how-fast-is-the-storage": {
+      "approved": "8c78f7969a82"
+    },
+    "m4-u4-file-storage-for-vpc-as-an-option": {
+      "approved": "5ea6ed2dc7af"
+    },
+    "m5-u1-live-migration": {
+      "approved": "bde3f6835fc9"
+    },
+    "m5-u2-updates-and-node-maintenance": {
+      "approved": "9a868bfa5fa9"
+    },
+    "m5-u3-snapshots-and-backups": {
+      "approved": "5bf694ce6b47"
+    },
+    "m5-u4-watch-and-troubleshoot-a-vm": {
+      "approved": "ca1daf4166d7"
+    },
+    "m6-u1-migrate-from-vsphere-with-mtv": {
+      "approved": "727d17c3629a"
+    },
+    "m6-u2-rackware-for-migration-and-dr": {
+      "approved": "fa2c12754f31"
+    },
+    "m6-u3-regional-dr-between-two-clusters": {
+      "approved": "334ed449ee3e"
+    },
+    "m6-u4-final-scenario-design-northgates-move": {
+      "approved": "a99eda38c6e5"
+    }
+  }
+}
