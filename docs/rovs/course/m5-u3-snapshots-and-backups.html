@@ -130,12 +130,12 @@ Completed   60/60    0        2</pre>
   <span class="kicker">Step 3 · Design it</span>
   <h2>Which protection does Northgate pick?</h2>
   <p class="lead">Northgate needs four things. Pick an approach for each one, then read why.</p>
-  <svg class="sketch" role="img" aria-label="Hand-drawn diagram of four boxes in a row: Snapshot, OADP, Kasten and IBM service. Beneath each is its job: rollback, DR metadata, scheduled backup and preview only."
+  <svg class="sketch" role="img" aria-label="Hand-drawn diagram of four boxes in a row: Snapshot, OADP, Kasten and IBM service. Beneath each is its job: rollback, DR metadata, scheduled backup and unsupported."
     data-drawing='{"w":560,"h":120,"shapes":[
       {"box":[10,10,125,70],"title":"Snapshot","detail":"rollback"},
       {"box":[145,10,125,70],"title":"OADP","detail":"DR metadata"},
       {"box":[280,10,125,70],"title":"Kasten","detail":"scheduled"},
-      {"box":[415,10,135,70],"dashed":true,"title":"IBM service","detail":"preview only"},
+      {"box":[415,10,135,70],"dashed":true,"title":"IBM service","detail":"unsupported"},
       {"text":"at least one copy must leave the cluster and the region","at":[10,108],"hand":true,"size":17,"tone":"mark"}]}'></svg>
   <div class="pair" style="margin-top:20px">
     <div class="q">
@@ -169,10 +169,10 @@ Completed   60/60    0        2</pre>
       <p>Northgate wants IBM's managed service, IBM Cloud Backup and Recovery, for its ROVS VMs. What do you tell them?</p>
       <div class="opts">
         <button class="opt">Use it: it's IBM's own service</button>
-        <button class="opt" data-ok>It worked as a proof of concept in eu-de, but IBM doesn't support it for ROVS</button>
+        <button class="opt" data-ok>It worked as a proof of concept, but IBM doesn't support it for ROVS</button>
         <button class="opt">It can't back up a ROVS VM at all</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p>It works as a proof of concept, and IBM doesn't support it for ROVS. IBM offers VM backup only as a preview in <code>au-syd</code>, says it isn't recommended for production, and doesn't name ROVS. <code>au-syd</code> has no VPC bare metal, so no ROVS cluster can run there. On a ROVS cluster in <code>eu-de</code> it backed up and restored a Linux VM and a Windows Server 2022 VM, and restored to a second cluster in the same region. It can't restore one file, so you restore the whole disk.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p>It works as a proof of concept, and IBM doesn't support it for ROVS. IBM says it isn't recommended for production, and doesn't name ROVS. On a ROVS cluster it backed up and restored a Linux VM and a Windows Server 2022 VM, and restored to a second cluster in the same region. It can't restore one file, so you restore the whole disk.</p></details>
     </div>
   </div>
   <p class="watch"><b>Watch for this.</b> ODF runs on local NVMe in your workers, so the storage fails with the workers. A backup in the same region doesn't survive the event that most DR plans are written for. Rehearse a restore and time it, because the measured time is your real RTO.</p>
@@ -209,7 +209,7 @@ Completed   60/60    0        2</pre>
       <div class="shot"><img src="../images/43/course-kasten-node-count.jpg" alt="Kasten's Licenses page. Nodes on this cluster: 3, with 3 nodes requiring a licence and 0 excluded. Locally installed licenses: 5, with 3 consumed and 2 available. Violations: 0." width="1568" height="270"></div>
       <figcaption>
         <h3>Which box shows the number the licence is counted in?</h3>
-        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Nodes on this cluster. Kasten counts worker nodes rather than VMs, so the number of VMs you protect makes no difference. The starter licence allows 5 nodes. The trial licence allowed 500 for 59 more days when the page was captured. The licence secret said 10 while the product said 5, and the dashboard is what enforces the limit.</p></details>
+        <details class="reveal"><summary>Show where</summary><p class="fb good">Right. Nodes on this cluster. Kasten counts worker nodes rather than VMs, so the number of VMs you protect makes no difference. The starter licence allows 5 nodes. The licence secret said 10 while the product said 5, and the dashboard is what enforces the limit.</p></details>
       </figcaption>
     </figure>
   </div>
