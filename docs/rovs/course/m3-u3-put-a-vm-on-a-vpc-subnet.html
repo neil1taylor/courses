@@ -286,7 +286,7 @@ No rules were found.</pre><p>The group has no rules. A new security group starts
         <button class="opt" data-ok>bootcmd</button>
         <button class="opt">packages</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p><code>bootcmd</code>. It runs on every boot. The rest of cloud-init runs on first boot only, and <code>runcmd</code> runs once. For the static address on a localnet VM, the worked example uses <code>runcmd</code>, because <code>nmcli connection add</code> isn't safe to repeat. Each reboot would add another profile with the same name.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p><code>bootcmd</code>. It runs on every boot. The rest of cloud-init runs on first boot only, and <code>runcmd</code> runs once. For the static address on a localnet VM, the worked example puts the <code>nmcli</code> lines in <code>bootcmd</code> with a guard, so a reboot doesn't add a second profile with the same name.</p></details>
     </div>
     <div class="q" data-check>
       <p>On localnet, which interface mode does the VM's network card use?</p>
