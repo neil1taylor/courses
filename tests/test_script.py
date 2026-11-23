@@ -194,10 +194,10 @@ def test_tested_sentence_only_in_first_module():
     only(run(first_module=False), "step 1 cue 2", "first module")
 
 
-def test_first_module_must_say_tested():
+def test_first_module_need_not_say_tested():
     def f(s):
         cue(s, 1, 2)["say"] = "That is the first step."
-    only(run(f, first_module=True), "tested")
+    assert run(f, first_module=True) == []
 
 
 def test_other_modules_need_not_say_tested():
