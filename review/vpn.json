@@ -1,0 +1,18 @@
+{
+  "comments": [],
+  "modules": {},
+  "outline": {
+    "m1-u1-how-a-client-to-site-vpn-reaches-a-vpc": {
+      "approved": "312cc5ec0e46"
+    },
+    "m1-u2-certificates-for-the-vpn": {
+      "approved": "f2d86a68701f"
+    },
+    "m2-u1-revoke-a-certificate-on-a-vpn-server": {
+      "approved": "fa53d8b83a51"
+    },
+    "m2-u2-revoke-on-a-load-balancer-and-the-mistakes": {
+      "approved": "5c8a3c6aeb41"
+    }
+  }
+}
