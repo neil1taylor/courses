@@ -73,7 +73,6 @@ REGIONS = re.compile(r"\b(us-south|us-east|eu-de|eu-gb|eu-es|jp-tok|jp-osa|au-sy
 OUR_LAB = re.compile(r"\bour lab\b|\bin our tests\b", re.I)
 UNIT_NUMBER = re.compile(r"\b(unit|module)\s+(\d[\d.]*|(one|two|three|four|five|six|seven|eight|nine|ten)\b)", re.I)
 UNIT_WORD = re.compile(r"\b(the|this) unit\b|\bclips?\b|\blessons?\b", re.I)
-TESTED = re.compile(r"\btested\b", re.I)
 TESTED_SENTENCE = "everything in this course was tested"
 CLOSING_LINE = re.compile(r"If you remember one thing, make it the sentence on (the )?screen\.")
 READ = re.compile(r"\bread\b", re.I)
@@ -484,7 +483,6 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
             problems.append("step 0 cue 0: pronounce %r must be lower-case plain words" % word)
 
     state = None
-    tested = False
     summary_at, closing = None, False
     narration = 0
     qs = []       # (at, slide) of each question slide, in order
@@ -532,8 +530,6 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
                 problems.append("%s: narration asks a question outside a question slide" % at)
             problems += check_narration(say, at, "read" in pronounce)
             problems += check_rejected(say, at, "narration")
-            if TESTED.search(say):
-                tested = True
             if not first_module and TESTED_SENTENCE in norm(say):
                 problems.append("%s: only the first module says everything in the course was tested" % at)
             if state is not None and state.slide.get("type") == "summary":
@@ -557,8 +553,6 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
 
     if summary_at and not closing:
         problems.append("%s: the summary must say \"If you remember one thing, make it the sentence on the screen.\"" % summary_at)
-    if first_module and not tested:
-        problems.append("step 0 cue 0: the first module must say the course was tested; no cue says 'tested'")
     if narration > MAX_NARRATION:
         problems.append("step 0 cue 0: narration is %d characters, at most 4,500" % narration)
     n = len(qs)

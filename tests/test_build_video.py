@@ -328,17 +328,20 @@ def test_load_video_skips_the_outline(tmp_path):
 
 
 def test_the_outline_decides_which_module_is_first(tmp_path):
-    video = make_source(tmp_path, {"b": second()})
+    video = make_source(tmp_path, {"b": dict(GOOD, unit="b.html")})  # GOOD says the course was tested
     outline = json.loads((FIX / "outline.json").read_text())
     mod = outline["modules"][0]
     outline["modules"] = [dict(mod, unit="a"), dict(mod, unit="b")]
     (video / "outline.json").write_text(json.dumps(outline))
-    loaded, problems = build.load_video("demo", {"source": video})
-    assert [stem for stem, _ in loaded] == ["b"]
+    _, problems = build.load_video("demo", {"source": video})
+    assert any("first module" in p for p in problems)
+    outline["modules"] = [dict(mod, unit="b"), dict(mod, unit="a")]
+    (video / "outline.json").write_text(json.dumps(outline))
+    _, problems = build.load_video("demo", {"source": video})
     assert problems == []
 
 
 def test_without_an_outline_the_first_script_is_first(tmp_path):
-    video = make_source(tmp_path, {"b": second()})
+    video = make_source(tmp_path, {"b": dict(GOOD, unit="b.html")})
     _, problems = build.load_video("demo", {"source": video})
-    assert any("tested" in p for p in problems)
+    assert problems == []
