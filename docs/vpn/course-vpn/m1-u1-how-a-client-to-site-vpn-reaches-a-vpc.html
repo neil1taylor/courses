@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en" data-course="vpn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How a client-to-site VPN reaches a VPC · VPN course</title>
+<meta name="description" content="Course unit 1.1: see what a VPN server, a client IP pool and a VPN route each do, pick the right way for administrators to reach private servers, and find why a connected client reaches nothing. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m1-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPN course</a> <span>·</span> Module 1 · Reach a VPC with a VPN</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 1</span>
+      <h1>How a client-to-site VPN reaches a VPC</h1>
+      <p class="lead">By the end of this unit you&apos;ll be able to say what a VPN server, a client IP pool and a VPN route each do, pick the right way for administrators to reach private servers, and find why a connected client reaches nothing.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a laptop on the internet joined by a tunnel to a VPN server inside a VPC, which passes traffic on to a private server."
+        data-drawing='{"w":460,"h":200,"shapes":[
+          {"box":[10,60,100,60],"title":"Laptop"},
+          {"line":[114,90,200,90],"arrow":true,"tone":"mark"},
+          {"text":"tunnel","at":[134,76],"hand":true,"size":16,"tone":"mark"},
+          {"box":[196,20,256,160],"heavy":true},
+          {"text":"VPC","at":[210,44],"hand":true,"tone":"muted"},
+          {"box":[210,60,100,60],"title":"VPN server"},
+          {"line":[314,90,340,90],"arrow":true},
+          {"box":[340,60,100,60],"title":"Server"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier moving its vSphere estate to IBM Cloud VPC. Its administrators work from laptops, and they need a way into the production VPC without opening every server to the internet.</p>
+    </div>
+  </div>
+  <p class="small">Every command and line of output in this unit comes from a real run, and the limits come from IBM&apos;s pages.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>A server, a pool and a route</h2>
+  <p class="lead">A client-to-site VPN server accepts OpenVPN connections from individual clients. Select a part of the drawing to see what it does and what limits IBM sets on it.</p>
+  <div class="explorer" data-start="server"
+    data-map='{"sg":[[1,3]],"server":[[4,4]],"pool":[[5,5]],"split":[[7,7]],"route":[[8,8]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A laptop on the left. Inside a VPC: a VPN server with a security group and a client IP pool, a route on the server, and a private server at 10.20.0.0/16."
+          data-drawing='{"w":620,"h":330,"shapes":[
+            {"box":[10,120,100,56],"title":"Laptop"},
+            {"line":[114,148,170,148],"arrow":true,"tone":"mark"},
+            {"box":[160,10,450,310],"heavy":true},
+            {"text":"vpct-prod","at":[174,34],"hand":true,"tone":"muted"},
+            {"box":[174,50,190,70],"part":"server","title":"VPN server","detail":"UDP 443"},
+            {"box":[174,134,190,56],"part":"pool","title":"Client IP pool","detail":"172.16.0.0/22"},
+            {"box":[174,204,190,56],"part":"sg","title":"Security group","detail":"UDP 443 in"},
+            {"line":[364,85,420,85],"part":"route","arrow":true},
+            {"box":[420,50,176,70],"part":"route","title":"VPN route","detail":"10.20.0.0/16 deliver"},
+            {"line":[508,120,508,170],"arrow":true},
+            {"box":[420,170,176,70],"title":"Private servers","detail":"10.20.0.0/16"},
+            {"box":[174,272,190,36],"part":"split","title":"Split tunnel"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="server">
+          <h3>VPN server</h3>
+          <p>A VPC service that accepts OpenVPN connections. IBM says it authenticates by certificate, by user ID and passcode, or both, and that its default port is 443 and its default protocol UDP. It can use up to two subnets, in different zones, for high availability.</p>
+          <p class="watch"><b>Watch for this.</b> A server created in the lab sat in the subnet <code>vpct-prod-vpn-z1</code> and was <code>stable</code> and healthy about 100 seconds after the create.</p>
+        </div>
+        <div class="part-info" data-part="pool">
+          <h3>Client IP pool</h3>
+          <p>The range the server hands out to connected clients. This one is <code>172.16.0.0/22</code>.</p>
+          <p class="watch"><b>Watch for this.</b> IBM says the pool must not overlap any address prefix of the VPC, <code>127.0.0.0/8</code>, <code>161.26.0.0/16</code>, <code>166.8.0.0/14</code>, <code>169.254.0.0/16</code> or <code>224.0.0.0/4</code>, and its prefix length is between /9 and /22.</p>
+        </div>
+        <div class="part-info" data-part="sg">
+          <h3>Security group</h3>
+          <p>The VPN server&apos;s group allows UDP 443 in, and everything out. A new group allows nothing out, so the outbound rule is added too.</p>
+          <p class="watch"><b>Watch for this.</b> The inbound rule is open to the internet on UDP 443.</p>
+        </div>
+        <div class="part-info" data-part="route">
+          <h3>VPN route</h3>
+          <p>A rule on the server that says where traffic for a destination goes. The action <code>deliver</code> sends it into the VPC. The action <code>translate</code> also changes its source address.</p>
+          <p class="watch"><b>Watch for this.</b> IBM says traffic that matches no route is dropped. With one route, to <code>10.20.0.0/16</code>, only that range is reachable.</p>
+        </div>
+        <div class="part-info" data-part="split">
+          <h3>Split tunnel</h3>
+          <p>A client setting that sends only the VPC&apos;s traffic through the VPN. It is off by default.</p>
+          <p class="watch"><b>Watch for this.</b> Without it, the client&apos;s default route goes into the tunnel, and an SSH session to the client itself is lost.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The commands that build the security group, the VPN server, the split tunnel and the route">ibmcloud is security-group-create vpct-prod-vpnserver-sg vpct-prod --resource-group-name vpct-lab
+ibmcloud is security-group-rule-add vpct-prod-vpnserver-sg inbound udp --port-min 443 --port-max 443 --remote 0.0.0.0/0 --name vpnserver-udp443-in --vpc vpct-prod
+ibmcloud is security-group-rule-add vpct-prod-vpnserver-sg outbound all --remote 0.0.0.0/0 --name vpnserver-all-out --vpc vpct-prod
+ibmcloud is vpn-server-create --name vpct-prod-vpnserver --vpc vpct-prod --subnet vpct-prod-vpn-z1 \
+  --client-ip-pool 172.16.0.0/22 --cert &lt;server-secret-crn&gt; --client-auth-methods certificate \
+  --client-ca &lt;client-ca-secret-crn&gt; --sg vpct-prod-vpnserver-sg --resource-group-name vpct-lab
+ibmcloud is vpn-server-update vpct-prod-vpnserver --vpc vpct-prod --enable-split-tunnel true
+ibmcloud is vpn-server-route-create vpct-prod-vpnserver --vpc vpct-prod --destination 10.20.0.0/16 --action deliver --name vpct-prod-vpnserver-to-prod</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Choose it</span>
+  <h2>Pick a way in for each need</h2>
+  <p class="lead">A client-to-site VPN is one of three ways to reach private servers. Pick one for each need, then read the worked answer.</p>
+  <div class="pair">
+    <div class="q">
+      <p>Many administrators need to reach a whole VPC range, each from their own laptop. What should Northgate use?</p>
+      <div class="opts">
+        <button class="opt" data-ok>A client-to-site VPN</button>
+        <button class="opt">A bastion host</button>
+        <button class="opt">A site-to-site VPN</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A client-to-site VPN. It suits many administrators and access to a whole VPC range, and it needs certificates and a client program on each laptop.</p></details>
+    </div>
+    <div class="q">
+      <p>Only a few servers need to be reached, and one SSH hop is enough. What should Northgate use?</p>
+      <div class="opts">
+        <button class="opt">A client-to-site VPN</button>
+        <button class="opt" data-ok>A bastion host</button>
+        <button class="opt">A site-to-site VPN</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A bastion host. It reaches a few servers with one SSH hop.</p></details>
+    </div>
+    <div class="q">
+      <p>A whole site, not a person, must reach the VPC. What should Northgate use?</p>
+      <div class="opts">
+        <button class="opt">A client-to-site VPN</button>
+        <button class="opt">A bastion host</button>
+        <button class="opt" data-ok>A site-to-site VPN</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>A site-to-site VPN. It joins a site to the VPC and is built in a later chapter of the tutorials.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Run it</span>
+  <h2>Create the server, add a route, connect</h2>
+  <p class="lead">Run each command in turn. The output is what the lab returned, trimmed to the lines that matter.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is vpn-server-create --name vpct-prod-vpnserver --vpc vpct-prod --subnet vpct-prod-vpn-z1 --client-ip-pool 172.16.0.0/22 --cert &lt;server-secret-crn&gt; --client-auth-methods certificate --client-ca &lt;client-ca-secret-crn&gt; --sg vpct-prod-vpnserver-sg --resource-group-name vpct-lab</pre>
+          <pre class="out">Name                         vpct-prod-vpnserver
+Status                       pending
+Protocol                     udp
+Port                         443
+Client IP pool               172.16.0.0/22
+Client authentication        Method        Identity provider   Client CA
+                             certificate   -                   crn:v1:bluemix:...
+Client idle timeout          600
+Enable split tunneling       false
+Health state                 inapplicable</pre>
+          <p class="hand note">Split tunnel is off, as IBM&apos;s default. The server turns <code>stable</code> about 100 seconds later.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is vpn-server-route-create vpct-prod-vpnserver --vpc vpct-prod --destination 10.20.0.0/16 --action deliver --name vpct-prod-vpnserver-to-prod</pre>
+          <pre class="out">Name               vpct-prod-vpnserver-to-prod
+Action             deliver
+Destination        10.20.0.0/16
+Lifecycle state    pending</pre>
+          <p class="hand note">The route table of the VPC has to accept routes from <code>vpn_server</code>. In the lab the default table already did.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is vpn-server-update vpct-prod-vpnserver --vpc vpct-prod --enable-split-tunnel true</pre>
+          <pre class="out">Name                         vpct-prod-vpnserver
+Status                       updating</pre>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is vpn-server-client-configuration vpct-prod-vpnserver --vpc vpct-prod --file vpct.ovpn</pre>
+          <pre class="out">Getting OpenVPN client configuration for VPN server vpct-prod-vpnserver
+OpenVPN client configuration was saved to vpct.ovpn</pre>
+          <p class="hand note">The downloaded file does not end with a newline. Add one before the client certificate, or OpenVPN stops with <code>Cannot parse argument &apos;0&lt;cert&gt;&apos; as non-negative integer</code>.</p>
+        </div>
+        <div class="q">
+          <p>The profile now holds the client&apos;s certificate and key. What does OpenVPN print when the tunnel is up?</p>
+          <div class="opts">
+            <button class="opt">Connection reset by peer</button>
+            <button class="opt" data-ok>Initialization Sequence Completed</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>Initialization Sequence Completed. That line in the log means the connection succeeded.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">sudo openvpn --config client.ovpn --daemon --log ovpn.log; ip -4 addr show tun0; ip route | grep tun0</pre>
+          <pre class="out">3: tun0    inet 172.16.0.130/25 brd 172.16.0.255 scope global tun0
+10.20.0.0/16 via 172.16.0.129 dev tun0 metric 200
+172.16.0.0/22 via 172.16.0.129 dev tun0 metric 200
+172.16.0.128/25 dev tun0 proto kernel scope link src 172.16.0.130</pre>
+          <p class="hand note">The client got <code>172.16.0.130</code> from the pool, and the server pushed the route to <code>10.20.0.0/16</code>.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Predict and spot the fault</span>
+  <h2>What the server sees, and what to check</h2>
+  <div class="pair">
+    <div class="q">
+      <p>The route&apos;s action is <code>deliver</code>. From a private server, which source address does a connection from the connected laptop show?</p>
+      <div class="opts">
+        <button class="opt" data-ok>The pool address, <code>172.16.0.130</code></button>
+        <button class="opt">The address of the VPN server&apos;s VPC</button>
+        <button class="opt">The laptop&apos;s home address</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The pool address, <code>172.16.0.130</code>. The action <code>deliver</code> does not change it. With <code>translate</code> a server sees an address of the VPN server&apos;s VPC instead, and security groups must allow that address.</p></details>
+    </div>
+    <div class="q">
+      <p>The tunnel is up and the log ends with <code>Initialization Sequence Completed</code>, but SSH to a private server times out. Where do you look first?</p>
+      <div class="opts">
+        <button class="opt">At the client certificate</button>
+        <button class="opt" data-ok>At the route, the route table, and the target&apos;s security group and ACL</button>
+        <button class="opt">At the UDP 443 rule of the VPN server</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>At the route, the route table, and the target&apos;s security group and ACL. The route may be missing, the route table may not accept the pool&apos;s routes, or a security group or network ACL may deny the pool. A network ACL needs a rule for each direction. The certificate and the UDP 443 rule worked, or the tunnel would not be up.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which range must the client IP pool not overlap?</p>
+      <div class="opts">
+        <button class="opt">The VPN server&apos;s own subnet only</button>
+        <button class="opt" data-ok>Any address prefix of the VPC</button>
+        <button class="opt">Any range used by a laptop</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Any address prefix of the VPC. IBM also lists <code>127.0.0.0/8</code>, <code>161.26.0.0/16</code>, <code>166.8.0.0/14</code>, <code>169.254.0.0/16</code> and <code>224.0.0.0/4</code>, and the pool&apos;s prefix length is between /9 and /22.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A private server shows the VPN server&apos;s VPC address instead of the pool address. Which route action is set?</p>
+      <div class="opts">
+        <button class="opt">deliver</button>
+        <button class="opt" data-ok>translate</button>
+        <button class="opt">drop</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p><code>translate</code> changes the source address. <code>deliver</code> leaves the pool address in place.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A client has the split tunnel off. What does it send into the tunnel?</p>
+      <div class="opts">
+        <button class="opt">Only traffic for the VPC</button>
+        <button class="opt" data-ok>Its default route, so all its traffic</button>
+        <button class="opt">Only traffic on port 443</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Its default route goes into the tunnel, so an SSH session to the client itself is lost. A split tunnel sends only the VPC&apos;s traffic through the VPN.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can say how a VPN reaches a VPC</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>The server hands each client an address from its pool, and a route says where that traffic goes. Traffic that matches no route is dropped. With <code>deliver</code> a private server sees the pool address. A connected client that reaches nothing is a route, route table, security group or ACL problem.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 72, Connecting administrators with a client-to-site VPN, builds this server and connects to it. The next unit covers the certificates it needs.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>

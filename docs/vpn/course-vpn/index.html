@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" data-course="vpn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Client-to-site VPN and certificate revocation without an account · VPN course</title>
+<meta name="description" content="A short, interactive course on IBM Cloud client-to-site VPN and on revoking client certificates. No IBM Cloud account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body>
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb">VPN course <span>·</span> <a href="../../">All courses</a></span>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+  <section class="home-hero">
+    <div class="start">
+      <div>
+        <span class="kicker">For administrators</span>
+        <h1>Client-to-site VPN and certificate revocation</h1>
+        <p class="lead">Short interactive units on how a client-to-site VPN server reaches a VPC, which certificates it needs, and what happens when a client certificate is revoked. You&apos;ll see real commands and their real output, and check what you&apos;ve learned. No account needed.</p>
+        <div class="facts"><span>2 modules</span><span>About 10 minutes a unit</span><span>No account needed</span></div>
+      </div>
+      <div style="display:grid;gap:12px">
+        <svg class="sketch" role="img" aria-label="Sketch: a laptop connects through a tunnel to a VPN server in a VPC and reaches a private server. A second laptop with a crossed-out certificate is stopped at the tunnel."
+          data-drawing='{"w":420,"h":220,"shapes":[
+            {"box":[10,30,90,50],"title":"Laptop"},
+            {"line":[104,55,200,55],"arrow":true,"tone":"mark"},
+            {"box":[200,20,206,170],"heavy":true},
+            {"text":"VPC","at":[214,44],"hand":true,"tone":"muted"},
+            {"box":[212,56,92,50],"title":"VPN server"},
+            {"line":[308,81,330,81],"arrow":true},
+            {"box":[330,56,66,50],"title":"Server"},
+            {"box":[10,130,90,50],"title":"Laptop","dashed":true},
+            {"line":[104,155,180,155],"tone":"mark"},
+            {"line":[180,140,180,170],"tone":"mark"},
+            {"text":"revoked","at":[22,204],"hand":true,"size":18,"tone":"mark"}]}'></svg>
+        <p class="hand tilt">The course follows Northgate Freight, a made-up haulier. Its administrators need a way into the production VPC, and its security team asks what happens when a laptop is lost.</p>
+      </div>
+    </div>
+  </section>
+
+  <ol class="modules">
+    <li class="module">
+      <span class="num">1</span>
+      <div><h2>Reach a VPC with a VPN</h2><p class="about">How a client-to-site VPN server reaches a VPC, and the certificates it needs.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m1-u1-how-a-client-to-site-vpn-reaches-a-vpc.html" data-unit-link="m1-u1">How a client-to-site VPN reaches a VPC</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m1-u2-certificates-for-the-vpn.html" data-unit-link="m1-u2">Certificates for the VPN</a><span class="min">10 min</span></li>
+      </ul>
+    </li>
+    <li class="module">
+      <span class="num">2</span>
+      <div><h2>Revoke client certificates</h2><p class="about">Revoking on a VPN server and on a load balancer, and the set-up mistakes that let a revoked certificate in.</p></div>
+      <ul class="units">
+        <li><span class="tick"></span><a href="m2-u1-revoke-a-certificate-on-a-vpn-server.html" data-unit-link="m2-u1">Revoke a certificate on a VPN server</a><span class="min">10 min</span></li>
+        <li><span class="tick"></span><a href="m2-u2-revoke-on-a-load-balancer-and-the-mistakes.html" data-unit-link="m2-u2">Revoke on a load balancer, and the mistakes</a><span class="min">10 min</span></li>
+      </ul>
+    </li>
+  </ol>
+  <p class="small" style="padding-top:24px">Your progress is kept in this browser only. Once you have an account, the tutorials build everything the course shows you.</p>
+</div></main>
+</body>
+</html>

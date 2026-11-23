@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en" data-course="vpn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Revoke on a load balancer, and the mistakes · VPN course</title>
+<meta name="description" content="Course unit 2.2: give a load balancer listener a revocation list that works, predict what an update does to open connections, and match a symptom to the set-up mistake behind it. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m2-u2">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPN course</a> <span>·</span> Module 2 · Revoke client certificates</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 2 of Module 2</span>
+      <h1>Revoke on a load balancer, and the mistakes</h1>
+      <p class="lead">By the end of this unit you&apos;ll be able to give a load balancer listener a revocation list that works, predict what an update does to open connections, and match a symptom to the set-up mistake behind it.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a client presents a certificate to a load balancer listener. The listener holds a client CA and a revocation list, and passes good clients to a pool of servers."
+        data-drawing='{"w":460,"h":230,"shapes":[
+          {"box":[10,80,110,56],"title":"Client"},
+          {"line":[124,108,170,108],"arrow":true,"tone":"mark"},
+          {"box":[170,30,150,160],"heavy":true},
+          {"text":"Listener","at":[184,54],"hand":true,"tone":"muted"},
+          {"box":[182,66,126,44],"title":"Client CA"},
+          {"box":[182,124,126,44],"title":"CRL"},
+          {"line":[324,108,350,108],"arrow":true},
+          {"box":[350,80,100,56],"title":"Pool"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its web application sits behind a load balancer that asks each client for a certificate, and the security team wants a revoked certificate refused there too.</p>
+    </div>
+  </div>
+  <p class="small">Every command and line of output in this unit comes from real runs.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>A listener that checks client certificates</h2>
+  <p class="lead">A load balancer listener can check a client certificate with mutual TLS. Select a part to see what it needs, and what the runs showed.</p>
+  <div class="explorer" data-start="listener"
+    data-map='{"cacert":[[1,1]],"listener":[[2,2]],"update":[[3,3]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram. A client CA secret and a revocation list feed a listener on the load balancer. An update of the list cuts open connections. A two-tier CA with a list refuses every client."
+          data-drawing='{"w":620,"h":330,"shapes":[
+            {"box":[10,10,260,70],"part":"cacert","title":"Client CA secret","detail":"the CA certificate alone"},
+            {"line":[140,80,140,110],"arrow":true},
+            {"box":[10,110,260,70],"part":"crl","title":"Revocation list","detail":"PEM text on the listener"},
+            {"line":[270,145,340,110],"arrow":true,"tone":"mark"},
+            {"box":[340,60,270,110],"heavy":true,"part":"listener","title":"Listener","detail":"does not read the distribution point"},
+            {"box":[10,210,260,56],"part":"update","title":"Update the list","detail":"open connections are cut"},
+            {"box":[340,210,270,56],"part":"twotier","title":"Two-tier CA","detail":"every client refused"},
+            {"line":[270,238,340,238],"arrow":true,"tone":"muted"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="listener">
+          <h3>Listener</h3>
+          <p>The load balancer does not read the CRL distribution point. With a Secrets Manager CA and no list on the listener, the revoked certificate was accepted for the whole time it was checked, 2 hours.</p>
+          <p class="watch"><b>Watch for this.</b> IBM&apos;s page does not say whether a load balancer reads the distribution point of a certificate. IBM says the CRL is optional PEM text, and the load balancer applies a new CRL immediately for subsequent connections.</p>
+        </div>
+        <div class="part-info" data-part="cacert">
+          <h3>Client CA secret</h3>
+          <p>The secret that <code>--client-auth-ca-crn</code> names holds the CA certificate and nothing else: no intermediate certificate and no private key. Use a CA of one tier, a root that signs the client certificates.</p>
+          <p class="watch"><b>Watch for this.</b> The listener refused a private certificate secret as its client CA, with <code>listener_invalid_certificate</code>.</p>
+        </div>
+        <div class="part-info" data-part="crl">
+          <h3>Revocation list</h3>
+          <p>Uploaded to the listener with <code>--client-auth-crl</code>. A listener that held the secret and no list accepted both certificates. After the list was added by an update, the revoked certificate was refused at the next check, 11 seconds after the update command.</p>
+          <p class="watch"><b>Watch for this.</b> An update that gave only <code>--client-auth-ca-crn</code> kept the list that the listener already held.</p>
+        </div>
+        <div class="part-info" data-part="update">
+          <h3>Update the list</h3>
+          <p>New connections with the revoked certificate were refused 19 to 24 seconds after the update command. The listener stayed <code>update_pending</code> for about 80 seconds.</p>
+          <p class="watch"><b>Watch for this.</b> Every open connection on the listener was cut by an update, and a connection with a good certificate was cut as well. A client of this listener has to reconnect after each update.</p>
+        </div>
+        <div class="part-info" data-part="twotier">
+          <h3>Two-tier CA</h3>
+          <p>With a root and an intermediate that signs the clients, a list on the listener refused every client, the good ones too, with <code>unknown ca</code>. A file with both CAs&apos; lists in it was refused with <code>listener_invalid_crl_format</code>.</p>
+          <p class="watch"><b>Watch for this.</b> So for a load balancer the path that worked was a one-tier CA.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The commands that make the client CA secret, create the listener and update its list">ibmcloud secrets-manager secret-create --secret-name vpct-own-alb-client-ca --secret-type imported_cert --imported-cert-certificate "$(cat ca.crt)"
+ibmcloud is load-balancer-listener-create vpct-prod-web-alb --protocol https --port 8445 --default-pool $POOL --certificate-instance-crn $CERT_CRN --client-auth-ca-crn &lt;client-ca-crn&gt; --client-auth-crl @crl.pem --vpc vpct-prod
+ibmcloud is load-balancer-listener-update vpct-prod-web-alb &lt;listener-id&gt; --client-auth-crl @crl-new.pem --vpc vpct-prod</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Choose it</span>
+  <h2>Set up the listener</h2>
+  <p class="lead">Pick what Northgate does, then read the worked answer.</p>
+  <div class="pair">
+    <div class="q">
+      <p>Which CA design should Northgate use for the client certificates of a load balancer listener?</p>
+      <div class="opts">
+        <button class="opt" data-ok>One tier: a root that signs the clients</button>
+        <button class="opt">Two tiers: a root and an intermediate</button>
+        <button class="opt">A private certificate secret</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>One tier. With a list on the listener, a two-tier CA refused every client, and the listener refused a private certificate secret as its client CA.</p></details>
+    </div>
+    <div class="q">
+      <p>A laptop&apos;s certificate is revoked. What does Northgate do on the listener?</p>
+      <div class="opts">
+        <button class="opt">Nothing. The listener reads the CA&apos;s list</button>
+        <button class="opt" data-ok>Make a new list and update the listener with it</button>
+        <button class="opt">Delete the client CA secret</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Make a new list and update the listener with it. The listener does not read the distribution point. Every open connection is cut by the update, so clients reconnect.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Run it</span>
+  <h2>Update the list and check from a client</h2>
+  <p class="lead">Run each command in turn. The output is what the lab returned, trimmed to the lines that matter.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">ibmcloud secrets-manager secret-create --secret-name vpct-own-alb-client-ca --secret-type imported_cert --imported-cert-certificate "$(cat ca.crt)"</pre>
+          <pre class="out">Name                    vpct-own-alb-client-ca
+Secret Type             imported_cert
+State Description       active
+Common Name             vpct-own-ca
+Intermediate Included   false
+Issuer                  vpct-own-ca
+Private Key Included    false</pre>
+          <p class="hand note">The secret holds the CA certificate and nothing else.</p>
+        </div>
+        <div class="cmd">
+          <pre class="in">ibmcloud is load-balancer-listener-update vpct-prod-web-alb &lt;listener-id&gt; --client-auth-crl @crl-new.pem --vpc vpct-prod</pre>
+          <pre class="out">Provision status               update_pending</pre>
+          <p class="hand note">The listener stayed <code>update_pending</code> for about 80 seconds.</p>
+        </div>
+        <div class="q">
+          <p>The listener now holds a list that names the revoked certificate. What does <code>curl</code> print with the revoked certificate?</p>
+          <div class="opts">
+            <button class="opt">The page, because the TLS handshake finished</button>
+            <button class="opt" data-ok>A TLS alert that the certificate is revoked</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>A TLS alert that the certificate is revoked. The good certificate gets the page.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">curl -k --cert &lt;chain&gt;.pem --key &lt;key&gt;.pem https://&lt;alb-host-name&gt;:8445/</pre>
+          <pre class="out">vpct-backend
+curl: (56) OpenSSL SSL_read: OpenSSL/3.0.13: error:0A000414:SSL routines::sslv3 alert certificate revoked, errno 0</pre>
+          <p class="hand note">The first line is the good certificate. The second is the revoked one.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+  <div class="q" style="margin-top:20px">
+    <p>The alert tells the cause. Which cause gives <code>sslv3 alert certificate expired</code>?</p>
+    <div class="opts">
+      <button class="opt">The certificate is in the list</button>
+      <button class="opt" data-ok>The list is past its next-update date</button>
+      <button class="opt">No client certificate was sent</button>
+    </div>
+    <details class="reveal"><summary>Show the answer</summary><p>The list is past its next-update date. A certificate in the list gives <code>certificate revoked</code>. A list that cannot be used with the chain gives <code>unknown ca</code>. No client certificate gives <code>tlsv13 alert certificate required</code>.</p></details>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Spot the fault</span>
+  <h2>Which set-up mistake is it?</h2>
+  <p class="lead">Each set-up below let a revoked certificate in, and none gave an error. Match the symptom to the mistake.</p>
+  <div class="pair">
+    <div class="q">
+      <p>On a VPN server, the revoked certificate connected after 75 minutes and after 120 minutes, on a new server and after a list rotation. No error.</p>
+      <div class="opts">
+        <button class="opt" data-ok>An imported CA secret as the client CA</button>
+        <button class="opt">A list past its next-update date</button>
+        <button class="opt">A two-tier CA</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>An imported CA secret as the client CA. The VPN client CA must be a Secrets Manager private certificate secret.</p></details>
+    </div>
+    <div class="q">
+      <p>The VPN server took the CA without an error, and the revoked certificate connected 37 minutes after it was revoked.</p>
+      <div class="opts">
+        <button class="opt">A CA without distribution points</button>
+        <button class="opt">A list without <code>--client-ca</code></button>
+        <button class="opt">A list from the wrong CA</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A CA without CRL distribution points. It writes no list address into its certificates, so nothing can refuse them.</p></details>
+    </div>
+    <div class="q">
+      <p>The VPN server accepted a list from the root, but the intermediate signed the client. The revoked certificate still connected.</p>
+      <div class="opts">
+        <button class="opt">A list from the wrong CA in the chain</button>
+        <button class="opt">A load balancer with no list</button>
+        <button class="opt">An update that cut open connections</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A list from the wrong CA in the chain. The certificate was refused 58 seconds after the intermediate&apos;s list was applied.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>You update a listener&apos;s list. What happens to open connections?</p>
+      <div class="opts">
+        <button class="opt">Only revoked ones are cut</button>
+        <button class="opt" data-ok>Every open connection is cut, including good ones</button>
+        <button class="opt">None. The update is for new connections</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Every open connection on the listener was cut, and a connection with a good certificate was cut as well. It ended 23 or 24 seconds after the command. A client has to reconnect after each update.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A listener has a Secrets Manager CA and no list. Why was a revoked certificate accepted?</p>
+      <div class="opts">
+        <button class="opt">The list takes an hour to apply</button>
+        <button class="opt" data-ok>The load balancer does not read the distribution point</button>
+        <button class="opt">The CA secret was rotated</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>The load balancer does not read the CRL distribution point. Upload the list to the listener with <code>--client-auth-crl</code>.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>A client sends no certificate to the listener. What does <code>curl</code> print?</p>
+      <div class="opts">
+        <button class="opt">sslv3 alert certificate revoked</button>
+        <button class="opt">tlsv1 alert unknown ca</button>
+        <button class="opt" data-ok>tlsv13 alert certificate required</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p><code>tlsv13 alert certificate required</code>. The other two mean the certificate is in the list, or the list cannot be used with the chain.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can revoke on a load balancer</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>A load balancer listener does not read the distribution point, so you upload the list, with a one-tier CA. Each update cuts every open connection. A revoked certificate gets in through an imported VPN client CA, a CA without distribution points, a list from the wrong CA, or no list. A list past its next-update date refuses everyone.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 67, Revoking client certificates on VPN servers and ALBs, runs every step and lists all seven mistakes with their symptoms.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>
