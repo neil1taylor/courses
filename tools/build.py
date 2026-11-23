@@ -29,6 +29,7 @@ SOURCES = {
     "rovs": (HOME / "rovs_tutorials/docs", "course"),
     "vpc": (HOME / "vpc_tutorials/docs", "course"),
     "backup": (HOME / "cohesity", "course"),
+    "vpn": (HOME / "vpc_tutorials/docs", "course-vpn"),
 }
 
 # Video courses: slug -> title, the source folder of the module scripts, and whether the whole
@@ -40,9 +41,10 @@ VIDEO = {
     "backup": {"title": "IBM Cloud Backup and Recovery", "source": HOME / "cohesity/course/video", "live": True},
     "vpc": {"title": "IBM Cloud VPC", "source": HOME / "vpc_tutorials/docs/course/video", "live": True},
     "rovs": {"title": "Red Hat OpenShift Virtualization Service", "source": HOME / "rovs_tutorials/docs/course/video", "live": True},
+    "vpn": {"title": "IBM Cloud client-to-site VPN and certificate revocation", "source": HOME / "vpc_tutorials/docs/course-vpn/video", "live": False},
 }
 # Where the home page links each course's interactive version.
-INTERACTIVE = {"rovs": "rovs/course/", "vpc": "vpc/course/", "backup": "backup/course/", "vault": "backup/course/vault/"}
+INTERACTIVE = {"rovs": "rovs/course/", "vpc": "vpc/course/", "backup": "backup/course/", "vault": "backup/course/vault/", "vpn": "vpn/course-vpn/"}
 GAP = 0.8  # seconds of silence after each cue, as the player plays it
 RATE = 0.92  # playback rate
 

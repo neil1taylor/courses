@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en" data-course="vpn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Revoke a certificate on a VPN server · VPN course</title>
+<meta name="description" content="Course unit 2.1: revoke a client certificate, predict when a VPN server refuses it and what happens to an open session, and give a server with its own CA a revocation list that works. No account needed.">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/course.css">
+<script src="assets/rough.js" defer></script>
+<script src="assets/course.js" defer></script>
+</head>
+<body data-unit="m2-u1">
+
+<header class="band gut">
+  <div class="wrap">
+    <span class="crumb"><a href="index.html">VPN course</a> <span>·</span> Module 2 · Revoke client certificates</span>
+    <span class="segs js-only" aria-label="Progress"></span>
+    <button class="toggle js-only" data-all aria-pressed="false">Show all on one page</button>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<section class="screen">
+  <div class="start">
+    <div>
+      <span class="kicker">Unit 1 of Module 2</span>
+      <h1>Revoke a certificate on a VPN server</h1>
+      <p class="lead">By the end of this unit you&apos;ll be able to revoke a client certificate and predict when a VPN server refuses it, say what happens to a session that is already open, and give a server that uses its own CA a revocation list that works.</p>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="js-only"><button class="btn" data-go="1">Start</button></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <svg class="sketch" role="img" aria-label="Sketch: a CA publishes a revocation list. A VPN server reads it. A laptop with a good certificate gets through, and a laptop with a revoked certificate is stopped."
+        data-drawing='{"w":460,"h":230,"shapes":[
+          {"box":[150,10,170,48],"title":"CA","detail":"revocation list"},
+          {"line":[235,58,235,86],"arrow":true,"tone":"mark"},
+          {"box":[150,86,170,48],"heavy":true,"title":"VPN server"},
+          {"box":[10,160,130,44],"title":"Good cert"},
+          {"line":[140,182,200,140],"arrow":true},
+          {"box":[330,160,120,44],"dashed":true,"title":"Revoked cert"},
+          {"line":[330,182,280,150],"tone":"mark"},
+          {"line":[270,142,290,162],"tone":"mark"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. One of its administrators loses a laptop, and its security team needs the laptop&apos;s certificate to stop working.</p>
+    </div>
+  </div>
+  <p class="small">Every command and line of output in this unit comes from real runs, and the first statements come from IBM&apos;s pages.</p>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 1 · Explore the parts</span>
+  <h2>From a revoked certificate to a refused one</h2>
+  <p class="lead">A revoked certificate is one its CA withdrew before it expired. Select a part to see what it does, and what the runs showed.</p>
+  <div class="explorer" data-start="revoke"
+    data-map='{"revoke":[[1,1]],"server":[[2,2]],"owncrl":[[3,5]]}'>
+    <div class="cols">
+      <div style="display:grid;gap:4px">
+        <svg class="sketch" role="img" aria-label="Hand-drawn diagram. Secrets Manager holds the CA, which publishes a revocation list. The VPN server reads it, and refuses a revoked client. An own CA made with openssl writes a list that is uploaded to the server. An open session stays up. A next-update date limits each list."
+          data-drawing='{"w":620,"h":330,"shapes":[
+            {"box":[10,10,250,110],"heavy":true},
+            {"text":"Secrets Manager","at":[24,34],"hand":true,"tone":"muted"},
+            {"box":[24,48,222,56],"part":"revoke","title":"Revoke the secret","detail":"the CA publishes a new list"},
+            {"line":[246,76,330,76],"arrow":true,"tone":"mark"},
+            {"box":[330,40,280,80],"heavy":true,"part":"server","title":"VPN server","detail":"refuses a revoked certificate"},
+            {"box":[10,150,250,70],"part":"owncrl","title":"Your own CA (openssl)","detail":"revoke, write a list, upload it"},
+            {"line":[260,185,330,120],"part":"owncrl","arrow":true},
+            {"box":[330,150,280,60],"part":"session","title":"Open session","detail":"stays up"},
+            {"box":[10,250,250,60],"part":"nextupdate","title":"Next-update date","detail":"a list expires"},
+            {"box":[330,240,280,70],"part":"cas","title":"Client CA secret","detail":"expires, rotates, is revoked"}]}'></svg>
+        <span class="scribble js-only">↑ tap any box</span>
+      </div>
+      <div class="parts" aria-live="polite">
+        <div class="part-info" data-part="revoke">
+          <h3>Revoke the secret</h3>
+          <p>A secret action revokes the client certificate. The CA rebuilt and published its list within 6 seconds. You do not rotate anything.</p>
+          <p class="watch"><b>Watch for this.</b> The CA must have been made with both CRL building and CRL distribution points on. IBM says a revoked certificate is then &quot;no longer trusted by the applications after one hour&quot;.</p>
+        </div>
+        <div class="part-info" data-part="server">
+          <h3>VPN server</h3>
+          <p>Create the server with a Secrets Manager private certificate secret as the client CA, and upload no list. In two runs the revoked certificate was refused within 100 seconds, and the good certificate connected throughout. IBM&apos;s page says an hour.</p>
+          <p class="watch"><b>Watch for this.</b> The server never says no. It stops answering, and the client gives up after 60 seconds with <code>TLS key negotiation failed</code>. An imported CA secret as the client CA never used the list.</p>
+        </div>
+        <div class="part-info" data-part="session">
+          <h3>Open session</h3>
+          <p>A session that was open when the certificate was revoked stayed up. One was still passing traffic almost 30 minutes later, with no packet loss.</p>
+          <p class="watch"><b>Watch for this.</b> No way to end such a session was run. Deleting the VPN client and changing the server were not tried.</p>
+        </div>
+        <div class="part-info" data-part="owncrl">
+          <h3>Your own CA</h3>
+          <p>A CA made with <code>openssl</code> has no distribution point that Secrets Manager serves, so the server never reads a list from it. You revoke the certificate in that CA, write the list and upload it to the server.</p>
+          <p class="watch"><b>Watch for this.</b> Give <code>--client-ca</code> as well. Without it the command returns success and stores nothing. The CLI has no option that removes a list, so use the REST API for that.</p>
+        </div>
+        <div class="part-info" data-part="nextupdate">
+          <h3>Next-update date</h3>
+          <p>Each list carries a date after which the list itself is out of date. Here the CA writes it 7 days after the list is written.</p>
+          <p class="watch"><b>Watch for this.</b> After that date the VPN server refuses every client, the good certificate too. Write a new list before then and upload it again.</p>
+        </div>
+        <div class="part-info" data-part="cas">
+          <h3>Client CA secret</h3>
+          <p>When this secret expired, was rotated, or was revoked, a good client certificate connected and a revoked one was refused, and the server stayed <code>stable</code> with health state <code>ok</code>.</p>
+          <p class="watch"><b>Watch for this.</b> After an expiry or a revocation, point the server at another certificate secret. A rotation needs nothing.</p>
+        </div>
+      </div>
+    </div>
+    <pre class="def" aria-label="The commands that revoke a certificate, make the server, and give an own-CA server a list">ibmcloud secrets-manager secret-action-create --id &lt;vpct-vpn-revoked-cert-id&gt; --secret-action-type private_cert_action_revoke_certificate
+ibmcloud is vpn-server-create --name vpct-prod-vpnserver-rev --vpc vpct-prod --subnet vpct-prod-vpn-z1 --client-ip-pool 172.16.4.0/22 --cert &lt;server-cert-crn&gt; --client-auth-methods certificate --client-ca &lt;crn-of-the-vpct-vpn-good-cert-secret&gt; --sg vpct-prod-vpnserver-sg --enable-split-tunnel true --resource-group-name vpct-lab
+openssl ca -config ca.cnf -revoke revoked.crt
+openssl ca -config ca.cnf -gencrl -out crl.pem
+ibmcloud is vpn-server-update &lt;server&gt; --vpc vpct-prod --client-auth-methods certificate --client-ca &lt;client-ca-crn&gt; --client-crl @crl.pem</pre>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 2 · Choose it</span>
+  <h2>A laptop is lost</h2>
+  <p class="lead">Pick what Northgate does in each case, then read the worked answer.</p>
+  <div class="pair">
+    <div class="q">
+      <p>Northgate&apos;s certificates come from a Secrets Manager CA. A laptop is lost. What does an administrator do?</p>
+      <div class="opts">
+        <button class="opt" data-ok>Revoke the certificate with a secret action</button>
+        <button class="opt">Rotate the client CA secret</button>
+        <button class="opt">Delete the VPN server</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>Revoke the certificate with a secret action. The CA rebuilt and published its list within 6 seconds, and the VPN server refused the certificate within 100 seconds in two runs. You do not rotate anything.</p></details>
+    </div>
+    <div class="q">
+      <p>Northgate&apos;s certificates come from its own <code>openssl</code> CA. A laptop is lost. How does the VPN server learn?</p>
+      <div class="opts">
+        <button class="opt">It reads the list from the CA</button>
+        <button class="opt" data-ok>You write a list and upload it to the server</button>
+        <button class="opt">Secrets Manager revokes it for you</button>
+      </div>
+      <details class="reveal"><summary>Show the worked answer</summary><p>You write a list and upload it to the server. A CA you run yourself has no distribution point that Secrets Manager serves, so the server never reads a list from it.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 3 · Run it</span>
+  <h2>Revoke, then try to connect</h2>
+  <p class="lead">Run each command in turn. The output is what the lab returned, trimmed to the lines that matter.</p>
+  <div class="term-block termgrid">
+    <div class="termcol">
+      <div class="term">
+        <div class="bar"><span>bash</span><span data-term-count></span></div>
+        <div class="cmd">
+          <pre class="in">ibmcloud secrets-manager secret-action-create --id &lt;vpct-vpn-revoked-cert-id&gt; --secret-action-type private_cert_action_revoke_certificate</pre>
+          <pre class="out">Action Type               private_cert_action_revoke_certificate
+Revocation Time Seconds   1794584968</pre>
+          <p class="hand note">The CA rebuilt and published its list within 6 seconds.</p>
+        </div>
+        <div class="q">
+          <p>The probe now connects with the revoked certificate every few seconds. What does the client see?</p>
+          <div class="opts">
+            <button class="opt">A message that the certificate is revoked</button>
+            <button class="opt" data-ok>No answer, then a timeout</button>
+          </div>
+          <details class="reveal"><summary>Show the answer</summary><p>No answer, then a timeout. The server never says no. It stops answering, and the client gives up after 60 seconds.</p></details>
+        </div>
+        <div class="cmd">
+          <pre class="in">sudo openvpn --config revoked.ovpn --verb 4</pre>
+          <pre class="out err">[15:49:26Z] revoked-cert: CONNECTED
+[15:50:45Z] revoked-cert: TIMEOUT
+TLS Error: TLS key negotiation failed to occur within 60 seconds (check your network connectivity)
+TLS Error: TLS handshake failed</pre>
+          <p class="hand note">The refused attempt began 38 seconds after the revocation. The first error line also appeared when the list was out of date, so it alone does not say which cause it is.</p>
+        </div>
+        <div class="cmd">
+          <p class="pre"># your own CA: revoke, write the list, and check it</p>
+          <pre class="in">openssl ca -config ca.cnf -revoke revoked.crt
+openssl ca -config ca.cnf -gencrl -out crl.pem
+openssl crl -in crl.pem -noout -issuer -lastupdate -nextupdate -crlnumber</pre>
+          <pre class="out">Revoking Certificate 1001.
+Database updated
+issuer=CN = vpct-own-ca
+lastUpdate=Nov 13 18:28:40 2026 GMT
+nextUpdate=Nov 20 18:28:40 2026 GMT
+crlNumber=0x1000</pre>
+          <p class="hand note">The next-update date is 7 days after the list was written.</p>
+        </div>
+        <div class="cmd">
+          <p class="pre"># the same upload without --client-ca</p>
+          <pre class="in">ibmcloud is vpn-server-update &lt;server&gt; --vpc vpct-prod --client-auth-methods certificate --client-crl @crl.pem</pre>
+          <pre class="out err">Status                       stable
+{"lifecycle_state":"stable","auth":{"method":"certificate","has_crl":false,"has_ca":true}}</pre>
+          <p class="hand note">Status <code>stable</code> and exit code 0, but <code>has_crl</code> is false: nothing was stored.</p>
+        </div>
+      </div>
+      <div class="ctl js-only">
+        <button class="btn" data-run><span>Run</span> <code></code></button>
+        <button class="btn line" data-run-reset>Start again</button>
+      </div>
+    </div>
+    <div class="notes js-only" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 4 · Predict and spot the fault</span>
+  <h2>Open sessions, and an upload that did nothing</h2>
+  <div class="pair">
+    <div class="q">
+      <p>A session was open when its certificate was revoked. What happens to it?</p>
+      <div class="opts">
+        <button class="opt">It is cut within a minute</button>
+        <button class="opt" data-ok>It stays up and keeps passing traffic</button>
+        <button class="opt">It is cut when the list is next read</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>It stays up and keeps passing traffic. One session was still passing traffic almost 30 minutes after its certificate was revoked. On a server that used an uploaded list, a session ended only when its TLS keys ran out, 75 minutes after the list was applied. No way to end such a session was run.</p></details>
+    </div>
+    <div class="q">
+      <p>You uploaded a list without <code>--client-ca</code> and saw <code>Status stable</code> with exit code 0. Does the server refuse the revoked certificate?</p>
+      <div class="opts">
+        <button class="opt">Yes, after about a minute</button>
+        <button class="opt" data-ok>No. The command stored no list</button>
+        <button class="opt">Yes, but only for new sessions</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>No. The REST API shows <code>has_crl</code> false, and the revoked certificate still connects. Give <code>--client-ca</code> with <code>--client-crl</code>. With it, the revoked certificate was refused at an attempt 36 seconds after the command.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 5 · Check yourself</span>
+  <h2>Three questions</h2>
+  <div>
+    <div class="q" data-check>
+      <p>Which client CA lets a VPN server read the list that Secrets Manager publishes?</p>
+      <div class="opts">
+        <button class="opt">An imported CA secret</button>
+        <button class="opt" data-ok>A Secrets Manager private certificate secret</button>
+        <button class="opt">Any secret, with a list uploaded</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A Secrets Manager private certificate secret. With an imported CA secret as the client CA, the server never used the list, and gave no error.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>IBM says a revoked certificate is untrusted after one hour. How long did the VPN server take in the runs?</p>
+      <div class="opts">
+        <button class="opt">About an hour</button>
+        <button class="opt" data-ok>Under two minutes</button>
+        <button class="opt">Until the next restart</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>Under two minutes. In two runs the revoked certificate was refused within 100 seconds of the revocation.</p></details>
+    </div>
+    <div class="q" data-check>
+      <p>The client CA secret expires. What happens to a revoked certificate, and what do you do?</p>
+      <div class="opts">
+        <button class="opt">It is accepted. Rebuild the server</button>
+        <button class="opt" data-ok>It is still refused. Point the server at another certificate secret</button>
+        <button class="opt">It is still refused. Rotate the server certificate</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>It is still refused, before and after the expiry date. Point the server at another certificate secret. The server was <code>stable</code> with health state <code>ok</code> 17 to 19 seconds after the update.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Unit complete</span>
+  <h2>You can revoke on a VPN server</h2>
+  <div class="done">
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
+    <div><span class="label">Remember</span><p>Revoke with a secret action and the VPN server refuses the certificate in about two minutes, by going silent. An open session stays up. With your own CA, write a list, upload it with <code>--client-ca</code>, and write a new one before its next-update date.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 67, Revoking client certificates on VPN servers and ALBs, runs every step. The next unit covers the load balancer.</p></div>
+  </div>
+  <p><a class="btn line" href="index.html">Back to the course</a></p>
+</section>
+
+<nav class="nav" aria-label="Step navigation">
+  <button class="btn line" data-back>Back</button>
+  <button class="btn" data-next>Next</button>
+</nav>
+
+</div></main>
+</body>
+</html>
