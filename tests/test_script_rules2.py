@@ -197,3 +197,9 @@ def test_ca_with_a_pronounce_entry_is_clean():
         s["pronounce"]["CA"] = "see ay"
         cue(s, 2, 2)["say"] = "It starts with the CA, a server you back up."
     assert not any("pronounce" in p for p in run(f))
+
+
+def test_option_that_is_only_a_quantifier_needs_no_earlier_mention():
+    def f(s):
+        cue(s, 5, 1)["slide"]["opts"][2] = "Neither"
+    assert not any("Neither" in p for p in run(f))

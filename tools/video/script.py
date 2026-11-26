@@ -476,6 +476,7 @@ PICTURE_ACTIONS = {"build", "items", "row", "line", "box"}
 SCREEN_POINTER = re.compile(r"\bon (the )?screen\b", re.I)
 QUIZ_OPENER = re.compile(r"quick questions|^three questions", re.I)
 CA_FORM = re.compile(r"\bCAs?\b")
+QUANTIFIERS = ("both", "neither", "none", "nothing", "always", "never", "every", "anything")
 TF, DF = 21.0, 20.0  # label sizes in sketch units; the player uses these or larger
 
 
@@ -562,6 +563,7 @@ def check_question_taught(script, si, ci, slide) -> list:
             earlier |= {w[:4] for w in re.findall(r"[a-z]{4,}", str(c.get("say", "")).lower())}
     for opt in listed(slide.get("opts")):
         roots = {w[:4] for w in content_words(opt)} | {w[:4] for w in re.findall(r"[a-z]{4,}", str(opt).lower()) if w not in STOP_WORDS}
+        roots -= {w[:4] for w in QUANTIFIERS}
         if roots and not roots & earlier:
             problems.append("%s: option %r is not mentioned in the narration before the question" % (at, opt))
     return problems
