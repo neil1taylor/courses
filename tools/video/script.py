@@ -19,6 +19,11 @@ MAX_TITLE_WORDS = 14
 MAX_SUMMARY_WORDS = 14
 MAX_TERMINAL_LINES = 8
 MAX_NARRATION = 4500
+MAX_TOPICS = 4
+MAX_TOPIC_WORDS = 8
+MAX_PICTURE_WORDS = 30
+MIN_ARROW = 28
+TERMS_HEAD = "Terms used in this module"
 SKETCH_LIMITS = {  # slide type -> (max w, max h), from slide-rules.md
     "diagram": (960, 430), "statement": (960, 430), "title": (490, 365), "summary": (350, 365),
 }
@@ -36,6 +41,7 @@ REQUIRED = {
     "terminal": {"cmd": str, "out": (list, str)},
     "table": {"head": str, "cols": list, "rows": list},
     "score": {},
+    "list": {"head": str, "items": list},
 }
 # The keys a `show` action can reveal, by slide type: the data-k values the player renders.
 SHOW_KEYS = {
@@ -50,12 +56,13 @@ SHOW_KEYS = {
     "terminal": set(),
     "table": {"head", "table"},
     "score": {"head"},
+    "list": {"head"},
 }
 # Keys that must be shown by the end of the slide (a question is shown by `ask`).
 MUST_SHOW = {
     "title": {"head", "sub"}, "diagram": {"head"}, "statement": {"head"}, "tip": {"head", "tip"},
     "words": {"head"}, "summary": {"head", "next"}, "screen": {"head"},
-    "table": {"head", "table"},
+    "table": {"head", "table"}, "list": {"head"},
 }
 ACTIONS = {"show", "build", "items", "ask", "why", "box", "line", "row"}
 MIN_TABLE_COLS, MAX_TABLE_COLS = 2, 4
@@ -148,6 +155,8 @@ def fields_ok(slide, at) -> list:
     if kind == "words" and not all(isinstance(i, list) and len(i) == 2 and all(isinstance(t, str) for t in i)
                                    for i in slide["items"]):
         problems.append("%s: items must be [term, definition] pairs" % at)
+    if kind == "list" and not all(isinstance(i, str) for i in slide["items"]):
+        problems.append("%s: items must be strings" % at)
     if kind == "q" and not all(isinstance(o, str) for o in slide["opts"]):
         problems.append("%s: opts must be strings" % at)
     if kind == "terminal" and not all(isinstance(o, str) for o in lines_of(slide["out"])):
@@ -197,6 +206,13 @@ def check_slide(slide, sketches, unit_html, at) -> list:
             if len(words(definition)) > MAX_DEFINITION:
                 problems.append("%s: definition of %r is %d words, at most %d"
                                 % (at, term, len(words(definition)), MAX_DEFINITION))
+    elif kind == "list":
+        items = slide["items"]
+        if len(items) > MAX_TOPICS:
+            problems.append("%s: list slide has %d items, at most %d" % (at, len(items), MAX_TOPICS))
+        for item in items:
+            if len(words(item)) > MAX_TOPIC_WORDS:
+                problems.append("%s: list item %r is %d words, at most %d" % (at, item, len(words(item)), MAX_TOPIC_WORDS))
     else:
         n = slide_words(slide, sketches)
         if n > MAX_WORDS:
@@ -275,7 +291,7 @@ def check_action(action, st, sketches, at) -> list:
         n = len(shapes_of(spec))
         return indices(value, n, at, "sketch part", st.built)
     elif name == "items":
-        n = len(slide["items"]) if kind == "words" else 0
+        n = len(slide["items"]) if kind in ("words", "list") else 0
         st.shown.add("head")
         return indices(value, n, at, "term", st.items)
     elif name == "ask":
@@ -320,10 +336,10 @@ def finish_slide(st, sketches) -> list:
         for i in range(len(shapes_of(spec))):
             if i not in st.built:
                 out.append("%s: sketch part %d is never built" % (at, i))
-    if kind == "words":
+    if kind in ("words", "list"):
         for i in range(len(slide["items"])):
             if i not in st.items:
-                out.append("%s: term %d is never revealed" % (at, i))
+                out.append("%s: %s %d is never revealed" % (at, "term" if kind == "words" else "item", i))
     return out
 
 
@@ -456,6 +472,101 @@ def check_narration(say, at, pronounce_read) -> list:
     return problems
 
 
+PICTURE_ACTIONS = {"build", "items", "row", "line", "box"}
+SCREEN_POINTER = re.compile(r"\bon (the )?screen\b", re.I)
+QUIZ_OPENER = re.compile(r"quick questions|^three questions", re.I)
+CA_FORM = re.compile(r"\bCAs?\b")
+TF, DF = 21.0, 20.0  # label sizes in sketch units; the player uses these or larger
+
+
+def box_rect(shape):
+    """x, y, w, h of a box as the player draws it: it grows when its text would not fit."""
+    x, y, w, h = shape["box"]
+    title, detail = shape.get("title") or "", shape.get("detail")
+    two = bool(detail) and h > 44
+    need_h = TF + DF + 9 + DF * 0.3 + 6 if two else TF * 1.35
+    need_w = len(title) * TF * 0.55 + 24 if title else w
+    return x, y, max(w, need_w), max(h, need_h)
+
+
+def _inside(a, b):
+    return a[0] <= b[0] and a[1] <= b[1] and a[0] + a[2] >= b[0] + b[2] and a[1] + a[3] >= b[1] + b[3]
+
+
+def _overlap(a, b):
+    return a[0] < b[0] + b[2] and b[0] < a[0] + a[2] and a[1] < b[1] + b[3] and b[1] < a[1] + a[3]
+
+
+def check_sketch_layout(name, spec) -> list:
+    """What would look messy when the sketch is drawn: text that outgrows its box, boxes that overlap,
+    arrows too short to see, shapes off the edge. A box that holds other boxes is a container."""
+    problems = []
+    w, h = spec.get("w"), spec.get("h")
+    boxes = []
+    for i, shape in enumerate(shapes_of(spec)):
+        if not isinstance(shape, dict):
+            continue
+        label = shape.get("title") or "part %d" % i
+        if isinstance(shape.get("box"), list) and len(shape["box"]) == 4:
+            r = box_rect(shape)
+            title, detail, bw = shape.get("title") or "", shape.get("detail"), shape["box"][2]
+            if title and r[2] > bw + 1:
+                problems.append("step 0 cue 0: sketch %r: title %r does not fit its box (needs about %d wide, box is %d)"
+                                % (name, title, r[2], bw))
+            if detail:
+                if shape["box"][3] <= 44:
+                    problems.append("step 0 cue 0: sketch %r: detail of %r is hidden, because the box is not taller than 44" % (name, label))
+                elif len(detail) * DF * 0.55 + 24 > bw + 1:
+                    problems.append("step 0 cue 0: sketch %r: detail %r does not fit its box" % (name, detail))
+            boxes.append((label, r))
+            if isinstance(w, (int, float)) and isinstance(h, (int, float)) and (r[0] < 0 or r[1] < 0 or r[0] + r[2] > w or r[1] + r[3] > h):
+                problems.append("step 0 cue 0: sketch %r: %r is outside the sketch (%sx%s)" % (name, label, w, h))
+        elif shape.get("arrow") and isinstance(shape.get("line"), list) and len(shape["line"]) == 4:
+            x1, y1, x2, y2 = shape["line"]
+            if ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5 < MIN_ARROW:
+                problems.append("step 0 cue 0: sketch %r: arrow %d is shorter than %d, too short to see" % (name, i, MIN_ARROW))
+    for i, (la, ra) in enumerate(boxes):
+        for lb, rb in boxes[i + 1:]:
+            if _overlap(ra, rb) and not _inside(ra, rb) and not _inside(rb, ra):
+                problems.append("step 0 cue 0: sketch %r: %r and %r overlap" % (name, la, lb))
+    return problems
+
+
+def check_rules2_cue(script, si, ci, cue, say, state, pronounce) -> list:
+    """The checks for scripts that say "rules": 2, applied to one cue."""
+    at = "step %d cue %d" % (si, ci)
+    problems = []
+    do = [a[0] for a in listed(cue.get("do")) if isinstance(a, list) and a and isinstance(a[0], str)]
+    if PICTURE_ACTIONS & set(do) and not (state and state.slide.get("type") == "summary"):
+        if len(sentences(say)) > 1:
+            problems.append("%s: a cue that changes the picture is one sentence, so the picture and the voice change together" % at)
+        elif len(words(say)) > MAX_PICTURE_WORDS:
+            problems.append("%s: a cue that changes the picture is at most %d words" % (at, MAX_PICTURE_WORDS))
+    missing = sorted({f for f in CA_FORM.findall(say) if f not in pronounce})
+    if missing:
+        problems.append("%s: narration says %s but the script has no pronounce for it" % (at, " and ".join(missing)))
+    return problems
+
+
+def check_question_taught(script, si, ci, slide) -> list:
+    """The answer, and every option, must come up in earlier narration (the opening step names topics only)."""
+    at = "step %d cue %d" % (si, ci)
+    problems = []
+    if teaching_cue(script, si, ci) is None:
+        problems.append("%s: question not taught earlier: no earlier narration covers the answer" % at)
+    earlier = set()
+    for esi, eci, c in _cues(script):
+        if (esi, eci) == (si, ci):
+            break
+        if esi > 1 or si == 1:
+            earlier |= {w[:4] for w in re.findall(r"[a-z]{4,}", str(c.get("say", "")).lower())}
+    for opt in listed(slide.get("opts")):
+        roots = {w[:4] for w in content_words(opt)} | {w[:4] for w in re.findall(r"[a-z]{4,}", str(opt).lower()) if w not in STOP_WORDS}
+        if roots and not roots & earlier:
+            problems.append("%s: option %r is not mentioned in the narration before the question" % (at, opt))
+    return problems
+
+
 def check_script(script: dict, unit_html: str, first_module: bool) -> list:
     if not isinstance(script, dict):
         return ["step 0 cue 0: the script is not a JSON object"]
@@ -482,8 +593,10 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
         if not isinstance(spoken, str) or spoken != spoken.lower():
             problems.append("step 0 cue 0: pronounce %r must be lower-case plain words" % word)
 
+    rules2 = script.get("rules") == 2
     state = None
-    summary_at, closing = None, False
+    summary_at, closing, summary_said, summary_text = None, False, False, ""
+    list_in_step_one = False
     narration = 0
     qs = []       # (at, slide) of each question slide, in order
     scores = []   # number of question slides before each score slide
@@ -515,6 +628,14 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
                     state = SlideState(sl, at, sl.get("type") in SHOW_KEYS and not fields_ok(sl, at))
                     if sl.get("type") == "q":
                         qs.append((at, sl))
+                        if rules2:
+                            problems += check_question_taught(script, si, ci, sl)
+                    if rules2 and sl.get("type") == "words" and sl.get("head") != TERMS_HEAD:
+                        problems.append("%s: the words slide heading must be %r" % (at, TERMS_HEAD))
+                    if rules2 and sl.get("type") == "statement" and QUIZ_OPENER.search(str(sl.get("head", ""))):
+                        problems.append("%s: the quiz opener must say 'Module quiz'" % at)
+                    if sl.get("type") == "list" and si == 1:
+                        list_in_step_one = True
                     if sl.get("type") == "score":
                         scores.append(len(qs))
                     if state.usable:
@@ -535,10 +656,19 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
             if state is not None and state.slide.get("type") == "summary":
                 summary_at = summary_at or at
                 closing = closing or bool(CLOSING_LINE.search(say))
+                if rules2:
+                    summary_text = norm(state.slide.get("text", ""))
+                    summary_said = summary_said or bool(summary_text and summary_text in norm(say))
+                    if SCREEN_POINTER.search(say):
+                        problems.append("%s: narration points at the screen ('on the screen'); say the sentence" % at)
+            if rules2:
+                problems += check_rules2_cue(script, si, ci, cue, say, state, pronounce)
             if state is None or not state.usable:
                 continue
             if state.slide["type"] not in ("q", "title"):
                 for key in ("head", "sub", "tip", "text"):
+                    if rules2 and key == "text" and state.slide["type"] == "summary":
+                        continue
                     text = norm(state.slide.get(key, ""))
                     if len(text.split()) >= 4 and text in norm(say):
                         problems.append("%s: narration on screen: %s %r is spoken word for word"
@@ -551,7 +681,14 @@ def check_script(script: dict, unit_html: str, first_module: bool) -> list:
                 problems += check_action(action, state, sketches, at)
     problems += finish_slide(state, sketches)
 
-    if summary_at and not closing:
+    if rules2:
+        for name, spec in sketches.items():
+            problems += check_sketch_layout(name, spec)
+        if steps and not list_in_step_one:
+            problems.append("step 1 cue 0: step 1 needs a list slide of what the module teaches")
+        if summary_at and not summary_said:
+            problems.append("%s: the narration never says the summary sentence" % summary_at)
+    if summary_at and not closing and not rules2:
         problems.append("%s: the summary must say \"If you remember one thing, make it the sentence on the screen.\"" % summary_at)
     if narration > MAX_NARRATION:
         problems.append("step 0 cue 0: narration is %d characters, at most 4,500" % narration)

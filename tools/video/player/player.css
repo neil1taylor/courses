@@ -52,6 +52,12 @@ svg.sk text.hw{font-family:var(--hand)}
 .cell span{display:block;font-size:44px;line-height:1.35;color:var(--muted);margin-top:14px}
 .cell.cur b{color:var(--mark)}
 .cell.past{opacity:.55}
+.t-list{justify-content:center}
+.topics{list-style:none;margin:60px 0 0;padding:0;display:grid;gap:34px}
+.topic{display:flex;gap:36px;align-items:baseline;font-size:64px;line-height:1.2;font-weight:600}
+.topic .n{font-family:var(--disp);font-weight:800;color:var(--mark);min-width:64px}
+.topic.cur{color:var(--mark)}
+.topic.past{opacity:.55}
 .t-summary{flex-direction:row;align-items:center;gap:70px}
 .t-summary .left{flex:0 0 1000px}
 .t-summary .big{font-family:var(--disp);font-weight:800;font-size:96px;line-height:1.12}
@@ -59,8 +65,8 @@ svg.sk text.hw{font-family:var(--hand)}
 .t-summary .next{font-size:44px;color:var(--muted);margin-top:60px}
 .t-summary svg.sk{flex:1;height:520px}
 .t-score{align-items:center;justify-content:center;text-align:center}
-.t-score .num{font-family:var(--disp);font-weight:800;font-size:260px;line-height:1}
-.t-score .num small{font-size:120px;color:var(--grey)}
+.t-score .num{font-family:var(--disp);font-weight:800;font-size:160px;line-height:1}
+.t-score .num small{font-size:160px;color:var(--grey)}
 .t-score .means{font-size:56px;margin-top:40px}
 
 /* ---- player chrome ---- */
