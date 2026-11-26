@@ -230,6 +230,7 @@ function renderSlide(spec, id) {
   }
   if (spec.type === "tip") d.innerHTML = k('<p class="tag">Watch for this</p>' + head, "head") + k('<p class="tip">' + esc(spec.tip) + "</p>", "tip");
   if (spec.type === "words") d.innerHTML = k(head, "head") + '<div class="grid">' + spec.items.map((it, j) => '<div class="cell k off" data-k="i' + j + '"><b>' + esc(it[0]) + "</b><span>" + esc(it[1]) + "</span></div>").join("") + "</div>";
+  if (spec.type === "list") d.innerHTML = k(head, "head") + '<ol class="topics">' + spec.items.map((t, j) => '<li class="topic k off" data-k="i' + j + '"><span class="n">' + (j + 1) + "</span><span>" + esc(t) + "</span></li>").join("") + "</ol>";
   if (spec.type === "summary") d.innerHTML = '<div class="left">' + k('<p class="big">' + summaryHtml(spec.text) + "</p>", "head") + k('<p class="next">' + esc(spec.next) + "</p>", "next") + "</div>";
   if (spec.type === "screen") {
     d.innerHTML = k(head, "head") + k('<div class="shot"><div class="pic"><img alt="" src="' + esc(spec.img) + '">' + spec.boxes.map((_, j) => '<i class="bx off" data-b="' + j + '"></i>').join("") + "</div></div>", "img");
@@ -293,7 +294,7 @@ function act([a, v], animate) {
   const show = key => { const e = d.querySelector('[data-k="' + key + '"]'); if (e) { if (!animate) e.style.transition = "none"; e.classList.remove("off"); } };
   if (a === "show") { show(v); if (v === "head" && d.spec.type === "screen") show("img"); }
   if (a === "build" && d.svg) build(d.svg, v, animate);
-  if (a === "items") { d.querySelectorAll(".cell.cur").forEach(c => { c.classList.remove("cur"); c.classList.add("past"); }); v.forEach(j => { show("i" + j); d.querySelector('[data-k="i' + j + '"]').classList.add("cur"); }); }
+  if (a === "items") { d.querySelectorAll(".cell.cur, .topic.cur").forEach(c => { c.classList.remove("cur"); c.classList.add("past"); }); v.forEach(j => { show("i" + j); d.querySelector('[data-k="i' + j + '"]').classList.add("cur"); }); }
   if (a === "box") { d.querySelectorAll(".bx.cur").forEach(b => { b.classList.remove("cur"); b.classList.add("past"); }); const b = d.querySelector('.bx[data-b="' + v + '"]'); if (b) { if (!animate) b.style.transition = "none"; b.classList.remove("off"); b.classList.add("cur"); } }
   if (a === "line") { d.querySelectorAll(".ol.cur").forEach(l => { l.classList.remove("cur"); l.classList.add("past"); }); const l = d.querySelector('.ol[data-l="' + v + '"]'); if (l) l.classList.add("cur"); }
   if (a === "row") { d.querySelectorAll(".tbl tr.cur").forEach(r => { r.classList.remove("cur"); r.classList.add("past"); }); const r = d.querySelector('.tbl tr[data-r="' + v + '"]'); if (r) r.classList.add("cur"); }

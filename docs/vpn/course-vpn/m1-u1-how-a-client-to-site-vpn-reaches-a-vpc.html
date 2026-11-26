@@ -90,7 +90,7 @@
         </div>
         <div class="part-info" data-part="route">
           <h3>VPN route</h3>
-          <p>A rule on the server that says where traffic for a destination goes. The action <code>deliver</code> sends it into the VPC. The action <code>translate</code> also changes its source address.</p>
+          <p>A rule on the server that says where traffic for a destination goes. The action <code>deliver</code> sends it into the VPC and keeps the client&apos;s address. The action <code>translate</code> changes its source address to the VPN server&apos;s private address, which hides the client address. The action <code>drop</code> blocks the traffic.</p>
           <p class="watch"><b>Watch for this.</b> IBM says traffic that matches no route is dropped. With one route, to <code>10.20.0.0/16</code>, only that range is reachable.</p>
         </div>
         <div class="part-info" data-part="split">
@@ -258,7 +258,7 @@ OpenVPN client configuration was saved to vpct.ovpn</pre>
         <button class="opt" data-ok>translate</button>
         <button class="opt">drop</button>
       </div>
-      <details class="reveal"><summary>Show the answer</summary><p><code>translate</code> changes the source address. <code>deliver</code> leaves the pool address in place.</p></details>
+      <details class="reveal"><summary>Show the answer</summary><p><code>translate</code> changes the source address. <code>deliver</code> leaves the pool address in place, and <code>drop</code> blocks the traffic.</p></details>
     </div>
     <div class="q" data-check>
       <p>A client has the split tunnel off. What does it send into the tunnel?</p>

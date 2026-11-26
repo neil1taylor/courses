@@ -28,7 +28,7 @@
       <span class="kicker">Unit 1 of Module 2</span>
       <h1>Revoke a certificate on a VPN server</h1>
       <p class="lead">By the end of this unit you&apos;ll be able to revoke a client certificate and predict when a VPN server refuses it, say what happens to a session that is already open, and give a server that uses its own CA a revocation list that works.</p>
-      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>5 steps</span></div>
+      <div class="facts"><span>About 10 minutes</span><span>No account needed</span><span>6 steps</span></div>
       <div class="js-only"><button class="btn" data-go="1">Start</button></div>
     </div>
     <div style="display:grid;gap:12px">
@@ -223,7 +223,42 @@ crlNumber=0x1000</pre>
 </section>
 
 <section class="screen">
-  <span class="kicker">Step 5 · Check yourself</span>
+  <span class="kicker">Step 5 · Spot the mistake</span>
+  <h2>Which set-up mistake is it?</h2>
+  <p class="lead">Each set-up below let a revoked certificate in, and none gave an error. Match the symptom to the mistake.</p>
+  <div class="pair">
+    <div class="q">
+      <p>On a VPN server, the revoked certificate connected after 75 minutes and after 120 minutes, on a new server and after a list rotation. No error.</p>
+      <div class="opts">
+        <button class="opt" data-ok>An imported CA secret as the client CA</button>
+        <button class="opt">A list past its next-update date</button>
+        <button class="opt">A split tunnel left off</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>An imported CA secret as the client CA. The VPN client CA must be a Secrets Manager private certificate secret.</p></details>
+    </div>
+    <div class="q">
+      <p>The VPN server took the CA without an error, and the revoked certificate connected 37 minutes after it was revoked.</p>
+      <div class="opts">
+        <button class="opt">A CA without distribution points</button>
+        <button class="opt">A list without <code>--client-ca</code></button>
+        <button class="opt">A list from the wrong CA</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A CA without CRL distribution points. It writes no list address into its certificates, so nothing can refuse them.</p></details>
+    </div>
+    <div class="q">
+      <p>The VPN server accepted a list from the root, but the intermediate signed the client. The revoked certificate still connected.</p>
+      <div class="opts">
+        <button class="opt">A list from the wrong CA in the chain</button>
+        <button class="opt">An imported CA secret as the client CA</button>
+        <button class="opt">A CA without distribution points</button>
+      </div>
+      <details class="reveal"><summary>Show the answer</summary><p>A list from the wrong CA in the chain. The certificate was refused 58 seconds after the intermediate&apos;s list was applied.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <span class="kicker">Step 6 · Check yourself</span>
   <h2>Three questions</h2>
   <div>
     <div class="q" data-check>
@@ -260,9 +295,9 @@ crlNumber=0x1000</pre>
   <span class="kicker">Unit complete</span>
   <h2>You can revoke on a VPN server</h2>
   <div class="done">
-    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 5.</span></div>
-    <div><span class="label">Remember</span><p>Revoke with a secret action and the VPN server refuses the certificate in about two minutes, by going silent. An open session stays up. With your own CA, write a list, upload it with <code>--client-ca</code>, and write a new one before its next-update date.</p></div>
-    <div><span class="label">When you have an account</span><p>Tutorial chapter 67, Revoking client certificates on VPN servers and ALBs, runs every step. The next unit covers the load balancer.</p></div>
+    <div><span class="label">Your check score</span><span class="score" data-score>–</span><span class="small" data-score-text>Answer the three questions in step 6.</span></div>
+    <div><span class="label">Remember</span><p>Revoke with a secret action and the VPN server refuses the certificate in about two minutes, by going silent. An open session stays up. With your own CA, write a list, upload it with <code>--client-ca</code>, and write a new one before its next-update date. Three set-ups let a revoked certificate in with no error: an imported CA secret as the client CA, a CA without distribution points, and a list from the wrong CA in the chain.</p></div>
+    <div><span class="label">When you have an account</span><p>Tutorial chapter 67, Revoking client certificates on VPN servers and ALBs, runs every step.</p></div>
   </div>
   <p><a class="btn line" href="index.html">Back to the course</a></p>
 </section>

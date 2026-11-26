@@ -40,8 +40,8 @@
           {"line":[190,120,100,150],"arrow":true},
           {"line":[270,120,360,150],"arrow":true},
           {"box":[10,150,180,56],"title":"Server certificate","detail":"for the VPN server"},
-          {"box":[270,150,180,56],"title":"Client certificate","detail":"for each administrator"}]}'></svg>
-      <p class="hand tilt">Northgate Freight is a made-up haulier. Its security team wants each administrator to prove who they are with their own certificate before the VPN lets them in.</p>
+          {"box":[270,150,180,56],"title":"Client certificate","detail":"for each VPN user"}]}'></svg>
+      <p class="hand tilt">Northgate Freight is a made-up haulier. Its security team wants each VPN user, each person who connects, to prove who they are with their own certificate before the VPN lets them in.</p>
     </div>
   </div>
   <p class="small">Every command and line of output in this unit comes from real runs, and the limits come from IBM&apos;s pages.</p>
@@ -50,7 +50,7 @@
 <section class="screen">
   <span class="kicker">Step 1 · Explore the parts</span>
   <h2>Who issues what</h2>
-  <p class="lead">The VPN server needs a server certificate, and a client certificate for each administrator, signed by a CA the server trusts. Select a part to see what it is and what goes wrong without it.</p>
+  <p class="lead">IBM Cloud Secrets Manager is an IBM Cloud service that stores secrets such as certificates, and a VPN server for VPC takes its certificates from it. A certificate authority, or CA, is the party that signs certificates so that others can check who a certificate belongs to. The VPN server needs a server certificate, and a client certificate for each VPN user, signed by a CA the server trusts. Select a part to see what it is and what goes wrong without it.</p>
   <div class="explorer" data-start="root"
     data-map='{"root":[[1,1]],"intermediate":[[2,3]],"template":[[4,4]],"server":[[5,5]],"client":[[6,6]],"auth":[[7,7]]}'>
     <div class="cols">
@@ -79,12 +79,12 @@
       <div class="parts" aria-live="polite">
         <div class="part-info" data-part="root">
           <h3>Root CA</h3>
-          <p>The top certificate authority, made as a configuration in Secrets Manager. Its keys stay in the service, and the service can renew certificates.</p>
+          <p>The top certificate authority, made as a configuration in Secrets Manager. In this chain it signs only the intermediate CA. Its keys stay in the service, and the service can renew certificates.</p>
           <p class="watch"><b>Watch for this.</b> Switch on <code>issuing_certificates_urls_encoded</code> and <code>crl_distribution_points_encoded</code>. A certificate cannot live longer than its CA.</p>
         </div>
         <div class="part-info" data-part="intermediate">
           <h3>Intermediate CA</h3>
-          <p>A CA that the root signs. Certificates are issued from this one.</p>
+          <p>A CA that the root signs. Certificates are issued from this one, so the root never signs a server or client certificate itself.</p>
           <p class="watch"><b>Watch for this.</b> Switch on the same two settings here too. Without them the VPN server refuses the certificate with <code>vpn_server_parent_ca_url_missing</code>.</p>
         </div>
         <div class="part-info" data-part="template">
@@ -99,7 +99,7 @@
         </div>
         <div class="part-info" data-part="client">
           <h3>Client certificate</h3>
-          <p>The certificate an administrator uses to prove who they are. Here its common name is <code>client1.vpct.internal</code>. The client keeps its own certificate, its key and the intermediate CA certificate.</p>
+          <p>The certificate a VPN user presents to prove who they are. Here its common name is <code>client1.vpct.internal</code>. The client keeps its own certificate, its key and the intermediate CA certificate.</p>
           <p class="watch"><b>Watch for this.</b> IBM says a client certificate used for authentication needs the certificate and the intermediate certificate.</p>
         </div>
         <div class="part-info" data-part="clientca">
